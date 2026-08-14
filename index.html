@@ -566,75 +566,23 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       </sc-if>
 
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="color:#117996;display:inline-flex"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#D5E7EF;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"></rect><path d="M3.5 10h17"></path><path d="M8 3.5V6"></path><path d="M16 3.5V6"></path></svg></span></span>លម្អិតតាមជុំ <span style="font-weight:400;color:#9AA5AE">Round detail</span></div>
-        <div style="display:flex;padding:9px 0 7px;border-bottom:1px solid #D9DEE4;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:#9AA5AE;margin-top:8px">
-          <span style="flex:1">ជុំ · round</span>
-          <span style="width:42px;text-align:right">ផ្ទះ</span>
-          <span style="width:42px;text-align:right">ប្រមូល</span>
-          <span style="width:62px;text-align:right">ភាជន៍ +/-</span>
-          <span style="width:46px;text-align:right">index</span>
-          <span style="width:40px;text-align:right">មូស</span>
-        </div>
-        <sc-for list="{{ dash.roundRows }}" as="r" hint-placeholder-count="2">
-          <div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #EDF1F4;font-size:11.5px;color:#333">
-            <span style="flex:1;font-weight:700;color:#003E78">{{ r.label }}</span>
-            <span style="width:42px;text-align:right">{{ r.houses }}</span>
-            <span style="width:42px;text-align:right">{{ r.collections }}</span>
-            <span style="width:62px;text-align:right">{{ r.positive }} / {{ r.inspected }}</span>
-            <span style="width:46px;text-align:right;font-weight:700">{{ r.index }}</span>
-            <span style="width:40px;text-align:right">{{ r.catch }}</span>
-          </div>
-        </sc-for>
-      </div>
-
-      <sc-if value="{{ dash.hasCollectors }}" hint-placeholder-val="{{ false }}">
-        
-      </sc-if>
-
-      
-
-      
-
-      <sc-if value="{{ dash.hasVillages }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="color:#7C1220;display:inline-flex"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#F7DDDF;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.6 4 5.5 6.7 5.5 9.4A5.5 5.5 0 0 1 6.5 12c0-2.7 1.9-5.4 5.5-9.5Z"></path></svg></span></span>ភូមិដែលមានដង្កូវច្រើន · Highest container index by village</div>
-          <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
-            <sc-for list="{{ dash.villages }}" as="v" hint-placeholder-count="3">
-              <div style="display:flex;align-items:center;gap:10px">
-                <span style="width:96px;font-size:12px;font-weight:700;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.name }}</span>
-                <div style="flex:1;height:10px;border-radius:5px;background:#EDF1F4"><div style="width:{{ v.w }};height:10px;border-radius:5px;background:#117996"></div></div>
-                <span style="width:52px;text-align:right;font-size:11.5px;font-weight:700;color:#333">{{ v.index }}%</span>
-              </div>
-            </sc-for>
-          </div>
-        </div>
-        
-    </sc-if>
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#F2F2F2;display:inline-flex;align-items:center;justify-content:center;color:#767676"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"></path></svg></span>ការកំណត់ <span style="font-weight:400;color:#9AA5AE">Settings</span></div>
-        <div style="display:flex;gap:10px;margin-top:12px">
-          <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#F2F2F2;display:inline-flex;align-items:center;justify-content:center;color:#767676"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v2.5"></path><path d="M12 18.5V21"></path><path d="M3 12h2.5"></path><path d="M18.5 12H21"></path><path d="M5.6 5.6l1.8 1.8"></path><path d="M16.6 16.6l1.8 1.8"></path><path d="M18.4 5.6l-1.8 1.8"></path><path d="M7.4 16.6l-1.8 1.8"></path></svg></span>ការកំណត់ <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Settings</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px">
+          <div>
             <label>អ្នកប្រមូល<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Collector</span></label>
             <input type="text" value="{{ collector }}" onChange="{{ setCollector }}" placeholder="Your name">
           </div>
-          <div style="flex:1">
+          <div>
             <label>ចង្កោម / ភូមិ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Cluster / village</span></label>
             <input type="text" value="{{ cluster }}" onChange="{{ setCluster }}" placeholder="C2">
           </div>
-          <div style="width:100px">
+          <div>
             <label>គោលដៅ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Target</span></label>
-            <input type="number" inputmode="numeric" min="0" value="{{ target }}" onChange="{{ setTarget }}" placeholder="30">
+            <input type="number" inputmode="numeric" value="{{ target }}" onChange="{{ setTarget }}" placeholder="30">
           </div>
         </div>
-        <div style="font-size:11.5px;color:#767676;margin-top:8px;line-height:1.5">{{ ctxLabel }}</div>
-        <div style="border-top:1px solid #EDF1F4;margin-top:12px;padding-top:12px">
-          <label>URL តារាង Google<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Google Sheet · Apps Script web app</span></label>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="{{ urlInputType }}" value="{{ sheetUrl }}" onChange="{{ setSheetUrl }}" placeholder="https://script.google.com/macros/s/.../exec" style="flex:1">
-            <button onClick="{{ toggleUrl }}" style="flex:none;border:1px solid #D9DEE4;background:#fff;color:#003E78;border-radius:6px;min-height:46px;padding:0 12px;font:700 11px/1.2 inherit;cursor:pointer">{{ urlToggleLabel }}</button>
-          </div>
-          <div style="font-size:10.5px;color:#9AA5AE;margin-top:5px">{{ urlHint }}</div>
-          <div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap">
+        <div style="font-size:11px;color:#767676;margin-top:8px">{{ ctxLabel }}</div>
+        <div style="display:flex;gap:18px;margin-top:14px;flex-wrap:wrap;border-top:1px solid #EDF1F4;padding-top:14px">
             <div><div style="font-size:18px;font-weight:700;color:#7C1220;line-height:1">{{ pendingSync }}</div><div style="font-size:10px;color:#767676">រង់ចាំផ្ញើ · to send</div></div>
             <div><div style="font-size:18px;font-weight:700;color:#003E78;line-height:1">{{ syncedCount }}</div><div style="font-size:10px;color:#767676">បានផ្ញើ · sent</div></div>
             <div style="flex:1;min-width:120px"><div style="font-size:11.5px;font-weight:700;color:#333">{{ lastSyncLabel }}</div><div style="font-size:10px;color:#767676">ផ្ញើចុងក្រោយ · last sync</div></div>
@@ -730,6 +678,7 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 const KEY = "ento.records.v1";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbz5dYyX8PKVisxPxePppnmu3qzy1S3pJPCfEQWgrP4osxJkoBA1vyx9DTDROASbA3-P/exec";
 const SEQ = "ento.seq.v1";
 
 const TYPES = {
@@ -1045,7 +994,7 @@ class Component extends DCLogic {
     try { localStorage.setItem(KEY, JSON.stringify(migrated)); } catch (e) {}
     this.setState({
       records: migrated, collector: c.collector || "", cluster: c.cluster || "",
-      target: c.target || "", sheetUrl: c.sheetUrl || "", lastSync: c.lastSync || "",
+      target: c.target || "", sheetUrl: c.sheetUrl || SHEET_URL, lastSync: c.lastSync || "",
     });
     this._on = () => this.setState({ online: navigator.onLine });
     this.startPolling();
@@ -2641,8 +2590,8 @@ class Component extends DCLogic {
       stripBg: s.online ? "#D5E7EF" : "#F4B71B",
       stripFg: s.online ? "#003E78" : "#3d2c00",
       stripText: s.online
-        ? "\u17a2\u1793\u17d2\u179b\u17b6\u1789 \u00b7 Online \u2014 saved on the device first"
-        : "\u1782\u17d2\u1798\u17b6\u1793\u17a2\u17b7\u1793\u1791\u17bc\u179a\u178e\u17b7\u178f \u00b7 Offline \u2014 saving here",
+        ? "\u1798\u17b6\u1793\u17a2\u17ca\u17b8\u1793\u1792\u17ba\u178e\u17b7\u178f \u00b7 Online \u2014 saved on the device first"
+        : "\u1798\u17b7\u1793\u17a2\u17ca\u17b8\u1793\u1792\u17ba\u178e\u17b7\u178f \u00b7 Offline \u2014 saving here",
       stripMeta: s.records.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 stored",
 
       todayCount: s.records.filter((r) => String(r.collected_at_utc || r.saved_at).slice(0, 10) === today).length,
