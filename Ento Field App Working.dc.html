@@ -26,10 +26,6 @@
 <script src="_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/_ds_bundle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<style>
-.leaflet-tooltip.hh-label { background:rgba(255,255,255,.92); border:1px solid #C6D5E4; box-shadow:none; padding:2px 6px; border-radius:4px; white-space:nowrap; }
-.leaflet-tooltip.hh-label:before { display:none; }
-</style>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
 html,body{margin:0;background:#F2F2F2;font-family:"Kantumruy Pro","Trebuchet MS","Fira Sans",system-ui,sans-serif;color:#333;-webkit-text-size-adjust:100%}
@@ -47,20 +43,6 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
     <button onClick="{{ home }}" style="width:38px;height:38px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
     </button>
-    <span style="width:34px;height:34px;flex:none;border-radius:9px;background:rgba(255,255,255,.14);color:#6EDBCD;display:inline-flex;align-items:center;justify-content:center">
-      <sc-if value="{{ iconRecord }}" hint-placeholder-val="{{ true }}">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15L12 17l-6.5 3V5A1.5 1.5 0 0 1 7 3.5Z"></path><path d="M9 8.5h6"></path></svg>
-      </sc-if>
-      <sc-if value="{{ iconHh }}" hint-placeholder-val="{{ false }}">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3.5l9 7"></path><path d="M5.5 9.6V20h13V9.6"></path><path d="M9.8 20v-5.5h4.4V20"></path></svg>
-      </sc-if>
-      <sc-if value="{{ iconDash }}" hint-placeholder-val="{{ false }}">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="8.5" rx="1.6"></rect><rect x="13.5" y="3.5" width="7" height="5" rx="1.6"></rect><rect x="3.5" y="15" width="7" height="5.5" rx="1.6"></rect><rect x="13.5" y="11.5" width="7" height="9" rx="1.6"></rect></svg>
-      </sc-if>
-      <sc-if value="{{ iconData }}" hint-placeholder-val="{{ false }}">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V13"></path><path d="M9.3 20V8.5"></path><path d="M14.7 20v-6"></path><path d="M20 20V4.5"></path></svg>
-      </sc-if>
-    </span>
     <div style="flex:1;min-width:0">
       <div style="font-size:17px;font-weight:700;line-height:1.2">{{ title }}</div>
       <div style="font-size:11px;color:#D5E7EF;line-height:1.3">{{ subtitle }}</div>
@@ -86,11 +68,11 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <button onClick="{{ openHousehold }}" style="border: 1px solid #BFD2E3; border-radius: 8px; min-height: 96px; padding: 12px 6px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background-color: var(--chai-gold)">
           <span style="width:42px;height:42px;border-radius:12px;background:#003E78;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3.5l9 7"></path><path d="M5.5 9.6V20h6"></path><path d="M18.5 14v7"></path><path d="M15 17.5h7"></path></svg></span>
-          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ខ្នងផ្ទះថ្មី</span><span style="display:block;font-size:10px;font-weight:400;color:#003E78;margin-top:2px">New household</span></span>
+          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ខ្នងផ្ទះថ្មី</span><span style="display:block;font-size:10px;font-weight:400;color:#5C7E9C;margin-top:2px">New household</span></span>
         </button>
         <button onClick="{{ openHh }}" style="border: 1px solid #A6D2DD; border-radius: 8px; min-height: 96px; padding: 12px 6px; cursor: pointer; font-family: inherit; color: #117996; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background-color: var(--color-success)">
           <span style="width: 42px; height: 42px; border-radius: 12px; color: #fff; display: inline-flex; align-items: center; justify-content: center; background-color: var(--color-primary-hover)"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="M15.8 15.8 21 21"></path></svg></span>
-          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display: block; color: var(--chai-dark-blue)">ស្វែងរកខ្នងផ្ទះ</span><span style="display: block; font-size: 10px; font-weight: 400; color: #003E78; margin-top: 2px">Find household</span></span>
+          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display: block; color: var(--chai-dark-blue)">ស្វែងរកខ្នងផ្ទះ</span><span style="display: block; font-size: 10px; font-weight: 400; color: var(--color-accent-hover); margin-top: 2px">Find household</span></span>
         </button>
         
         
@@ -106,29 +88,26 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       </div>
       <sc-for list="{{ latest }}" as="r" hint-placeholder-count="3">
         <div style="background:#fff;border:1px solid #D9DEE4;border-left:3px solid {{ r.bar }};border-radius:6px;padding:7px 10px;display:flex;align-items:center;gap:10px">
-          <button onClick="{{ r.edit }}" style="flex:1;min-width:0;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit">
-            <span style="display:block;font-size:12px;font-weight:700;color:#003E78">{{ r.title }}</span>
-            <span style="display:block;font-size:10px;color:#9AA5AE;margin-top:1px">{{ r.meta }}</span>
-          </button>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:700;color:#003E78">{{ r.title }}</div>
+            <div style="font-size:10px;color:#9AA5AE;margin-top:1px">{{ r.meta }}</div>
+          </div>
           <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #EDF1F4;background:#fff;color:#7C1220;border-radius:5px;width:32px;height:32px;flex:none;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
         </div>
       </sc-for>
       <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
         <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:12px 14px;font-size:12px;line-height:1.5;color:#003E78">No records yet. Everything you save stays on this phone, works with no signal, and leaves as a CSV file from the Results screen.</div>
       </sc-if>
-      <div style="background:#fff;border:1px solid #D9DEE4;border-top:3px solid #117996;border-radius:8px;padding:12px">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">ស្ថានភាពទិន្នន័យ <span style="font-weight:400;color:#9AA5AE">Data status</span></span>
-          <span style="flex:1"></span>
-          <span style="font-size:10px;color:#9AA5AE">{{ storeSize }} · {{ lastSyncLabel }}</span>
+      <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:14px">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+          <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ todayCount }}</div><div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">ថ្ងៃនេះ<span style="display:block;color:#9AA5AE">Today</span></div></div>
+          <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ count }}</div><div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">ក្នុងទូរស័ព្ទ<span style="display:block;color:#9AA5AE">On device</span></div></div>
+          <div><div style="font-size:20px;font-weight:700;color:#7C1220;line-height:1">{{ pendingSync }}</div><div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">រង់ចាំផ្ញើ<span style="display:block;color:#9AA5AE">To send</span></div></div>
+          <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ syncedCount }}</div><div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">បានផ្ញើ<span style="display:block;color:#9AA5AE">Sent</span></div></div>
         </div>
-        <div style="display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap">
-          <span style="display:inline-flex;align-items:baseline;gap:5px"><span style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ todayCount }}</span><span style="font-size:10px;color:#9AA5AE">ថ្ងៃនេះ · today</span></span>
-          <span style="display:inline-flex;align-items:baseline;gap:5px"><span style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ count }}</span><span style="font-size:10px;color:#9AA5AE">ក្នុងទូរស័ព្ទ · on device</span></span>
-          <span style="display:inline-flex;align-items:baseline;gap:5px"><span style="font-size:17px;font-weight:700;color:#7C1220;line-height:1">{{ pendingSync }}</span><span style="font-size:10px;color:#9AA5AE">រង់ចាំផ្ញើ · to send</span></span>
-          <span style="display:inline-flex;align-items:baseline;gap:5px"><span style="font-size:17px;font-weight:700;color:#117996;line-height:1">{{ syncedCount }}</span><span style="font-size:10px;color:#9AA5AE">បានផ្ញើ · sent</span></span>
-          <span style="flex:1"></span>
-          <button onClick="{{ syncNow }}" style="flex:none;background:#117996;color:#fff;border:none;border-radius:6px;min-height:36px;padding:0 12px;font:700 11px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap">
+        <div style="display:flex;align-items:center;gap:12px;margin-top:12px;border-top:1px solid #EDF1F4;padding-top:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:130px;font-size:11px;color:#767676;line-height:1.4">ផ្ញើចុងក្រោយ · last sync<span style="display:block;font-size:12px;font-weight:700;color:#333">{{ lastSyncLabel }}</span></div>
+          <button onClick="{{ syncNow }}" style="flex:none;background:#117996;color:#fff;border:none;border-radius:6px;min-height:34px;padding:0 11px;font:700 11px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
             <span>{{ syncBtnLabel }}</span>
           </button>
@@ -165,7 +144,11 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
 
       <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-          <div ref="{{ hhMapRef }}" style="height:300px;border-radius:6px;border:1px solid #E4EBF0;background:#F8FAFB"></div>
+          <div style="position:relative;height:300px;border-radius:6px;background:#F8FAFB;background-image:linear-gradient(#E4EBF0 1px,transparent 1px),linear-gradient(90deg,#E4EBF0 1px,transparent 1px);background-size:40px 40px;border:1px solid #E4EBF0;overflow:hidden">
+            <sc-for list="{{ hhPins }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.open }}" title="{{ p.title }}" style="position:absolute;left:{{ p.left }};top:{{ p.top }};transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:#117996;color:#fff;font:700 10px/1 inherit;cursor:pointer;box-shadow:0 1px 4px rgba(0,62,120,.35);display:flex;align-items:center;justify-content:center">{{ p.label }}</button>
+            </sc-for>
+          </div>
           <div style="font-size:12px;color:#767676;margin-top:10px;line-height:1.5">{{ mapScale }} · ចុចលើចំណុចដើម្បីបើកខ្នងផ្ទះ · tap a pin to open the household</div>
         </div>
       </sc-if>
@@ -287,16 +270,11 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       </div>
       <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ប្រវត្តិសកម្មភាព <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Activity history</span></div>
       <sc-for list="{{ hhRecordsShown }}" as="r" hint-placeholder-count="3">
-        <button onClick="{{ r.edit }}" style="display:block;width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:12px 14px;cursor:pointer;font-family:inherit">
-          <span style="display:flex;align-items:center;gap:10px">
-            <span style="flex:1;min-width:0">
-              <span style="display:block;font-size:13px;font-weight:700;color:#003E78">{{ r.title }}</span>
-              <span style="display:block;font-size:11px;color:#767676;margin-top:2px">{{ r.meta }}</span>
-            </span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg>
-          </span>
-          <span style="display:block;font-size:12px;color:#333;line-height:1.5;margin-top:8px;border-top:1px solid #EDF1F4;padding-top:8px">{{ r.detail }}</span>
-        </button>
+        <div style="background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:12px 14px">
+          <div style="font-size:13px;font-weight:700;color:#003E78">{{ r.title }}</div>
+          <div style="font-size:11px;color:#767676;margin-top:2px">{{ r.meta }}</div>
+          <div style="font-size:12px;color:#333;line-height:1.5;margin-top:8px;border-top:1px solid #EDF1F4;padding-top:8px">{{ r.detail }}</div>
+        </div>
       </sc-for>
       <sc-if value="{{ hhHasMore }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ toggleHhAll }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #D9DEE4;color:#003E78;border-radius:8px;min-height:44px;font:700 12.5px/1 inherit;cursor:pointer">
@@ -307,9 +285,6 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
     </sc-if>
 
     <sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
-      <sc-if value="{{ savedFlash }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#E8F7EF;border-left:4px solid #1ED47F;padding:10px 12px;font-size:12px;color:#06492b;line-height:1.5">{{ savedFlashText }}</div>
-      </sc-if>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-items:start">
         <sc-for list="{{ fields }}" as="f" hint-placeholder-count="6">
           <div style="grid-column:{{ f.span }}">
@@ -428,9 +403,6 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
                       <span style="display:block;font-size:11px;color:#767676;margin-top:2px">{{ t.meta }}</span>
                     </span>
                     <span style="font-size:10px;font-weight:700;background:{{ t.tagBg }};color:{{ t.tagFg }};padding:4px 8px;border-radius:999px;white-space:nowrap">{{ t.tag }}</span>
-                    <sc-if value="{{ t.canDelete }}" hint-placeholder-val="{{ false }}">
-                      <button onClick="{{ t.remove }}" title="លុបអន្ទាក់ · Delete trap" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #EDF1F4;background:#fff;color:#7C1220;border-radius:5px;width:30px;height:30px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
-                    </sc-if>
                   </div>
                 </sc-for>
                 <sc-if value="{{ f.noRows }}" hint-placeholder-val="{{ false }}">
@@ -472,8 +444,8 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
             <div style="font-size:11px;color:#9FC4DC">ការគ្របដណ្តប់ · coverage</div>
           </div>
         </div>
-        <div style="height:8px;border-radius:4px;background:rgba(255,255,255,.22);margin-top:12px;overflow:hidden;max-width:100%">
-          <div style="width:{{ dash.coveragePct }}%;max-width:100%;height:8px;background:#6EDBCD"></div>
+        <div style="height:8px;border-radius:4px;background:rgba(255,255,255,.22);margin-top:12px">
+          <div style="width:{{ dash.coveragePct }}%;height:8px;border-radius:4px;background:#6EDBCD"></div>
         </div>
         <div style="font-size:12px;color:#D5E7EF;margin-top:6px">{{ dash.visited }} / {{ dash.households }} ខ្នងផ្ទះបានទៅ · households visited · គោលដៅ {{ dash.target }}</div>
 
@@ -562,121 +534,16 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       </div>
 
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#D5E7EF;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6l-1 15.5a2 2 0 0 1-2 1.9h-.1a2 2 0 0 1-2-1.9L9 3.5Z"></path><path d="M9.4 12h5.2"></path></svg></span>ដំណើរអន្ទាក់ <span style="font-weight:400;color:#9AA5AE">Trap chain</span></div>
-
-        <div style="display:flex;flex-direction:column;gap:11px;margin-top:12px">
-          <div>
-            <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px">
-              <span style="font-weight:700;color:#003E78">ដាក់អន្ទាក់ <span style="font-weight:400;color:#9AA5AE">Installed</span></span>
-              <span style="font-weight:700;color:#003E78">{{ dash.trapInstalled }}</span>
-            </div>
-            <div style="height:10px;border-radius:5px;background:#EDF1F4;margin-top:4px"><div style="width:{{ dash.trapInstalledW }};height:10px;border-radius:5px;background:#003E78"></div></div>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px">
-              <span style="font-weight:700;color:#003E78">ប្រមូលអន្ទាក់ <span style="font-weight:400;color:#9AA5AE">Collected</span></span>
-              <span style="font-weight:700;color:#003E78">{{ dash.trapCollected }} · {{ dash.trapCollectedPct }}%</span>
-            </div>
-            <div style="height:10px;border-radius:5px;background:#EDF1F4;margin-top:4px"><div style="width:{{ dash.trapCollectedW }};height:10px;border-radius:5px;background:#117996"></div></div>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px">
-              <span style="font-weight:700;color:#003E78">លទ្ធផលមន្ទីរពិសោធន៍ <span style="font-weight:400;color:#9AA5AE">Lab results</span></span>
-              <span style="font-weight:700;color:#003E78">{{ dash.trapLabs }} · {{ dash.trapLabsPct }}%</span>
-            </div>
-            <div style="height:10px;border-radius:5px;background:#EDF1F4;margin-top:4px"><div style="width:{{ dash.trapLabsW }};height:10px;border-radius:5px;background:#6EDBCD"></div></div>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;border-top:1px solid #EDF1F4;padding-top:12px">
-          <sc-if value="{{ dash.hasUncollected }}" hint-placeholder-val="{{ false }}">
-          <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
-            <div style="font-size:17px;font-weight:700;color:#7C1220;line-height:1">{{ dash.trapUncollected }}</div>
-            <div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">មិនទាន់ប្រមូល<span style="display:block;color:#9AA5AE">Installed, not collected</span></div>
-          </div>
-          </sc-if>
-          <sc-if value="{{ dash.hasNoResult }}" hint-placeholder-val="{{ false }}">
-          <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
-            <div style="font-size:17px;font-weight:700;color:#B47A0A;line-height:1">{{ dash.trapNoResult }}</div>
-            <div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">ចាំលទ្ធផល<span style="display:block;color:#9AA5AE">Lab</span></div>
-          </div>
-          </sc-if>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
-          <sc-if value="{{ dash.hasUncollected }}" hint-placeholder-val="{{ false }}">
-          <div style="min-width:0">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#7C1220">មិនទាន់ប្រមូល · to collect</div>
-            <div style="border:1px solid #EDF1F4;border-radius:6px;overflow:hidden;margin-top:6px">
-              <sc-for list="{{ dash.uncollectedList }}" as="g" hint-placeholder-count="2">
-                <div style="border-bottom:1px solid #EDF1F4">
-                  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;padding:6px 9px;background:#F7F9FB">
-                    <span style="font:700 11px ui-monospace,Menlo,monospace;color:#003E78;white-space:nowrap">{{ g.house }}</span>
-                    <span style="font-size:10px;font-weight:700;color:#7C1220;white-space:nowrap">{{ g.n }}</span>
-                  </div>
-                  <sc-for list="{{ g.items }}" as="u" hint-placeholder-count="2">
-                    <button onClick="{{ u.go }}" style="display:block;width:100%;box-sizing:border-box;text-align:left;border:none;background:transparent;padding:6px 9px 6px 16px;cursor:pointer;font-family:inherit">
-                      <span style="display:block;font:700 10.5px ui-monospace,Menlo,monospace;color:#117996;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ u.id }}</span>
-                      <span style="display:block;font-size:9.5px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ u.meta }}</span>
-                    </button>
-                  </sc-for>
-                </div>
-              </sc-for>
-            </div>
-          </div>
-          </sc-if>
-          <sc-if value="{{ dash.hasNoResult }}" hint-placeholder-val="{{ false }}">
-          <div style="min-width:0">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#B47A0A">រង់ចាំលទ្ធផល <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Waiting lab result</span></div>
-            <div style="border:1px solid #EDF1F4;border-radius:6px;overflow:hidden;margin-top:6px">
-              <sc-for list="{{ dash.noResultList }}" as="g" hint-placeholder-count="2">
-                <div style="border-bottom:1px solid #EDF1F4">
-                  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;padding:6px 9px;background:#F7F9FB">
-                    <span style="font:700 11px ui-monospace,Menlo,monospace;color:#003E78;white-space:nowrap">{{ g.house }}</span>
-                    <span style="font-size:10px;font-weight:700;color:#B47A0A;white-space:nowrap">{{ g.n }}</span>
-                  </div>
-                  <sc-for list="{{ g.items }}" as="u" hint-placeholder-count="2">
-                    <button onClick="{{ u.go }}" style="display:block;width:100%;box-sizing:border-box;text-align:left;border:none;background:transparent;padding:6px 9px 6px 16px;cursor:pointer;font-family:inherit">
-                      <span style="display:block;font:700 10.5px ui-monospace,Menlo,monospace;color:#117996;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ u.id }}</span>
-                      <span style="display:block;font-size:9.5px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ u.meta }}</span>
-                    </button>
-                  </sc-for>
-                </div>
-              </sc-for>
-            </div>
-          </div>
-        </sc-if></div>
-      </div>
-
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
         <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
           <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="color:#B47A0A;display:inline-flex"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#FDF1D1;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5 21 20H3l9-15.5Z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path></svg></span></span>ចន្លោះខ្វះទិន្នន័យ <span style="font-weight:400;color:#9AA5AE">Collection gaps</span></span>
           <span style="font-size:11px;color:#9AA5AE">មិនទាន់ដោះស្រាយ · open</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
-          <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="3">
-            <div style="border:1px solid #F4B71B;border-left:4px solid #F4B71B;border-radius:6px;min-width:0">
-              <button onClick="{{ g.toggle }}" style="width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:transparent;border:none;padding:10px 12px;cursor:pointer;font-family:inherit">
-                <span style="font-size:17px;font-weight:700;color:#7C1220;line-height:1;min-width:26px">{{ g.n }}</span>
-                <span style="flex:1;min-width:0">
-                  <span style="display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.3">{{ g.label }}</span>
-                  <span style="display:block;font-size:10px;color:#9AA5AE;margin-top:2px;line-height:1.3">{{ g.note }}</span>
-                </span>
-                <sc-if value="{{ g.hasItems }}" hint-placeholder-val="{{ false }}">
-                  <span style="width:24px;height:24px;flex:none;border-radius:6px;border:1px solid #F3DFA8;color:#B47A0A;font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">{{ g.caret }}</span>
-                </sc-if>
-              </button>
-              <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
-                <div style="border-top:1px solid #F3DFA8">
-                  <sc-for list="{{ g.rows }}" as="it" hint-placeholder-count="2">
-                    <button onClick="{{ it.go }}" style="width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:none;border-bottom:1px solid #EDF1F4;padding:9px 12px;cursor:pointer;font-family:inherit">
-                      <span style="font:700 11px ui-monospace,Menlo,monospace;color:#003E78">{{ it.id }}</span>
-                      <span style="flex:1;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.name }}</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9AA5AE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M9.5 5.5 16 12l-6.5 6.5"></path></svg>
-                    </button>
-                  </sc-for>
-                </div>
-              </sc-if>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="4">
+            <div style="border:1px solid #F4B71B;border-left:4px solid #F4B71B;border-radius:6px;padding:10px 11px">
+              <div style="font-size:20px;font-weight:700;color:#7C1220;line-height:1">{{ g.n }}</div>
+              <div style="font-size:11px;font-weight:700;color:#003E78;margin-top:4px;line-height:1.3">{{ g.label }}</div>
+              <div style="font-size:10px;color:#9AA5AE;margin-top:2px;line-height:1.3">{{ g.note }}</div>
             </div>
           </sc-for>
         </div>
@@ -694,13 +561,13 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
           <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
             <sc-for list="{{ dash.containers }}" as="c" hint-placeholder-count="3">
               <div>
-                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:12px;color:#333">
-                  <span style="flex:1;min-width:0;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }} <span style="font-weight:400;color:#9AA5AE">{{ c.labelEn }}</span></span>
-                  <span style="flex:none;white-space:nowrap;font-variant-numeric:tabular-nums">{{ c.pos }} / {{ c.insp }} · {{ c.pct }}%</span>
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:#333">
+                  <span style="font-weight:700;color:#003E78">{{ c.label }} <span style="font-weight:400;color:#9AA5AE">{{ c.labelEn }}</span></span>
+                  <span>{{ c.pos }} / {{ c.insp }} · {{ c.pct }}%</span>
                 </div>
-                <div style="position:relative;height:12px;border-radius:6px;background:#EDF1F4;margin-top:5px;overflow:hidden;max-width:100%">
-                  <div style="position:absolute;left:0;top:0;width:{{ c.inspW }};max-width:100%;height:12px;background:#D5E7EF"></div>
-                  <div style="position:absolute;left:0;top:0;width:{{ c.posW }};max-width:100%;height:12px;background:#7C1220"></div>
+                <div style="position:relative;height:12px;border-radius:6px;background:#EDF1F4;margin-top:5px">
+                  <div style="position:absolute;left:0;top:0;width:{{ c.inspW }};height:12px;border-radius:6px;background:#D5E7EF"></div>
+                  <div style="position:absolute;left:0;top:0;width:{{ c.posW }};height:12px;border-radius:6px;background:#7C1220"></div>
                 </div>
               </div>
             </sc-for>
@@ -717,9 +584,9 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
           <div style="display:flex;flex-direction:column;gap:9px;margin-top:12px">
             <sc-for list="{{ dash.species }}" as="sp" hint-placeholder-count="3">
               <div style="display:flex;align-items:center;gap:10px">
-                <span style="width:132px;flex:none;font-size:11px;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sp.label }}</span>
+                <span style="width:118px;font-size:11px;font-weight:700;color:#003E78">{{ sp.label }}</span>
                 <div style="flex:1;height:10px;border-radius:5px;background:#EDF1F4"><div style="width:{{ sp.w }};height:10px;border-radius:5px;background:{{ sp.color }}"></div></div>
-                <span style="width:78px;flex:none;text-align:right;font-size:11px;color:#333;white-space:nowrap">{{ sp.n }} · {{ sp.pct }}%</span>
+                <span style="width:74px;text-align:right;font-size:11px;color:#333">{{ sp.n }} · {{ sp.pct }}%</span>
               </div>
             </sc-for>
           </div>
@@ -727,89 +594,19 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       </sc-if>
 
       <sc-if value="{{ dash.hasInOut }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">ក្នុងផ្ទះ / ក្រៅផ្ទះ <span style="font-weight:400;color:#9AA5AE">Indoor / outdoor</span></div>
-          <div style="display:flex;height:12px;border-radius:6px;overflow:hidden;margin-top:12px;background:#EDF1F4">
-            <div style="width:{{ dash.trapsInW }};background:#003E78"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
-            <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
-              <div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ dash.trapsIn }} / {{ dash.collectIn }}</div>
-              <div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">ក្នុងផ្ទះ · អន្ទាក់ / ការប្រមូល<span style="display:block;color:#9AA5AE">Inside · traps / collections</span></div>
-            </div>
-            <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
-              <div style="font-size:17px;font-weight:700;color:#117996;line-height:1">{{ dash.trapsOut }} / {{ dash.collectOut }}</div>
-              <div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">ក្រៅផ្ទះ · អន្ទាក់ / ការប្រមូល<span style="display:block;color:#9AA5AE">Outside · traps / collections</span></div>
-            </div>
-          </div>
-        </div>
+        
       </sc-if>
 
       <sc-if value="{{ dash.hasTubes }}" hint-placeholder-val="{{ false }}">
         <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:14px">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#003E78;display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:rgba(0,62,120,.12);display:inline-flex;align-items:center;justify-content:center;color:#003E78"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></span>កំប៉ុងទៅមន្ទីរពិសោធន៍ <span style="font-weight:400">Lab pipeline</span></div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#003E78;display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:rgba(0,62,120,.12);display:inline-flex;align-items:center;justify-content:center;color:#003E78"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></span>បំពង់ទៅមន្ទីរពិសោធន៍ <span style="font-weight:400">Lab pipeline</span></div>
           <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap">
-            <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ dash.tubes }}</div><div style="font-size:11px;color:#003E78">កំប៉ុងប្រមូល · tubes collected</div></div>
+            <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ dash.tubes }}</div><div style="font-size:11px;color:#003E78">បំពង់ប្រមូល · tubes collected</div></div>
             <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ dash.labsDone }}</div><div style="font-size:11px;color:#003E78">លទ្ធផលបានបញ្ចូល · results entered</div></div>
             <div><div style="font-size:22px;font-weight:700;color:#7C1220;line-height:1">{{ dash.labsPending }}</div><div style="font-size:11px;color:#003E78">រង់ចាំ · pending</div></div>
           </div>
-          <div style="height:8px;border-radius:4px;background:rgba(0,62,120,.15);margin-top:12px;overflow:hidden;max-width:100%">
-            <div style="width:{{ dash.labsPct }}%;max-width:100%;height:8px;background:#003E78"></div>
-          </div>
-        </div>
-      </sc-if>
-
-
-      <sc-if value="{{ dash.hasMonths }}" hint-placeholder-val="{{ false }}">
-        
-      </sc-if>
-
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">លម្អិតតាមជុំ <span style="font-weight:400;color:#9AA5AE">Round detail</span></div>
-        <div style="display:flex;padding:9px 0 7px;border-bottom:1px solid #D9DEE4;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#9AA5AE;margin-top:8px">
-          <span style="flex:1">ជុំ · round</span>
-          <span style="width:42px;text-align:right">ផ្ទះ</span>
-          <span style="width:42px;text-align:right">ប្រមូល</span>
-          <span style="width:62px;text-align:right">ភាជន៍ +/-</span>
-          <span style="width:46px;text-align:right">index</span>
-          <span style="width:40px;text-align:right">មូស</span>
-        </div>
-        <sc-for list="{{ dash.roundRows }}" as="r" hint-placeholder-count="2">
-          <div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #EDF1F4;font-size:12px;color:#333">
-            <span style="flex:1;font-weight:700;color:#003E78">{{ r.label }}</span>
-            <span style="width:42px;text-align:right">{{ r.houses }}</span>
-            <span style="width:42px;text-align:right">{{ r.collections }}</span>
-            <span style="width:62px;text-align:right">{{ r.positive }} / {{ r.inspected }}</span>
-            <span style="width:46px;text-align:right;font-weight:700">{{ r.index }}</span>
-            <span style="width:40px;text-align:right">{{ r.catch }}</span>
-          </div>
-        </sc-for>
-      </div>
-
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">សន្ទស្សន៍ភាជន៍តាមភូមិ <span style="font-weight:400;color:#9AA5AE">Container index by village</span></div>
-        <div style="height:220px;margin-top:12px">
-          <canvas ref="{{ chartRef }}"></canvas>
-        </div>
-      </div>
-
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">ផែនទីគ្រួសារ <span style="font-weight:400;color:#9AA5AE">Household map</span></div>
-        <div ref="{{ mapRef }}" style="height:280px;margin-top:12px;border-radius:6px;border:1px solid #E4EBF0;background:#F8FAFB"></div>
-        <div style="font-size:11px;color:#767676;margin-top:8px;line-height:1.5">ចំណុចមកពី GPS ពេលចុះបញ្ជី · pins come from the GPS captured at registration</div>
-      </div>
-
-      <sc-if value="{{ dash.hasCollectors }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">តាមអ្នកប្រមូល <span style="font-weight:400;color:#9AA5AE">By collector</span></div>
-          <div style="display:flex;flex-direction:column;gap:9px;margin-top:12px">
-            <sc-for list="{{ dash.collectors }}" as="c" hint-placeholder-count="2">
-              <div style="display:flex;align-items:center;gap:10px">
-                <span style="width:96px;flex:none;font-size:12px;font-weight:700;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</span>
-                <div style="flex:1;height:10px;border-radius:5px;background:#EDF1F4"><div style="width:{{ c.w }};height:10px;border-radius:5px;background:#6EDBCD"></div></div>
-                <span style="width:36px;flex:none;text-align:right;font-size:12px;font-weight:700;color:#333">{{ c.n }}</span>
-              </div>
-            </sc-for>
+          <div style="height:8px;border-radius:4px;background:rgba(0,62,120,.15);margin-top:12px">
+            <div style="width:{{ dash.labsPct }}%;height:8px;border-radius:4px;background:#003E78"></div>
           </div>
         </div>
       </sc-if>
@@ -836,20 +633,12 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
             <div><div style="font-size:18px;font-weight:700;color:#003E78;line-height:1">{{ syncedCount }}</div><div style="font-size:10px;color:#767676">បានផ្ញើ · sent</div></div>
             <div style="flex:1;min-width:120px"><div style="font-size:12px;font-weight:700;color:#333">{{ lastSyncLabel }}</div><div style="font-size:10px;color:#767676">ផ្ញើចុងក្រោយ · last sync</div></div>
           </div>
-          <div style="margin-top:10px">
-            <label style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:4px">ទាញតែខេត្ត<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Pull only this province · faster</span></label>
-            <select value="{{ pullProv }}" onChange="{{ setPullProv }}">
-              <sc-for list="{{ pullProvOptions }}" as="o" hint-placeholder-count="2">
-                <option value="{{ o.value }}">{{ o.label }}</option>
-              </sc-for>
-            </select>
-          </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
             <button onClick="{{ syncNow }}" style="background:#117996;color:#fff;border:none;border-radius:8px;min-height:50px;font:700 14px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
               <span>{{ syncBtnLabel }}</span>
             </button>
-            <button onClick="{{ pullNow }}" data-pull="1" style="background:#D5E7EF;color:#003E78;border:1px solid #A8C8DC;border-radius:8px;min-height:48px;font:700 13.5px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
+            <button onClick="{{ pullNow }}" style="background:#D5E7EF;color:#003E78;border:1px solid #A8C8DC;border-radius:8px;min-height:48px;font:700 13.5px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>
               <span>{{ pullBtnLabel }}</span>
             </button>
@@ -888,30 +677,18 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
         <button onClick="{{ exportAllTypes }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:12px;background:#117996;color:#fff;border:none;border-radius:8px;min-height:52px;font:700 14px/1 inherit;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>ទាញយកឯកសារទាំងអស់ · Download all activity files</button>
         <div style="font-size:12px;color:#767676;margin-top:10px;line-height:1.5">Each file carries record_id, household_id, trap_id, site_id, collected_date and epi_week, so you can link them in Excel, R or Stata. trap_id joins collections and adult catches to the installation record; household_id then reaches the registration, and is copied onto a collection automatically from its trap's installation.</div>
       </div>
-      <sc-for list="{{ allRecordsShown }}" as="r" hint-placeholder-count="4">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:10px 12px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <button onClick="{{ r.toggle }}" style="flex:1;min-width:0;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit">
-              <span style="display:block;font-size:12px;font-weight:700;color:#003E78">{{ r.title }}</span>
-              <span style="display:block;font-size:10px;color:#9AA5AE;margin-top:2px">{{ r.metaShort }}</span>
-            </button>
-            <button onClick="{{ r.edit }}" title="កែ Edit" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #EDF1F4;background:#fff;color:#117996;border-radius:5px;width:32px;height:32px;flex:none;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+      <sc-for list="{{ allRecords }}" as="r" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:12px 14px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:700;color:#003E78">{{ r.title }}</div>
+              <div style="font-size:11px;color:#767676;margin-top:2px">{{ r.meta }}</div>
+            </div>
             <button onClick="{{ r.remove }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #D9DEE4;background:#fff;color:#7C1220;border-radius:6px;min-height:40px;padding:0 12px;font:700 12px/1 inherit;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg>លុប Delete</button>
           </div>
-          <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:12px;color:#333;line-height:1.5;margin-top:8px;border-top:1px solid #EDF1F4;padding-top:8px">
-              <div style="font-size:10px;color:#9AA5AE">{{ r.meta }}</div>
-              <div style="margin-top:4px">{{ r.detail }}</div>
-            </div>
-          </sc-if>
+          <div style="font-size:12px;color:#333;line-height:1.5;margin-top:8px;border-top:1px solid #EDF1F4;padding-top:8px">{{ r.detail }}</div>
         </div>
       </sc-for>
-      <sc-if value="{{ hasMoreRecords }}" hint-placeholder-val="{{ false }}">
-        <button onClick="{{ toggleAllRecords }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #D9DEE4;color:#003E78;border-radius:8px;min-height:44px;font:700 12px/1 inherit;cursor:pointer">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6 9.5 12 15.5l6-6"></path></svg>
-          <span>{{ moreRecordsLabel }}</span>
-        </button>
-      </sc-if>
       <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
         <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:12px 14px;font-size:12px;line-height:1.5;color:#003E78">មិនទាន់មានទិន្នន័យ · Nothing stored yet.</div>
       </sc-if>
@@ -1003,7 +780,7 @@ const MEASURES = {
     ["container_index_pct", "percent"], ["container_positive", "0/1"]].concat(
     CONTAINERS.map(([k]) => ["inspected_" + k, "containers"]),
     CONTAINERS.map(([k]) => ["positive_" + k, "containers"])),
-  lab: [["eggs", "eggs"], ["aegypti", "mosquitoes"], ["albopictus", "mosquitoes"],
+  lab: [["aegypti", "mosquitoes"], ["albopictus", "mosquitoes"],
     ["aegypti_f", "mosquitoes"], ["aegypti_m", "mosquitoes"], ["albopictus_f", "mosquitoes"],
     ["albopictus_m", "mosquitoes"], ["culex", "mosquitoes"], ["other", "mosquitoes"],
     ["total_catch", "mosquitoes"], ["aegypti_total", "mosquitoes"], ["aegypti_pct", "percent"]],
@@ -1042,7 +819,7 @@ const KM = {
   "Village": "\u1797\u17bc\u1798\u17b7",
   "House / street": "\u1795\u17d2\u1791\u17c7 / \u1795\u17d2\u179b\u17bc\u179c",
   "Structure": "\u1794\u17d2\u179a\u1797\u17c1\u1791\u1795\u17d2\u1791\u17c7",
-  "Consent": "\u1799\u179b\u17cb\u1796\u17d2\u179a\u1798 \u1795\u17d2\u178f\u179b\u17cb\u1791\u17b8\u178f\u17b6\u17c6\u1784",
+  "Consent": "\u1799\u179b\u17cb\u1796\u17d2\u179a\u1798",
   "Trap type": "\u1794\u17d2\u179a\u1797\u17c1\u1791\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb",
   "Trap position": "\u1791\u17b8\u178f\u17b6\u17c6\u1784\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb",
   "Inside trap ID *": "\u179b\u17c1\u1781\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u1780\u17d2\u1793\u17bb\u1784\u1795\u17d2\u1791\u17c7",
@@ -1053,8 +830,7 @@ const KM = {
   "Substrate": "\u1791\u17b9\u1780\u1780\u17d2\u1793\u17bb\u1784\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u178a\u17b6\u1780\u17cb\u1796\u1784\u1798\u17bc\u179f",
   "Notes": "\u1780\u17c6\u178e\u178f\u17cb\u179f\u1798\u17d2\u1782\u17b6\u179b\u17cb",
   "Trap *": "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb",
-  "Trap found": "\u179f\u17d2\u1790\u17b6\u1793\u1797\u17b6\u1796 \u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb",
-  "Eggs counted": "\u1785\u17c6\u1793\u17bd\u1793\u1796\u1784",
+  "Trap found": "\u179a\u1780\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u179b\u17c1\u1785",
   "Collection method": "\u179c\u17b7\u1792\u17b8\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Tubes collected": "\u1785\u17c6\u1793\u17bd\u1793\u1780\u17c6\u1794\u17c9\u17bb\u1784\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Aspirator": "\u1798\u17c9\u17b6\u179f\u17bc\u1794\u1798\u17bc\u179f",
@@ -1155,11 +931,9 @@ function derive(type, r) {
     d.trap_found = r.found === "Yes" ? 1 : 0;
     d.water_level_code = WATER_CODE[r.water];
     d.paddle_intact = r.condition === "Intact" ? 1 : 0;
-
   } else if (type === "adult") {
     d.specimens = r.specimens === "" || r.specimens == null ? "" : Number(r.specimens);
   } else if (type === "lab") {
-    d.eggs = Number(r.eggs) || 0;
     const larval = r.specimen_stage === "Larvae";
     const set = larval ? LARVAL_TAXA : TAXA;
     const total = set.reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
@@ -1255,15 +1029,11 @@ class Component extends DCLogic {
   componentDidMount() {
     // Province/district/commune arrive first (42 KB) so the form is usable at once;
     // the village list (455 KB) streams in behind it.
-    const ok = (r) => { if (!r.ok) throw new Error("http " + r.status); return r.json(); };
-    fetch("locations-core.json").then(ok)
+    fetch("locations-core.json").then((r) => r.json())
       .then((core) => this.setState({ geo: { ...core, villages: {} } }))
-      .then(() => fetch("locations-villages.json").then(ok))
+      .then(() => fetch("locations-villages.json").then((r) => r.json()))
       .then((v) => this.setState((p) => ({ geo: { ...p.geo, villages: v.villages } })))
-      // Older deployments only carry the combined file; fall back to it.
-      .catch(() => fetch("locations.json").then(ok)
-        .then((geo) => this.setState({ geo }))
-        .catch(() => this.setState({ geoError: true })));
+      .catch(() => {});
     const c = loadCtx();
     const migrated = this.link(load());
     try { localStorage.setItem(KEY, JSON.stringify(migrated)); } catch (e) {}
@@ -1328,9 +1098,7 @@ class Component extends DCLogic {
     if (!url) { this.setState({ syncMsg: "\u1794\u1789\u17d2\u1785\u17bc\u179b URL \u1787\u17b6\u1798\u17bb\u1793 \u00b7 paste the URL first" }); return; }
     if (quiet === true) this.setState({ autoBusy: true });
     else this.setState({ syncing: true, syncMsg: "\u1780\u17c6\u1796\u17bb\u1784\u1791\u17b6\u1789 \u00b7 pulling from the sheet\u2026" });
-    const prov = String(this.state.pullProv || "").trim();
-    fetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "action=records"
-      + (prov ? "&province=" + encodeURIComponent(prov) : ""))
+    fetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "action=records")
       .then((res) => res.json())
       .then((out) => {
         if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
@@ -1365,36 +1133,7 @@ class Component extends DCLogic {
   // Chart.js bar of container index by village, plus a Leaflet map of household points.
   // Both are drawn after render and updated in place; they are skipped when offline
   // (no CDN) and the CSS fallbacks stay visible.
-  componentDidUpdate() { this.drawDash(); this.drawHhMap(); }
-
-  // Household map on the search screen: real basemap, one pin per household in view.
-  drawHhMap() {
-    const el = this._hhMapEl;
-    if (!el || this.state.screen !== "hh" || this.state.hhView !== "map" || !window.L) return;
-    const pts = this._hhPts || [];
-    if (!this._hhMap) {
-      this._hhMap = window.L.map(el, { scrollWheelZoom: false });
-      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19, attribution: "\u00a9 OpenStreetMap",
-      }).addTo(this._hhMap);
-      this._hhMarkers = window.L.layerGroup().addTo(this._hhMap);
-    }
-    this._hhMarkers.clearLayers();
-    pts.forEach((p) => {
-      const m = window.L.circleMarker([p.lat, p.lon], {
-        radius: 9, color: "#fff", weight: 2,
-        fillColor: p.positive ? "#7C1220" : "#117996", fillOpacity: 1,
-      // Permanent label beside each pin, so every household reads at a glance.
-      }).bindTooltip(
-        '<span style="font:700 11px \'Kantumruy Pro\',\'Trebuchet MS\',system-ui,sans-serif;color:#003E78">' + p.head + '</span>',
-        { permanent: true, direction: "right", offset: [8, 0], opacity: 1, className: "hh-label" }
-      ).addTo(this._hhMarkers);
-      if (p.open) m.on("click", p.open);
-    });
-    if (pts.length) this._hhMap.fitBounds(pts.map((p) => [p.lat, p.lon]), { padding: [26, 26], maxZoom: 17 });
-    else this._hhMap.setView([12.5657, 104.991], 7);
-    setTimeout(() => this._hhMap && this._hhMap.invalidateSize(), 60);
-  }
+  componentDidUpdate() { this.drawDash(); }
 
   drawDash() {
     if (this.state.screen !== "dash") return;
@@ -1404,10 +1143,6 @@ class Component extends DCLogic {
       const labels = d.villages.map((v) => v.name);
       const values = d.villages.map((v) => v.index);
       if (!this._chart) {
-        // Chart.js draws to canvas, so it needs the Khmer font named explicitly.
-        window.Chart.defaults.font.family = '"Kantumruy Pro","Trebuchet MS","Fira Sans",system-ui,sans-serif';
-        window.Chart.defaults.font.size = 11;
-        window.Chart.defaults.color = "#767676";
         this._chart = new window.Chart(canvas, {
           type: "bar",
           data: { labels, datasets: [{ label: "Container index (percent)", data: values, backgroundColor: "#117996", borderRadius: 3 }] },
@@ -1441,10 +1176,7 @@ class Component extends DCLogic {
         window.L.circleMarker([p.lat, p.lon], {
           radius: 7, color: "#fff", weight: 2,
           fillColor: p.positive ? "#7C1220" : "#117996", fillOpacity: 1,
-        }).bindTooltip(
-          '<span style="font:700 11px \'Kantumruy Pro\',\'Trebuchet MS\',system-ui,sans-serif;color:#003E78">' + (p.head || "") + '</span>',
-          { permanent: true, direction: "right", offset: [8, 0], opacity: 1, className: "hh-label" }
-        ).bindPopup(p.label).addTo(this._markers);
+        }).bindPopup(p.label).addTo(this._markers);
       });
       if (pts.length) {
         this._map.fitBounds(pts.map((p) => [p.lat, p.lon]), { padding: [24, 24], maxZoom: 16 });
@@ -1516,23 +1248,17 @@ class Component extends DCLogic {
     return prefix + "-" + String(n).padStart(4, "0");
   }
 
-  blankForm(type) {
+  open = (type, context) => {
     const today = new Date().toISOString().slice(0, 10);
     const blank = {
       household: { head: "", phone: "", residents: 0, province_code: "", province: "", district_code: "", district: "", commune_code: "", commune: "", village_code: "", village: "", address: "", structure: "House", consent: "Given" },
       install: { trap_id_inside: "", trap_id_outside: "", trap_type: "Ovitrap", house: "", position: "Both", substrate: "Hay infusion", notes: "" },
-      collect: { trap_ids: [], trap_id: "", position: "Both", found: "Yes", condition: "Intact", paddle: 0, notes: "" },
+      collect: { trap_ids: [], trap_id: "", position: "Both", found: "Yes", condition: "Intact", paddle: "", notes: "" },
       adult: { method: "Procopack", trap_id: "", house: "", specimens: 0, notes: "" },
-      lab: { source_id: "", tube_id: "", house: "", trap_id: "", eggs: 0, aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
+      lab: { source_id: "", tube_id: "", house: "", trap_id: "", aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
       larvae: { house: "", specimens: 0, notes: "" },
     }[type];
     blank.collected_date = today;
-    return blank;
-  }
-
-  open = (type, context) => {
-    const today = new Date().toISOString().slice(0, 10);
-    const blank = this.blankForm(type);
     const ctx = context || {};
     let form = blank;
     if (ctx.edit) {
@@ -1751,13 +1477,9 @@ class Component extends DCLogic {
     }
     if (type === "adult" && !String(f.specimens || "").trim()) w.push("No tubes recorded for this catch.");
     if (type === "lab") {
-      if (this.isOvitrapLab(f)) {
-        if (!Number(f.eggs)) w.push("\u1798\u17b7\u1793\u1798\u17b6\u1793\u1785\u17c6\u1793\u17bd\u1793\u1796\u1784 \u00b7 no eggs counted.");
-      } else {
-        const set = this.stageForForm(f) === "Larvae" ? LARVAL_TAXA : TAXA;
-        const total = set.reduce((a, [k]) => a + (Number(f[k]) || 0), 0);
-        if (!total) w.push("\u1798\u17b7\u1793\u1798\u17b6\u1793\u1785\u17c6\u1793\u17bd\u1793\u1780\u17d2\u1793\u17bb\u1784\u1780\u17c6\u1794\u17c9\u17bb\u1784\u1793\u17c1\u17c7 \u00b7 nothing counted in this tube.");
-      }
+      const set = this.stageOf(f.source_id) === "Larvae" ? LARVAL_TAXA : TAXA;
+      const total = set.reduce((a, [k]) => a + (Number(f[k]) || 0), 0);
+      if (!total) w.push("Nothing counted in this tube.");
     }
     if (type === "larvae") {
       let pos = 0;
@@ -1781,7 +1503,7 @@ class Component extends DCLogic {
     }
     const soft = this.softWarnings(type, form, gps);
     if (soft.length && !this.state.forceSave) {
-      this.setState({ error: soft.join(" ") + " \u1785\u17bb\u1785\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780\u1798\u17d2\u178a\u1784\u1791\u17c0\u178f\u178a\u17be\u1798\u17d2\u1794\u17b8\u1794\u1793\u17d2\u178f \u00b7 press save again to store it anyway.", forceSave: true });
+      this.setState({ error: soft.join(" ") + " Press save again to store it anyway.", forceSave: true });
       return;
     }
     const picked = String(form.collected_date || "").slice(0, 10);
@@ -1797,7 +1519,7 @@ class Component extends DCLogic {
       : type === "collect" && Array.isArray(form.trap_ids) && form.trap_ids.length
         ? form.trap_ids.map((id) => ({ trap_id: id, position: this.registered().trapPos[id] || form.position }))
       : type === "lab"
-        ? [{ specimen_stage: this.stageForForm(form) }]
+        ? [{ specimen_stage: this.stageOf(form.source_id) }]
         : [(type === "collect" || type === "adult") && this.registered().trapPos[form.trap_id]
             ? { position: this.registered().trapPos[form.trap_id] } : {}];
     const built = variants.map((v) => this.buildRecord(type, { ...form, ...v }, gps, stamp, now, wk));
@@ -1816,19 +1538,7 @@ class Component extends DCLogic {
         error: "", forceSave: false,
       }));
     } else {
-      // Stay on the form so several records can be entered in a row; the lists above
-      // refresh with what was just saved.
-      this.setState((p) => ({
-        form: this.autoIds(p.type, {
-          ...this.blankForm(p.type),
-          house: p.form.house || "",
-          collected_date: p.form.collected_date,
-          trap_type: p.form.trap_type || "Ovitrap",
-          position: p.form.position || "Both",
-        }, p.records),
-        error: "", forceSave: false, savedFlash: true,
-      }));
-      setTimeout(() => this.setState({ savedFlash: false }), 2200);
+      this.setState({ screen: this.state.returnTo === "hhdetail" ? "hhdetail" : "home", error: "", forceSave: false });
     }
   }
 
@@ -1938,14 +1648,11 @@ class Component extends DCLogic {
         lat: reg.lat || (rows.find((r) => r.lat) || {}).lat || "",
         lon: reg.lon || (rows.find((r) => r.lon) || {}).lon || "",
         traps_installed: installs.length,
-        traps_ovitrap: installs.filter((r) => (r.trap_type || "Ovitrap") === "Ovitrap").length,
-        traps_procopack: installs.filter((r) => r.trap_type && r.trap_type !== "Ovitrap").length,
         trap_ids: trapIds.join(" "),
         collections: collects.length,
         adult_records: adults.length,
         lab_results: labs.length,
         total_catch: catchTotal,
-        eggs_total: sum(labs, "eggs"),
         aegypti_total: aegypti,
         aegypti_pct: catchTotal ? Math.round((aegypti / catchTotal) * 1000) / 10 : 0,
         larvae_records: larvae.length,
@@ -1970,7 +1677,7 @@ class Component extends DCLogic {
     const cols = ["household_id", "head", "province_code", "province", "district_code", "district",
       "commune_code", "commune", "village_code", "village", "address",
       "cluster", "consent", "consent_given", "registered_date",
-      "lat", "lon", "traps_installed", "traps_ovitrap", "traps_procopack", "trap_ids", "collections", "adult_records", "eggs_total", "total_catch",
+      "lat", "lon", "traps_installed", "trap_ids", "collections", "adult_records", "total_catch",
       "aegypti_total", "aegypti_pct", "lab_results", "larvae_records", "containers_inspected", "containers_positive",
       "container_index_pct", "house_positive", "larvae_count", "pupae_count", "records",
       "last_activity_date", "last_epi_week"];
@@ -2097,47 +1804,12 @@ class Component extends DCLogic {
     });
   };
 
-  // True when the chosen lab source is an ovitrap collection: only those carry eggs.
-  sourceIsOvitrap(sourceId) {
-    if (!sourceId) return false;
-    const src = this.state.records.find((r) => r.record_id === sourceId);
-    if (!src || (src.form_type || src.type) !== "collect") return false;
-    if (src.trap_type) return src.trap_type === "Ovitrap";
-    const inst = this.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === src.trap_id);
-    return ((inst && inst.trap_type) || "Ovitrap") === "Ovitrap";
-  }
-
   // Reared material — larvae, and eggs from an ovitrap collection — is identified to
   // species only. Only mosquitoes caught as adults (Procopack) are sexed.
-  // An ovitrap lab result records eggs only — nothing is identified to species.
-  isOvitrapLab(form) {
-    if (form.source_id) return this.sourceIsOvitrap(form.source_id);
-    return String(form._srcType || "") === "collect:Ovitrap";
-  }
-
-  // Species tallies only once the form knows it is an adult catch: a picked
-  // Procopack / BG source, or that filter chosen.
-  showsTallies(form) {
-    if (!form.source_id) return false;
-    return !this.sourceIsOvitrap(form.source_id);
-  }
-
-  // Stage for the open form: the picked record if there is one, otherwise the activity filter.
-  stageForForm(form) {
-    if (form.source_id) return this.stageOf(form.source_id);
-    const t = String(form._srcType || "");
-    if (t === "larvae" || t === "collect:Ovitrap") return "Larvae";
-    if (t === "adult" || t === "collect:BG-Sentinel") return "Adult";
-    return "Larvae";
-  }
-
   stageOf(sourceId) {
     const src = this.state.records.find((r) => r.record_id === sourceId);
     const t = src && (src.form_type || src.type);
-    if (t === "larvae") return "Larvae";
-    // A BG-Sentinel catches adults, so it is sexed; an ovitrap is reared from eggs.
-    if (t === "collect") return this.sourceIsOvitrap(sourceId) ? "Larvae" : "Adult";
-    return "Adult";
+    return t === "larvae" || t === "collect" ? "Larvae" : "Adult";
   }
 
   // Changing a source filter clears the picked record and tube.
@@ -2151,15 +1823,7 @@ class Component extends DCLogic {
     return this.state.records
       .filter((r) => ["adult", "collect", "larvae"].indexOf(r.form_type || r.type) >= 0)
       .filter((r) => !house || r.household_id === house)
-      .filter((r) => {
-        if (!type) return true;
-        const parts = String(type).split(":");
-        if ((r.form_type || r.type) !== parts[0]) return false;
-        if (!parts[1]) return true;
-        if (r.trap_type) return r.trap_type === parts[1];
-        const inst = this.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === r.trap_id);
-        return ((inst && inst.trap_type) || "Ovitrap") === parts[1];
-      })
+      .filter((r) => !type || (r.form_type || r.type) === type)
       // hide collections whose results are already entered
       .filter((r) => {
         const labs = this.state.records.filter((x) => (x.form_type || x.type) === "lab"
@@ -2170,15 +1834,8 @@ class Component extends DCLogic {
       })
       .map((r) => ({
         value: r.record_id,
-        label: r.record_id + " \u00b7 " + TYPES[r.form_type || r.type].label
-          + (function (self, rec) {
-            if (rec.trap_type) return " \u00b7 " + rec.trap_type;
-            if (rec.method) return " \u00b7 " + rec.method;
-            const inst = rec.trap_id && self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === rec.trap_id);
-            return inst && inst.trap_type ? " \u00b7 " + inst.trap_type : "";
-          })(this, r)
-          + " \u00b7 " + (r.collected_date || "")
-          + (r.trap_id ? " \u00b7 " + r.trap_id : "") + (r.household_id ? " \u00b7 " + r.household_id : ""),
+        label: r.record_id + " \u00b7 " + TYPES[r.form_type || r.type].label + " \u00b7 "
+          + (r.collected_date || "") + (r.trap_id ? " \u00b7 " + r.trap_id : "") + (r.household_id ? " \u00b7 " + r.household_id : ""),
       }));
   }
 
@@ -2187,7 +1844,6 @@ class Component extends DCLogic {
   pins(list) {
     const pts = list.filter((h) => h.lat && h.lon);
     if (!pts.length) {
-      this._hhPts = [];
       return { hhPins: [], hasPins: false, mapScale: "No household has a captured location yet." };
     }
     const lats = pts.map((h) => Number(h.lat)), lons = pts.map((h) => Number(h.lon));
@@ -2199,18 +1855,14 @@ class Component extends DCLogic {
       hasPins: true,
       mapScale: pts.length + (pts.length === 1 ? " household plotted" : " households plotted") +
         " \u00b7 about " + (km < 1 ? Math.round(km * 1000) + " m" : km + " km") + " across",
-      hhPins: (this._hhPts = pts.map((h) => ({
-        lat: Number(h.lat), lon: Number(h.lon),
-        positive: !!h.house_positive,
+      hhPins: pts.map((h) => ({
         left: (8 + ((Number(h.lon) - minLo) / spanLo) * 84) + "%",
         top: (92 - ((Number(h.lat) - minLa) / spanLa) * 84) + "%",
         color: h.house_positive ? "#7C1220" : "#117996",
         label: h.household_id.replace(/^HH-/, ""),
-        title: h.household_id + (h.head ? " \u00b7 " + h.head : "") + (h.village ? " \u00b7 " + h.village : ""),
-        head: h.household_id + (h.head ? "  \u00b7  " + h.head : ""),
-        village: (h.village || "\u2014") + (h.commune ? "  \u00b7  " + h.commune : ""),
+        title: h.household_id + (h.head ? " \u00b7 " + h.head : ""),
         open: () => this.setState({ screen: "hhdetail", hhId: h.household_id }),
-      }))),
+      })),
     };
   }
 
@@ -2228,11 +1880,11 @@ class Component extends DCLogic {
     const open = ids.filter((id) => !done[id] || id === form.tube_id);
     if (!open.length) {
       return { label: "Tube", isNote: true,
-        value: "\u1780\u17c6\u1794\u17c9\u17bb\u1784\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb\u1798\u17b6\u1793\u179b\u1791\u17d2\u1792\u1795\u179b\u179a\u17bd\u1785 \u00b7 every tube here already has a result" };
+        value: "\u1794\u17c6\u1796\u1784\u17cb\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb\u1798\u17b6\u1793\u179b\u1791\u17d2\u1792\u1795\u179b\u179a\u17bd\u1785 \u00b7 every tube here already has a result" };
     }
     return {
       label: "Tube *", isSelect: true, value: form.tube_id || "", onChange: this.set("tube_id"),
-      options: [{ value: "", label: "\u2014 select \u2014 (" + open.length + " \u1780\u17c6\u1794\u17c9\u17bb\u1784 \u00b7 tubes)" }]
+      options: [{ value: "", label: "\u2014 select \u2014 (" + open.length + " \u1794\u17c6\u1796\u1784\u17cb \u00b7 tubes)" }]
         .concat(open.map((id) => ({ value: id, label: id }))),
     };
   }
@@ -2334,72 +1986,6 @@ class Component extends DCLogic {
     inRound(recs, thisMonth).forEach((r) => { if (r.household_id) visitedThisRound[r.household_id] = 1; });
     const visited = Object.keys(visitedThisRound).length;
 
-      // Jump straight from an outstanding item into the form that clears it.
-    const jump = (house, type) => () => {
-      this.setState({ hhId: house });
-      this.open(type, { house, returnTo: "hhdetail" });
-    };
-    const hhName = {};
-    hh.forEach((h) => { hhName[h.household_id] = { head: h.head || "", where: h.village || h.commune || "" }; });
-
-    // Outstanding work reads best grouped by the household it belongs to.
-    const groupByHouse = (rows, item) => {
-      const order = [], byId = {};
-      rows.forEach((r) => {
-        const h = r.household_id || "\u2014";
-        if (!byId[h]) {
-          byId[h] = { house: h, where: r.village || r.commune || "", items: [] };
-          order.push(h);
-        }
-        byId[h].items.push(item(r));
-      });
-      return order.slice(0, 8).map((h) => ({ ...byId[h], n: byId[h].items.length, items: byId[h].items.slice(0, 8) }));
-    };
-
-    // Trap chain: installed, collected, and results entered for those collections.
-    const collectIds = {};
-    collects.forEach((r) => { if (r.record_id) collectIds[r.record_id] = 1; });
-    const trapLabs = labs.filter((r) => collectIds[r.source_id]).length;
-    const trapMax = Math.max(1, installs.length, collects.length, trapLabs);
-    const chain = {
-      trapInstalled: installs.length,
-      trapCollected: collects.length,
-      trapLabs,
-      trapInstalledW: Math.min(100, Math.round((installs.length / trapMax) * 100)) + "%",
-      trapCollectedW: Math.min(100, Math.round((collects.length / trapMax) * 100)) + "%",
-      trapLabsW: Math.min(100, Math.round((trapLabs / trapMax) * 100)) + "%",
-      trapCollectedPct: installs.length ? Math.round((collects.length / installs.length) * 100) : 0,
-      trapLabsPct: collects.length ? Math.round((trapLabs / collects.length) * 100) : 0,
-      trapUncollected: Math.max(0, installs.length - collects.length),
-      trapNoResult: collects.concat(larvae, of("adult")).filter((r) => {
-        const n = labs.filter((x) => x.source_id === r.record_id).length;
-        const tubes = String(r.tube_ids || "").split(" ").filter(Boolean).length;
-        return tubes ? n < tubes : n === 0;
-      }).length,
-      // The actual traps behind those two figures, grouped by household.
-      uncollectedList: (function () {
-        const done = {};
-        collects.forEach((r) => { if (r.trap_id) done[r.trap_id] = 1; });
-        return groupByHouse(installs.filter((r) => r.trap_id && !done[r.trap_id]),
-          (r) => ({
-            id: r.trap_id,
-            meta: [(hhName[r.household_id] || {}).head, (hhName[r.household_id] || {}).where || r.village]
-              .filter(Boolean).join(" \u00b7 "),
-            go: jump(r.household_id, "collect"),
-          }));
-      })(),
-      noResultList: groupByHouse(collects.concat(larvae, of("adult")).filter((r) => {
-        const n = labs.filter((x) => x.source_id === r.record_id).length;
-        const tubes = String(r.tube_ids || "").split(" ").filter(Boolean).length;
-        return tubes ? n < tubes : n === 0;
-      }), (r) => ({
-        id: r.trap_id || r.record_id,
-        meta: [km(TYPES[r.form_type || r.type].label), (hhName[r.household_id] || {}).head,
-          (hhName[r.household_id] || {}).where || r.village].filter(Boolean).join(" \u00b7 "),
-        go: jump(r.household_id, "lab"),
-      })),
-    };
-
     // Species composition across all identified specimens (adult and larval keys).
     const SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
       ["aegypti", "Ae. aegypti (larval)"], ["albopictus_f", "Ae. albopictus \u2640"],
@@ -2420,7 +2006,7 @@ class Component extends DCLogic {
     // Lab pipeline: tubes collected in the field versus results entered.
     const tubes = sum(of("adult"), "tubes_count") + sum(larvae, "tubes_count");
     const pipeline = { tubes, done: labs.length, pending: Math.max(0, tubes - labs.length),
-      donePct: tubes ? Math.min(100, Math.round((labs.length / tubes) * 100)) : 0 };
+      donePct: tubes ? Math.round((labs.length / tubes) * 100) : 0 };
 
     // Who collected what.
     const byCollector = {};
@@ -2433,9 +2019,6 @@ class Component extends DCLogic {
     const maxCollector = Math.max(1, Math.max.apply(null, collectorRows.map((c) => c.n).concat([1])));
 
     return {
-      ...chain,
-      hasUncollected: chain.uncollectedList.length > 0,
-      hasNoResult: chain.noResultList.length > 0,
       records: recs.length,
       species: speciesRows.map((r) => ({ ...r,
         pct: Math.round((r.n / speciesTotal) * 1000) / 10,
@@ -2498,8 +2081,8 @@ class Component extends DCLogic {
       hasMonths: perMonth.length > 0,
       containers: containers.map((c) => ({
         ...c,
-        inspW: Math.min(100, Math.round((c.insp / maxContainer) * 100)) + "%",
-        posW: Math.min(100, Math.round((c.pos / maxContainer) * 100)) + "%",
+        inspW: Math.round((c.insp / maxContainer) * 100) + "%",
+        posW: Math.round((c.pos / maxContainer) * 100) + "%",
       })),
       hasContainers: containers.length > 0,
       villages: villageRows.map((v) => ({ ...v, w: Math.min(100, v.index) + "%" })),
@@ -2512,7 +2095,6 @@ class Component extends DCLogic {
       })(hh),
       points: hh.filter((h) => h.lat && h.lon).map((h) => ({
         lat: Number(h.lat), lon: Number(h.lon), positive: !!h.house_positive,
-        head: h.household_id + (h.head ? "  \u00b7  " + h.head : ""),
         label: h.household_id + (h.head ? " \u00b7 " + h.head : "") + "<br>" + (h.village || "")
           + "<br>" + h.containers_positive + " / " + h.containers_inspected + " containers positive",
       })),
@@ -2607,24 +2189,6 @@ class Component extends DCLogic {
         tag,
         tagBg: e.today || e.thisRound ? "#1ED47F" : e.lastCollect ? "#D5E7EF" : "#F2F2F2",
         tagFg: e.today || e.thisRound ? "#06492b" : e.lastCollect ? "#003E78" : "#767676",
-        // Only an uncollected trap can be deleted; once it has collections the chain matters.
-        canDelete: !e.lastCollect,
-        remove: !e.lastCollect ? () => {
-          const kept = this.state.records.filter((r) => !(
-            (r.form_type || r.type) === "install" && r.trap_id === id && r.household_id === householdId
-          ));
-          this.persist(kept);
-          // Stay on the form; re-mint any auto ID so the next save cannot reuse a deleted number.
-          this.setState((p) => (p.type === "install" ? {
-            form: this.autoIds("install", {
-              ...p.form,
-              trap_id_inside: p.form._auto_trap_id_inside === p.form.trap_id_inside ? "" : p.form.trap_id_inside,
-              trap_id_outside: p.form._auto_trap_id_outside === p.form.trap_id_outside ? "" : p.form.trap_id_outside,
-              _auto_trap_id_inside: "", _auto_trap_id_outside: "",
-            }, kept),
-            error: "",
-          } : { error: "" }));
-        } : null,
       };
     });
     return {
@@ -2642,8 +2206,6 @@ class Component extends DCLogic {
     const g = this.state.geo;
     const parent = { province: null, district: "province_code", commune: "district_code", village: "commune_code" }[level];
     const ready = !!g && (!parent || !!form[parent]) && !(level === "village" && !Object.keys((g && g.villages) || {}).length);
-    // A saved value must stay selectable while editing, even if a parent list is empty.
-    const hasSaved = !!form[level + "_code"];
     const list = !ready ? [] : level === "province" ? g.provinces
       : level === "district" ? (g.districts[form.province_code] || [])
       : level === "commune" ? (g.communes[form.district_code] || [])
@@ -2652,13 +2214,9 @@ class Component extends DCLogic {
       labelKm, labelEn,
       value: form[level + "_code"] || "",
       onChange: this.setGeo(level),
-      disabled: !ready && !hasSaved,
-      // Keep the saved value visible even before its list has loaded, so editing
-      // a household never blanks its recorded location.
-      options: [{ value: "", label: !g ? (this.state.geoError ? "\u2014 list missing" : "\u2014 loading") : ready ? "\u2014 (" + list.length + ")" : "\u2014" }]
-        .concat(list.map((x) => ({ value: x[0], label: x[1] })))
-        .concat(form[level + "_code"] && !list.some((x) => x[0] === form[level + "_code"])
-          ? [{ value: form[level + "_code"], label: (form[level] || form[level + "_code"]) }] : []),
+      disabled: !ready,
+      options: [{ value: "", label: ready ? "\u2014 (" + list.length + ")" : "\u2014" }]
+        .concat(list.map((x) => ({ value: x[0], label: x[1] }))),
     };
   }
 
@@ -2811,7 +2369,7 @@ class Component extends DCLogic {
             })(this.peekId(TYPES[type].prefix), Number(form.specimens) || 0)
           : this.peekId(TYPES[type].prefix) + "-T1",
         value: (Number(form.specimens) || 0) > 0
-          ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1780\u17c6\u1794\u17c9\u17bb\u1784 \u00b7 write these on the tubes"
+          ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1794\u17c6\u1796\u1784\u17cb \u00b7 write these on the tubes"
           : "  \u2014 \u1782\u17c6\u179a\u17bc \u00b7 example, enter how many tubes you collected" },
       txt("notes", "Notes", { placeholder: "Rooms swept, time on site" }),
       { label: "Identification", isNote: true, value: "\u1794\u1789\u17d2\u1785\u17bc\u179b\u1785\u17c6\u1793\u17bd\u1793\u1794\u17d2\u179a\u1797\u17c1\u1791\u1793\u17c5\u179b\u1791\u17d2\u1792\u1795\u179b\u1798\u1793\u17d2\u1791\u17b8\u179a\u1796\u17b7\u179f\u17c4\u1792\u1793\u17cd \u00b7 species counts are entered under Lab result, one tube at a time" },
@@ -2826,14 +2384,11 @@ class Component extends DCLogic {
       // Each activity shows how many collections there are still waiting on a result.
       (function (self, house) {
         const n = (t) => self.specimenSources(house, t).length;
-        // Activities with nothing waiting on a result are left out of the list.
         return { label: "Activity", isSelect: true, value: form._srcType || "", onChange: self.setSrcFilter("_srcType"),
-          options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all activities (" + n("") + ")" }]
-            .concat([["adult", "Procopack"], ["larvae", km("Larvae collection")],
-              ["collect:Ovitrap", "Ovitrap"],
-              ["collect:BG-Sentinel", "BG-Sentinel"]]
-              .filter(([k]) => n(k) > 0 || form._srcType === k)
-              .map(([k, label]) => ({ value: k, label: label + " (" + n(k) + ")" }))) };
+          options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all activities (" + n("") + ")" },
+            { value: "adult", label: km("Adult collection") + " \u00b7 Procopack (" + n("adult") + ")" },
+            { value: "larvae", label: km("Larvae collection") + " (" + n("larvae") + ")" },
+            { value: "collect", label: km("Trap collection") + " (" + n("collect") + ")" }] };
       })(this, ctx || form._srcHouse),
       (function (sources) {
         return sources.length
@@ -2843,15 +2398,11 @@ class Component extends DCLogic {
               value: "\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1794\u17d2\u179a\u1798\u17bc\u179b\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb\u1798\u17b6\u1793\u179b\u1791\u17d2\u1792\u1795\u179b\u179a\u17bd\u1785 \u00b7 every collection here already has a result" };
       }).call(this, this.specimenSources(ctx || form._srcHouse, form._srcType)),
       this.tubeField(form),
-      ].concat(
-      form.source_id && this.sourceIsOvitrap(form.source_id)
-        ? [txt("eggs", "Eggs counted", { type: "number", inputmode: "numeric", placeholder: "0" })] : [],
-      this.showsTallies(form) ? [
-      { label: "Specimen stage", isNote: true, value: this.stageForForm(form) === "Larvae"
+      { label: "Specimen stage", isNote: true, value: this.stageOf(form.source_id) === "Larvae"
         ? "\u1794\u1784\u17d2\u1780\u17be\u178f\u1796\u17b8\u1796\u1784/\u178a\u1784\u17d2\u1780\u17bc\u179c \u00b7 reared \u2014 species only, no sex"
         : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799 \u00b7 adult \u2014 species and sex" },
-      ] : [])
-    ).concat(!this.showsTallies(form) || this.specimenSources(ctx || form._srcHouse, form._srcType).length === 0 ? []
+      ]
+    ).concat(this.specimenSources(ctx || form._srcHouse, form._srcType).length === 0 ? []
       // Two tallies per row, so a six-species count fits one screen.
       : (function (list, self) {
           const rows = [];
@@ -2864,7 +2415,7 @@ class Component extends DCLogic {
             });
           }
           return rows;
-        })(this.stageForForm(form) === "Larvae" ? LARVAL_TAXA : TAXA, this)).map((fd) => (fd.isPair ? fd : { ...fd, wide: true }));
+        })(this.stageOf(form.source_id) === "Larvae" ? LARVAL_TAXA : TAXA, this)).map((fd) => (fd.isPair ? fd : { ...fd, wide: true }));
     return [
       dateField,
       sel("house", "Household *", reg.hh, { placeholder: "HH-KC-0312" }),
@@ -2895,7 +2446,7 @@ class Component extends DCLogic {
               })(this.peekId(TYPES[type].prefix), Number(form.specimens) || 0)
             : this.peekId(TYPES[type].prefix) + "-T1",
           value: (Number(form.specimens) || 0) > 0
-            ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1780\u17c6\u1794\u17c9\u17bb\u1784 \u00b7 write these on the tubes"
+            ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1794\u17c6\u1796\u1784\u17cb \u00b7 write these on the tubes"
             : "  \u2014 \u1782\u17c6\u179a\u17bc \u00b7 example, enter how many tubes you collected" },
         { label: "Identification", isNote: true, value: "\u1794\u1789\u17d2\u1785\u17bc\u179b\u1785\u17c6\u1793\u17bd\u1793\u1794\u17d2\u179a\u1797\u17c1\u1791\u1793\u17c5\u179b\u1791\u17d2\u1792\u1795\u179b\u1798\u1793\u17d2\u1791\u17b8\u179a\u1796\u17b7\u179f\u17c4\u1792\u1793\u17cd \u00b7 species counts are entered under Lab result, one tube at a time" },
         txt("notes", "Notes", { placeholder: "Treatment applied, refusals" }),
@@ -2911,14 +2462,13 @@ class Component extends DCLogic {
     if (r.type === "lab") {
       const larval = r.specimen_stage === "Larvae";
       const total = (larval ? LARVAL_TAXA : TAXA).reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
-      return "\u1780\u17c6\u1794\u17c9\u17bb\u1784 " + (r.tube_id || "\u2014") + " \u00b7 " + (r.source_id || "\u2014") + " \u00b7 " + total + " \u1794\u17b6\u1793\u1785\u17c6\u178e\u17b6\u178f\u17cb \u00b7 Ae. aegypti "
+      return "\u1794\u17c6\u1796\u1784\u17cb " + (r.tube_id || "\u2014") + " \u00b7 " + (r.source_id || "\u2014") + " \u00b7 " + total + " \u1794\u17b6\u1793\u1785\u17c6\u178e\u17b6\u178f\u17cb \u00b7 Ae. aegypti "
         + (larval ? String(Number(r.aegypti) || 0) : (Number(r.aegypti_f) || 0) + "\u2640 / " + (Number(r.aegypti_m) || 0) + "\u2642")
-        + (Number(r.eggs) ? " \u00b7 \u1796\u1784 " + r.eggs : "")
         + (r.wmel && r.wmel !== "Not tested" ? " \u00b7 wMel " + String(r.wmel).toLowerCase() : "");
     }
     if (r.type === "adult") {
       const total = TAXA.reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
-      if (!total) return (r.method || r.trap_type || "Procopack") + " \u00b7 " + (r.household_id || "") + (r.specimens ? " \u00b7 " + r.specimens + " \u1780\u17c6\u1794\u17c9\u17bb\u1784" : "") + " \u00b7 \u179a\u1784\u17cb\u1785\u17b6\u17c6\u179b\u1791\u17d2\u1792\u1795\u179b";
+      if (!total) return (r.method || r.trap_type || "Procopack") + " \u00b7 " + (r.household_id || "") + (r.specimens ? " \u00b7 " + r.specimens + " \u1794\u17c6\u1796\u1784\u17cb" : "") + " \u00b7 \u179a\u1784\u17cb\u1785\u17b6\u17c6\u179b\u1791\u17d2\u1792\u1795\u179b";
       return (r.method || r.trap_type || "Adult") + " \u00b7 " + (r.trap_id || r.household_id || "") + " \u00b7 " + total + " mosquitoes \u00b7 Ae. aegypti " + (Number(r.aegypti_f) || 0) + "\u2640 / " + (Number(r.aegypti_m) || 0) + "\u2642";
     }
     if (Number(r.containers_inspected) > 0) {
@@ -2937,17 +2487,8 @@ class Component extends DCLogic {
     const hhList = this.households();
     let openGaps = [];
     const q = String(s.hhQuery || "").trim().toLowerCase();
-    // Codes pulled back from the sheet lose their leading zero (01 becomes 1),
-    // so compare them as padded strings and ignore a filter that matches nothing.
-    const provKey = (v) => (v == null || v === "" ? "" : String(v).length === 1 ? "0" + String(v) : String(v));
-    const provList = [];
-    hhList.forEach((h) => {
-      const k = provKey(h.province_code) || h.province || "";
-      if (k && provList.indexOf(k) < 0) provList.push(k);
-    });
-    const activeProv = s.hhProv && provList.indexOf(provKey(s.hhProv)) >= 0 ? provKey(s.hhProv) : "";
     const hhFiltered = hhList.filter((h) => {
-      if (activeProv && (provKey(h.province_code) || h.province) !== activeProv) return false;
+      if (s.hhProv && (h.province_code || h.province) !== s.hhProv) return false;
       if (!q) return true;
       return [h.household_id, h.head, h.village, h.commune, h.district, h.province, h.cluster,
         h.address, h.trap_ids].join(" ").toLowerCase().indexOf(q) >= 0;
@@ -2956,12 +2497,8 @@ class Component extends DCLogic {
     const titles = {
       home: ["ការប្រមូលទិន្នន័យបាណកសាស្រ្ត", "Entomology field \u00b7 Wolbachia \u00b7 v1"],
       form: s.editId
-        ? [s.type === "household"
-            ? "\u1780\u17c2\u1794\u17d2\u179a\u17c2\u1796\u17d0\u178f\u17cc\u1798\u17b6\u1793\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7"
-            : "\u1780\u17c2\u1794\u17d2\u179a\u17c2 " + (t ? km(t.label) : ""), "Edit \u00b7 " + s.editId]
-        : [s.type === "household"
-             ? "\u1794\u1789\u17d2\u1785\u17bc\u179b\u1796\u17d0\u178f\u17cc\u1798\u17b6\u1793\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7"
-             : t ? km(t.label) : "\u1780\u178f\u17cb\u178f\u17d2\u179a\u17b6",
+        ? ["\u1780\u17c2\u1794\u17d2\u179a\u17c2 " + (t ? km(t.label) : ""), "Edit \u00b7 " + s.editId]
+        : [t ? km(t.label) : "\u1780\u178f\u17cb\u178f\u17d2\u179a\u17b6",
            s.ctxHouse
              ? s.ctxHouse + (function (recs, id) {
                  const r = recs.find((x) => x.record_id === id);
@@ -2969,7 +2506,7 @@ class Component extends DCLogic {
                })(s.records, s.ctxHouse)
              : (t ? t.label : "Record") + " \u00b7 new"],
       data: ["\u179b\u1791\u17d2\u1792\u1795\u179b", "Results \u00b7 stored on this device"],
-      hh: ["\u179f\u17d2\u179c\u17c2\u1784\u179a\u1780 \u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7", "Households \u00b7 " + hhList.length],
+      hh: ["\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7", "Households \u00b7 " + hhList.length],
       dash: ["\u1795\u17d2\u1791\u17b6\u17c6\u1784\u1796\u17d0\u178f\u17cc\u1798\u17b6\u1793", "Dashboard"],
       hhdetail: [current ? current.household_id : "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7", current && current.head ? current.head : "Household"],
     };
@@ -2980,18 +2517,14 @@ class Component extends DCLogic {
       const type = r.form_type || r.type;
       const rid = r.record_id || r.id;
       const ts = r.collected_at_utc || r.saved_at;
-      const trapType = r.trap_type || r.method
-        || (r.trap_id && (this.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === r.trap_id) || {}).trap_type)
-        || "";
       return {
-        title: km(TYPES[type].label) + (trapType ? " \u00b7 " + trapType : "") + " \u00b7 " + rid,
+        title: km(TYPES[type].label) + " \u00b7 " + rid,
         titleEn: TYPES[type].label,
         meta: new Date(ts).toLocaleString() + (r.period_label ? " \u00b7 " + r.period_label + " round" : "")
           + (r.visit_no ? " \u00b7 visit " + r.visit_no : "") + (r.epi_week ? " \u00b7 week " + r.epi_week : ""),
         detail: this.describe(r),
         bar: TYPES[type].bar,
         remove: () => this.persist(this.state.records.filter((x) => (x.record_id || x.id) !== rid)),
-        edit: () => this.open(type, { edit: rid, house: r.household_id || "", returnTo: "home" }),
       };
     };
 
@@ -3048,15 +2581,15 @@ class Component extends DCLogic {
       hhQuery: s.hhQuery,
       setHhQuery: (e) => this.setState({ hhQuery: e.target.value }),
       clearHhQuery: () => this.setState({ hhQuery: "", hhProv: "" }),
-      hhProv: activeProv,
+      hhProv: s.hhProv,
       setHhProv: (e) => this.setState({ hhProv: e.target.value }),
       hhProvOptions: [{ value: "", label: "All provinces" }].concat((function (list) {
         const seen = [], out = [];
         list.forEach((h) => {
-          const key = provKey(h.province_code) || h.province;
+          const key = h.province_code || h.province;
           if (!key || seen.indexOf(key) >= 0) return;
           seen.push(key);
-          out.push({ value: key, label: (h.province || key) + " (" + list.filter((x) => (provKey(x.province_code) || x.province) === key).length + ")" });
+          out.push({ value: key, label: (h.province || key) + " (" + list.filter((x) => (x.province_code || x.province) === key).length + ")" });
         });
         return out;
       })(hhList)),
@@ -3069,24 +2602,12 @@ class Component extends DCLogic {
       setList: () => this.setState({ hhView: "list" }),
       setMap: () => this.setState({ hhView: "map" }),
       ...this.pins(hhFiltered),
-      hhMapRef: (el) => {
-        if (this._hhMapEl !== el && this._hhMap) { this._hhMap.remove(); this._hhMap = null; this._hhMarkers = null; }
-        this._hhMapEl = el;
-        if (el) setTimeout(() => this.drawHhMap(), 0);
-      },
       households: hhFiltered.map((h) => ({
         id: h.household_id,
         head: h.head || "\u1798\u17b7\u1793\u1798\u17b6\u1793\u1788\u17d2\u1798\u17c4\u17c7 \u00b7 no name",
         meta: ([h.village, h.commune, h.district, h.province].filter(Boolean).join(", ") || h.address || "No location")
           + " \u00b7 " + h.records + " records \u00b7 last " + (h.last_activity_date || "\u2014"),
-        traps: (function (o, p) {
-          const bits = [];
-          if (o) bits.push("Ovitrap " + o);
-          if (p) bits.push("Procopack " + p);
-          return bits.length ? bits.join(" \u00b7 ") : "0";
-        })(h.traps_ovitrap, h.traps_procopack),
-        catch: (h.eggs_total ? "\u1796\u1784 " + h.eggs_total + " \u00b7 " : "") + "\u1798\u17bc\u179f " + h.total_catch,
-        positive: h.containers_positive,
+        traps: h.traps_installed, catch: h.total_catch, positive: h.containers_positive,
         bar: h.house_positive ? "#7C1220" : "#117996",
         tag: h.house_positive ? "Larvae positive" : "No positives",
         tagBg: h.house_positive ? "#7C1220" : "#D5E7EF",
@@ -3101,15 +2622,9 @@ class Component extends DCLogic {
         consent: km(current.consent) || "\u2014",
         registered: current.registered_date || "\u2014",
         gps: current.lat ? current.lat + ", " + current.lon : "\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1799\u1780 \u00b7 not captured",
-        traps: (function (o, p, n) {
-          const bits = [];
-          if (o) bits.push("Ovitrap " + o);
-          if (p) bits.push("Procopack " + p);
-          return bits.length ? bits.join("  \u00b7  ") : String(n || 0);
-        })(current.traps_ovitrap, current.traps_procopack, current.traps_installed),
+        traps: current.traps_installed,
         trapIds: String(current.trap_ids || "").split(" ").filter(Boolean).join("  |  ") || "\u2014",
-        collections: current.collections,
-        catch: (current.eggs_total ? "\u1796\u1784 " + current.eggs_total + "  \u00b7  " : "") + "\u1798\u17bc\u179f " + current.total_catch,
+        collections: current.collections, catch: current.total_catch,
         aegypti: current.aegypti_total, aegyptiPct: current.aegypti_pct + "%",
         inspected: current.containers_inspected, positive: current.containers_positive,
         index: current.container_index_pct + "%",
@@ -3141,36 +2656,20 @@ class Component extends DCLogic {
         : "\u1798\u17be\u179b\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb " + ((current && current._rows.length) || 0) + " \u00b7 show all",
       toggleHhAll: () => this.setState((p) => ({ hhAll: !p.hhAll })),
       hhRecordsShown: current ? (s.hhAll ? current._rows : current._rows.slice(0, 3)).map((r) => ({
-        edit: () => this.open(r.form_type || r.type, {
-          edit: r.record_id || r.id, house: r.household_id || "", returnTo: "hhdetail",
-        }),
-        title: km(TYPES[r.form_type || r.type].label)
-          + (function (self, rec) {
-            const t = rec.trap_type || rec.method
-              || (rec.trap_id && (self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === rec.trap_id) || {}).trap_type);
-            return t ? " \u00b7 " + t : "";
-          })(this, r)
-          + " \u00b7 " + (r.record_id || r.id),
+        title: km(TYPES[r.form_type || r.type].label) + " \u00b7 " + (r.record_id || r.id),
         meta: (r.collected_date || "") + " " + (r.collected_time || "") + (r.epi_week ? " \u00b7 week " + r.epi_week : "") + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
         detail: this.describe(r),
         bar: TYPES[r.form_type || r.type].bar,
       })) : [],
       hhRecords: current ? current._rows.map((r) => ({
-        title: km(TYPES[r.form_type || r.type].label)
-          + (function (self, rec) {
-            const t = rec.trap_type || rec.method
-              || (rec.trap_id && (self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === rec.trap_id) || {}).trap_type);
-            return t ? " \u00b7 " + t : "";
-          })(this, r)
-          + " \u00b7 " + (r.record_id || r.id),
+        title: km(TYPES[r.form_type || r.type].label) + " \u00b7 " + (r.record_id || r.id),
         meta: (r.collected_date || "") + " " + (r.collected_time || "") + (r.epi_week ? " \u00b7 week " + r.epi_week : "") + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
         detail: this.describe(r),
         bar: TYPES[r.form_type || r.type].bar,
       })) : [],
       exportHouseholds: this.exportHouseholds, exportSiteWeek: this.exportSiteWeek,
       gaps: (openGaps = [
-        { label: "Households with no GPS", n: s.records.filter((r) => (r.form_type || r.type) === "household" && !r.lat).length, note: "Cannot be mapped",
-          items: hhList.filter((h) => !h.lat).map((h) => ({ id: h.household_id, name: h.head || "\u2014", go: () => this.setState({ screen: "hhdetail", hhId: h.household_id }) })) },
+        { label: "Households with no GPS", n: s.records.filter((r) => (r.form_type || r.type) === "household" && !r.lat).length, note: "Cannot be mapped" },
         { label: "Records with no collector", n: s.records.filter((r) => !r.collector).length, note: "Cannot be traced to a person" },
         { label: "Records with no cluster", n: s.records.filter((r) => !r.cluster).length, note: "Cannot be aggregated by area" },
         { label: "Trap records not linked to a household", n: s.records.filter((r) => r.trap_id && !r.household_id).length, note: "Install the trap against a household" },
@@ -3182,43 +2681,15 @@ class Component extends DCLogic {
               if ((t === "collect" || t === "adult") && r.trap_id) seen[r.trap_id] = 1;
             });
             return Object.keys(inst).filter((k) => !seen[k]).length;
-          })(), note: "Overdue trap service",
-          items: (function (recs, self) {
-            const inst = {}, seen = {};
-            recs.forEach((r) => {
-              const t = r.form_type || r.type;
-              if (t === "install" && r.trap_id) inst[r.trap_id] = r.household_id || "";
-              if ((t === "collect" || t === "adult") && r.trap_id) seen[r.trap_id] = 1;
-            });
-            return Object.keys(inst).filter((k) => !seen[k]).map((k) => ({
-              id: k, name: inst[k] || "\u2014",
-              go: inst[k] ? () => self.setState({ screen: "hhdetail", hhId: inst[k] }) : null,
-            }));
-          })(s.records, this) },
-        { label: "Households with no larvae survey", n: hhList.filter((h) => h.larvae_records === 0).length, note: "No container data yet",
-          items: hhList.filter((h) => h.larvae_records === 0).map((h) => ({ id: h.household_id, name: h.head || "\u2014", go: () => this.setState({ screen: "hhdetail", hhId: h.household_id }) })) },
+          })(), note: "Overdue trap service" },
+        { label: "Households with no larvae survey", n: hhList.filter((h) => h.larvae_records === 0).length, note: "No container data yet" },
         { label: "Collection days recorded", n: (function () {
             const d = {};
             s.records.forEach((r) => { if (r.collected_date) d[r.collected_date] = 1; });
             return Object.keys(d).length;
-          })(), note: "Two or more days are needed for a trend", info: true,
-          items: (function (recs, self) {
-            const d = {};
-            recs.forEach((r) => { if (r.collected_date) d[r.collected_date] = (d[r.collected_date] || 0) + 1; });
-            return Object.keys(d).sort().reverse().map((k) => ({
-              id: k, name: d[k] + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 records",
-              go: () => self.setState({ screen: "data" }),
-            }));
-          })(s.records, this) },
+          })(), note: "Two or more days are needed for a trend", info: true },
       ].filter((g) => (g.info ? g.n < 2 : g.n > 0))
-        .map((g, i) => ({
-          ...g, fg: "#7C1220", bd: "#F4B71B",
-          hasItems: !!(g.items && g.items.length),
-          open: s.gapOpen === i,
-          rows: s.gapOpen === i ? (g.items || []).slice(0, 12) : [],
-          toggle: () => this.setState((p) => ({ gapOpen: p.gapOpen === i ? null : i })),
-          caret: s.gapOpen === i ? "\u2212" : "+",
-        }))),
+        .map((g) => ({ ...g, fg: "#7C1220", bd: "#F4B71B" }))),
       gapsClear: openGaps.length === 0,
       isEmpty: s.records.length === 0,
       home: () => this.setState({
@@ -3257,18 +2728,6 @@ class Component extends DCLogic {
 
       todayCount: s.records.filter((r) => String(r.collected_at_utc || r.saved_at).slice(0, 10) === today).length,
       latest: s.records.slice(0, 3).map(row),
-      allRecordsShown: s.records.slice(0, s.dataAll ? s.records.length : 8).map((r, i) => ({
-        ...row(r),
-        metaShort: (r.collected_date || "") + (r.household_id ? "  \u00b7  " + r.household_id : "")
-          + (r.trap_id ? "  \u00b7  " + r.trap_id : ""),
-        open: s.dataOpen === (r.record_id || r.id),
-        toggle: () => this.setState((p) => ({ dataOpen: p.dataOpen === (r.record_id || r.id) ? null : (r.record_id || r.id) })),
-      })),
-      hasMoreRecords: s.records.length > 8,
-      moreRecordsLabel: s.dataAll
-        ? "\u1794\u17b7\u1791 \u00b7 show less"
-        : "\u1798\u17be\u179b\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb " + s.records.length + " \u00b7 show all",
-      toggleAllRecords: () => this.setState((p) => ({ dataAll: !p.dataAll })),
       allRecords: s.records.map(row),
       typeCounts: Object.keys(TYPES).map((k) => {
         const n = s.records.filter((r) => (r.form_type || r.type) === k).length;
@@ -3300,10 +2759,6 @@ class Component extends DCLogic {
         : "\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1797\u17d2\u1787\u17b6\u1794\u17cb \u00b7 not connected yet",
       syncNow: this.syncNow,
       pullNow: this.pullNow,
-      pullProv: s.pullProv || "",
-      setPullProv: (e) => this.setState({ pullProv: e.target.value }),
-      pullProvOptions: [{ value: "", label: "\u1781\u17c1\u178f\u17d2\u178f\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all provinces" }]
-        .concat(this.adminOptions("province")),
       pullBtnLabel: s.syncing ? "\u1780\u17c6\u1796\u17bb\u1784\u1791\u17b6\u1789\u2026 pulling" : "\u1791\u17b6\u1789\u1796\u17b8 Sheet \u00b7 Pull data",
       autoLabel: s.autoBusy
         ? "\u1780\u17c6\u1796\u17bb\u1784\u1795\u17d2\u1791\u17bb\u1780\u1791\u17b7\u1793\u17d2\u1793\u1793\u17d0\u1799\u2026 checking the sheet"
@@ -3337,8 +2792,6 @@ class Component extends DCLogic {
       saveAndAdd: this.saveAndAdd,
       isInstallForm: s.screen === "form" && s.type === "install",
       hasError: !!s.error, error: s.error,
-      savedFlash: !!s.savedFlash,
-      savedFlashText: "\u1794\u17b6\u1793\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780 \u00b7 saved \u2014 \u1794\u1793\u17d2\u178f\u1794\u1789\u17d2\u1785\u17bc\u179b\u1794\u17b6\u1793 \u00b7 the form is ready for the next one",
       canSave: !(s.type === "lab" && this.specimenSources(s.ctxHouse || (s.form || {})._srcHouse, (s.form || {})._srcType).length === 0),
       captureGps: this.captureGps,
       gpsHasMap: !!(s.gps && s.gps.lat),
@@ -3363,12 +2816,6 @@ class Component extends DCLogic {
       })(s.gps, hhList),
       gpsText: g && g.lat ? g.lat.toFixed(5) + ", " + g.lon.toFixed(5) : g && g.pending ? "Locating\u2026" : g && g.err ? "Not available" : "Not captured",
       gpsMeta: g && g.lat ? "Accuracy \u00b1" + Math.round(g.acc) + " m" : g && g.err ? g.err : "Optional \u2014 tap capture once per site",
-
-      // The header icon mirrors whichever tab is active.
-      iconHh: s.screen === "hh" || s.screen === "hhdetail",
-      iconDash: s.screen === "dash",
-      iconData: s.screen === "data",
-      iconRecord: !(s.screen === "hh" || s.screen === "hhdetail" || s.screen === "dash" || s.screen === "data"),
 
       // Each tab keeps its own accent: active gets the colour plus a light wash.
       tabRecordW: s.screen === "home" ? 800 : 500,
