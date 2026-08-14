@@ -26,7 +26,7 @@
 
 var LOG_SHEET = '_history';
 var LOG_COLS = ['logged_at', 'action', 'record_id', 'form_type', 'household_id', 'trap_id',
-  'collected_date', 'period_label', 'collector', 'cluster', 'changed_fields', 'sheet_row'];
+  'trap_type', 'collected_date', 'period_label', 'collector', 'cluster', 'changed_fields', 'sheet_row'];
 
 function logRows(ss, rows) {
   if (!rows.length) return;
@@ -35,8 +35,14 @@ function logRows(ss, rows) {
     sheet = ss.insertSheet(LOG_SHEET);
     sheet.getRange(1, 1, 1, LOG_COLS.length).setValues([LOG_COLS]).setFontWeight('bold');
     sheet.setFrozenRows(1);
+    sheet.setColumnWidth(1, 150);   // logged_at
+    sheet.setColumnWidth(11, 320);  // changed_fields
   }
-  sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, LOG_COLS.length).setValues(rows);
+  var start = sheet.getLastRow() + 1;
+  sheet.getRange(start, 1, rows.length, LOG_COLS.length).setValues(rows);
+  // Readable timestamps, and the newest entry always visible on open.
+  sheet.getRange(start, 1, rows.length, 1).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+  try { sheet.autoResizeColumns(2, 4); } catch (e) {}
 }
 
 function doPost(e) {
@@ -69,6 +75,9 @@ function doPost(e) {
         return v === undefined || v === null ? '' : v;
       });
 
+      // Date columns as real dates, so the sheet can sort and chart them.
+      var dateCols = ['collected_date', 'registered_date', 'synced_at', 'collected_at_utc', 'entered_at_utc'];
+
       // update in place when this record_id is already there
       var idCol = header.indexOf('record_id') + 1;
       var existing = 0;
@@ -90,9 +99,17 @@ function doPost(e) {
         sheet.appendRow(row);
       }
       var atRow = existing || sheet.getLastRow();
+      dateCols.forEach(function (name) {
+        var col = header.indexOf(name) + 1;
+        if (col > 0) {
+          sheet.getRange(atRow, col).setNumberFormat(
+            name === 'collected_date' || name === 'registered_date' ? 'yyyy-mm-dd' : 'yyyy-mm-dd hh:mm');
+        }
+      });
       log.push([
         stamp, existing ? (changed.length ? 'updated' : 'unchanged') : 'new',
         rec.record_id || '', type, rec.household_id || '', rec.trap_id || '',
+        rec.trap_type || rec.method || '',
         rec.collected_date || '', rec.period_label || '', rec.collector || '', rec.cluster || '',
         existing ? changed.join(', ') : 'all', atRow,
       ]);
@@ -145,6 +162,7 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
   var out = [];
+  var wantProvince = e && e.parameter ? String(e.parameter.province || '').trim() : '';
   try {
     var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
     sheets.forEach(function (sheet) {
@@ -163,7 +181,15 @@ function doGet(e) {
           if (v !== '' && v !== null) empty = false;
           rec[key] = v === null ? '' : v;
         }
-        if (!empty && rec.record_id) out.push(rec);
+        if (!empty && rec.record_id) {
+          // Optional province scope keeps the payload small for a single team.
+          if (wantProvince) {
+            var pc = String(rec.province_code || '').replace(/^0+/, '');
+            var pn = String(rec.province || '').toLowerCase();
+            if (pc !== wantProvince.replace(/^0+/, '') && pn !== wantProvince.toLowerCase()) continue;
+          }
+          out.push(rec);
+        }
       }
     });
     return ContentService.createTextOutput(JSON.stringify({ ok: true, records: out }))
