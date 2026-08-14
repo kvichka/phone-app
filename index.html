@@ -37,7 +37,7 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
 </style>
 </helmet>
 
-<div style="max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:#F2F2F2">
+<div style="width:100%;max-width:clamp(520px, 55vw, 900px);margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:#F2F2F2">
 
   <div style="background:#003E78;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;min-height:56px;box-sizing:border-box;position:sticky;top:0;z-index:5">
     <button onClick="{{ home }}" style="width:38px;height:38px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none">
@@ -65,62 +65,67 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       
       
       <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">កត់ត្រា <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Record</span></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-        <button onClick="{{ openHousehold }}" style="background:#E8EEF5;border:1px solid #C6D5E4;border-radius:8px;min-height:96px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-          <span style="width:42px;height:42px;border-radius:11px;background:#fff;color:#003E78;display:inline-flex;align-items:center;justify-content:center"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3.5l9 7"></path><path d="M5.5 9.6V20h6"></path><path d="M18.5 14v7"></path><path d="M15 17.5h7"></path></svg></span>
-          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ខ្នងផ្ទះថ្មី</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">New household</span></span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button onClick="{{ openHousehold }}" style="background:#EAF1F8;border:1px solid #BFD2E3;border-radius:8px;min-height:96px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+          <span style="width:42px;height:42px;border-radius:12px;background:#003E78;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3.5l9 7"></path><path d="M5.5 9.6V20h6"></path><path d="M18.5 14v7"></path><path d="M15 17.5h7"></path></svg></span>
+          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ខ្នងផ្ទះថ្មី</span><span style="display:block;font-size:10px;font-weight:400;color:#5C7E9C;margin-top:2px">New household</span></span>
         </button>
-        <button onClick="{{ openHh }}" style="background:#E6F2F5;border:1px solid #B7DCE4;border-radius:8px;min-height:96px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#117996;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-          <span style="width:42px;height:42px;border-radius:11px;background:#fff;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="M15.8 15.8 21 21"></path></svg></span>
-          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ស្វែងរកខ្នងផ្ទះ</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Find household</span></span>
+        <button onClick="{{ openHh }}" style="background:#E3F2F5;border:1px solid #A6D2DD;border-radius:8px;min-height:96px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#117996;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+          <span style="width:42px;height:42px;border-radius:12px;background:#117996;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="M15.8 15.8 21 21"></path></svg></span>
+          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ស្វែងរកខ្នងផ្ទះ</span><span style="display:block;font-size:10px;font-weight:400;color:#3E8296;margin-top:2px">Find household</span></span>
         </button>
         
         
         
         
         
-        <button onClick="{{ openData }}" style="background:#FDF6E3;border:1px solid #F3DFA8;border-radius:8px;min-height:96px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#B47A0A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-          <span style="width:42px;height:42px;border-radius:11px;background:#fff;color:#B47A0A;display:inline-flex;align-items:center;justify-content:center"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V13"></path><path d="M9.3 20V8.5"></path><path d="M14.7 20v-6"></path><path d="M20 20V4.5"></path></svg></span>
-          <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">លទ្ធផល</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Results</span></span>
-        </button>
+        
       </div>
-      <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:12px 14px;font-size:12px;line-height:1.5;color:#003E78">ស្វែងរកខ្នងផ្ទះ បន្ទាប់មកជ្រើសរើសសកម្មភាព។ <span style="color:#4E7EA6">Find the household, then pick the activity — every trap, collection and lab result is recorded inside a household.</span></div>
-      <div style="display:flex;gap:10px">
-        <div style="flex:1;background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:12px">
-          <div style="font-size:26px;font-weight:700;color:#003E78;line-height:1">{{ todayCount }}</div>
-          <div style="font-size:11px;color:#767676;text-transform:uppercase;letter-spacing:.04em;margin-top:4px">កំណត់ត្រាថ្ងៃនេះ <span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Records today</span></div>
-        </div>
-        <div style="flex:1;background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:12px">
-          <div style="font-size:26px;font-weight:700;color:#003E78;line-height:1">{{ count }}</div>
-          <div style="font-size:11px;color:#767676;text-transform:uppercase;letter-spacing:.04em;margin-top:4px">ក្នុងទូរស័ព្ទនេះ <span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">On this device</span></div>
-        </div>
-      </div>
+      <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:12px 14px;font-size:12px;line-height:1.5;color:#003E78">ស្វែងរកខ្នងផ្ទះ បន្ទាប់មកជ្រើសរើសសកម្មភាព។ <span style="color:#4E7EA6">Find the household, then pick the activity.</span></div>
       <div style="display:flex;align-items:baseline;justify-content:space-between">
         <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ចុងក្រោយ <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Latest</span></div>
         <button onClick="{{ openData }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;background:transparent;color:#117996;font:700 12px/1 inherit;cursor:pointer;padding:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12h13"></path><path d="M13 6.5 18.5 12 13 17.5"></path></svg>មើលទាំងអស់ · See all</button>
       </div>
       <sc-for list="{{ latest }}" as="r" hint-placeholder-count="3">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:11px 13px;display:flex;align-items:center;gap:12px">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-left:3px solid {{ r.bar }};border-radius:6px;padding:7px 10px;display:flex;align-items:center;gap:10px">
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:700;color:#003E78">{{ r.title }}</div>
-            <div style="font-size:11px;color:#767676;margin-top:2px">{{ r.meta }}</div>
+            <div style="font-size:12px;font-weight:700;color:#003E78">{{ r.title }}</div>
+            <div style="font-size:10px;color:#9AA5AE;margin-top:1px">{{ r.meta }}</div>
           </div>
-          <button onClick="{{ r.remove }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #D9DEE4;background:#fff;color:#7C1220;border-radius:6px;min-height:40px;padding:0 12px;font:700 12px/1 inherit;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg>លុប Delete</button>
+          <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #EDF1F4;background:#fff;color:#7C1220;border-radius:5px;width:32px;height:32px;flex:none;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
         </div>
       </sc-for>
       <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
         <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:12px 14px;font-size:12px;line-height:1.5;color:#003E78">No records yet. Everything you save stays on this phone, works with no signal, and leaves as a CSV file from the Results screen.</div>
       </sc-if>
+      <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:14px">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+          <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ todayCount }}</div><div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">ថ្ងៃនេះ<span style="display:block;color:#9AA5AE">Today</span></div></div>
+          <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ count }}</div><div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">ក្នុងទូរស័ព្ទ<span style="display:block;color:#9AA5AE">On device</span></div></div>
+          <div><div style="font-size:20px;font-weight:700;color:#7C1220;line-height:1">{{ pendingSync }}</div><div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">រង់ចាំផ្ញើ<span style="display:block;color:#9AA5AE">To send</span></div></div>
+          <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ syncedCount }}</div><div style="font-size:10px;color:#767676;margin-top:3px;line-height:1.35">បានផ្ញើ<span style="display:block;color:#9AA5AE">Sent</span></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:12px;border-top:1px solid #EDF1F4;padding-top:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:130px;font-size:11px;color:#767676;line-height:1.4">ផ្ញើចុងក្រោយ · last sync<span style="display:block;font-size:12px;font-weight:700;color:#333">{{ lastSyncLabel }}</span></div>
+          <button onClick="{{ syncNow }}" style="flex:none;background:#117996;color:#fff;border:none;border-radius:6px;min-height:34px;padding:0 11px;font:700 11px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
+            <span>{{ syncBtnLabel }}</span>
+          </button>
+        </div>
+        <sc-if value="{{ hasSyncMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:#003E78;background:#D5E7EF;border-left:4px solid #003E78;padding:9px 11px;line-height:1.5;margin-top:10px">{{ syncMsg }}</div>
+        </sc-if>
+      </div>
     </sc-if>
 
     <sc-if value="{{ isHh }}" hint-placeholder-val="{{ false }}">
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px">
         <div>
-          <label>ស្វែងរកខ្នងផ្ទះ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Find a household</span></label>
+          <label>ស្វែងរកខ្នងផ្ទះ<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Find a household</span></label>
           <input type="search" value="{{ hhQuery }}" onChange="{{ setHhQuery }}" placeholder="ID, name, village, commune, trap ID">
         </div>
         <div>
-          <label>ខេត្ត / រាជធានី<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Province</span></label>
+          <label>ខេត្ត / រាជធានី<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Province</span></label>
           <select value="{{ hhProv }}" onChange="{{ setHhProv }}">
             <sc-for list="{{ hhProvOptions }}" as="o" hint-placeholder-count="2">
               <option value="{{ o.value }}">{{ o.label }}</option>
@@ -138,17 +143,13 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       </div>
 
       <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
           <div style="position:relative;height:300px;border-radius:6px;background:#F8FAFB;background-image:linear-gradient(#E4EBF0 1px,transparent 1px),linear-gradient(90deg,#E4EBF0 1px,transparent 1px);background-size:40px 40px;border:1px solid #E4EBF0;overflow:hidden">
             <sc-for list="{{ hhPins }}" as="p" hint-placeholder-count="3">
-              <button onClick="{{ p.open }}" title="{{ p.title }}" style="position:absolute;left:{{ p.left }};top:{{ p.top }};transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:{{ p.color }};color:#fff;font:700 10px/1 inherit;cursor:pointer;box-shadow:0 1px 4px rgba(0,62,120,.35);display:flex;align-items:center;justify-content:center">{{ p.label }}</button>
+              <button onClick="{{ p.open }}" title="{{ p.title }}" style="position:absolute;left:{{ p.left }};top:{{ p.top }};transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:#117996;color:#fff;font:700 10px/1 inherit;cursor:pointer;box-shadow:0 1px 4px rgba(0,62,120,.35);display:flex;align-items:center;justify-content:center">{{ p.label }}</button>
             </sc-for>
           </div>
-          <div style="display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap">
-            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#767676"><span style="width:12px;height:12px;border-radius:50%;background:#7C1220;display:inline-block"></span>មានដង្កូវ Larvae positive</span>
-            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#767676"><span style="width:12px;height:12px;border-radius:50%;background:#117996;display:inline-block"></span>គ្មានដង្កូវ No positives</span>
-          </div>
-          <div style="font-size:12px;color:#767676;margin-top:8px;line-height:1.5">{{ mapScale }}. Positions come from the GPS captured at registration and are drawn to scale relative to each other. There is no basemap, so this works with no signal — tap a pin to open the household.</div>
+          <div style="font-size:12px;color:#767676;margin-top:10px;line-height:1.5">{{ mapScale }} · ចុចលើចំណុចដើម្បីបើកខ្នងផ្ទះ · tap a pin to open the household</div>
         </div>
       </sc-if>
 
@@ -181,41 +182,82 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
     </sc-if>
 
     <sc-if value="{{ isHhDetail }}" hint-placeholder-val="{{ false }}">
-      <div style="background:{{ hh.verdictBg }};color:{{ hh.verdictFg }};border-radius:8px;padding:13px 15px;font-size:13px;font-weight:700;line-height:1.45">{{ hh.verdict }}</div>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
         <div style="font:700 16px ui-monospace,Menlo,monospace;color:#003E78">{{ hh.id }}</div>
         <div style="font-size:14px;font-weight:700;color:#333;margin-top:4px">{{ hh.head }}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
-          <div style="grid-column:1 / -1"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">ភូមិ ឃំុ ស្រុក ខេត្ត<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Village, commune, district, province</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.location }}</div></div>
-          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">ផ្ទះ / ផ្លូវ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">House / street</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.address }}</div></div>
-          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">ចង្កោម<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Cluster</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.cluster }}</div></div>
-          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">យល់ព្រម<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Consent</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.consent }}</div></div>
-          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">ចុះឈ្មោះ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Registered</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.registered }}</div></div>
-          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">អន្ទាក់<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Traps</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.trapIds }}</div></div>
+          <div style="grid-column:1 / -1"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">ភូមិ ឃំុ ស្រុក ខេត្ត<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Village, commune, district, province</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.location }}</div></div>
+          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">ផ្ទះ / ផ្លូវ<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">House / street</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.address }}</div></div>
+          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">ចង្កោម<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Cluster</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.cluster }}</div></div>
+          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">យល់ព្រម<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Consent</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.consent }}</div></div>
+          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">ចុះឈ្មោះ<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Registered</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.registered }}</div></div>
+          <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">អន្ទាក់<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Traps</span></div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.trapIds }}</div></div>
           <div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#767676">GPS</div><div style="font-size:13px;color:#333;margin-top:2px">{{ hh.gps }}</div></div>
         </div>
       </div>
+      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">កត់ត្រានៅខ្នងផ្ទះនេះ <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Record at this household</span></div>
+      
+
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:12px 10px">
-          <div style="font-size:22px;font-weight:700;color:#003E78;line-height:1">{{ hh.catch }}</div>
-          <div style="font-size:10px;color:#767676;text-transform:uppercase;letter-spacing:.04em;margin-top:4px">មូស<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Mosquitoes</span></div>
+          
+          <button onClick="{{ editHousehold }}" style="background:#F7E7E9;border:1px solid #E3BFC4;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+            <span style="width:40px;height:40px;border-radius:12px;background:#7C1220;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16v4Z"></path><path d="M14.5 5.5 18.5 9.5"></path></svg></span>
+            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">កែព័ត៌មានខ្នងផ្ទះ</span><span style="display:block;font-size:10px;font-weight:400;color:#9AA5AE;margin-top:2px">Edit household</span></span>
+          </button><button onClick="{{ hhInstall }}" style="background:#E8EEF5;border:1px solid #C6D5E4;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+            <span style="width:40px;height:40px;border-radius:12px;background:#003E78;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h12l-1.3 10.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 9Z"></path><path d="M12 2v4.2"></path><path d="M9.4 4.4 12 6.8l2.6-2.4"></path></svg></span>
+            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ដាក់អន្ទាក់</span><span style="display:block;font-size:10px;font-weight:400;color:#9AA5AE;margin-top:2px">Trap installation</span></span>
+          </button><button onClick="{{ hhCollect }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 92px; padding: 12px 6px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background-color: #9AE9DF">
+            <span style="width:40px;height:40px;border-radius:12px;background:#117996;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12l-1.3 7.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 12Z"></path><path d="M12 9.2V2.6"></path><path d="M9.4 5 12 2.4 14.6 5"></path></svg></span>
+            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ប្រមូលអន្ទាក់</span><span style="display:block;font-size:10px;font-weight:400;color:#9AA5AE;margin-top:2px">Trap collection</span></span>
+          </button><button onClick="{{ hhLarvae }}" style="background:#FDF6E3;border:1px solid #F3DFA8;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+            <span style="width:40px;height:40px;border-radius:12px;background:#B47A0A;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.6 4 5.5 6.7 5.5 9.4A5.5 5.5 0 0 1 6.5 12c0-2.7 1.9-5.4 5.5-9.5Z"></path><path d="M8.4 13.6c1.1-.9 2.1-.9 3.2 0 1.1.9 2.1.9 3.2 0"></path><path d="M9 17c1-.8 1.9-.8 2.9 0 1 .8 1.9.8 2.9 0"></path></svg></span>
+            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ប្រមូលដង្កូវទឹក</span><span style="display:block;font-size:10px;font-weight:400;color:#9AA5AE;margin-top:2px">Larvae collection</span></span>
+          </button>
+          
+          <button onClick="{{ hhAdult }}" style="background:#E8F8F5;border:1px solid #B4E7DE;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+            <span style="width:40px;height:40px;border-radius:12px;background:#0E8F7E;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="13.5" r="7"></circle><path d="M15.6 8.4 21 3"></path><path d="M7.5 11.5h6"></path><path d="M8 15.5h5"></path></svg></span>
+            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ប្រមូលមូសពេញវ័យ</span><span style="display:block;font-size:10px;font-weight:400;color:#9AA5AE;margin-top:2px">Adult collection</span></span>
+          </button>
+          <button onClick="{{ hhLab }}" style="background:#F1EBF5;border:1px solid #D6C4E0;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+            <span style="width:40px;height:40px;border-radius:12px;background:#6B4C7A;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></span>
+            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">លទ្ធផលមន្ទីរពិសោធន៍</span><span style="display:block;font-size:10px;font-weight:400;color:#9AA5AE;margin-top:2px">Lab result</span></span>
+          </button>
+          
+        </div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:14px">
+          <div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ hh.catch }}</div>
+          <div style="font-size:10px;color:#767676;text-transform:uppercase;letter-spacing:.03em;margin-top:3px">មូស<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Mosquitoes</span></div>
         </div>
-        <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:12px 10px">
-          <div style="font-size:22px;font-weight:700;color:#003E78;line-height:1">{{ hh.aegypti }}</div>
-          <div style="font-size:10px;color:#767676;text-transform:uppercase;letter-spacing:.04em;margin-top:4px">Ae. aegypti</div>
+        <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:14px">
+          <div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ hh.aegypti }}</div>
+          <div style="font-size:10px;color:#767676;text-transform:uppercase;letter-spacing:.03em;margin-top:3px">Ae. aegypti</div>
         </div>
-        <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #F4B71B;border-radius:8px;padding:12px 10px">
-          <div style="font-size:22px;font-weight:700;color:#003E78;line-height:1">{{ hh.index }}</div>
-          <div style="font-size:10px;color:#767676;text-transform:uppercase;letter-spacing:.04em;margin-top:4px">សន្ទស្សន៍ភាជន៍<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Container index</span></div>
+        <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #F4B71B;border-radius:8px;padding:12px 14px">
+          <div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ hh.index }}</div>
+          <div style="font-size:10px;color:#767676;text-transform:uppercase;letter-spacing:.03em;margin-top:3px">សន្ទស្សន៍ភាជន៍<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Container index</span></div>
         </div>
       </div>
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px;display:flex;flex-wrap:wrap;gap:14px">
-        <div><div style="font-size:11px;color:#767676">ការប្រមូល<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Collections</span></div><div style="font-size:16px;font-weight:700;color:#003E78">{{ hh.collections }}</div></div>
-        <div><div style="font-size:11px;color:#767676">ភាជន៍បានពិនិត្យ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Containers checked</span></div><div style="font-size:16px;font-weight:700;color:#003E78">{{ hh.inspected }}</div></div>
-        <div><div style="font-size:11px;color:#767676">មានដង្កូវ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Positive</span></div><div style="font-size:16px;font-weight:700;color:#7C1220">{{ hh.positive }}</div></div>
-        <div><div style="font-size:11px;color:#767676">ដង្កូវទឹក<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Larvae</span></div><div style="font-size:16px;font-weight:700;color:#003E78">{{ hh.larvae }}</div></div>
-        <div></div>
-        <div><div style="font-size:11px;color:#767676">សមាមាត្រ Ae. aegypti<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Ae. aegypti share</span></div><div style="font-size:16px;font-weight:700;color:#003E78">{{ hh.aegyptiPct }}</div></div>
+      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
+          <div style="font-size:16px;font-weight:700;color:#003E78;line-height:1">{{ hh.collections }}</div>
+          <div style="font-size:10px;color:#767676;margin-top:4px;line-height:1.35">ប្រមូលអន្ទាក់<span style="display:block;color:#9AA5AE">Trap collections · Ovitrap / BG</span></div>
+        </div>
+        <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
+          <div style="font-size:16px;font-weight:700;color:#003E78;line-height:1">{{ hh.inspected }}</div>
+          <div style="font-size:10px;color:#767676;margin-top:4px;line-height:1.35">ភាជន៍បានពិនិត្យ<span style="display:block;color:#9AA5AE">Containers checked</span></div>
+        </div>
+        <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
+          <div style="font-size:16px;font-weight:700;color:#7C1220;line-height:1">{{ hh.positive }}</div>
+          <div style="font-size:10px;color:#767676;margin-top:4px;line-height:1.35">មានដង្កូវ<span style="display:block;color:#9AA5AE">Positive</span></div>
+        </div>
+        <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
+          <div style="font-size:16px;font-weight:700;color:#003E78;line-height:1">{{ hh.larvae }}</div>
+          <div style="font-size:10px;color:#767676;margin-top:4px;line-height:1.35">ដង្កូវទឹក<span style="display:block;color:#9AA5AE">Larvae</span></div>
+        </div>
+        <div style="border:1px solid #EDF1F4;border-radius:6px;padding:10px 12px">
+          <div style="font-size:16px;font-weight:700;color:#003E78;line-height:1">{{ hh.aegyptiPct }}</div>
+          <div style="font-size:10px;color:#767676;margin-top:4px;line-height:1.35">សមាមាត្រ Ae. aegypti<span style="display:block;color:#9AA5AE">Ae. aegypti share</span></div>
+        </div>
       </div>
       <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ជុំដែលបានទៅ <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Rounds visited</span></div>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:6px 14px">
@@ -226,49 +268,27 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
           </div>
         </sc-for>
       </div>
-      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">កត់ត្រានៅខ្នងផ្ទះនេះ <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Record at this household</span></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-          <button onClick="{{ hhInstall }}" style="background:#E8EEF5;border:1px solid #C6D5E4;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-            <span style="width:40px;height:40px;border-radius:11px;background:#fff;color:#003E78;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h12l-1.3 10.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 9Z"></path><path d="M12 2v4.2"></path><path d="M9.4 4.4 12 6.8l2.6-2.4"></path></svg></span>
-            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ដាក់អន្ទាក់</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Trap installation</span></span>
-          </button>
-          <button onClick="{{ hhCollect }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 92px; padding: 12px 6px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background-color: #9AE9DF">
-            <span style="width:40px;height:40px;border-radius:11px;background:#fff;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12l-1.3 7.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 12Z"></path><path d="M12 9.2V2.6"></path><path d="M9.4 5 12 2.4 14.6 5"></path></svg></span>
-            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ប្រមូលអន្ទាក់</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Trap collection</span></span>
-          </button>
-          <button onClick="{{ hhAdult }}" style="background:#E8F8F5;border:1px solid #B4E7DE;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-            <span style="width:40px;height:40px;border-radius:11px;background:#fff;color:#0E8F7E;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="13.5" r="7"></circle><path d="M15.6 8.4 21 3"></path><path d="M7.5 11.5h6"></path><path d="M8 15.5h5"></path></svg></span>
-            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ប្រមូលមូសពេញវ័យ</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Adult collection</span></span>
-          </button>
-          <button onClick="{{ hhLarvae }}" style="background:#FDF6E3;border:1px solid #F3DFA8;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-            <span style="width:40px;height:40px;border-radius:11px;background:#fff;color:#B47A0A;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.6 4 5.5 6.7 5.5 9.4A5.5 5.5 0 0 1 6.5 12c0-2.7 1.9-5.4 5.5-9.5Z"></path><path d="M8.4 13.6c1.1-.9 2.1-.9 3.2 0 1.1.9 2.1.9 3.2 0"></path><path d="M9 17c1-.8 1.9-.8 2.9 0 1 .8 1.9.8 2.9 0"></path></svg></span>
-            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">ប្រមូលដង្កូវទឹក</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Larvae collection</span></span>
-          </button>
-          <button onClick="{{ hhLab }}" style="background:#F1EBF5;border:1px solid #D6C4E0;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-            <span style="width:40px;height:40px;border-radius:11px;background:#fff;color:#6B4C7A;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></span>
-            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">លទ្ធផលមន្ទីរពិសោធន៍</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Lab result</span></span>
-          </button>
-          <button onClick="{{ editHousehold }}" style="background:#F7E7E9;border:1px solid #E3BFC4;border-radius:8px;min-height:92px;padding:12px 6px;cursor:pointer;font-family:inherit;color:#003E78;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-            <span style="width:40px;height:40px;border-radius:11px;background:#fff;color:#7C1220;display:inline-flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16v4Z"></path><path d="M14.5 5.5 18.5 9.5"></path></svg></span>
-            <span style="font-size:11px;font-weight:700;line-height:1.25;text-align:center"><span style="display:block">កែព័ត៌មានខ្នងផ្ទះ</span><span style="display:block;font-size:9.5px;font-weight:400;color:#9AA5AE;margin-top:2px">Edit household</span></span>
-          </button>
-        </div>
-
       <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ប្រវត្តិសកម្មភាព <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Activity history</span></div>
-      <sc-for list="{{ hhRecords }}" as="r" hint-placeholder-count="4">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:12px 13px">
+      <sc-for list="{{ hhRecordsShown }}" as="r" hint-placeholder-count="3">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:12px 14px">
           <div style="font-size:13px;font-weight:700;color:#003E78">{{ r.title }}</div>
           <div style="font-size:11px;color:#767676;margin-top:2px">{{ r.meta }}</div>
           <div style="font-size:12px;color:#333;line-height:1.5;margin-top:8px;border-top:1px solid #EDF1F4;padding-top:8px">{{ r.detail }}</div>
         </div>
       </sc-for>
+      <sc-if value="{{ hhHasMore }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleHhAll }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #D9DEE4;color:#003E78;border-radius:8px;min-height:44px;font:700 12.5px/1 inherit;cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6 9.5 12 15.5l6-6"></path></svg>
+          <span>{{ hhMoreLabel }}</span>
+        </button>
+      </sc-if>
     </sc-if>
 
     <sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px">
+      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-items:start">
         <sc-for list="{{ fields }}" as="f" hint-placeholder-count="6">
-          <div>
-            <label style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:4px">{{ f.labelKm }}<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">{{ f.labelEn }}</span></label>
+          <div style="grid-column:{{ f.span }}">
+            <label style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:4px">{{ f.labelKm }}<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">{{ f.labelEn }}</span></label>
             <sc-if value="{{ f.isText }}" hint-placeholder-val="{{ true }}">
               <input type="{{ f.type }}" inputmode="{{ f.inputmode }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.placeholder }}" list="{{ f.listId }}">
               <sc-if value="{{ f.hasList }}" hint-placeholder-val="{{ false }}">
@@ -289,34 +309,35 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
             <sc-if value="{{ f.isChoice }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="3">
-                  <button onClick="{{ o.pick }}" style="min-height:52px;padding:6px 16px;border-radius:6px;border:2px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};font:700 14px/1.2 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px"><span>{{ o.label }}</span><span style="font-size:9.5px;font-weight:400;opacity:.7">{{ o.labelEn }}</span></button>
+                  <button onClick="{{ o.pick }}" style="min-height:52px;padding:6px 16px;border-radius:6px;border:2px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};font:700 14px/1.2 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px"><span>{{ o.label }}</span><span style="font-size:10px;font-weight:400;opacity:.7">{{ o.labelEn }}</span></button>
                 </sc-for>
               </div>
             </sc-if>
             <sc-if value="{{ f.isCounter }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;align-items:center;gap:6px">
-                <button onClick="{{ f.dec }}" style="width:32px;height:32px;border-radius:5px;border:2px solid #003E78;background:#fff;color:#003E78;font:700 15px/1 inherit;cursor:pointer">−</button>
-                <input type="number" inputmode="numeric" min="0" value="{{ f.value }}" onChange="{{ f.onChange }}" style="flex:1;text-align:center;font:700 14px ui-monospace,Menlo,monospace;color:#003E78;padding:2px;min-height:32px">
-                <button onClick="{{ f.inc }}" style="width:32px;height:32px;border-radius:5px;border:2px solid #003E78;background:#003E78;color:#fff;font:700 15px/1 inherit;cursor:pointer">+</button>
+              <input type="number" inputmode="numeric" min="0" value="{{ f.value }}" onChange="{{ f.onChange }}" style="width:100%;box-sizing:border-box;text-align:center;font:400 14px inherit;color:#333;min-height:38px">
+            </sc-if>
+            <sc-if value="{{ f.isColHead }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:8px;padding-left:96px">
+                <div style="flex:1;font-size:12px;font-weight:700;color:#003E78;text-align:center">{{ f.aLabel }}</div>
+                <div style="flex:1;font-size:12px;font-weight:700;color:#7C1220;text-align:center">{{ f.bLabel }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ f.isRow }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:88px;flex:none;font-size:12px;font-weight:700;color:#003E78;line-height:1.3">{{ f.rowLabel }}</span>
+                <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font:400 15px inherit;color:#333;min-height:38px">
+                <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font:400 15px inherit;color:#333;min-height:38px">
               </div>
             </sc-if>
             <sc-if value="{{ f.isPair }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;gap:10px">
-                <div style="flex:1">
-                  <div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9AA5AE;margin-bottom:2px">{{ f.aLabel }}</div>
-                  <div style="display:flex;align-items:center;gap:6px">
-                    <button onClick="{{ f.aDec }}" style="width:34px;height:36px;border-radius:6px;border:2px solid #003E78;background:#fff;color:#003E78;font:700 15px/1 inherit;cursor:pointer">−</button>
-                    <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" style="flex:1;text-align:center;font:700 15px ui-monospace,Menlo,monospace;color:#003E78;padding:2px;min-height:36px">
-                    <button onClick="{{ f.aInc }}" style="width:34px;height:36px;border-radius:6px;border:2px solid #003E78;background:#003E78;color:#fff;font:700 15px/1 inherit;cursor:pointer">+</button>
-                  </div>
+              <div style="display:flex;align-items:flex-end;gap:8px">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:12px;font-weight:700;color:#003E78">{{ f.aCap }}</div>
+                  <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" style="width:100%;box-sizing:border-box;text-align:center;font:400 15px inherit;color:#333;min-height:38px">
                 </div>
-                <div style="flex:1">
-                  <div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#B4636E;margin-bottom:2px">{{ f.bLabel }}</div>
-                  <div style="display:flex;align-items:center;gap:6px">
-                    <button onClick="{{ f.bDec }}" style="width:34px;height:36px;border-radius:6px;border:2px solid #7C1220;background:#fff;color:#7C1220;font:700 15px/1 inherit;cursor:pointer">−</button>
-                    <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" style="flex:1;text-align:center;font:700 15px ui-monospace,Menlo,monospace;color:#7C1220;padding:2px;min-height:36px">
-                    <button onClick="{{ f.bInc }}" style="width:34px;height:36px;border-radius:6px;border:2px solid #7C1220;background:#7C1220;color:#fff;font:700 15px/1 inherit;cursor:pointer">+</button>
-                  </div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:12px;font-weight:700;color:#003E78">{{ f.bCap }}</div>
+                  <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" style="width:100%;box-sizing:border-box;text-align:center;font:400 15px inherit;color:#333;min-height:38px">
                 </div>
               </div>
             </sc-if>
@@ -324,10 +345,23 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
               <div style="display:flex;align-items:center;gap:12px;border:1px solid #D9DEE4;border-radius:6px;padding:12px 14px;background:#F8FAFB">
                 <span style="flex:1;min-width:0">
                   <span style="display:block;font-size:13.5px;font-weight:700;color:#003E78">{{ f.text }}</span>
-                  <span style="display:block;font-size:10.5px;color:#767676;margin-top:2px">{{ f.meta }}</span>
+                  <span style="display:block;font-size:11px;color:#767676;margin-top:2px">{{ f.meta }}</span>
                 </span>
                 <button onClick="{{ f.capture }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;border:2px solid #117996;background:#fff;color:#117996;border-radius:6px;min-height:44px;padding:0 14px;font:700 12px/1.2 inherit;cursor:pointer;flex:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="7.5"></circle><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"></path></svg>យក · Capture</button>
               </div>
+              <sc-if value="{{ f.hasFix }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+                  <div style="border:1px solid #EDF1F4;border-radius:6px;padding:8px 10px">
+                    <div style="font:700 13px ui-monospace,Menlo,monospace;color:#003E78">{{ f.lat }}</div>
+                    <div style="font-size:10px;color:#9AA5AE;margin-top:2px">រយៈទទឹង · latitude</div>
+                  </div>
+                  <div style="border:1px solid #EDF1F4;border-radius:6px;padding:8px 10px">
+                    <div style="font:700 13px ui-monospace,Menlo,monospace;color:#003E78">{{ f.lon }}</div>
+                    <div style="font-size:10px;color:#9AA5AE;margin-top:2px">រយៈបណ្តោយ · longitude</div>
+                  </div>
+                </div>
+                <div ref="{{ formMapRef }}" style="height:180px;margin-top:8px;border:1px solid #E4EBF0;border-radius:6px;background:#F8FAFB"></div>
+              </sc-if>
             </sc-if>
             <sc-if value="{{ f.isPicks }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;flex-direction:column;gap:8px">
@@ -336,7 +370,7 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
                     <span style="width:22px;height:22px;flex:none;border-radius:5px;border:2px solid {{ t.bd }};background:#fff;color:#117996;font:700 13px/1 inherit;display:inline-flex;align-items:center;justify-content:center">{{ t.mark }}</span>
                     <span style="flex:1;min-width:0">
                       <span style="display:block;font:700 12px ui-monospace,Menlo,monospace;color:#003E78">{{ t.id }}</span>
-                      <span style="display:block;font-size:10.5px;color:#767676;margin-top:2px">{{ t.meta }}</span>
+                      <span style="display:block;font-size:11px;color:#767676;margin-top:2px">{{ t.meta }}</span>
                     </span>
                   </button>
                 </sc-for>
@@ -352,9 +386,9 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
                   <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #EDF1F4">
                     <span style="flex:1;min-width:0">
                       <span style="display:block;font:700 12px ui-monospace,Menlo,monospace;color:#003E78">{{ t.id }}</span>
-                      <span style="display:block;font-size:10.5px;color:#767676;margin-top:2px">{{ t.meta }}</span>
+                      <span style="display:block;font-size:11px;color:#767676;margin-top:2px">{{ t.meta }}</span>
                     </span>
-                    <span style="font-size:9.5px;font-weight:700;background:{{ t.tagBg }};color:{{ t.tagFg }};padding:4px 8px;border-radius:999px;white-space:nowrap">{{ t.tag }}</span>
+                    <span style="font-size:10px;font-weight:700;background:{{ t.tagBg }};color:{{ t.tagFg }};padding:4px 8px;border-radius:999px;white-space:nowrap">{{ t.tag }}</span>
                   </div>
                 </sc-for>
                 <sc-if value="{{ f.noRows }}" hint-placeholder-val="{{ false }}">
@@ -363,7 +397,7 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
               </div>
             </sc-if>
             <sc-if value="{{ f.isNote }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12px;line-height:1.5;color:#767676">{{ f.value }}</div>
+              <div style="font-size:12px;line-height:1.5;color:#767676"><span style="font-weight:700;color:#003E78">{{ f.noteId }}</span>{{ f.value }}</div>
             </sc-if>
           </div>
         </sc-for>
@@ -374,15 +408,73 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
         <div style="background:#FDF1D1;border-left:4px solid #F4B71B;padding:12px 14px;font-size:12px;line-height:1.5;color:#3d2c00;font-weight:700">{{ error }}</div>
       </sc-if>
       <sc-if value="{{ isInstallForm }}" hint-placeholder-val="{{ false }}">
-        <button onClick="{{ saveAndAdd }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#117996;color:#fff;border:none;border-radius:8px;min-height:52px;font:700 15px/1 inherit;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 5.5v13M5.5 12h13"></path></svg>រក្សាទុក ហើយបន្ថែមអន្ទាក់ · Save and add another trap</button>
+        <button onClick="{{ saveAndAdd }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#117996;color:#fff;border:none;border-radius:8px;min-height:52px;font:700 14px/1 inherit;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 5.5v13M5.5 12h13"></path></svg>រក្សាទុក ហើយបន្ថែមអន្ទាក់ · Save and add another trap</button>
       </sc-if>
-      <sc-if value="{{ canSave }}" hint-placeholder-val="{{ true }}">
-        <button onClick="{{ saveRecord }}" style="background:#003E78;color:#fff;border:none;border-radius:8px;min-height:56px;font:700 16px/1 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12.5 10 17.5 19 7"></path></svg><span>រក្សាទុក</span><span style="font-size:10px;font-weight:400;opacity:.75">{{ saveLabel }}</span></button>
-      </sc-if>
-      <button onClick="{{ home }}" style="background:transparent;color:#003E78;border:2px solid #003E78;border-radius:8px;min-height:48px;font:700 14px/1 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path></svg><span>បោះបង់</span><span style="font-size:10px;font-weight:400;color:#9AA5AE">Cancel</span></button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <sc-if value="{{ canSave }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ saveRecord }}" style="background:#003E78;color:#fff;border:none;border-radius:8px;min-height:56px;font:700 16px/1 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5.5 4h10L20 8.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 1.5-2Z"></path><path d="M8 4v5h7V4.6"></path><rect x="8" y="13" width="8" height="7" rx="1"></rect></svg><span>រក្សាទុក</span><span style="font-size:10px;font-weight:400;opacity:.75">{{ saveLabel }}</span></button>
+        </sc-if>
+        <button onClick="{{ home }}" style="background:#D5E7EF;color:#003E78;border:1px solid #A8C8DC;border-radius:8px;min-height:48px;font:700 14px/1 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path></svg><span>បោះបង់</span><span style="font-size:10px;font-weight:400;color:#33608A">Cancel</span></button>
+      </div>
     </sc-if>
 
     <sc-if value="{{ isDash }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#003E78;color:#fff;border-radius:8px;padding:16px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+          <div>
+            <div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#9FC4DC">ជុំបច្ចុប្បន្ន · Current round</div>
+            <div style="font-size:19px;font-weight:700;line-height:1.15;margin-top:2px">{{ dash.roundLabel }}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:19px;font-weight:700;line-height:1.15">{{ dash.coveragePct }}%</div>
+            <div style="font-size:11px;color:#9FC4DC">ការគ្របដណ្តប់ · coverage</div>
+          </div>
+        </div>
+        <div style="height:8px;border-radius:4px;background:rgba(255,255,255,.22);margin-top:12px">
+          <div style="width:{{ dash.coveragePct }}%;height:8px;border-radius:4px;background:#6EDBCD"></div>
+        </div>
+        <div style="font-size:12px;color:#D5E7EF;margin-top:6px">{{ dash.visited }} / {{ dash.households }} ខ្នងផ្ទះបានទៅ · households visited · គោលដៅ {{ dash.target }}</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;border-top:1px solid rgba(255,255,255,.18);padding-top:14px">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px">
+              <span style="font-size:11px;font-weight:700">ដាក់អន្ទាក់</span>
+              <span style="font-size:11px;color:#D5E7EF">{{ dash.installedN }} / {{ dash.target }}</span>
+            </div>
+            <div style="height:6px;border-radius:3px;background:rgba(255,255,255,.22);margin-top:5px"><div style="width:{{ dash.installedW }};height:6px;border-radius:3px;background:#fff"></div></div>
+            <div style="font-size:10px;color:#9FC4DC;margin-top:4px">Traps installed · {{ dash.installedPct }}%</div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px">
+              <span style="font-size:11px;font-weight:700">ប្រមូលអន្ទាក់</span>
+              <span style="font-size:11px;color:#D5E7EF">{{ dash.collectedN }} / {{ dash.target }}</span>
+            </div>
+            <div style="height:6px;border-radius:3px;background:rgba(255,255,255,.22);margin-top:5px"><div style="width:{{ dash.collectedW }};height:6px;border-radius:3px;background:#6EDBCD"></div></div>
+            <div style="font-size:10px;color:#9FC4DC;margin-top:4px">Traps collected · {{ dash.collectedPct }}%</div>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ dash.hasOutstanding }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">នៅសល់ត្រូវទៅ <span style="font-weight:400;color:#9AA5AE">Still to visit</span></span>
+            <span style="font-size:13px;font-weight:700;color:#7C1220">{{ dash.remaining }}</span>
+          </div>
+          <div style="border:1px solid #EDF1F4;border-radius:6px;overflow:hidden;margin-top:10px">
+            <sc-for list="{{ dash.outstanding }}" as="o" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px;padding:9px 11px;border-bottom:1px solid #EDF1F4">
+                <span style="flex:1;min-width:0">
+                  <span style="display:block;font:700 12px ui-monospace,Menlo,monospace;color:#003E78">{{ o.id }}</span>
+                  <span style="display:block;font-size:11px;color:#767676;margin-top:2px">{{ o.name }} · {{ o.meta }}</span>
+                </span>
+                <span style="font-size:10px;font-weight:700;background:{{ o.tagBg }};color:{{ o.tagFg }};padding:4px 8px;border-radius:999px;white-space:nowrap">{{ o.tag }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="color:#117996;display:inline-flex"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#D5E7EF;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5 10 4l4 2.5L20 4v13.5L14 20l-4-2.5L4 20V6.5Z"></path><path d="M10 4v13.5"></path><path d="M14 6.5V20"></path></svg></span></span>តំបន់រដ្ឋបាល · Administrative area</div>
         <select value="{{ dash.prov }}" onChange="{{ setDashProv }}">
@@ -406,83 +498,36 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
           </sc-for>
         </select>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-          <span style="font-size:11.5px;color:#767676">{{ dash.records }} កំណត់ត្រា · records in view</span>
+          <span style="font-size:12px;color:#767676">{{ dash.records }} កំណត់ត្រា · records in view</span>
           <button onClick="{{ clearDash }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #D9DEE4;background:#fff;color:#003E78;border-radius:6px;min-height:40px;padding:0 14px;font:700 12px/1 inherit;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="8.5"></circle><path d="M9 9l6 6M15 9l-6 6"></path></svg>សម្អាត · Clear</button>
         </div>
       </div>
-      <div style="background:#003E78;color:#fff;border-radius:8px;padding:14px 16px">
-        <div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#D5E7EF;display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:rgba(255,255,255,.16);display:inline-flex;align-items:center;justify-content:center;color:#6EDBCD"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"></rect><path d="M3.5 10h17"></path><path d="M8 3.5V6"></path><path d="M16 3.5V6"></path></svg></span>ជុំបច្ចុប្បន្ន · Current round</div>
-        <div style="display:flex;align-items:baseline;gap:12px;margin-top:6px">
-          <span style="font-size:24px;font-weight:700">{{ dash.roundLabel }}</span>
-          <span style="font-size:13px;color:#D5E7EF">{{ dash.visited }} / {{ dash.households }} ខ្នងផ្ទះ · households visited</span>
-        </div>
-        <div style="height:8px;border-radius:4px;background:rgba(255,255,255,.25);margin-top:12px">
-          <div style="width:{{ dash.coveragePct }}%;height:8px;border-radius:4px;background:#6EDBCD"></div>
-        </div>
-        <div style="font-size:11px;color:#D5E7EF;margin-top:6px">{{ dash.coveragePct }} ភាគរយនៃការគ្របដណ្តប់ · percent coverage</div>
-      </div>
-
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
-          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="color:#117996;display:inline-flex"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#D5E7EF;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="3.4"></circle><path d="M12 4V2"></path></svg></span></span>វឌ្ឍនភាពធៀបគោលដៅ <span style="font-weight:400;color:#9AA5AE">Progress against target</span></span>
-          <span style="font-size:11px;font-weight:700;color:#003E78">{{ dash.target }}</span>
-        </div>
-        <div style="margin-top:12px">
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#333">
-            <span style="font-weight:700;color:#003E78">ដាក់អន្ទាក់ <span style="font-weight:400;color:#9AA5AE">Traps installed</span></span>
-            <span>{{ dash.installedN }} / {{ dash.target }} · {{ dash.installedPct }}%</span>
-          </div>
-          <div style="height:12px;border-radius:6px;background:#EDF1F4;margin-top:5px"><div style="width:{{ dash.installedW }};height:12px;border-radius:6px;background:#003E78"></div></div>
-        </div>
-        <div style="margin-top:12px">
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#333">
-            <span style="font-weight:700;color:#003E78">ប្រមូលអន្ទាក់ <span style="font-weight:400;color:#9AA5AE">Traps collected</span></span>
-            <span>{{ dash.collectedN }} / {{ dash.target }} · {{ dash.collectedPct }}%</span>
-          </div>
-          <div style="height:12px;border-radius:6px;background:#EDF1F4;margin-top:5px"><div style="width:{{ dash.collectedW }};height:12px;border-radius:6px;background:#117996"></div></div>
-        </div>
-        <div style="font-size:11.5px;color:#767676;margin-top:10px;line-height:1.5">នៅសល់ {{ dash.remaining }} ខ្នងផ្ទះ · {{ dash.remaining }} households still to collect this round. ដាក់គោលដៅក្នុងការកំណត់ខាងក្រោម · set the target under Settings below.</div>
-        <sc-if value="{{ dash.hasOutstanding }}" hint-placeholder-val="{{ false }}">
-          <div style="border:1px solid #D9DEE4;border-radius:6px;overflow:hidden;margin-top:12px">
-            <sc-for list="{{ dash.outstanding }}" as="o" hint-placeholder-count="3">
-              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #EDF1F4">
-                <span style="flex:1;min-width:0">
-                  <span style="display:block;font:700 11.5px ui-monospace,Menlo,monospace;color:#003E78">{{ o.id }}</span>
-                  <span style="display:block;font-size:10.5px;color:#767676;margin-top:2px">{{ o.name }} · {{ o.meta }}</span>
-                </span>
-                <span style="font-size:9.5px;font-weight:700;background:{{ o.tagBg }};color:{{ o.tagFg }};padding:4px 8px;border-radius:999px;white-space:nowrap">{{ o.tag }}</span>
-              </div>
-            </sc-for>
-          </div>
-        </sc-if>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
         <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #117996;border-radius:8px;padding:12px">
-          <div style="font-size:24px;font-weight:700;color:#003E78;line-height:1">{{ dash.containerIndex }}%</div>
-          <div style="font-size:10.5px;color:#767676;margin-top:4px">សន្ទស្សន៍ភាជន៍<span style="display:block;color:#9AA5AE">Container index</span></div>
+          <div style="font-size:19px;font-weight:700;color:#003E78;line-height:1">{{ dash.containerIndex }}%</div>
+          <div style="font-size:11px;color:#767676;margin-top:4px">សន្ទស្សន៍ភាជន៍<span style="display:block;color:#9AA5AE">Container index</span></div>
         </div>
         <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #7C1220;border-radius:8px;padding:12px">
-          <div style="font-size:24px;font-weight:700;color:#003E78;line-height:1">{{ dash.houseIndex }}%</div>
-          <div style="font-size:10.5px;color:#767676;margin-top:4px">សន្ទស្សន៍ផ្ទះ<span style="display:block;color:#9AA5AE">House index · {{ dash.housesInspected }} inspected</span></div>
+          <div style="font-size:19px;font-weight:700;color:#003E78;line-height:1">{{ dash.houseIndex }}%</div>
+          <div style="font-size:11px;color:#767676;margin-top:4px">សន្ទស្សន៍ផ្ទះ<span style="display:block;color:#9AA5AE">House index · {{ dash.housesInspected }} inspected</span></div>
         </div>
         <div style="background:#fff;border:1px solid #D9DEE4;border-top:4px solid #6EDBCD;border-radius:8px;padding:12px">
-          <div style="font-size:24px;font-weight:700;color:#003E78;line-height:1">{{ dash.aegyptiPct }}%</div>
-          <div style="font-size:10.5px;color:#767676;margin-top:4px">សមាមាត្រ Ae. aegypti<span style="display:block;color:#9AA5AE">Ae. aegypti share</span></div>
+          <div style="font-size:19px;font-weight:700;color:#003E78;line-height:1">{{ dash.aegyptiPct }}%</div>
+          <div style="font-size:11px;color:#767676;margin-top:4px">សមាមាត្រ Ae. aegypti<span style="display:block;color:#9AA5AE">Ae. aegypti share</span></div>
         </div>
       </div>
 
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
         <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
           <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="color:#B47A0A;display:inline-flex"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#FDF1D1;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5 21 20H3l9-15.5Z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path></svg></span></span>ចន្លោះខ្វះទិន្នន័យ <span style="font-weight:400;color:#9AA5AE">Collection gaps</span></span>
-          <span style="font-size:10.5px;color:#9AA5AE">មិនទាន់ដោះស្រាយ · open</span>
+          <span style="font-size:11px;color:#9AA5AE">មិនទាន់ដោះស្រាយ · open</span>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
           <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="4">
             <div style="border:1px solid #F4B71B;border-left:4px solid #F4B71B;border-radius:6px;padding:10px 11px">
               <div style="font-size:20px;font-weight:700;color:#7C1220;line-height:1">{{ g.n }}</div>
-              <div style="font-size:10.5px;font-weight:700;color:#003E78;margin-top:4px;line-height:1.3">{{ g.label }}</div>
-              <div style="font-size:9.5px;color:#9AA5AE;margin-top:2px;line-height:1.3">{{ g.note }}</div>
+              <div style="font-size:11px;font-weight:700;color:#003E78;margin-top:4px;line-height:1.3">{{ g.label }}</div>
+              <div style="font-size:10px;color:#9AA5AE;margin-top:2px;line-height:1.3">{{ g.note }}</div>
             </div>
           </sc-for>
         </div>
@@ -500,7 +545,7 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
           <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
             <sc-for list="{{ dash.containers }}" as="c" hint-placeholder-count="3">
               <div>
-                <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#333">
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:#333">
                   <span style="font-weight:700;color:#003E78">{{ c.label }} <span style="font-weight:400;color:#9AA5AE">{{ c.labelEn }}</span></span>
                   <span>{{ c.pos }} / {{ c.insp }} · {{ c.pct }}%</span>
                 </div>
@@ -533,31 +578,16 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
       </sc-if>
 
       <sc-if value="{{ dash.hasInOut }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="color:#117996;display:inline-flex"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#D5E7EF;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3.5l9 7"></path><path d="M5.5 9.6V20h13V9.6"></path><path d="M9.5 20v-6h5v6"></path></svg></span></span>ក្នុងផ្ទះ / ក្រៅផ្ទះ <span style="font-weight:400;color:#9AA5AE">Indoor / outdoor</span></div>
-          <div style="display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:12px;background:#EDF1F4">
-            <div style="width:{{ dash.trapsInW }};background:#003E78"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
-            <div style="border:1px solid #D9DEE4;border-radius:6px;padding:10px">
-              <div style="font-size:18px;font-weight:700;color:#003E78;line-height:1">{{ dash.trapsIn }} / {{ dash.collectIn }}</div>
-              <div style="font-size:10px;color:#767676;margin-top:4px">ក្នុងផ្ទះ · អន្ទាក់ / ការប្រមូល<span style="display:block;color:#9AA5AE">Inside · traps / collections</span></div>
-            </div>
-            <div style="border:1px solid #D9DEE4;border-radius:6px;padding:10px">
-              <div style="font-size:18px;font-weight:700;color:#117996;line-height:1">{{ dash.trapsOut }} / {{ dash.collectOut }}</div>
-              <div style="font-size:10px;color:#767676;margin-top:4px">ក្រៅផ្ទះ · អន្ទាក់ / ការប្រមូល<span style="display:block;color:#9AA5AE">Outside · traps / collections</span></div>
-            </div>
-          </div>
-        </div>
+        
       </sc-if>
 
       <sc-if value="{{ dash.hasTubes }}" hint-placeholder-val="{{ false }}">
         <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:14px">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#003E78;display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:rgba(0,62,120,.12);display:inline-flex;align-items:center;justify-content:center;color:#003E78"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></span>បំពង់ទៅមន្ទីរពិសោធន៍ <span style="font-weight:400">Lab pipeline</span></div>
           <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap">
-            <div><div style="font-size:22px;font-weight:700;color:#003E78;line-height:1">{{ dash.tubes }}</div><div style="font-size:10.5px;color:#003E78">បំពង់ប្រមូល · tubes collected</div></div>
-            <div><div style="font-size:22px;font-weight:700;color:#003E78;line-height:1">{{ dash.labsDone }}</div><div style="font-size:10.5px;color:#003E78">លទ្ធផលបានបញ្ចូល · results entered</div></div>
-            <div><div style="font-size:22px;font-weight:700;color:#7C1220;line-height:1">{{ dash.labsPending }}</div><div style="font-size:10.5px;color:#003E78">រង់ចាំ · pending</div></div>
+            <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ dash.tubes }}</div><div style="font-size:11px;color:#003E78">បំពង់ប្រមូល · tubes collected</div></div>
+            <div><div style="font-size:17px;font-weight:700;color:#003E78;line-height:1">{{ dash.labsDone }}</div><div style="font-size:11px;color:#003E78">លទ្ធផលបានបញ្ចូល · results entered</div></div>
+            <div><div style="font-size:22px;font-weight:700;color:#7C1220;line-height:1">{{ dash.labsPending }}</div><div style="font-size:11px;color:#003E78">រង់ចាំ · pending</div></div>
           </div>
           <div style="height:8px;border-radius:4px;background:rgba(0,62,120,.15);margin-top:12px">
             <div style="width:{{ dash.labsPct }}%;height:8px;border-radius:4px;background:#003E78"></div>
@@ -569,15 +599,15 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#F2F2F2;display:inline-flex;align-items:center;justify-content:center;color:#767676"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v2.5"></path><path d="M12 18.5V21"></path><path d="M3 12h2.5"></path><path d="M18.5 12H21"></path><path d="M5.6 5.6l1.8 1.8"></path><path d="M16.6 16.6l1.8 1.8"></path><path d="M18.4 5.6l-1.8 1.8"></path><path d="M7.4 16.6l-1.8 1.8"></path></svg></span>ការកំណត់ <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">Settings</span></div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px">
           <div>
-            <label>អ្នកប្រមូល<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Collector</span></label>
+            <label>អ្នកប្រមូល<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Collector</span></label>
             <input type="text" value="{{ collector }}" onChange="{{ setCollector }}" placeholder="Your name">
           </div>
           <div>
-            <label>ចង្កោម / ភូមិ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Cluster / village</span></label>
+            <label>ចង្កោម / ភូមិ<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Cluster / village</span></label>
             <input type="text" value="{{ cluster }}" onChange="{{ setCluster }}" placeholder="C2">
           </div>
           <div>
-            <label>គោលដៅ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Target</span></label>
+            <label>គោលដៅ<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Target</span></label>
             <input type="number" inputmode="numeric" value="{{ target }}" onChange="{{ setTarget }}" placeholder="30">
           </div>
         </div>
@@ -585,57 +615,54 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
         <div style="display:flex;gap:18px;margin-top:14px;flex-wrap:wrap;border-top:1px solid #EDF1F4;padding-top:14px">
             <div><div style="font-size:18px;font-weight:700;color:#7C1220;line-height:1">{{ pendingSync }}</div><div style="font-size:10px;color:#767676">រង់ចាំផ្ញើ · to send</div></div>
             <div><div style="font-size:18px;font-weight:700;color:#003E78;line-height:1">{{ syncedCount }}</div><div style="font-size:10px;color:#767676">បានផ្ញើ · sent</div></div>
-            <div style="flex:1;min-width:120px"><div style="font-size:11.5px;font-weight:700;color:#333">{{ lastSyncLabel }}</div><div style="font-size:10px;color:#767676">ផ្ញើចុងក្រោយ · last sync</div></div>
+            <div style="flex:1;min-width:120px"><div style="font-size:12px;font-weight:700;color:#333">{{ lastSyncLabel }}</div><div style="font-size:10px;color:#767676">ផ្ញើចុងក្រោយ · last sync</div></div>
           </div>
-          <button onClick="{{ syncNow }}" style="width:100%;margin-top:10px;background:#117996;color:#fff;border:none;border-radius:8px;min-height:50px;font:700 14px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
-            <span>{{ syncBtnLabel }}</span>
-          </button>
-          <button onClick="{{ pullNow }}" style="width:100%;margin-top:8px;background:#fff;color:#003E78;border:2px solid #003E78;border-radius:8px;min-height:48px;font:700 13.5px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>
-            <span>{{ pullBtnLabel }}</span>
-          </button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+            <button onClick="{{ syncNow }}" style="background:#117996;color:#fff;border:none;border-radius:8px;min-height:50px;font:700 14px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
+              <span>{{ syncBtnLabel }}</span>
+            </button>
+            <button onClick="{{ pullNow }}" style="background:#D5E7EF;color:#003E78;border:1px solid #A8C8DC;border-radius:8px;min-height:48px;font:700 13.5px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>
+              <span>{{ pullBtnLabel }}</span>
+            </button>
+          </div>
           <sc-if value="{{ hasSyncMsg }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:11.5px;color:#003E78;background:#D5E7EF;border-left:4px solid #003E78;padding:9px 11px;margin-top:10px;line-height:1.5">{{ syncMsg }}</div>
+            <div style="font-size:12px;color:#003E78;background:#D5E7EF;border-left:4px solid #003E78;padding:9px 11px;margin-top:10px;line-height:1.5">{{ syncMsg }}</div>
           </sc-if>
-          <div style="font-size:10.5px;color:#117996;margin-top:8px;line-height:1.5">{{ autoLabel }}</div>
-          <div style="font-size:10.5px;color:#9AA5AE;margin-top:6px;line-height:1.5">ទិន្នន័យរក្សាទុកក្នុងទូរស័ព្ទជានិច្ច · records always stay on the phone; syncing only copies them to the sheet.</div>
+          <div style="font-size:11px;color:#117996;margin-top:8px;line-height:1.5">{{ autoLabel }}</div>
+          <div style="font-size:11px;color:#9AA5AE;margin-top:6px;line-height:1.5">ទិន្នន័យរក្សាទុកក្នុងទូរស័ព្ទជានិច្ច · records always stay on the phone; syncing only copies them to the sheet.</div>
         </div>
-      </div>
-    </sc-if>
+      </sc-if>
 
     <sc-if value="{{ isData }}" hint-placeholder-val="{{ false }}">
       
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
         <div style="display:flex;justify-content:space-between;align-items:baseline">
-          <div><div style="font-size:30px;font-weight:700;color:#003E78;line-height:1">{{ count }}</div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#767676;margin-top:3px">កំណត់ត្រាបានរក្សាទុក<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Records stored</span></div></div>
-          <div style="text-align:right"><div style="font-size:13px;font-weight:700;color:#333">{{ storeSize }}</div><div style="font-size:11px;color:#767676">ទំហំផ្ទុកបានប្រើ<span style="font-size:9.5px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Device storage used</span></div></div>
+          <div><div style="font-size:30px;font-weight:700;color:#003E78;line-height:1">{{ count }}</div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#767676;margin-top:3px">កំណត់ត្រាបានរក្សាទុក<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Records stored</span></div></div>
+          <div style="text-align:right"><div style="font-size:13px;font-weight:700;color:#333">{{ storeSize }}</div><div style="font-size:11px;color:#767676">ទំហំផ្ទុកបានប្រើ<span style="font-size:10px;font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0;margin-left:6px">Device storage used</span></div></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
           <button onClick="{{ exportHouseholds }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#117996;color:#fff;border:none;border-radius:8px;min-height:52px;font:700 13px/1.3 inherit;cursor:pointer;padding:0 10px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>សង្ខេបខ្នងផ្ទះ CSV</button>
-          <button onClick="{{ exportSiteWeek }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#fff;color:#003E78;border:2px solid #003E78;border-radius:8px;min-height:52px;font:700 13px/1.3 inherit;cursor:pointer;padding:0 10px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>ទីតាំងតាមសប្តាហ៍ CSV</button>
+          <button onClick="{{ exportSiteWeek }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#D5E7EF;color:#003E78;border:1px solid #A8C8DC;border-radius:8px;min-height:52px;font:700 13px/1.3 inherit;cursor:pointer;padding:0 10px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>ទីតាំងតាមសប្តាហ៍ CSV</button>
         </div>
         <div style="font-size:12px;color:#767676;margin-top:10px;line-height:1.5">Exports download to the phone. Send them by email or upload to KoboToolbox when you reach a connection.</div>
       </div>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">CSV មួយក្នុងមួយសកម្មភាព <span style="font-weight:400;color:#9AA5AE;text-transform:none;letter-spacing:0">One CSV per activity</span></div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-          <sc-for list="{{ typeCounts }}" as="t" hint-placeholder-count="5">
-            <button onClick="{{ t.download }}" style="background:#fff;border:1px solid {{ t.bd }};border-left:4px solid {{ t.bar }};border-radius:8px;min-height:54px;padding:0 14px;cursor:pointer;font-family:inherit;color:{{ t.fg }};display:flex;align-items:center;gap:12px;text-align:left">
-              <span style="flex:1">
-                <span style="display:block;font-size:14px;font-weight:700">{{ t.label }}</span>
-                <span style="display:block;font:400 11px ui-monospace,Menlo,monospace;color:#767676;margin-top:2px">{{ t.file }}</span>
-              </span>
-              <span style="font-size:18px;font-weight:700">{{ t.n }}</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>
-            </button>
-          </sc-for>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+          <select value="{{ exportChoice }}" onChange="{{ setExportChoice }}" style="flex:1;min-width:170px">
+            <sc-for list="{{ typeCounts }}" as="t" hint-placeholder-count="5">
+              <option value="{{ t.key }}">{{ t.option }}</option>
+            </sc-for>
+          </select>
+          <button onClick="{{ downloadChoice }}" style="flex:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#117996;color:#fff;border:none;border-radius:8px;min-height:44px;padding:0 16px;font:700 13px/1 inherit;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>ទាញយក CSV</button>
         </div>
         <button onClick="{{ exportAllTypes }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:12px;background:#117996;color:#fff;border:none;border-radius:8px;min-height:52px;font:700 14px/1 inherit;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>ទាញយកឯកសារទាំងអស់ · Download all activity files</button>
         <div style="font-size:12px;color:#767676;margin-top:10px;line-height:1.5">Each file carries record_id, household_id, trap_id, site_id, collected_date and epi_week, so you can link them in Excel, R or Stata. trap_id joins collections and adult catches to the installation record; household_id then reaches the registration, and is copied onto a collection automatically from its trap's installation.</div>
       </div>
       <sc-for list="{{ allRecords }}" as="r" hint-placeholder-count="4">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:12px 13px">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-left:4px solid {{ r.bar }};border-radius:8px;padding:12px 14px">
           <div style="display:flex;align-items:center;gap:12px">
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:700;color:#003E78">{{ r.title }}</div>
@@ -652,30 +679,30 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
     </sc-if>
   </div>
 
-  <div style="display:flex;background:#fff;border-top:1px solid #D9DEE4;position:sticky;bottom:0">
-    <button onClick="{{ goRecord }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabRecordInd }};background:{{ tabRecordBg }};color:{{ tabRecordFg }};font:700 11.5px/1.2 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+  <div style="display:flex;background:#fff;border-top:1px solid #D9DEE4;position:sticky;bottom:0;margin-top:auto;z-index:5">
+    <button onClick="{{ goRecord }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabRecordInd }};background:{{ tabRecordBg }};color:{{ tabRecordFg }};font-size:12px;line-height:1.2;font-weight:{{ tabRecordW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15L12 17l-6.5 3V5A1.5 1.5 0 0 1 7 3.5Z"></path><path d="M9 8.5h6"></path></svg>
       <span>កត់ត្រា</span>
-      <span style="font-size:9px;font-weight:400;color:#9AA5AE">Record</span>
+      <span style="font-size:10px;font-weight:400;color:#9AA5AE">Record</span>
     </button>
-    <button onClick="{{ goHh }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabHhInd }};background:{{ tabHhBg }};color:{{ tabHhFg }};font:700 11.5px/1.2 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+    <button onClick="{{ goHh }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabHhInd }};background:{{ tabHhBg }};color:{{ tabHhFg }};font-size:12px;line-height:1.2;font-weight:{{ tabHhW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3.5l9 7"></path><path d="M5.5 9.6V20h13V9.6"></path><path d="M9.8 20v-5.5h4.4V20"></path></svg>
       <span>ខ្នងផ្ទះ {{ hhCount }}</span>
-      <span style="font-size:9px;font-weight:400;color:#9AA5AE">Households</span>
+      <span style="font-size:10px;font-weight:400;color:#9AA5AE">Households</span>
     </button>
-    <button onClick="{{ goDash }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabDashInd }};background:{{ tabDashBg }};color:{{ tabDashFg }};font:700 11.5px/1.2 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+    <button onClick="{{ goDash }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabDashInd }};background:{{ tabDashBg }};color:{{ tabDashFg }};font-size:12px;line-height:1.2;font-weight:{{ tabDashW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="8.5" rx="1.6"></rect><rect x="13.5" y="3.5" width="7" height="5" rx="1.6"></rect><rect x="3.5" y="15" width="7" height="5.5" rx="1.6"></rect><rect x="13.5" y="11.5" width="7" height="9" rx="1.6"></rect></svg>
-      <span>ផ្ទាំង</span>
-      <span style="font-size:9px;font-weight:400;color:#9AA5AE">Dashboard</span>
+      <span>ផ្ទាំងបង្ហាញ</span>
+      <span style="font-size:10px;font-weight:400;color:#9AA5AE">Dashboard</span>
     </button>
-    <button onClick="{{ goData }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabDataInd }};background:{{ tabDataBg }};color:{{ tabDataFg }};font:700 11.5px/1.2 inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+    <button onClick="{{ goData }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabDataInd }};background:{{ tabDataBg }};color:{{ tabDataFg }};font-size:12px;line-height:1.2;font-weight:{{ tabDataW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V13"></path><path d="M9.3 20V8.5"></path><path d="M14.7 20v-6"></path><path d="M20 20V4.5"></path></svg>
-      <span>លទ្ធផល {{ recCount }}</span>
-      <span style="font-size:9px;font-weight:400;color:#9AA5AE">Results</span>
+      <span>ទាញទិន្នន័យ {{ recCount }}</span>
+      <span style="font-size:10px;font-weight:400;color:#9AA5AE">Export</span>
     </button>
   </div>
-</div>
-</x-dc>
+
+</div></x-dc>
 <script type="text/x-dc" data-dc-script>
 const KEY = "ento.records.v1";
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbz5dYyX8PKVisxPxePppnmu3qzy1S3pJPCfEQWgrP4osxJkoBA1vyx9DTDROASbA3-P/exec";
@@ -721,7 +748,7 @@ const CORE_COLS = [
 ];
 
 // Container types counted per household: inspected and positive (larvae present).
-const CONTAINERS = [["jar", "Water jar"], ["drum", "Drum"], ["tyre", "Tyre"],
+const CONTAINERS = [["jar", "Water jar"], ["tyre", "Tyre"],
   ["pot", "Plant pot"], ["tank", "Water tank"], ["other", "Other"]];
 
 // Numeric measures per form, used for the long (tidy) export — one row per observation.
@@ -761,11 +788,13 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 // Khmer for every field label and choice; English stays underneath in small grey.
 // Please have a Khmer speaker review these before field use.
 const KM = {
+  "Date of lab result": "\u1790\u17d2\u1784\u17c3\u179b\u1791\u17d2\u1792\u1795\u179b\u1798\u1793\u17d2\u1791\u17b8\u179a\u1796\u17b7\u179f\u17c4\u1792\u1793\u17cd",
+  "Date registered": "\u1790\u17d2\u1784\u17c3\u1785\u17bb\u17c7\u1794\u1789\u17d2\u1787\u17b8",
   "Date collected": "\u1790\u17d2\u1784\u17c3\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Round": "\u1787\u17bb\u17c6\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Household": "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7",
   "Household *": "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7",
-  "Head of household *": "\u1798\u17c1\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7",
+  "Head of household *": "\u1798\u17c1\u1782\u17d2\u179a\u17bc\u179f\u17b6\u179a",
   "Phone": "\u179b\u17c1\u1781 \u1791\u17bc\u179a\u179f\u17d0\u1796\u17d2\u1791",
   "Residents": "\u1785\u17c6\u1793\u17bd\u1793\u179f\u1798\u17b6\u1787\u17b7\u1780",
   "Province *": "\u1781\u17c1\u178f\u17d2\u178f / \u179a\u17b6\u1787\u1792\u17b6\u1793\u17b8",
@@ -787,19 +816,19 @@ const KM = {
   "Trap *": "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb",
   "Trap found": "\u179a\u1780\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u179b\u17c1\u1785",
   "Collection method": "\u179c\u17b7\u1792\u17b8\u1794\u17d2\u179a\u1798\u17bc\u179b",
-  "Tubes collected": "\u1785\u17c6\u1793\u17bd\u1793\u1794\u17c6\u1796\u1784\u17cb\u1794\u17d2\u179a\u1798\u17bc\u179b",
+  "Tubes collected": "\u1785\u17c6\u1793\u17bd\u1793\u1780\u17c6\u1794\u17c9\u17bb\u1784\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Aspirator": "\u1798\u17c9\u17b6\u179f\u17bc\u1794\u1798\u17bc\u179f",
   "Identification": "\u1780\u17b6\u179a\u1785\u17c6\u178e\u17b6\u178f\u17cb\u1794\u17d2\u179a\u1797\u17c1\u1791",
   "Containers by type": "\u1797\u17b6\u1787\u1793\u17cd\u178f\u17b6\u1798\u1794\u17d2\u179a\u1797\u17c1\u1791",
   "House total": "\u179f\u179a\u17bb\u1794\u1797\u17b6\u1787\u1793\u17cd",
-  "Larvae tubes collected": "\u1794\u17c6\u1796\u1784\u17cb\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
+  "Larvae tubes collected": "\u1780\u17c6\u1794\u17c9\u17bb\u1784\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
   "Collection record *": "\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1794\u17d2\u179a\u1798\u17bc\u179b",
-  "Tube *": "\u1794\u17c6\u1796\u1784\u17cb",
-  "Tube ID": "\u179b\u17c1\u1781\u1794\u17c6\u1796\u1784\u17cb",
-  "Tube": "\u1794\u17c6\u1796\u1784\u17cb",
+  "Tube *": "\u1780\u17c6\u1794\u17c9\u17bb\u1784",
+  "Tube ID": "\u179b\u17c1\u1781 \u1780\u17c6\u1794\u17c9\u17bb\u1784",
+  "Tube IDs": "\u179b\u17c1\u1781 \u1780\u17c6\u1794\u17c9\u17bb\u1784",
+  "Tube": "\u1780\u17c6\u1794\u17c9\u17bb\u1784",
   "Specimen stage": "\u178a\u17c6\u178e\u17b6\u1780\u17cb\u1780\u17b6\u179b\u179f\u17c6\u178e\u17b6\u1780",
-  "Water jar": "\u1780\u17d2\u17a2\u1798\u1791\u17b9\u1780",
-  "Drum": "\u1796\u17b6\u1784\u1791\u17b9\u1780",
+  "Water jar": "\u1796\u17b6\u1784\u1791\u17b9\u1780",
   "Tyre": "\u179f\u17c6\u1794\u1780\u1780\u1784\u17cb\u1785\u17b6\u179f\u17cb\u17d7",
   "Plant pot": "\u1790\u17bc\u1795\u17d2\u1780\u17b6",
   "Water tank": "\u17a2\u17b6\u1784\u1791\u17b9\u1780",
@@ -811,9 +840,9 @@ const KM = {
   "Culex spp.": "Culex spp.",
   "Other / damaged": "\u1795\u17d2\u179f\u17c1\u1784\u17d7 / \u1781\u17bc\u1785",
   "Ae. aegypti female": "Ae. aegypti \u1789\u17b8",
-  "Ae. aegypti male": "Ae. aegypti \u1786\u17d2\u1798\u17c4\u179b",
+  "Ae. aegypti male": "Ae. aegypti \u1788\u17d2\u1798\u17c4\u179b",
   "Ae. albopictus female": "Ae. albopictus \u1789\u17b8",
-  "Ae. albopictus male": "Ae. albopictus \u1786\u17d2\u1798\u17c4\u179b",
+  "Ae. albopictus male": "Ae. albopictus \u1788\u17d2\u1798\u17c4\u179b",
   Inside: "\u1780\u17d2\u1793\u17bb\u1784\u1795\u17d2\u1791\u17c7",
   Outside: "\u1780\u17d2\u179a\u17c5\u1795\u17d2\u1791\u17c7",
   Both: "\u1791\u17b6\u17c6\u1784\u1796\u17b8\u179a",
@@ -838,7 +867,7 @@ KM["Location"] = "\u1791\u17b8\u178f\u17b6\u17c6\u1784";
 KM["Activity"] = "\u179f\u1780\u1798\u17d2\u1798\u1797\u17b6\u1796";
 KM["Trap install"] = "\u178a\u17b6\u1780\u17cb\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb";
 KM["Trap collection"] = "\u1794\u17d2\u179a\u1798\u17bc\u179b\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb";
-KM["Adult collection"] = "\u1794\u17d2\u179a\u1798\u17bc\u179b\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17c9\u1799";
+KM["Adult collection"] = "\u1794\u17d2\u179a\u1798\u17bc\u179b\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799";
 KM["Larvae collection"] = "\u1794\u17d2\u179a\u1798\u17bc\u179b\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780";
 KM["Lab result"] = "\u179b\u1791\u17d2\u1792\u1795\u179b\u1798\u1793\u17d2\u1791\u17b8\u179a\u1796\u17b7\u179f\u17c4\u1792\u1793\u17cd";
 KM["Torn"] = "\u179a\u17c9\u17b6\u179a\u17c9\u17c3";
@@ -1206,12 +1235,12 @@ class Component extends DCLogic {
   open = (type, context) => {
     const today = new Date().toISOString().slice(0, 10);
     const blank = {
-      household: { head: "", phone: "", residents: "", province_code: "", province: "", district_code: "", district: "", commune_code: "", commune: "", village_code: "", village: "", address: "", structure: "House", consent: "Given" },
+      household: { head: "", phone: "", residents: 0, province_code: "", province: "", district_code: "", district: "", commune_code: "", commune: "", village_code: "", village: "", address: "", structure: "House", consent: "Given" },
       install: { trap_id_inside: "", trap_id_outside: "", trap_type: "Ovitrap", house: "", position: "Both", substrate: "Hay infusion", notes: "" },
       collect: { trap_ids: [], trap_id: "", position: "Both", found: "Yes", condition: "Intact", paddle: "", notes: "" },
-      adult: { method: "Procopack", trap_id: "", house: "", specimens: "", notes: "" },
+      adult: { method: "Procopack", trap_id: "", house: "", specimens: 0, notes: "" },
       lab: { source_id: "", tube_id: "", house: "", trap_id: "", aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
-      larvae: { house: "", specimens: "", notes: "" },
+      larvae: { house: "", specimens: 0, notes: "" },
     }[type];
     blank.collected_date = today;
     const ctx = context || {};
@@ -1260,10 +1289,12 @@ class Component extends DCLogic {
 
   // One standard trap ID format everywhere: TYPE-HOUSE-POSITION, e.g. OVT-0009-IN,
   // BGS-0009-OUT. Regenerated while the field still holds an auto value; typing over it wins.
-  autoIds(type, f) {
-    if (type !== "install" || !f.house) return f;
+  autoIds(type, f, records) {
+    // The household comes from the form, or from the household the form was opened inside.
+    const house = f.house || this.state.ctxHouse || "";
+    if (type !== "install" || !house) return f;
     const taken = {};
-    this.state.records.forEach((r) => { if (r.trap_id) taken[r.trap_id] = 1; });
+    (records || this.state.records).forEach((r) => { if (r.trap_id) taken[r.trap_id] = 1; });
     const unique = (base) => {
       if (!taken[base]) return base;
       let i = 2;
@@ -1271,7 +1302,7 @@ class Component extends DCLogic {
       return base + "-" + i;
     };
     const prefix = f.trap_type === "BG-Sentinel" ? "BGS" : "OVT";
-    const stem = prefix + "-" + String(f.house).replace(/^HH-/, "");
+    const stem = prefix + "-" + String(house).replace(/^HH-/, "");
     const out = { ...f };
     const apply = (key, suffix, wanted) => {
       const autoKey = "_auto_" + key;
@@ -1485,7 +1516,11 @@ class Component extends DCLogic {
     this.persist(built.concat(this.state.records));
     if (again) {
       // Same household, same day, same location — only the trap changes.
-      this.setState({ form: { ...form, trap_id_inside: "", trap_id_outside: "" }, error: "", forceSave: false });
+      // Clear the IDs, then mint the next pair so the field is never empty.
+      this.setState((p) => ({
+        form: this.autoIds(p.type, { ...form, trap_id_inside: "", trap_id_outside: "", _auto_trap_id_inside: "", _auto_trap_id_outside: "" }, p.records),
+        error: "", forceSave: false,
+      }));
     } else {
       this.setState({ screen: this.state.returnTo === "hhdetail" ? "hhdetail" : "home", error: "", forceSave: false });
     }
@@ -1753,10 +1788,12 @@ class Component extends DCLogic {
     });
   };
 
-  // Larvae tubes are reared and identified to species only; adults are also sexed.
+  // Reared material — larvae, and eggs from an ovitrap collection — is identified to
+  // species only. Only mosquitoes caught as adults (Procopack) are sexed.
   stageOf(sourceId) {
     const src = this.state.records.find((r) => r.record_id === sourceId);
-    return src && (src.form_type || src.type) === "larvae" ? "Larvae" : "Adult";
+    const t = src && (src.form_type || src.type);
+    return t === "larvae" || t === "collect" ? "Larvae" : "Adult";
   }
 
   // Changing a source filter clears the picked record and tube.
@@ -2087,6 +2124,21 @@ class Component extends DCLogic {
     };
   }
 
+  // Which round this form belongs to, shown in the status strip.
+  roundText(form, type) {
+    const p = period((form || {}).collected_date);
+    if (!p.month) return "";
+    const ctxHouse = this.state.ctxHouse;
+    const prior = ctxHouse
+      ? this.state.records.filter((r) => r.household_id === ctxHouse && (r.form_type || r.type) === type)
+      : [];
+    const same = prior.filter((r) => r.period_month === p.month).length;
+    return p.label + " round" + (ctxHouse
+      ? " \u00b7 visit " + (prior.length + 1)
+        + (same ? " \u00b7 " + same + " this month" : "")
+      : "");
+  }
+
   // What is already registered and already done at this household this round,
   // so the same trap is not entered twice on the same visit.
   trapListField(householdId, form) {
@@ -2176,22 +2228,12 @@ class Component extends DCLogic {
     })(this.state.records, ctx);
     // A registered ID is picked from a list; free text only when nothing is registered yet.
     const sel = (k, label, options, fallback) => (k === "house" && ctx
-      ? { label: label.replace(" *", ""), isNote: true, value: hhLabel }
+      ? { label: label.replace(" *", ""), isNote: true, noteId: hhLabel, value: "" }
       : options.length
       ? { label, isSelect: true, value: form[k] == null ? "" : String(form[k]), onChange: this.set(k),
           options: [{ value: "", label: "\u2014 select \u2014" }].concat(options) }
       : txt(k, label, fallback));
     const dateField = txt("collected_date", "Date collected", { type: "date" });
-    const roundNote = { label: "Round", isNote: true, value: (function (recs, f, t, ctxHouse) {
-      const p = period(f.collected_date);
-      if (!p.month) return "Pick the date to set the round.";
-      const prior = ctxHouse ? recs.filter((r) => r.household_id === ctxHouse && (r.form_type || r.type) === t) : [];
-      const same = prior.filter((r) => r.period_month === p.month).length;
-      return p.label + " round" + (ctxHouse
-        ? " \u00b7 visit " + (prior.length + 1) + " at this household"
-          + (same ? " \u00b7 " + same + " already recorded this month" : "")
-        : "");
-    })(this.state.records, form, type, this.state.ctxHouse) };
     const opts = (arr) => arr.map((v) => ({ value: v, label: v }));
     const seen = (k, where) => {
       const out = [];
@@ -2207,10 +2249,10 @@ class Component extends DCLogic {
       suggestions: opts(seen(k, where)),
     });
 
-    if (type === "household") return [dateField, roundNote].concat([
+    if (type === "household") return [{ ...dateField, label: "Date registered" }].concat([
       txt("head", "Head of household *", { placeholder: "Name" }),
       txt("phone", "Phone", { type: "tel", inputmode: "tel", placeholder: "012 000 000" }),
-      txt("residents", "Residents", { type: "number", inputmode: "numeric", placeholder: "6" }),
+      txt("residents", "Residents", { type: "number", inputmode: "numeric", placeholder: "0" }),
       this.geoField("province", "Province *", form),
       this.geoField("district", "District *", form),
       this.geoField("commune", "Commune", form),
@@ -2220,6 +2262,9 @@ class Component extends DCLogic {
       (function (g, capture) {
         return {
           label: "Location", isGps: true, capture,
+          hasFix: !!(g && g.lat),
+          lat: g && g.lat ? g.lat.toFixed(6) : "",
+          lon: g && g.lon ? g.lon.toFixed(6) : "",
           text: g && g.lat ? g.lat.toFixed(5) + ", " + g.lon.toFixed(5)
             : g && g.pending ? "\u1780\u17c6\u1796\u17bb\u1784\u179a\u1780\u1791\u17b8\u178f\u17b6\u17c6\u1784\u2026 locating"
             : g && g.err ? "\u1798\u17b7\u1793\u1798\u17b6\u1793 \u00b7 not available"
@@ -2232,7 +2277,6 @@ class Component extends DCLogic {
     ]);
     if (type === "install") return [
       dateField,
-      roundNote,
       choice("trap_type", "Trap type", ["Ovitrap", "BG-Sentinel"]),
       choice("position", "Trap position", ["Inside", "Outside", "Both"]),
     ].concat(
@@ -2250,8 +2294,7 @@ class Component extends DCLogic {
     );
     if (type === "collect") return [
       dateField,
-      roundNote,
-      ctx ? { label: "Household", isNote: true, value: hhLabel }
+      ctx ? { label: "Household", isNote: true, noteId: hhLabel, value: "" }
         : { label: "Village", isSelect: true, value: form._village || "", onChange: this.setVillageFilter,
         options: [{ value: "", label: "All villages (" + reg.traps.length + " traps)" }].concat((function (traps) {
           const seen = [], out = [];
@@ -2268,9 +2311,6 @@ class Component extends DCLogic {
       this.trapPicksField(form, ctx ? reg.traps.filter((t) => t.household_id === ctx)
         : form._village ? reg.traps.filter((t) => (t.village_code || t.village) === form._village)
         : reg.traps),
-      reg.trapPos[form.trap_id]
-        ? { label: "Trap position", isNote: true, value: reg.trapPos[form.trap_id] + " \u2014 taken from the installation record" }
-        : choice("position", "Trap position", ["Inside", "Outside", "Both"]),
     ].concat(
       ctx ? [this.trapListField(ctx, form)] : [],
       [
@@ -2280,33 +2320,39 @@ class Component extends DCLogic {
     );
     if (type === "adult") return [
       dateField,
-      roundNote,
       { label: "Collection method", isNote: true, value: "Procopack \u2014 handheld aspirator, no trap ID." },
       sel("house", "Household *", reg.hh, { placeholder: "HH-0001" }),
-      txt("specimens", "Tubes collected", { type: "number", inputmode: "numeric", placeholder: "2" }),
-      { label: "Tube IDs", isNote: true, value: (Number(form.specimens) || 0) > 0
-        ? (function (base, n) {
-            const ids = [];
-            for (let i = 1; i <= Math.min(n, 24); i += 1) ids.push(base + "-T" + i);
-            return ids.join("  |  ") + (n > 24 ? "  |  \u2026" : "") + "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1794\u17c6\u1796\u1784\u17cb \u00b7 write these on the tubes";
-          })(this.peekId(TYPES[type].prefix), Number(form.specimens) || 0)
-        : this.peekId(TYPES[type].prefix) + "-T1  \u2014 \u1782\u17c6\u179a\u17bc \u00b7 example, enter how many tubes you collected" },
+      txt("specimens", "Tubes collected", { type: "number", inputmode: "numeric", placeholder: "0" }),
+      { label: "Tube IDs", isNote: true,
+        noteId: (Number(form.specimens) || 0) > 0
+          ? (function (base, n) {
+              const ids = [];
+              for (let i = 1; i <= Math.min(n, 24); i += 1) ids.push(base + "-T" + i);
+              return ids.join("  |  ") + (n > 24 ? "  |  \u2026" : "");
+            })(this.peekId(TYPES[type].prefix), Number(form.specimens) || 0)
+          : this.peekId(TYPES[type].prefix) + "-T1",
+        value: (Number(form.specimens) || 0) > 0
+          ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1794\u17c6\u1796\u1784\u17cb \u00b7 write these on the tubes"
+          : "  \u2014 \u1782\u17c6\u179a\u17bc \u00b7 example, enter how many tubes you collected" },
       txt("notes", "Notes", { placeholder: "Rooms swept, time on site" }),
       { label: "Identification", isNote: true, value: "\u1794\u1789\u17d2\u1785\u17bc\u179b\u1785\u17c6\u1793\u17bd\u1793\u1794\u17d2\u179a\u1797\u17c1\u1791\u1793\u17c5\u179b\u1791\u17d2\u1792\u1795\u179b\u1798\u1793\u17d2\u1791\u17b8\u179a\u1796\u17b7\u179f\u17c4\u1792\u1793\u17cd \u00b7 species counts are entered under Lab result, one tube at a time" },
     ];
     if (type === "lab") return [
-      dateField,
-      roundNote,
+      { ...dateField, label: "Date of lab result" },
       // Narrow the source list to one household and one activity before picking.
     ].concat(
       ctx ? [] : [{ label: "Household", isSelect: true, value: form._srcHouse || "", onChange: this.setSrcFilter("_srcHouse"),
         options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all households" }].concat(reg.hh) }],
       [
-      { label: "Activity", isSelect: true, value: form._srcType || "", onChange: this.setSrcFilter("_srcType"),
-        options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all activities" },
-          { value: "adult", label: km("Adult collection") + " \u00b7 Procopack" },
-          { value: "larvae", label: km("Larvae collection") },
-          { value: "collect", label: km("Trap collection") }] },
+      // Each activity shows how many collections there are still waiting on a result.
+      (function (self, house) {
+        const n = (t) => self.specimenSources(house, t).length;
+        return { label: "Activity", isSelect: true, value: form._srcType || "", onChange: self.setSrcFilter("_srcType"),
+          options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all activities (" + n("") + ")" },
+            { value: "adult", label: km("Adult collection") + " \u00b7 Procopack (" + n("adult") + ")" },
+            { value: "larvae", label: km("Larvae collection") + " (" + n("larvae") + ")" },
+            { value: "collect", label: km("Trap collection") + " (" + n("collect") + ")" }] };
+      })(this, ctx || form._srcHouse),
       (function (sources) {
         return sources.length
           ? { label: "Collection record *", isSelect: true, value: form.source_id || "", onChange: this.setSource,
@@ -2316,24 +2362,35 @@ class Component extends DCLogic {
       }).call(this, this.specimenSources(ctx || form._srcHouse, form._srcType)),
       this.tubeField(form),
       { label: "Specimen stage", isNote: true, value: this.stageOf(form.source_id) === "Larvae"
-        ? "\u178a\u1784\u17d2\u1780\u17bc\u179c \u00b7 larvae \u2014 species only, no sex" : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17c9\u1799 \u00b7 adult \u2014 species and sex" },
+        ? "\u1794\u1784\u17d2\u1780\u17be\u178f\u1796\u17b8\u1796\u1784/\u178a\u1784\u17d2\u1780\u17bc\u179c \u00b7 reared \u2014 species only, no sex"
+        : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799 \u00b7 adult \u2014 species and sex" },
       ]
     ).concat(this.specimenSources(ctx || form._srcHouse, form._srcType).length === 0 ? []
-      : this.stageOf(form.source_id) === "Larvae"
-        ? LARVAL_TAXA.map(([k, label]) => counter(k, label))
-        : TAXA.map(([k, label]) => counter(k, label)));
+      // Two tallies per row, so a six-species count fits one screen.
+      : (function (list, self) {
+          const rows = [];
+          for (let i = 0; i < list.length; i += 2) {
+            const a = list[i], b = list[i + 1];
+            rows.push({
+              label: "", isPair: true,
+              aCap: km(a[1]), aValue: String(form[a[0]] || 0), aChange: self.setNum(a[0]),
+              bCap: b ? km(b[1]) : "", bValue: b ? String(form[b[0]] || 0) : "", bChange: b ? self.setNum(b[0]) : null,
+            });
+          }
+          return rows;
+        })(this.stageOf(form.source_id) === "Larvae" ? LARVAL_TAXA : TAXA, this)).map((fd) => (fd.isPair ? fd : { ...fd, wide: true }));
     return [
       dateField,
-      roundNote,
       sel("house", "Household *", reg.hh, { placeholder: "HH-KC-0312" }),
-      { label: "Containers by type", isNote: true, value: "\u179a\u17b6\u1799\u1780\u17b6\u179a\u178e\u17cd\u1785\u17c6\u1793\u17bd\u1793\u1797\u17b6\u1787\u1793\u17cd\u1794\u17b6\u1793\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799 \u1793\u17b7\u1784\u1785\u17c6\u1793\u17bd\u1793\u1798\u17b6\u1793\u178a\u1784\u17d2\u1780\u17bc\u179c \u00b7 inspected and positive, by type" },
+      { label: "Containers by type", isColHead: true,
+        aLabel: "\u1794\u17b6\u1793\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799 \u00b7 inspected",
+        bLabel: "\u1798\u17b6\u1793\u178a\u1784\u17d2\u1780\u17bc\u179c \u00b7 positive" },
     ].concat(
       CONTAINERS.map(([k, label]) => ({
-        label, isPair: true,
+        label: "", isRow: true, rowLabel: km(label),
         aLabel: "Inspected", bLabel: "Positive",
         aValue: String(form["inspected_" + k] || 0), bValue: String(form["positive_" + k] || 0),
-        aInc: this.bump("inspected_" + k, 1), aDec: this.bump("inspected_" + k, -1),
-        bInc: this.bump("positive_" + k, 1), bDec: this.bump("positive_" + k, -1),
+        aChange: this.setNum("inspected_" + k), bChange: this.setNum("positive_" + k),
       })),
       [
         { label: "House total", isNote: true, value: (function (f) {
@@ -2342,15 +2399,18 @@ class Component extends DCLogic {
             return i ? p + " / " + i + " containers positive \u00b7 container index " + (Math.round((p / i) * 1000) / 10) + " \u1797\u17b6\u1782\u179a\u1799"
               : "No containers counted yet.";
           })(form) },
-        txt("specimens", "Larvae tubes collected", { type: "number", inputmode: "numeric", placeholder: "1" }),
-        { label: "Tube IDs", isNote: true, value: (Number(form.specimens) || 0) > 0
-          ? (function (base, n) {
-              const ids = [];
-              for (let i = 1; i <= Math.min(n, 24); i += 1) ids.push(base + "-T" + i);
-              return ids.join("  |  ") + (n > 24 ? "  |  \u2026" : "")
-                + "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1794\u17c6\u1796\u1784\u17cb \u00b7 write these on the tubes";
-            })(this.peekId(TYPES[type].prefix), Number(form.specimens) || 0)
-          : this.peekId(TYPES[type].prefix) + "-T1  \u2014 \u1782\u17c6\u179a\u17bc \u00b7 example, enter how many tubes you collected" },
+        txt("specimens", "Larvae tubes collected", { type: "number", inputmode: "numeric", placeholder: "0" }),
+        { label: "Tube IDs", isNote: true,
+          noteId: (Number(form.specimens) || 0) > 0
+            ? (function (base, n) {
+                const ids = [];
+                for (let i = 1; i <= Math.min(n, 24); i += 1) ids.push(base + "-T" + i);
+                return ids.join("  |  ") + (n > 24 ? "  |  \u2026" : "");
+              })(this.peekId(TYPES[type].prefix), Number(form.specimens) || 0)
+            : this.peekId(TYPES[type].prefix) + "-T1",
+          value: (Number(form.specimens) || 0) > 0
+            ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1794\u17c6\u1796\u1784\u17cb \u00b7 write these on the tubes"
+            : "  \u2014 \u1782\u17c6\u179a\u17bc \u00b7 example, enter how many tubes you collected" },
         { label: "Identification", isNote: true, value: "\u1794\u1789\u17d2\u1785\u17bc\u179b\u1785\u17c6\u1793\u17bd\u1793\u1794\u17d2\u179a\u1797\u17c1\u1791\u1793\u17c5\u179b\u1791\u17d2\u1792\u1795\u179b\u1798\u1793\u17d2\u1791\u17b8\u179a\u1796\u17b7\u179f\u17c4\u1792\u1793\u17cd \u00b7 species counts are entered under Lab result, one tube at a time" },
         txt("notes", "Notes", { placeholder: "Treatment applied, refusals" }),
       ]
@@ -2359,9 +2419,9 @@ class Component extends DCLogic {
 
   describe(rec) {
     const r = { ...rec, type: rec.form_type || rec.type, house: rec.household_id || rec.house || "" };
-    if (r.type === "household") return r.head + " \u00b7 " + km(r.structure) + " \u00b7 \u1799\u179b\u17cb\u1796\u17d2\u179a\u1798 " + km(r.consent) + (r.residents ? " \u00b7 " + r.residents + " \u1793\u17b6\u1780\u17cb" : "");
+    if (r.type === "household") return r.head + " \u00b7 " + km(r.structure) + " \u00b7 " + km(r.consent) + (r.residents ? " \u00b7 " + r.residents + " \u1793\u17b6\u1780\u17cb" : "");
     if (r.type === "install") return km(r.trap_type) + " " + r.trap_id + (r.position ? " \u00b7 " + km(r.position) : "") + (r.substrate ? " \u00b7 " + km(r.substrate) : "") + (r.house ? " \u00b7 " + r.house : "");
-    if (r.type === "collect") return r.trap_id + (r.position ? " \u00b7 " + km(r.position) : "") + " \u00b7 \u179a\u1780\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u179b\u17c1\u1785 " + km(r.found) + (r.condition ? " \u00b7 " + km(r.condition) : "");
+    if (r.type === "collect") return r.trap_id + (r.position ? " \u00b7 " + km(r.position) : "") + " \u00b7 \u179a\u1780\u1783\u17be\u1789\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u17d6 " + km(r.found) + (r.condition ? " \u00b7 \u179f\u1797\u17b6\u1796\u17d6 " + km(r.condition) : "");
     if (r.type === "lab") {
       const larval = r.specimen_stage === "Larvae";
       const total = (larval ? LARVAL_TAXA : TAXA).reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
@@ -2424,7 +2484,7 @@ class Component extends DCLogic {
         title: km(TYPES[type].label) + " \u00b7 " + rid,
         titleEn: TYPES[type].label,
         meta: new Date(ts).toLocaleString() + (r.period_label ? " \u00b7 " + r.period_label + " round" : "")
-          + (r.visit_no ? " \u00b7 visit " + r.visit_no : "") + (r.epi_week ? " \u00b7 week " + r.epi_week : "") + (r.lat ? " \u00b7 " + r.lat + ", " + r.lon : " \u00b7 no GPS"),
+          + (r.visit_no ? " \u00b7 visit " + r.visit_no : "") + (r.epi_week ? " \u00b7 week " + r.epi_week : ""),
         detail: this.describe(r),
         bar: TYPES[type].bar,
         remove: () => this.persist(this.state.records.filter((x) => (x.record_id || x.id) !== rid)),
@@ -2443,6 +2503,27 @@ class Component extends DCLogic {
       dash: this.dashboard(),
       // React recreates these nodes whenever the screen changes, so a cached
       // Chart/Leaflet instance would stay bound to a detached element: tear down first.
+      // Small map under the Location field, showing the fix just captured.
+      formMapRef: (el) => {
+        if (this._formMap && this._formMapEl !== el) { this._formMap.remove(); this._formMap = null; }
+        this._formMapEl = el;
+        if (!el) return;
+        setTimeout(() => {
+          const g = this.state.gps;
+          if (!g || !g.lat || !window.L || !this._formMapEl) return;
+          if (!this._formMap) {
+            this._formMap = window.L.map(this._formMapEl, { scrollWheelZoom: false, attributionControl: false });
+            window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(this._formMap);
+            this._formMarker = window.L.circleMarker([g.lat, g.lon], {
+              radius: 8, color: "#fff", weight: 2, fillColor: "#117996", fillOpacity: 1,
+            }).addTo(this._formMap);
+          } else {
+            this._formMarker.setLatLng([g.lat, g.lon]);
+          }
+          this._formMap.setView([g.lat, g.lon], 17);
+          this._formMap.invalidateSize();
+        }, 60);
+      },
       chartRef: (el) => {
         if (this._chart && this._chart.canvas !== el) { this._chart.destroy(); this._chart = null; }
         this._chartEl = el;
@@ -2504,7 +2585,8 @@ class Component extends DCLogic {
         consent: km(current.consent) || "\u2014",
         registered: current.registered_date || "\u2014",
         gps: current.lat ? current.lat + ", " + current.lon : "\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1799\u1780 \u00b7 not captured",
-        traps: current.traps_installed, trapIds: current.trap_ids || "\u2014",
+        traps: current.traps_installed,
+        trapIds: String(current.trap_ids || "").split(" ").filter(Boolean).join("  |  ") || "\u2014",
         collections: current.collections, catch: current.total_catch,
         aegypti: current.aegypti_total, aegyptiPct: current.aegypti_pct + "%",
         inspected: current.containers_inspected, positive: current.containers_positive,
@@ -2531,6 +2613,17 @@ class Component extends DCLogic {
             + Object.keys(map[m].types).map((t) => km(TYPES[t].label)).join(", "),
         }));
       })(current._rows) : [],
+      hhHasMore: !!(current && current._rows.length > 3),
+      hhMoreLabel: s.hhAll
+        ? "\u1794\u17b7\u1791 \u00b7 show less"
+        : "\u1798\u17be\u179b\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb " + ((current && current._rows.length) || 0) + " \u00b7 show all",
+      toggleHhAll: () => this.setState((p) => ({ hhAll: !p.hhAll })),
+      hhRecordsShown: current ? (s.hhAll ? current._rows : current._rows.slice(0, 3)).map((r) => ({
+        title: km(TYPES[r.form_type || r.type].label) + " \u00b7 " + (r.record_id || r.id),
+        meta: (r.collected_date || "") + " " + (r.collected_time || "") + (r.epi_week ? " \u00b7 week " + r.epi_week : "") + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
+        detail: this.describe(r),
+        bar: TYPES[r.form_type || r.type].bar,
+      })) : [],
       hhRecords: current ? current._rows.map((r) => ({
         title: km(TYPES[r.form_type || r.type].label) + " \u00b7 " + (r.record_id || r.id),
         meta: (r.collected_date || "") + " " + (r.collected_time || "") + (r.epi_week ? " \u00b7 week " + r.epi_week : "") + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
@@ -2539,7 +2632,7 @@ class Component extends DCLogic {
       })) : [],
       exportHouseholds: this.exportHouseholds, exportSiteWeek: this.exportSiteWeek,
       gaps: (openGaps = [
-        { label: "Records with no GPS", n: s.records.filter((r) => !r.lat).length, note: "Cannot be mapped" },
+        { label: "Households with no GPS", n: s.records.filter((r) => (r.form_type || r.type) === "household" && !r.lat).length, note: "Cannot be mapped" },
         { label: "Records with no collector", n: s.records.filter((r) => !r.collector).length, note: "Cannot be traced to a person" },
         { label: "Records with no cluster", n: s.records.filter((r) => !r.cluster).length, note: "Cannot be aggregated by area" },
         { label: "Trap records not linked to a household", n: s.records.filter((r) => r.trap_id && !r.household_id).length, note: "Install the trap against a household" },
@@ -2592,7 +2685,9 @@ class Component extends DCLogic {
       stripText: s.online
         ? "\u1798\u17b6\u1793\u17a2\u17ca\u17b8\u1793\u1792\u17ba\u178e\u17b7\u178f \u00b7 Online \u2014 saved on the device first"
         : "\u1798\u17b7\u1793\u17a2\u17ca\u17b8\u1793\u1792\u17ba\u178e\u17b7\u178f \u00b7 Offline \u2014 saving here",
-      stripMeta: s.records.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 stored",
+      stripMeta: s.screen === "form"
+        ? this.roundText(s.form, s.type)
+        : s.records.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 stored",
 
       todayCount: s.records.filter((r) => String(r.collected_at_utc || r.saved_at).slice(0, 10) === today).length,
       latest: s.records.slice(0, 3).map(row),
@@ -2600,6 +2695,7 @@ class Component extends DCLogic {
       typeCounts: Object.keys(TYPES).map((k) => {
         const n = s.records.filter((r) => (r.form_type || r.type) === k).length;
         return {
+          key: k, option: km(TYPES[k].label) + "  \u00b7  " + n + "  \u00b7  ento-" + k + ".csv",
           label: TYPES[k].label, n, file: "ento-" + k + ".csv",
           download: n ? this.exportType(k) : null,
           bar: TYPES[k].bar,
@@ -2607,6 +2703,9 @@ class Component extends DCLogic {
           bd: n ? "#D9DEE4" : "#EDF1F4",
         };
       }),
+      exportChoice: s.exportChoice || "household",
+      setExportChoice: (e) => this.setState({ exportChoice: e && e.target ? e.target.value : e }),
+      downloadChoice: () => this.exportType(s.exportChoice || "household")(),
       exportAllTypes: this.exportAllTypes,
       storeSize: size,
       exportCsv: this.exportCsv, exportJson: this.exportJson, exportLong: this.exportLong,
@@ -2646,6 +2745,10 @@ class Component extends DCLogic {
         ...fd,
         labelKm: km(fd.label),
         labelEn: km(fd.label) === fd.label ? "" : fd.label,
+        noteId: fd.noteId || "",
+        span: (fd.wide || fd.isRow || fd.isPair || fd.isColHead || fd.isGps || fd.isPicks || fd.isList || fd.isChoice || fd.isNote
+          || fd.label === "Tubes collected" || fd.label === "Larvae tubes collected"
+          || fd.label === "House / street" || fd.label === "Notes") ? "span 2" : "auto",
       })) : [],
       saveRecord: this.save,
       saveLabel: s.editId ? "Save changes" : "Save record to device",
@@ -2678,18 +2781,22 @@ class Component extends DCLogic {
       gpsMeta: g && g.lat ? "Accuracy \u00b1" + Math.round(g.acc) + " m" : g && g.err ? g.err : "Optional \u2014 tap capture once per site",
 
       // Each tab keeps its own accent: active gets the colour plus a light wash.
+      tabRecordW: s.screen === "home" ? 800 : 500,
+      tabHhW: (s.screen === "hh" || s.screen === "hhdetail") ? 800 : 500,
+      tabDashW: s.screen === "dash" ? 800 : 500,
+      tabDataW: s.screen === "data" ? 800 : 500,
       tabRecordFg: s.screen === "home" ? "#003E78" : "#8A96A3",
-      tabRecordInd: s.screen === "home" ? "#003E78" : "transparent",
+      tabRecordInd: s.screen === "home" ? "#117996" : "transparent",
       tabRecordBg: s.screen === "home" ? "#EDF3F8" : "#fff",
-      tabHhFg: (s.screen === "hh" || s.screen === "hhdetail") ? "#117996" : "#8A96A3",
+      tabHhFg: (s.screen === "hh" || s.screen === "hhdetail") ? "#003E78" : "#8A96A3",
       tabHhInd: (s.screen === "hh" || s.screen === "hhdetail") ? "#117996" : "transparent",
-      tabHhBg: (s.screen === "hh" || s.screen === "hhdetail") ? "#E6F2F5" : "#fff",
-      tabDashFg: s.screen === "dash" ? "#0E8F7E" : "#8A96A3",
-      tabDashInd: s.screen === "dash" ? "#6EDBCD" : "transparent",
-      tabDashBg: s.screen === "dash" ? "#E8F8F5" : "#fff",
-      tabDataFg: s.screen === "data" ? "#B47A0A" : "#8A96A3",
-      tabDataInd: s.screen === "data" ? "#F4B71B" : "transparent",
-      tabDataBg: s.screen === "data" ? "#FDF6E3" : "#fff",
+      tabHhBg: (s.screen === "hh" || s.screen === "hhdetail") ? "#EDF3F8" : "#fff",
+      tabDashFg: s.screen === "dash" ? "#003E78" : "#8A96A3",
+      tabDashInd: s.screen === "dash" ? "#117996" : "transparent",
+      tabDashBg: s.screen === "dash" ? "#EDF3F8" : "#fff",
+      tabDataFg: s.screen === "data" ? "#003E78" : "#8A96A3",
+      tabDataInd: s.screen === "data" ? "#117996" : "transparent",
+      tabDataBg: s.screen === "data" ? "#EDF3F8" : "#fff",
       goRecord: () => this.setState({ screen: "home" }),
       goHh: () => this.setState({ screen: "hh" }),
       goDash: () => this.setState({ screen: "dash" }),
