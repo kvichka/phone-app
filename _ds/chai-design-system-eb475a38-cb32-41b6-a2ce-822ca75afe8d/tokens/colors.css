@@ -1,0 +1,47 @@
+/* CHAI color palette — from CHAI Identity Guide (July 2023) */
+:root {
+  /* Primary */
+  --chai-dark-blue: #003E78;   /* primary brand color — used in the logo */
+  --chai-turquoise: #117996;   /* primary accent */
+  --chai-light-blue: #D5E7EF;  /* callout box background, paired w/ dark blue text */
+
+  /* Accent */
+  --chai-teal: #6EDBCD;
+  --chai-green: #1ED47F;
+  --chai-gold: #F4B71B;
+  --chai-light-gold: #FDF1D1;
+  --chai-dark-red: #7C1220;
+
+  /* Neutrals */
+  --chai-black: #000000;
+  --chai-white: #FFFFFF;
+  --chai-light-grey: #F2F2F2;
+  --chai-grey: #767676;       /* accessible body grey on white */
+  --chai-dark-grey: #333333;
+
+  /* ---- Semantic aliases ---- */
+  --color-bg: var(--chai-white);
+  --color-bg-subtle: var(--chai-light-grey);
+  --color-surface: var(--chai-white);
+  --color-surface-callout: var(--chai-light-blue);
+  --color-surface-callout-gold: var(--chai-light-gold);
+
+  --color-text: var(--chai-dark-grey);
+  --color-text-strong: var(--chai-dark-blue);
+  --color-text-muted: var(--chai-grey);
+  --color-text-inverse: var(--chai-white);
+
+  --color-primary: var(--chai-dark-blue);
+  --color-primary-hover: #002b53;   /* darken */
+  --color-accent: var(--chai-turquoise);
+  --color-accent-hover: #0d6177;
+
+  --color-link: var(--chai-turquoise);
+  --color-border: #D9DEE4;
+  --color-border-strong: #B5BFC9;
+
+  --color-success: var(--chai-green);
+  --color-warning: var(--chai-gold);
+  --color-danger: var(--chai-dark-red);
+  --color-info: var(--chai-turquoise);
+}
