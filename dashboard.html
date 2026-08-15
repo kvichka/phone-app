@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<style>
+html,body{margin:0;background:#EFF4F8;font-family:"Kantumruy Pro","Trebuchet MS","Fira Sans",system-ui,sans-serif;color:#1E293B;font-size:15px;-webkit-text-size-adjust:100%}
+button,select,input,textarea{font-family:inherit}
+*{box-sizing:border-box}
+a{color:#117996}a:hover{color:#0d6177}
+select{font-family:inherit;font-size:13px;padding:6px 10px;border:1px solid #D9DEE4;border-radius:6px;background:#fff;color:#1E293B;min-width:0;max-width:100%}
+canvas{max-height:280px}
+.leaflet-tooltip.hh-label{background:rgba(255,255,255,.92);border:1px solid #C6D5E4;box-shadow:none;padding:2px 6px;border-radius:4px;white-space:nowrap}
+.leaflet-tooltip.hh-label:before{display:none}
+</style>
+</helmet>
+
+<div style="width:96vw;max-width:1700px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:16px">
+
+  <div style="background:linear-gradient(135deg,#003E78 0%,#117996 100%);color:#fff;border-radius:12px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div style="display:flex;align-items:center;gap:14px;min-width:0">
+      <img src="icon-180.png" alt="" width="44" height="44" style="width:44px;height:44px;border-radius:11px;flex:none;background:rgba(255,255,255,.12)">
+      <div style="min-width:0">
+        <div style="font-size:20px;font-weight:700;line-height:1.3">ផ្ទាំងព័ត៌មានការឃ្លាំមើលបាណកសាស្ត្រ</div>
+        <div style="font-size:13px;color:#A9CCE3;margin-top:3px">Entomological Surveillance Dashboard · Wolbachia programme</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span style="font-size:12px;color:#A9CCE3">{{ statusText }}</span>
+      <button onClick="{{ reload }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font:700 12.5px/1 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
+        <span>{{ reloadLabel }}</span>
+      </button>
+      <button onClick="{{ downloadCsv }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font:700 12.5px/1 inherit;cursor:pointer">CSV</button>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+    <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+        <span style="font-size:11px;font-weight:700;color:{{ f.labelFg }}">{{ f.label }}{{ f.mark }}</span>
+        <select value="{{ f.value }}" onChange="{{ f.onChange }}" style="border:1.5px solid {{ f.bd }};background:{{ f.bg }};font-weight:{{ f.weight }}">
+          <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="2">
+            <option value="{{ o.value }}">{{ o.label }}</option>
+          </sc-for>
+        </select>
+      </div>
+    </sc-for>
+    <button onClick="{{ resetFilters }}" style="padding:8px 14px;background:{{ resetBg }};border:1.5px solid {{ resetBd }};border-radius:6px;font:700 12.5px/1 inherit;color:{{ resetFg }};cursor:pointer;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path></svg>{{ resetLabel }}</button>
+    <span style="margin-left:auto;font-size:12px;color:#64748B">{{ recCountLabel }}</span>
+  </div>
+
+  <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#FDF1D1;border-left:4px solid #F4B71B;border-radius:6px;padding:12px 16px;font-size:13px;line-height:1.6;color:#3d2c00">{{ errorText }}</div>
+  </sc-if>
+
+  <div style="background:#D5E7EF;border-left:4px solid #003E78;border-radius:6px;padding:14px 16px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#003E78">អានលទ្ធផល <span style="font-weight:400">What the data says</span></div>
+    <div style="font-size:13.5px;line-height:1.65;color:#003E78;margin-top:6px">{{ story }}</div>
+  </div>
+
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+      <button onClick="{{ t.go }}" style="padding:9px 16px;border:1px solid {{ t.bd }};border-radius:20px;background:{{ t.bg }};color:{{ t.fg }};font:700 13px/1 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="{{ t.icon }}"></path></svg>
+        <span>{{ t.label }}</span>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px">
+    <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+      <div style="background:#fff;border:1px solid #F1F5F9;border-top:4px solid {{ k.color }};border-radius:12px;padding:14px 16px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <div style="font-size:11.5px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px">{{ k.label }}</div>
+        <div style="font-size:27px;font-weight:700;color:#1A2332;margin:5px 0 2px;line-height:1.1">{{ k.value }}</div>
+        <div style="font-size:11.5px;color:#64748B">{{ k.sub }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ showTables }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="background:#fff;border:1px solid #F1F5F9;border-radius:12px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">សូចនាករមូសពេញវ័យ <span style="font-weight:400;color:#9AA5AE">Adult survey indicators</span></div>
+        <sc-for list="{{ adultIndicators }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:13px">
+            <span>{{ r.label }}</span><span style="font-weight:700;color:#003E78">{{ r.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:#fff;border:1px solid #F1F5F9;border-radius:12px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">សូចនាករដង្កូវទឹក <span style="font-weight:400;color:#9AA5AE">Larval survey indicators</span></div>
+        <sc-for list="{{ larvalIndicators }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:13px">
+            <span>{{ r.label }}</span><span style="font-weight:700;color:#003E78">{{ r.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showCharts }}" hint-placeholder-val="{{ true }}">
+    <div style="font-size:12px;color:#64748B">{{ chartHint }}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <sc-for list="{{ charts }}" as="c" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #F1F5F9;border-radius:12px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span style="width:26px;height:26px;flex:none;border-radius:7px;background:#EEF4F8;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ c.icon }}"></path></svg></span>
+            <span style="flex:1;min-width:0;font-size:14px;font-weight:700;color:#1A2332">{{ c.title }} <span style="font-weight:400;color:#9AA5AE">{{ c.titleEn }}</span></span>
+            <sc-if value="{{ c.clickable }}" hint-placeholder-val="{{ false }}">
+              <span style="flex:none;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#117996;background:#EEF4F8;border-radius:999px;padding:3px 8px">តម្រង · filter</span>
+            </sc-if>
+          </div>
+          <canvas data-chart="{{ c.key }}"></canvas>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#fff;border:1px solid #F1F5F9;border-radius:12px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+      <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">ផែនទីគ្រួសារ <span style="font-weight:400;color:#9AA5AE">Household locations</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <sc-for list="{{ mapModes }}" as="m" hint-placeholder-count="3">
+          <button onClick="{{ m.go }}" style="padding:6px 12px;border:1px solid {{ m.bd }};border-radius:16px;background:{{ m.bg }};color:{{ m.fg }};font:700 12px/1 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="{{ m.icon }}"></path></svg>
+            <span>{{ m.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div ref="{{ mapRef }}" style="height:520px;border-radius:8px;border:1px solid #E4EBF0;background:#F8FAFB"></div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px">
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#64748B">{{ mapLegendTitle }}</span>
+        <sc-for list="{{ mapLegend }}" as="l" hint-placeholder-count="3">
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#475569">
+            <span style="width:{{ l.size }};height:{{ l.size }};border-radius:50%;background:{{ l.color }};border:2px solid #fff;box-shadow:0 0 0 1px #D9DEE4;flex:none"></span>
+            <span>{{ l.label }}</span>
+          </span>
+        </sc-for>
+      </div>
+      <div style="font-size:12px;color:#64748B;margin-top:10px;line-height:1.6">{{ mapNote }}</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showTable }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#fff;border:1px solid #F1F5F9;border-radius:12px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow-x:auto">
+      <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">តារាងតាមខ្នងផ្ទះ <span style="font-weight:400;color:#9AA5AE">By household</span></div>
+      <div style="display:flex;gap:8px;padding:8px 10px;background:#F1F5F9;border-radius:6px;width:max-content;min-width:100%">
+        <sc-for list="{{ tableCols }}" as="c" hint-placeholder-count="8">
+          <button onClick="{{ c.sort }}" style="flex:{{ c.flex }};width:{{ c.w }};min-width:{{ c.min }};text-align:{{ c.align }};background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:{{ c.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}{{ c.arrow }}</button>
+        </sc-for>
+      </div>
+      <sc-for list="{{ tableRows }}" as="r" hint-placeholder-count="6">
+        <div style="display:flex;gap:8px;padding:9px 10px;border-bottom:1px solid #F1F5F9;font-size:12.5px;width:max-content;min-width:100%">
+          <span style="flex:none;width:84px;font-weight:700;color:#003E78">{{ r.id }}</span>
+          <span style="flex:none;width:110px;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.prov }}</span>
+          <span style="flex:none;width:110px;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.dist }}</span>
+          <span style="flex:none;width:110px;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.comm }}</span>
+          <span style="flex:none;width:110px;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.vill }}</span>
+          <span style="flex:none;width:70px;text-align:right">{{ r.trapsOvi }}</span>
+          <span style="flex:none;width:72px;text-align:right">{{ r.trapsBg }}</span>
+          <span style="flex:none;width:112px;text-align:right">{{ r.insp }} / {{ r.pos }}</span>
+          <span style="flex:none;width:58px;text-align:right;font-weight:700;color:{{ r.ciColor }}">{{ r.ci }}</span>
+          <span style="flex:none;width:88px;text-align:right;color:#003E78;font-weight:700">{{ r.aeg }}</span>
+          <span style="flex:none;width:96px;text-align:right;color:#0d6177">{{ r.alb }}</span>
+          <span style="flex:none;width:76px;text-align:right;color:#B47A0A">{{ r.culex }}</span>
+          <span style="flex:none;width:62px;text-align:right">{{ r.adults }}</span>
+          <span style="flex:none;width:58px;text-align:right;font-weight:700;color:#B47A0A">{{ r.eggs }}</span>
+          <span style="flex:none;width:62px;text-align:right;color:#475569">{{ r.eggsIn }}</span>
+          <span style="flex:none;width:70px;text-align:right;color:#475569">{{ r.eggsOut }}</span>
+        </div>
+      </sc-for>
+      <div style="display:flex;gap:8px;padding:10px;background:#F1F5F9;border-radius:6px;font-size:12.5px;font-weight:700;color:#1A2332;margin-top:2px;width:max-content;min-width:100%">
+        <span style="flex:none;width:84px;color:#003E78">{{ totals.label }}</span>
+        <span style="flex:none;width:110px"></span>
+        <span style="flex:none;width:110px"></span>
+        <span style="flex:none;width:110px"></span>
+        <span style="flex:none;width:110px"></span>
+        <span style="flex:none;width:70px;text-align:right">{{ totals.trapsOvi }}</span>
+        <span style="flex:none;width:72px;text-align:right">{{ totals.trapsBg }}</span>
+        <span style="flex:none;width:112px;text-align:right">{{ totals.insp }} / {{ totals.pos }}</span>
+        <span style="flex:none;width:58px;text-align:right;color:{{ totals.ciColor }}">{{ totals.ci }}</span>
+        <span style="flex:none;width:88px;text-align:right;color:#003E78">{{ totals.aeg }}</span>
+        <span style="flex:none;width:96px;text-align:right;color:#0d6177">{{ totals.alb }}</span>
+        <span style="flex:none;width:76px;text-align:right;color:#B47A0A">{{ totals.culex }}</span>
+        <span style="flex:none;width:62px;text-align:right">{{ totals.adults }}</span>
+        <span style="flex:none;width:58px;text-align:right;color:#B47A0A">{{ totals.eggs }}</span>
+        <span style="flex:none;width:62px;text-align:right">{{ totals.eggsIn }}</span>
+        <span style="flex:none;width:70px;text-align:right">{{ totals.eggsOut }}</span>
+      </div>
+      <div style="font-size:11.5px;color:#64748B;margin-top:10px">{{ tableNote }}</div>
+    </div>
+  </sc-if>
+
+  <div style="text-align:center;font-size:11.5px;color:#64748B;padding:8px">{{ footer }}</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:900}}">
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbz5dYyX8PKVisxPxePppnmu3qzy1S3pJPCfEQWgrP4osxJkoBA1vyx9DTDROASbA3-P/exec";
+const CONTAINERS = [["jar", "ពាងទឹក", "Water jar"], ["tyre", "សំបកកង់ចាស់ៗ", "Tyre"],
+  ["pot", "ថូផ្កា", "Plant pot"], ["tank", "អាងទឹក", "Water tank"], ["other", "ផ្សេងៗ", "Other"]];
+const FONT = "'Kantumruy Pro','Trebuchet MS','Fira Sans',system-ui,sans-serif";
+const COLORS = ["#003E78", "#117996", "#6EDBCD", "#F4B71B", "#7C1220", "#1ED47F", "#6B4C7A", "#B47A0A"];
+const num = (v) => Number(v) || 0;
+// Counts read with thousands separators: 10,383 not 10383.
+const fmt = (v) => (typeof v === "number" || (v !== "" && v != null && !isNaN(Number(v))))
+  ? Number(v).toLocaleString("en-US") : v;
+
+const TAB_COLOR = {
+  overview: { solid: "#003E78", tint: "#EDF3F8", line: "#C6D5E4" },
+  larval:   { solid: "#117996", tint: "#E6F2F5", line: "#B7DCE4" },
+  adult:    { solid: "#7C1220", tint: "#FBEDEF", line: "#E8C6CC" },
+  ovitrap:  { solid: "#B47A0A", tint: "#FDF6E3", line: "#F3DFA8" },
+  map:      { solid: "#0E7A5F", tint: "#E7F6F1", line: "#B5E0D3" },
+  table:    { solid: "#4B5563", tint: "#F1F5F9", line: "#D9DEE4" },
+};
+
+const TAB_ICON = {
+  "overview": "M4 20V10m5 10V4m5 16v-7m5 7V7",
+  "larval": "M12 3.5c3.5 4 5.5 6.4 5.5 9a5.5 5.5 0 0 1-11 0c0-2.6 2-5 5.5-9Z",
+  "adult": "M12 6v12M7 9 4 7m13 2 3-2M7 15l-3 2m13-2 3 2M9.5 6a2.5 2.5 0 0 1 5 0",
+  "ovitrap": "M8.5 4h7l-1 15.5h-5L8.5 4Z",
+  "map": "M9 3.5 4 6v14.5l5-2.5 6 2.5 5-2.5V3.5l-5 2.5-6-2.5Z",
+  "table": "M4 6.5h16M4 12h16M4 17.5h16",
+  "eggs": "M12 4c3 0 5.2 3.4 5.2 7S15 17.5 12 17.5 6.8 14.6 6.8 11 9 4 12 4Z"
+};
+
+// Romanised or English place names seen in the Kobo forms → gazetteer code + name.
+const PLACE_ALIAS = {
+  province: { "Battambang": ["02", "បាត់ដំបង"], "Battambang Province": ["02", "បាត់ដំបង"] },
+  district: { "Battambang City": ["0203", "បាត់ដំបង"], "Battambang": ["0203", "បាត់ដំបង"],
+    "Krong Battambang": ["0203", "បាត់ដំបង"] },
+  commune: { "Toul Ta Ek": ["020301", "ទួលតាឯក"], "Preak Peahsdach": ["020302", "ព្រែកព្រះសេ្ដច"],
+    "Rattanak": ["020303", "រតនៈ"], "Svay Por": ["020310", "ស្វាយពោ"] },
+  village: { "Toul Ta Ek": ["0203010400", "ទួលតាឯក"], "Otakom": ["0203010200", "អូរតាគាំ ២"],
+    "Kampong Krabei": ["0203100200", "កំពង់ក្របី"], "Kamakor": ["0203100400", "កម្មករ"],
+    "Rumchek": ["0203030500", "រំចេក ៥"], "Rattanak": ["0203030800", "រតនៈ"],
+    "Numkiem": ["0203020600", "នំក្រៀប"], "Ocheay": ["0203020400", "អូរខ្ជាយ"] },
+};
+const LEVELS = ["province", "district", "commune", "village"];
+const padTo = { province: 2, district: 4, commune: 6, village: 10 };
+
+function cleanRecords(list) {
+  const pad = (level, raw) => {
+    const s = String(raw === undefined || raw === null ? "" : raw).trim();
+    if (!s) return "";
+    return /^\d+$/.test(s) ? s.padStart(padTo[level], "0") : s;
+  };
+  const out = list.map((r) => {
+    const rec = { ...r };
+    LEVELS.forEach((level) => {
+      let code = pad(level, rec[level + "_code"]);
+      let nm = String(rec[level] || "").replace(/_v$/, "").trim();
+      const alias = (PLACE_ALIAS[level] || {})[nm];
+      if (alias) { code = code || alias[0]; nm = alias[1]; }
+      rec[level + "_code"] = code;
+      rec[level] = nm;
+    });
+    // a village outside the gazetteer still needs a stable key
+    if (rec.village && !rec.village_code) {
+      rec.village = rec.village.replace(/_v$/, "");
+      rec.village_code = (rec.commune_code || "x") + "-"
+        + rec.village.replace(/[^A-Za-z0-9\u1780-\u17ff]+/g, "").toLowerCase();
+    }
+    // parent levels implied by a child code
+    if (rec.commune_code && /^\d{6}$/.test(rec.commune_code)) {
+      rec.district_code = rec.district_code || rec.commune_code.slice(0, 4);
+      rec.province_code = rec.province_code || rec.commune_code.slice(0, 2);
+    }
+    if (rec.district_code && /^\d{4}$/.test(rec.district_code)) {
+      rec.province_code = rec.province_code || rec.district_code.slice(0, 2);
+    }
+    return rec;
+  });
+
+  // Only the register row carries place; every other record inherits it by household.
+  const byHouse = {};
+  out.forEach((r) => {
+    if (!r.household_id) return;
+    const slot = byHouse[r.household_id] || (byHouse[r.household_id] = {});
+    LEVELS.forEach((level) => {
+      if (!slot[level] && r[level]) { slot[level] = r[level]; slot[level + "_code"] = r[level + "_code"]; }
+    });
+    if (!slot.lat && r.lat) { slot.lat = r.lat; slot.lon = r.lon; }
+  });
+  out.forEach((r) => {
+    const slot = byHouse[r.household_id];
+    if (!slot) return;
+    LEVELS.forEach((level) => {
+      if (!r[level] && slot[level]) { r[level] = slot[level]; r[level + "_code"] = slot[level + "_code"]; }
+    });
+    if (!r.lat && slot.lat) { r.lat = slot.lat; r.lon = slot.lon; }
+  });
+
+  // names follow their code, so one code never shows two spellings
+  const nameByCode = {};
+  out.forEach((r) => LEVELS.forEach((level) => {
+    const c = r[level + "_code"];
+    if (c && r[level] && !nameByCode[level + c]) nameByCode[level + c] = r[level];
+  }));
+  out.forEach((r) => LEVELS.forEach((level) => {
+    const c = r[level + "_code"];
+    if (c && nameByCode[level + c]) r[level] = nameByCode[level + c];
+  }));
+  return out;
+}
+
+class Component extends DCLogic {
+  state = { records: [], loading: true, error: "", tab: "overview",
+    prov: "", dist: "", comm: "", vill: "", month: "", mapMode: "ci", sortKey: "ci", sortDir: "desc" };
+
+  componentDidMount() { this.load(); [0, 300, 900, 2000].forEach((ms) => setTimeout(this.draw, ms)); }
+  componentDidUpdate() { this.draw(); }
+
+  load = () => {
+    this.setState({ loading: true, error: "" });
+    const url = SHEET_URL + (SHEET_URL.indexOf("?") >= 0 ? "&" : "?") + "action=records";
+    fetch(url)
+      .then((r) => r.json())
+      .then((out) => {
+        if (!out || !out.ok) throw new Error((out && out.error) || "the sheet refused the request");
+        // Both sources live in the sheet now; each row says which it came from.
+        const sheet = cleanRecords(out.records || []);
+        this.setState({ records: sheet, loading: false });
+      })
+      .catch((e) => this.setState({ loading: false,
+        error: "មិនអាចទាញទិន្នន័យ · could not load from the sheet: " + (e && e.message ? e.message : "no connection")
+          + ". Check the Apps Script deployment is set to \"Anyone\" and redeployed as a new version." }));
+  };
+
+  type(r) { return r.form_type || r.type || ""; }
+
+  // Admin code widths: province 2, district 4, commune 6, village 8.
+  code(level, r) {
+    const width = { province: 2, district: 4, commune: 6, village: 8 }[level];
+    const raw = r[level + "_code"];
+    if (raw === undefined || raw === null || raw === "") return String(r[level] || "");
+    const s = String(raw).trim();
+    return /^\d+$/.test(s) ? s.padStart(width, "0") : s;
+  }
+
+  // Records that pass the administrative and month filters.
+  rows() {
+    const s = this.state;
+    return this.state.records.filter((r) => {
+      if (s.prov && this.code("province", r) !== s.prov) return false;
+      if (s.dist && this.code("district", r) !== s.dist) return false;
+      if (s.comm && this.code("commune", r) !== s.comm) return false;
+      if (s.vill && this.code("village", r) !== s.vill) return false;
+      if (s.month && this.monthKey(r) !== s.month) return false;
+      return true;
+    });
+  }
+
+  // One row per household, with everything measured against it.
+  households(rows) {
+    const map = {};
+    rows.forEach((r) => {
+      const id = r.household_id || (this.type(r) === "household" ? r.record_id : "");
+      if (!id) return;
+      const h = map[id] || (map[id] = { id, head: "", where: "", prov: "", dist: "", comm: "", vill: "", lat: "", lon: "",
+        traps: 0, trapsOvi: 0, trapsBg: 0, insp: 0, pos: 0, adults: 0, eggs: 0, eggsIn: 0, eggsOut: 0,
+        aeg: 0, alb: 0, culex: 0, other: 0, larvaeRecords: 0, positiveHouse: false });
+      const t = this.type(r);
+      // any record can supply the household's place; the register row is preferred
+      h.prov = h.prov || r.province || "";
+      h.dist = h.dist || r.district || "";
+      h.comm = h.comm || r.commune || "";
+      h.vill = h.vill || r.village || "";
+      h.where = h.where || [r.village, r.commune, r.district].filter(Boolean).join(", ");
+      if (!h.lat && r.lat) { h.lat = r.lat; h.lon = r.lon; }
+      if (t === "household") {
+        h.head = r.head || h.head;
+        h.label = r.hh_label || h.label || "";
+        h.where = [r.village, r.commune, r.district].filter(Boolean).join(", ") || h.where;
+        h.prov = r.province || h.prov;
+        h.dist = r.district || h.dist;
+        h.comm = r.commune || h.comm;
+        h.vill = r.village || h.vill;
+        if (r.lat) { h.lat = r.lat; h.lon = r.lon; }
+      }
+      if (t === "install") {
+        h.traps += 1;
+        if ((r.trap_type || "Ovitrap") === "Ovitrap") h.trapsOvi += 1; else h.trapsBg += 1;
+      }
+      if (t === "larvae") {
+        h.larvaeRecords += 1;
+        h.insp += num(r.containers_inspected);
+        h.pos += num(r.containers_positive);
+        if (num(r.containers_positive) > 0) h.positiveHouse = true;
+      }
+      if (t === "lab") {
+        h.adults += num(r.total_catch);
+        h.eggs += num(r.eggs);
+        // explicit in/out fields win; otherwise attribute by the trap's position
+        const pos = this.positionOf(r);
+        h.eggsIn += num(r.eggs_in) || (pos === "Inside" ? num(r.eggs) : 0);
+        h.eggsOut += num(r.eggs_out) || (pos === "Outside" ? num(r.eggs) : 0);
+        h.aeg += num(r.aegypti) + num(r.aegypti_f) + num(r.aegypti_m);
+        h.alb += num(r.albopictus) + num(r.albopictus_f) + num(r.albopictus_m);
+        h.culex += num(r.culex);
+        h.other += num(r.other);
+      }
+    });
+    return Object.keys(map).map((k) => {
+      const h = map[k];
+      h.ci = h.insp ? Math.round((h.pos / h.insp) * 1000) / 10 : 0;
+      return h;
+    });
+  }
+
+  // Species totals across lab records, adult keys and larval keys kept apart.
+  species(rows) {
+    const labs = rows.filter((r) => this.type(r) === "lab");
+    const sum = (k) => labs.reduce((a, r) => a + num(r[k]), 0);
+    const adultAeg = sum("aegypti_f") + sum("aegypti_m");
+    const adultAlb = sum("albopictus_f") + sum("albopictus_m");
+    const larvAeg = sum("aegypti"), larvAlb = sum("albopictus");
+    const culex = sum("culex"), other = sum("other");
+    const adultTotal = adultAeg + adultAlb + culex + other;
+    const larvTotal = larvAeg + larvAlb;
+    return { adultAeg, adultAlb, larvAeg, larvAlb, culex, other, adultTotal, larvTotal,
+      femaleAeg: sum("aegypti_f"), femaleAlb: sum("albopictus_f"),
+      maleAeg: sum("aegypti_m"), maleAlb: sum("albopictus_m"),
+      eggs: sum("eggs"), catchTotal: labs.reduce((a, r) => a + num(r.total_catch), 0) };
+  }
+
+  options(level) {
+    const s = this.state;
+    const parent = { district: ["province", s.prov], commune: ["district", s.dist],
+      village: ["commune", s.comm] }[level];
+    const seen = {}, out = [];
+    this.state.records.forEach((r) => {
+      const code = this.code(level, r);
+      if (!code) return;
+      if (parent && parent[1] && this.code(parent[0], r) !== parent[1]) return;
+      if (seen[code]) return;
+      seen[code] = 1;
+      out.push({ value: code, label: r[level] || code });
+    });
+    return out.sort((a, b) => String(a.label).localeCompare(String(b.label)));
+  }
+
+  // One key per calendar month, whatever shape the sheet sent back.
+  monthKey(r) {
+    const plain = String(r.collected_date || "").match(/^(\d{4})-(\d{2})/);
+    if (plain) return plain[1] + "-" + plain[2];
+    const raw = String(r.period_month || "");
+    const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})T/);
+    if (iso) {
+      // shift to Phnom Penh (UTC+7) before taking the month
+      const d = new Date(raw);
+      if (!isNaN(d)) {
+        const local = new Date(d.getTime() + 7 * 3600 * 1000);
+        return local.getUTCFullYear() + "-" + String(local.getUTCMonth() + 1).padStart(2, "0");
+      }
+    }
+    const m = raw.match(/^(\d{4})-(\d{2})/);
+    return m ? m[1] + "-" + m[2] : "";
+  }
+
+  monthLabel(key) {
+    const NAMES = ["\u1798\u1780\u179a\u17b6", "\u1780\u17bb\u1798\u17d2\u1797\u17c8", "\u1798\u17b8\u1793\u17b6", "\u1798\u17c1\u179f\u17b6", "\u17a7\u179f\u1797\u17b6", "\u1798\u17b7\u1790\u17bb\u1793\u17b6",
+      "\u1780\u1780\u17d2\u1780\u178a\u17b6", "\u179f\u17b8\u17a0\u17b6", "\u1780\u1789\u17d2\u1789\u17b6", "\u178f\u17bb\u179b\u17b6", "\u179c\u17b7\u1785\u17d2\u1786\u17b7\u1780\u17b6", "\u1792\u17d2\u1793\u17bc"];
+    const EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const parts = String(key).split("-");
+    const i = Number(parts[1]) - 1;
+    return i >= 0 && i < 12 ? NAMES[i] + " " + parts[0] + " \u00b7 " + EN[i] + " " + parts[0] : key;
+  }
+
+  monthOptions() {
+    const seen = {}, out = [];
+    this.state.records.forEach((r) => {
+      const m = this.monthKey(r);
+      if (!m || seen[m]) return;
+      seen[m] = 1;
+      out.push({ value: m, label: this.monthLabel(m) });
+    });
+    return out.sort((a, b) => String(b.value).localeCompare(String(a.value)));
+  }
+
+  set = (k) => (e) => {
+    const v = e && e.target ? e.target.value : e;
+    const clear = { prov: { dist: "", comm: "", vill: "" }, dist: { comm: "", vill: "" }, comm: { vill: "" } }[k] || {};
+    this.setState({ [k]: v, ...clear });
+  };
+
+  // Village aggregates drive most of the charts.
+  byVillage(rows) {
+    const map = {};
+    rows.forEach((r) => {
+      const name = r.village || r.village_code || "—";
+      const v = map[name] || (map[name] = { name, insp: 0, pos: 0, houses: {}, adults: 0, eggs: 0,
+        aeg: 0, alb: 0, culex: 0, larvae: 0 });
+      if (r.household_id) v.houses[r.household_id] = 1;
+      const t = this.type(r);
+      if (t === "larvae") { v.insp += num(r.containers_inspected); v.pos += num(r.containers_positive); }
+      if (t === "lab") {
+        v.adults += num(r.total_catch);
+        v.eggs += num(r.eggs);
+        v.aeg += num(r.aegypti_f) + num(r.aegypti_m) + num(r.aegypti);
+        v.alb += num(r.albopictus_f) + num(r.albopictus_m) + num(r.albopictus);
+        v.culex += num(r.culex);
+        v.larvae += num(r.aegypti) + num(r.albopictus);
+      }
+    });
+    return Object.keys(map).map((k) => {
+      const v = map[k];
+      v.visits = Object.keys(v.houses).length;
+      v.ci = v.insp ? Math.round((v.pos / v.insp) * 1000) / 10 : 0;
+      return v;
+    }).sort((a, b) => b.ci - a.ci || b.adults - a.adults);
+  }
+
+  // A lab result belongs to the trap that produced it: follow source_id back to the
+  // collection, then to that trap's installation.
+  methodOf(r) {
+    if (r.method) return r.method === "Larvae" ? "" : r.method;
+    const all = this.state.records;
+    const src = r.source_id ? all.find((x) => x.record_id === r.source_id) : null;
+    if (!src) return "";
+    const t = src.form_type || src.type;
+    if (t === "adult") return src.method || "Procopack";
+    if (t === "larvae") return "";
+    if (src.trap_type) return src.trap_type;
+    const inst = src.trap_id && all.find((x) => (x.form_type || x.type) === "install" && x.trap_id === src.trap_id);
+    return (inst && inst.trap_type) || "Ovitrap";
+  }
+
+  positionOf(r) {
+    const all = this.state.records;
+    const src = r.source_id ? all.find((x) => x.record_id === r.source_id) : null;
+    const trapId = (src && src.trap_id) || r.trap_id || "";
+    if (!trapId) return "";
+    const inst = all.find((x) => (x.form_type || x.type) === "install" && x.trap_id === trapId);
+    const pos = (inst && inst.position) || "";
+    if (pos === "Inside" || pos === "Outside") return pos;
+    if (/-IN(-|$)/i.test(trapId)) return "Inside";
+    if (/-OUT(-|$)/i.test(trapId)) return "Outside";
+    if (Number(inst && inst.pos_inside) === 1 && Number(inst && inst.pos_outside) !== 1) return "Inside";
+    if (Number(inst && inst.pos_outside) === 1 && Number(inst && inst.pos_inside) !== 1) return "Outside";
+    return "";
+  }
+
+  byMethod(rows) {
+    const map = {};
+    rows.filter((r) => (r.form_type || r.type) === "lab").forEach((r) => {
+      const m = this.methodOf(r);
+      if (!m || m === "Ovitrap") return;
+      const v = map[m] || (map[m] = { name: m, tubes: 0, total: 0, aeg: 0, alb: 0, culex: 0, other: 0 });
+      v.tubes += 1;
+      v.aeg += num(r.aegypti) + num(r.aegypti_f) + num(r.aegypti_m);
+      v.alb += num(r.albopictus) + num(r.albopictus_f) + num(r.albopictus_m);
+      v.culex += num(r.culex);
+      v.other += num(r.other);
+      v.total = v.aeg + v.alb + v.culex + v.other;
+    });
+    return Object.keys(map).map((k) => map[k]).sort((a, b) => b.total - a.total);
+  }
+
+  chartSpecs() {
+    const rows = this.rows();
+    const vil = this.byVillage(rows);
+    const sp = this.species(rows);
+    const labels = vil.map((v) => v.name).slice(0, 12);
+    const take = (fn) => vil.slice(0, 12).map(fn);
+    const bar = (data, color, label) => ({ type: "bar",
+      data: { labels, datasets: [{ label, data, backgroundColor: color, borderRadius: 3 }] } });
+    const t = this.state.tab;
+    const whoLine = (n) => ({ type: "line", label: "WHO threshold 20%", data: new Array(n).fill(20),
+      borderColor: "#7C1220", borderDash: [5, 4], borderWidth: 2, fill: false,
+      pointRadius: n < 2 ? 5 : 0, pointStyle: "rectRot",
+      pointBackgroundColor: "#7C1220", pointBorderColor: "#7C1220" });
+    const mon = this.byMonth(rows);
+    const monLabels = mon.map((m) => this.monthLabel(m.key));
+    this._monKeyByLabel = {};
+    mon.forEach((m) => { this._monKeyByLabel[this.monthLabel(m.key)] = m.key; });
+
+    if (t === "larval") {
+      const contInsp = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["inspected_" + k]), 0));
+      const contPos = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["positive_" + k]), 0));
+      return [
+        { key: "ci", title: "សន្ទស្សន៍ភាជន៍តាមភូមិ", titleEn: "Container index % by village",
+          spec: { type: "bar", data: { labels, datasets: [
+            { label: "CI %", data: take((v) => v.ci), backgroundColor: "#117996", borderRadius: 3 },
+            whoLine(labels.length)] } } },
+        { key: "cont", title: "ភាជន៍តាមប្រភេទ", titleEn: "Containers by type",
+          spec: { type: "bar", data: { labels: CONTAINERS.map((c) => c[2]),
+            datasets: [{ label: "Inspected", data: contInsp, backgroundColor: "#D5E7EF", borderRadius: 3 },
+              { label: "Positive", data: contPos, backgroundColor: "#7C1220", borderRadius: 3 }] } } },
+        { key: "ciRound", title: "សន្ទស្សន៍ភាជន៍តាមជុំ", titleEn: "Container index % by round — pale bars: fewer than 20 containers",
+          spec: { type: "bar", data: { labels: monLabels, datasets: [
+            { label: "CI %", data: mon.map((m) => m.ci), borderRadius: 3,
+              backgroundColor: mon.map((m) => (m.insp >= 20 ? "#F4B71B" : "#FDF1D1")) },
+            whoLine(mon.length)] } } },
+        { key: "typePie", title: "សមាមាត្រភាជន៍មានដង្កូវ", titleEn: "Positive containers by type",
+          spec: { type: "doughnut", data: { labels: CONTAINERS.map((c) => c[2]),
+            datasets: [{ data: contPos, backgroundColor: COLORS }] } } },
+      ];
+    }
+    if (t === "adult") {
+      return [
+        { key: "adultVil", title: "មូសពេញវ័យតាមភូមិ", titleEn: "Adults identified by village",
+          spec: { type: "bar", data: { labels, datasets: [
+            { label: "Ae. aegypti", data: take((v) => v.aeg), backgroundColor: "#003E78", borderRadius: 3, stack: "s" },
+            { label: "Ae. albopictus", data: take((v) => v.alb), backgroundColor: "#6EDBCD", borderRadius: 3, stack: "s" },
+            { label: "Culex", data: take((v) => v.culex), backgroundColor: "#F4B71B", borderRadius: 3, stack: "s" }] } } },
+        { key: "sexSplit", title: "ញី / ឈ្មោល", titleEn: "Female vs male",
+          spec: { type: "bar", data: { labels: ["Ae. aegypti", "Ae. albopictus"], datasets: [
+            { label: "Female", data: [sp.femaleAeg, sp.femaleAlb], backgroundColor: "#7C1220", borderRadius: 3 },
+            { label: "Male", data: [sp.maleAeg, sp.maleAlb], backgroundColor: "#117996", borderRadius: 3 }] } } },
+        { key: "compo", title: "សមាសភាពប្រភេទ", titleEn: "Species composition",
+          spec: { type: "doughnut", data: { labels: ["Ae. aegypti", "Ae. albopictus", "Culex", "Other"],
+            datasets: [{ data: [sp.adultAeg, sp.adultAlb, sp.culex, sp.other], backgroundColor: COLORS }] } } },
+        { key: "byMethod", title: "តាមប្រភេទអន្ទាក់", titleEn: "By trap: Procopack vs BG-Sentinel",
+          spec: (function (m) {
+            return { type: "bar", data: { labels: m.map((x) => x.name), datasets: [
+              { label: "Ae. aegypti", data: m.map((x) => x.aeg), backgroundColor: "#003E78", borderRadius: 3, stack: "s" },
+              { label: "Ae. albopictus", data: m.map((x) => x.alb), backgroundColor: "#6EDBCD", borderRadius: 3, stack: "s" },
+              { label: "Culex", data: m.map((x) => x.culex), backgroundColor: "#F4B71B", borderRadius: 3, stack: "s" },
+              { label: "Other", data: m.map((x) => x.other), backgroundColor: "#767676", borderRadius: 3, stack: "s" }] } };
+          })(this.byMethod(rows)) },
+      ];
+    }
+    if (t === "ovitrap") {
+      const ovi = rows.filter((r) => (r.form_type || r.type) === "lab" && this.methodOf(r) === "Ovitrap");
+      const byVil = {};
+      ovi.forEach((r) => {
+        const k = r.village || r.village_code || "\u2014";
+        byVil[k] = (byVil[k] || 0) + num(r.eggs);
+      });
+      const vilKeys = Object.keys(byVil).sort((a, b) => byVil[b] - byVil[a]).slice(0, 12);
+      return [
+        { key: "eggsVil", title: "\u1785\u17c6\u1793\u17bd\u1793\u1796\u1784\u178f\u17b6\u1798\u1797\u17bc\u1798\u17b7", titleEn: "Ovitrap eggs by village",
+          spec: { type: "bar", data: { labels: vilKeys,
+            datasets: [{ label: "Eggs", data: vilKeys.map((k) => byVil[k]), backgroundColor: "#F4B71B", borderRadius: 3 }] } } },
+        { key: "eggsMonth", title: "\u1785\u17c6\u1793\u17bd\u1793\u1796\u1784\u178f\u17b6\u1798\u1781\u17c2", titleEn: "Ovitrap eggs by round",
+          spec: (function (self, list) {
+            const m = {};
+            list.forEach((r) => {
+              const k = self.monthKey(r) || "\u2014";
+              m[k] = (m[k] || 0) + num(r.eggs);
+            });
+            const keys = Object.keys(m).sort();
+            return { type: "line", data: { labels: keys, datasets: [{ label: "Eggs", data: keys.map((k) => m[k]),
+              borderColor: "#F4B71B", backgroundColor: "rgba(244,183,27,.18)", fill: true, tension: .3 }] } };
+          })(this, ovi) },
+      ];
+    }
+    // overview — read top to bottom: is risk rising, is the cycle complete,
+    // where is it worst, and what are we finding.
+    return [
+      { key: "ciTrend", title: "សន្ទស្សន៍ភាជន៍តាមជុំ", titleEn: "Container index % by round — pale bars: fewer than 20 containers",
+        spec: { type: "bar", data: { labels: monLabels, datasets: [
+          { label: "CI %", data: mon.map((m) => m.ci), borderRadius: 3,
+            backgroundColor: mon.map((m) => (m.insp >= 20 ? "#F4B71B" : "#FDF1D1")) },
+          whoLine(mon.length)] } } },
+      { key: "cycle", title: "ដំណើរការពេញលេញតាមជុំ", titleEn: "Cycle completed by round: installed, collected, lab",
+        spec: { type: "bar", data: { labels: monLabels, datasets: [
+          { label: "Traps installed", data: mon.map((m) => m.installs), backgroundColor: "#117996", borderRadius: 3 },
+          { label: "Collected", data: mon.map((m) => m.collects), backgroundColor: "#F4B71B", borderRadius: 3 },
+          { label: "Lab results", data: mon.map((m) => m.labs), backgroundColor: "#1ED47F", borderRadius: 3 }] } } },
+      { key: "ciVil", title: "សន្ទស្សន៍ភាជន៍តាមភូមិ", titleEn: "Container index % by village",
+        spec: { type: "bar", data: { labels, datasets: [
+          { label: "CI %", data: take((v) => v.ci), backgroundColor: "#117996", borderRadius: 3 },
+          whoLine(labels.length)] } } },
+      { key: "pie", title: "សមាសភាពប្រភេទ", titleEn: "Species composition",
+        spec: { type: "doughnut", data: { labels: ["Ae. aegypti", "Ae. albopictus", "Culex", "Other"],
+          datasets: [{ data: [sp.adultAeg + sp.larvAeg, sp.adultAlb + sp.larvAlb, sp.culex, sp.other], backgroundColor: COLORS }] } } },
+    ];
+  }
+
+  // Everything aggregated by survey round, oldest first.
+  byMonth(rows) {
+    const map = {};
+    rows.forEach((r) => {
+      const k = this.monthKey(r);
+      if (!k) return;
+      const m = map[k] || (map[k] = { key: k, insp: 0, pos: 0, installs: 0, collects: 0, labs: 0,
+        eggs: 0, adults: 0, houses: {} });
+      const t = this.type(r);
+      if (r.household_id) m.houses[r.household_id] = 1;
+      if (t === "install") m.installs += 1;
+      if (t === "collect") m.collects += 1;
+      if (t === "lab") { m.labs += 1; m.eggs += num(r.eggs); m.adults += num(r.total_catch); }
+      if (t === "larvae") { m.insp += num(r.containers_inspected); m.pos += num(r.containers_positive); }
+    });
+    return Object.keys(map).sort().map((k) => {
+      const m = map[k];
+      return { ...m, visits: Object.keys(m.houses).length,
+        ci: m.insp ? Math.round((m.pos / m.insp) * 1000) / 10 : 0 };
+    });
+  }
+
+  // Which global filter a chart's labels correspond to.
+  chartDim(key) {
+    if (/month|round|trend|cycle/i.test(key)) return "month";
+    if (/vil|^ci$|visits|adults|eggsVil/i.test(key)) return "village";
+    return "";
+  }
+
+  // Village labels are names; the filter works on codes when the sheet has them.
+  villageValue(name) {
+    const hit = this.state.records.find((r) => (r.village || "") === name);
+    return hit ? this.code("village", hit) : name;
+  }
+
+  applyChartClick(key, label) {
+    const dim = this.chartDim(key);
+    if (!dim || !label) return;
+    if (dim === "month") {
+      const key = (this._monKeyByLabel || {})[label] || label;
+      this.setState((p) => ({ month: p.month === key ? "" : key }), () => setTimeout(this.draw, 60));
+      return;
+    }
+    const value = this.villageValue(label);
+    this.setState((p) => ({ vill: p.vill === value ? "" : value }), () => setTimeout(this.draw, 60));
+  }
+
+  draw = () => {
+    try { this.drawInner(); } catch (e) { console.error("[dashboard] chart draw failed", e); }
+  };
+
+  drawInner() {
+    if (!window.Chart) { clearTimeout(this._chartWait); this._chartWait = setTimeout(this.draw, 200); return; }
+    const specs = this.chartSpecs();
+    this._charts = this._charts || {};
+    const live = specs.map((x) => x.key);
+    Object.keys(this._charts).forEach((k) => {
+      if (live.indexOf(k) < 0) { this._charts[k].destroy(); delete this._charts[k]; }
+    });
+    specs.forEach((s) => {
+      const el = document.querySelector('canvas[data-chart="' + s.key + '"]');
+      if (!el) return;
+      const stacked = !!(s.spec.data.datasets[0] && s.spec.data.datasets[0].stack);
+      const dim = this.chartDim(s.key);
+      const options = {
+        responsive: true, maintainAspectRatio: false,
+        onClick: dim ? (evt, els, chart) => {
+          if (!els || !els.length) return;
+          const label = chart.data.labels[els[0].index];
+          this.applyChartClick(s.key, String(label));
+        } : undefined,
+        onHover: dim ? (evt, els) => {
+          if (evt && evt.native && evt.native.target) {
+            evt.native.target.style.cursor = els && els.length ? "pointer" : "default";
+          }
+        } : undefined,
+        plugins: { legend: { display: s.spec.data.datasets.length > 1 || s.spec.type === "doughnut",
+          position: "bottom", labels: { font: { size: 11, family: FONT }, boxWidth: 12 } } },
+        scales: s.spec.type === "doughnut" ? {} : {
+          x: { stacked, grid: { display: false }, ticks: { font: { size: 10, family: FONT }, maxRotation: 45, minRotation: 0 } },
+          y: { stacked, beginAtZero: true, grid: { color: "#EDF1F4" }, ticks: { font: { size: 10, family: FONT }, precision: 0 } },
+        },
+      };
+      const existing = this._charts[s.key];
+      if (existing && existing.canvas === el && existing.config.type === s.spec.type) {
+        existing.data = s.spec.data;
+        existing.options = options;
+        existing.update();
+        return;
+      }
+      if (existing) existing.destroy();
+      const prior = window.Chart.getChart(el);
+      if (prior) prior.destroy();
+      this._charts[s.key] = new window.Chart(el, { type: s.spec.type, data: s.spec.data, options });
+    });
+    // Leaflet map, only while its tab is open.
+    if (this.state.tab === "map" && this._mapEl && window.L) {
+      const hh = this.households(this.rows()).filter((h) => h.lat && h.lon);
+      if (!this._map) {
+        this._map = window.L.map(this._mapEl, { scrollWheelZoom: false });
+        window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          { maxZoom: 19, attribution: "\u00a9 OpenStreetMap" }).addTo(this._map);
+        this._layer = window.L.layerGroup().addTo(this._map);
+      }
+      this._layer.clearLayers();
+      const mode = this.state.mapMode;
+      const value = (h) => (mode === "ci" ? h.ci : mode === "adults" ? h.adults : mode === "eggs" ? h.eggs : h.traps);
+      const max = Math.max.apply(null, hh.map(value).concat([1]));
+      hh.forEach((h) => {
+        const v = value(h);
+        const share = max ? v / max : 0;
+        window.L.circleMarker([Number(h.lat), Number(h.lon)], {
+          radius: 7 + Math.round(share * 9), weight: 2, color: "#fff",
+          fillColor: share > .66 ? "#7C1220" : share > .33 ? "#F4B71B" : "#117996", fillOpacity: .92,
+        }).bindTooltip('<span style="font:700 11px ' + FONT + ';color:#003E78">' + h.id
+          + (h.head ? "  \u00b7  " + h.head : "") + "</span>", { permanent: true, direction: "right", offset: [8, 0], opacity: 1, className: "hh-label" })
+          .bindPopup("<b>" + h.id + "</b><br>" + (h.where || "") + "<br>CI " + h.ci + "% · "
+            + h.pos + "/" + h.insp + " containers<br>" + h.adults + " mosquitoes · " + h.eggs + " eggs")
+          .addTo(this._layer);
+      });
+      if (hh.length) this._map.fitBounds(hh.map((h) => [Number(h.lat), Number(h.lon)]), { padding: [30, 30], maxZoom: 16 });
+      else this._map.setView([12.5657, 104.991], 7);
+      setTimeout(() => this._map && this._map.invalidateSize(), 60);
+    }
+  }
+
+  downloadCsv = () => {
+    const rows = this.rows();
+    if (!rows.length) return;
+    const cols = [];
+    rows.forEach((r) => Object.keys(r).forEach((k) => { if (cols.indexOf(k) < 0) cols.push(k); }));
+    const esc = (v) => {
+      const s = v == null ? "" : String(v);
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+    const csv = [cols.join(",")].concat(rows.map((r) => cols.map((c) => esc(r[c])).join(","))).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
+    a.download = "ento-dashboard-" + new Date().toISOString().slice(0, 10) + ".csv";
+    a.click();
+  };
+
+  renderVals() {
+    const s = this.state;
+    const rows = this.rows();
+    const hh = this.households(rows);
+    const sp = this.species(rows);
+    const insp = hh.reduce((a, h) => a + h.insp, 0);
+    const pos = hh.reduce((a, h) => a + h.pos, 0);
+    const inspected = hh.filter((h) => h.larvaeRecords > 0);
+    const tabs = [["overview", "ទូទៅ · Overview"], ["larval", "ដង្កូវទឹក · Larval & CI"],
+      ["adult", "មូសពេញវ័យ · Adults"], ["ovitrap", "អន្ទាក់ពង · Ovitrap"],
+      ["map", "ផែនទី · Map"], ["table", "តារាង · Table"]];
+    const kpiSets = {
+      overview: [
+        { label: "ខ្នងផ្ទះ · Households", value: fmt(hh.length), sub: "registered in view", color: "#003E78" },
+        { label: "អន្ទាក់ · Traps", value: fmt(rows.filter((r) => this.type(r) === "install").length), sub: "installations", color: "#117996" },
+        { label: "សន្ទស្សន៍ភាជន៍ · CI", value: insp ? Math.round((pos / insp) * 1000) / 10 + "%" : "—",
+          sub: insp ? fmt(pos) + " of " + fmt(insp) + " positive" : "no larval survey in view", color: "#6EDBCD" },
+        { label: "សន្ទស្សន៍ផ្ទះ · HI", value: inspected.length ? Math.round((inspected.filter((h) => h.positiveHouse).length / inspected.length) * 1000) / 10 + "%" : "—",
+          sub: inspected.length ? fmt(inspected.length) + " houses inspected" : "no larval survey in view", color: "#7C1220" },
+        { label: "មូស · Mosquitoes", value: fmt(sp.catchTotal), sub: "identified in the lab", color: "#F4B71B" },
+        { label: "ពង · Eggs", value: fmt(sp.eggs), sub: "counted from ovitraps", color: "#1ED47F" },
+      ],
+      larval: [
+        { label: "សន្ទស្សន៍ភាជន៍ · CI", value: insp ? Math.round((pos / insp) * 1000) / 10 + "%" : "—",
+          sub: insp ? "WHO threshold 20%" : "no larval survey in view", color: "#117996" }, 
+        { label: "សន្ទស្សន៍ផ្ទះ · HI", value: inspected.length ? Math.round((inspected.filter((h) => h.positiveHouse).length / inspected.length) * 1000) / 10 + "%" : "—",
+          sub: inspected.length ? fmt(inspected.filter((h) => h.positiveHouse).length) + " positive houses" : "no larval survey in view", color: "#7C1220" },
+        { label: "ភាជន៍បានពិនិត្យ · Inspected", value: fmt(insp), sub: "containers", color: "#6EDBCD" },
+        { label: "ភាជន៍មានដង្កូវ · Positive", value: fmt(pos), sub: "containers with larvae", color: "#F4B71B" },
+      ],
+      adult: [
+        { label: "មូសពេញវ័យ · Adults", value: fmt(sp.adultTotal), sub: "sexed specimens", color: "#003E78" },
+        { label: "Ae. aegypti", value: fmt(sp.adultAeg), sub: (sp.adultTotal ? Math.round((sp.adultAeg / sp.adultTotal) * 1000) / 10 : 0) + "% of catch", color: "#7C1220" },
+        { label: "Ae. albopictus", value: fmt(sp.adultAlb), sub: (sp.adultTotal ? Math.round((sp.adultAlb / sp.adultTotal) * 1000) / 10 : 0) + "% of catch", color: "#6EDBCD" },
+        { label: "Culex spp.", value: fmt(sp.culex), sub: "non-target", color: "#F4B71B" },
+      ],
+      ovitrap: [
+        { label: "ពង · Eggs", value: fmt(sp.eggs), sub: "all ovitrap results", color: "#F4B71B" },
+        { label: "អន្ទាក់ពង · Ovitraps", value: fmt(rows.filter((r) => this.type(r) === "install" && (r.trap_type || "Ovitrap") === "Ovitrap").length), sub: "installed", color: "#003E78" },
+        { label: "ប្រមូល · Collections", value: fmt(rows.filter((r) => this.type(r) === "collect").length), sub: "trap collections", color: "#117996" },
+      ],
+      map: [
+        { label: "ខ្នងផ្ទះមានទីតាំង · Mapped", value: fmt(hh.filter((h) => h.lat && h.lon).length), sub: "of " + fmt(hh.length) + " households", color: "#003E78" },
+        { label: "ផ្ទះមានដង្កូវ · Positive houses", value: fmt(hh.filter((h) => h.positiveHouse).length), sub: "larvae found", color: "#7C1220" },
+      ],
+      table: [
+        { label: "ខ្នងផ្ទះ · Households", value: fmt(hh.length), sub: "in view", color: "#003E78" },
+        { label: "កំណត់ត្រា · Records", value: fmt(rows.length), sub: "all form types", color: "#117996" },
+      ],
+    };
+    const specs = this.chartSpecs();
+    this._canvas = this._canvas || {};
+    return {
+      statusText: s.loading ? "កំពុងទាញ · loading…" : fmt(this.state.records.length) + " records from the sheet",
+      reloadLabel: s.loading ? "កំពុងទាញ…" : "ទាញឡើងវិញ · Reload",
+      reload: this.load,
+      downloadCsv: this.downloadCsv,
+      hasError: !!s.error, errorText: s.error,
+      recCountLabel: fmt(rows.length) + " កំណត់ត្រា · records in view",
+      filters: (function (list) {
+        return list.map((x) => ({ ...x,
+          bd: x.value ? "#F4B71B" : "#D9DEE4",
+          bg: x.value ? "#FDF6E3" : "#fff",
+          weight: x.value ? 700 : 400,
+          labelFg: x.value ? "#B47A0A" : "#64748B",
+          mark: x.value ? "  •" : "" }));
+      })([
+        { label: "ខេត្ត · Province", value: s.prov, onChange: this.set("prov"),
+          options: [{ value: "", label: "ទាំងអស់ · all" }].concat(this.options("province")) },
+        { label: "ស្រុក · District", value: s.dist, onChange: this.set("dist"),
+          options: [{ value: "", label: "ទាំងអស់ · all" }].concat(this.options("district")) },
+        { label: "ឃុំ · Commune", value: s.comm, onChange: this.set("comm"),
+          options: [{ value: "", label: "ទាំងអស់ · all" }].concat(this.options("commune")) },
+        { label: "ភូមិ · Village", value: s.vill, onChange: this.set("vill"),
+          options: [{ value: "", label: "ទាំងអស់ · all" }].concat(this.options("village")) },
+        { label: "ជុំ · Round", value: s.month, onChange: this.set("month"),
+          options: [{ value: "", label: "ទាំងអស់ · all" }].concat(this.monthOptions()) },
+      ]),
+      resetFilters: () => this.setState({ prov: "", dist: "", comm: "", vill: "", month: "" }),
+      activeCount: [s.prov, s.dist, s.comm, s.vill, s.month].filter(Boolean).length,
+      hasFilters: [s.prov, s.dist, s.comm, s.vill, s.month].some(Boolean),
+      resetLabel: [s.prov, s.dist, s.comm, s.vill, s.month].filter(Boolean).length
+        ? "សម្អាតតម្រង " + [s.prov, s.dist, s.comm, s.vill, s.month].filter(Boolean).length + " · Clear filters"
+        : "សម្អាត · Reset",
+      resetBg: [s.prov, s.dist, s.comm, s.vill, s.month].some(Boolean) ? "#F4B71B" : "#F1F5F9",
+      resetFg: [s.prov, s.dist, s.comm, s.vill, s.month].some(Boolean) ? "#3d2c00" : "#64748B",
+      resetBd: [s.prov, s.dist, s.comm, s.vill, s.month].some(Boolean) ? "#F4B71B" : "#D9DEE4",
+      tabs: tabs.map(([k, label]) => {
+        const c = TAB_COLOR[k] || TAB_COLOR.overview;
+        const on = s.tab === k;
+        return { label, icon: TAB_ICON[k] || TAB_ICON.overview, go: () => this.setState({ tab: k }),
+          bg: on ? c.solid : c.tint, fg: on ? "#fff" : c.solid, bd: on ? c.solid : c.line };
+      }),
+      kpis: kpiSets[s.tab] || kpiSets.overview,
+      showTables: s.tab === "overview",
+      adultIndicators: [
+        { label: "Ae. aegypti", value: sp.adultTotal ? Math.round((sp.adultAeg / sp.adultTotal) * 1000) / 10 + "%" : "—" },
+        { label: "Ae. albopictus", value: sp.adultTotal ? Math.round((sp.adultAlb / sp.adultTotal) * 1000) / 10 + "%" : "—" },
+        { label: "Culex spp.", value: sp.adultTotal ? Math.round((sp.culex / sp.adultTotal) * 1000) / 10 + "%" : "—" },
+        { label: "Female Ae. aegypti", value: sp.adultAeg ? Math.round((sp.femaleAeg / sp.adultAeg) * 1000) / 10 + "%" : "—" },
+        { label: "Female Ae. albopictus", value: sp.adultAlb ? Math.round((sp.femaleAlb / sp.adultAlb) * 1000) / 10 + "%" : "—" },
+      ],      larvalIndicators: [
+        { label: "Container index (CI)", value: insp ? Math.round((pos / insp) * 1000) / 10 + "%" : "—" },
+        { label: "House index (HI)", value: inspected.length ? Math.round((inspected.filter((h) => h.positiveHouse).length / inspected.length) * 1000) / 10 + "%" : "—" },
+        { label: "Containers inspected", value: fmt(insp) },
+        { label: "Containers positive", value: fmt(pos) },
+        { label: "Reared Ae. aegypti", value: fmt(sp.larvAeg) },
+      ],
+      showCharts: s.tab !== "map" && s.tab !== "table",
+      // One sentence a reader can act on, built from what is in view.
+      // One sentence a reader can act on, built from what is in view. A round with
+      // no larval survey is reported as unmeasured, never as a container index of zero.
+      story: (function (self, list, months, species, pending) {
+        if (!list.length) return "គ្មានទិន្នន័យក្នុងតម្រងនេះ · no records match the current filters.";
+        const bits = [fmt(list.length) + " households in view."];
+        const last = months.length ? months[months.length - 1] : null;
+        // A round with a handful of containers is not yet representative: it is
+        // reported as a partial count, and never used for a trend or a verdict.
+        const MIN_CONTAINERS = 20;
+        const measured = months.filter((m) => m.insp >= MIN_CONTAINERS);
+        const now = measured.length ? measured[measured.length - 1] : null;
+        const prev = measured.length > 1 ? measured[measured.length - 2] : null;
+        const verdict = (ci) => (ci >= 20
+          ? "at or above the WHO 20% threshold — larval control is indicated"
+          : "below the WHO 20% threshold");
+
+        if (last && last.insp > 0 && last.insp < MIN_CONTAINERS) {
+          bits.push("In " + self.monthLabel(last.key) + " only " + fmt(last.visits)
+            + (last.visits === 1 ? " household has" : " households have") + " been surveyed so far ("
+            + fmt(last.pos) + " of " + fmt(last.insp) + " containers positive), too few to read as an index.");
+          if (now) bits.push("The last full round was " + self.monthLabel(now.key)
+            + " at " + now.ci + "%, " + verdict(now.ci) + ".");
+        } else if (last && last.insp === 0) {
+          bits.push("No larval survey has been recorded for " + self.monthLabel(last.key) + ".");
+          if (now) bits.push("The last measured round was " + self.monthLabel(now.key)
+            + " at " + now.ci + "%, " + verdict(now.ci) + ".");
+        } else if (now) {
+          const dir = prev
+            ? (now.ci > prev.ci ? "up from " + prev.ci + "% in " + self.monthLabel(prev.key)
+              : now.ci < prev.ci ? "down from " + prev.ci + "% in " + self.monthLabel(prev.key)
+              : "unchanged from " + self.monthLabel(prev.key))
+            : "";
+          bits.push("In " + self.monthLabel(now.key) + " the container index was " + now.ci + "%"
+            + (dir ? " (" + dir + ")" : "") + ", " + verdict(now.ci) + ".");
+        } else {
+          bits.push("No larval survey large enough to read as an index has been recorded for this view.");
+        }
+
+        const total = species.adultAeg + species.adultAlb + species.larvAeg + species.larvAlb + species.culex + species.other;
+        const aeg = species.adultAeg + species.larvAeg;
+        if (total) {
+          bits.push("Ae. aegypti, the dengue vector, is " + (Math.round((aeg / total) * 1000) / 10)
+            + " percent of the " + fmt(total) + " specimens identified.");
+        }
+        if (last && last.installs > last.collects) {
+          bits.push(fmt(last.installs - last.collects) + " traps installed in "
+            + self.monthLabel(last.key) + " have not been collected yet.");
+        }
+        if (pending > 0) bits.push(fmt(pending) + " collections are still waiting on a lab result.");
+        return bits.join(" ");
+      })(this, hh, this.byMonth(rows), sp,
+        rows.filter((r) => ["adult", "larvae", "collect"].indexOf(this.type(r)) >= 0).length
+          - rows.filter((r) => this.type(r) === "lab").length),
+      chartHint: (s.vill || s.month)
+        ? "តម្រងសកម្ម · filtering — click the highlighted bar again to clear"
+        : "ចុចលើក្រាហ្វដើម្បីតម្រង · click a bar to filter the whole dashboard",
+      charts: specs.map((c) => ({ key: c.key, title: c.title, titleEn: c.titleEn,
+        clickable: !!this.chartDim(c.key),
+        icon: c.spec.type === "line" ? "M4 16.5l5-5 4 3 7-8"
+          : c.spec.type === "doughnut" ? "M12 4a8 8 0 1 1-8 8h8V4Z"
+          : "M4 20V10m5 10V4m5 16v-7m5 7V7" })),
+      showMap: s.tab === "map",
+      mapRef: (el) => {
+        if (this._mapEl !== el && this._map) { this._map.remove(); this._map = null; this._layer = null; }
+        this._mapEl = el;
+        if (el) setTimeout(() => this.draw(), 0);
+      },
+      mapModes: [["ci", "សន្ទស្សន៍ភាជន៍ · CI", TAB_ICON.larval], ["adults", "មូស · Mosquitoes", TAB_ICON.adult],
+        ["eggs", "ពង · Eggs", TAB_ICON.eggs], ["traps", "អន្ទាក់ · Traps", TAB_ICON.ovitrap]]
+        .map(([k, label, icon]) => ({ label, icon, go: () => this.setState({ mapMode: k }),
+          bg: s.mapMode === k ? "#003E78" : "#fff", fg: s.mapMode === k ? "#fff" : "#64748B",
+          bd: s.mapMode === k ? "#003E78" : "#D9DEE4" })),
+      // Legend thresholds are the same thirds the markers are coloured by.
+      mapLegendTitle: { ci: "សន្ទស្សន៍ភាជន៍ · container index", adults: "មូស · mosquitoes",
+        eggs: "ពង · eggs", traps: "អន្ទាក់ · traps" }[s.mapMode] || "",
+      mapLegend: (function (list, mode) {
+        const val = (h) => (mode === "ci" ? h.ci : mode === "adults" ? h.adults : mode === "eggs" ? h.eggs : h.traps);
+        const pts = list.filter((h) => h.lat && h.lon);
+        const max = Math.max.apply(null, pts.map(val).concat([1]));
+        const unit = mode === "ci" ? "%" : "";
+        const at = (share) => fmt(Math.round(max * share * 10) / 10) + unit;
+        return [
+          { color: "#117996", size: "10px", label: "0 – " + at(.33) },
+          { color: "#F4B71B", size: "14px", label: at(.33) + " – " + at(.66) },
+          { color: "#7C1220", size: "18px", label: at(.66) + " – " + at(1) },
+        ];
+      })(hh, s.mapMode),
+      mapNote: "ចំណុចធំ និងក្រហម មានតម្លៃខ្ពស់ · larger, redder circles carry the higher value. "
+        + hh.filter((h) => h.lat && h.lon).length + " of " + hh.length + " households have coordinates.",
+      showTable: s.tab === "table",
+      // Every column is sortable: numbers numerically, names by Khmer collation.
+      tableCols: [
+        ["id", "HH", "none", "84px", "84px", "left"],
+        ["prov", "Province", "none", "110px", "110px", "left"],
+        ["dist", "District", "none", "110px", "110px", "left"],
+        ["comm", "Commune", "none", "110px", "110px", "left"],
+        ["vill", "Village", "none", "110px", "110px", "left"],
+        ["trapsOvi", "Ovitraps", "none", "70px", "70px", "right"],
+        ["trapsBg", "BG traps", "none", "72px", "72px", "right"],
+        ["insp", "Inspected / Positive", "none", "112px", "112px", "right"],
+        ["ci", "CI %", "none", "58px", "58px", "right"],
+        ["aeg", "Ae. aegypti", "none", "88px", "88px", "right"],
+        ["alb", "Ae. albopictus", "none", "96px", "96px", "right"],
+        ["culex", "Culex spp.", "none", "76px", "76px", "right"],
+        ["adults", "Adults", "none", "62px", "62px", "right"],
+        ["eggs", "Eggs", "none", "58px", "58px", "right"],
+        ["eggsIn", "Eggs in", "none", "62px", "62px", "right"],
+        ["eggsOut", "Eggs out", "none", "70px", "70px", "right"],
+      ].map(function (col) {
+        const key = col[0];
+        return {
+          label: col[1], flex: col[2], w: col[3], min: col[4], align: col[5],
+          fg: s.sortKey === key ? "#003E78" : "#64748B",
+          arrow: s.sortKey === key ? (s.sortDir === "asc" ? "  \u2191" : "  \u2193") : "",
+          sort: () => this.setState((p) => ({
+            sortKey: key,
+            sortDir: p.sortKey === key && p.sortDir === "desc" ? "asc" : "desc",
+          })),
+        };
+      }, this),
+      tableRows: hh.slice().sort((a, b) => {
+        const k = s.sortKey || "ci";
+        const dir = s.sortDir === "asc" ? 1 : -1;
+        const av = a[k], bv = b[k];
+        if (typeof av === "number" && typeof bv === "number") return (av - bv) * dir;
+        return String(av || "").localeCompare(String(bv || ""), "km") * dir;
+      }).slice(0, 60).map((h) => ({
+        id: h.label && h.label !== h.id ? h.label : h.id, where: h.where || "\u2014",
+        prov: h.prov || "\u2014", dist: h.dist || "\u2014", comm: h.comm || "\u2014", vill: h.vill || "\u2014",
+        traps: fmt(h.traps), trapsOvi: fmt(h.trapsOvi), trapsBg: fmt(h.trapsBg), insp: fmt(h.insp), pos: fmt(h.pos),
+        ci: h.ci + "%", ciColor: h.ci >= 20 ? "#7C1220" : "#003E78",
+        adults: fmt(h.adults), eggs: fmt(h.eggs),
+        aeg: fmt(h.aeg), alb: fmt(h.alb), culex: fmt(h.culex),
+        eggsIn: h.eggsIn ? fmt(h.eggsIn) : (h.eggs ? "\u2014" : 0),
+        eggsOut: h.eggsOut ? fmt(h.eggsOut) : (h.eggs ? "\u2014" : 0),
+      })),
+      totals: (function (list) {
+        const t = (k) => list.reduce((a, h) => a + (Number(h[k]) || 0), 0);
+        const insp = t("insp"), pos = t("pos");
+        const ci = insp ? Math.round((pos / insp) * 1000) / 10 : 0;
+        return {
+          label: "\u179f\u179a\u17bb\u1794 \u00b7 Total (" + list.length + ")",
+          traps: fmt(t("traps")), trapsOvi: fmt(t("trapsOvi")), trapsBg: fmt(t("trapsBg")), insp: fmt(insp), pos: fmt(pos),
+          ci: ci + "%", ciColor: ci >= 20 ? "#7C1220" : "#003E78",
+          aeg: fmt(t("aeg")), alb: fmt(t("alb")), culex: fmt(t("culex")),
+          adults: fmt(t("adults")), eggs: fmt(t("eggs")),
+          eggsIn: t("eggsIn") ? fmt(t("eggsIn")) : "\u2014",
+          eggsOut: t("eggsOut") ? fmt(t("eggsOut")) : "\u2014",
+        };
+      })(hh),
+      tableNote: "Tap a column heading to sort. Up to 60 households. Red where CI is at or above the WHO 20% threshold.",
+      footer: "ទិន្នន័យពី Google Sheet · live from the field app's Google Sheet. Reload to refresh.",
+    };
+  }
+}
+
+</script>
+</body>
+</html>
