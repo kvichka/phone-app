@@ -377,6 +377,29 @@ label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;lett
           <span>{{ hhMoreLabel }}</span>
         </button>
       </sc-if>
+
+      <div style="background:#fff;border:1px solid #E3BFC4;border-top:3px solid #7C1220;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7C1220">លុបខ្នងផ្ទះ <span style="font-weight:400;color:#9AA5AE">Delete household</span></div>
+        <sc-if value="{{ hhDelArmed }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#F7E7E9;border-left:4px solid #7C1220;padding:11px 13px;font-size:12px;line-height:1.6;color:#7C1220">
+            <span style="display:block;font-weight:700">{{ hhDelWarnKm }}</span>
+            <span style="display:block;margin-top:4px">{{ hhDelWarnEn }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <button onClick="{{ cancelHhDelete }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #D9DEE4;color:#003E78;border-radius:8px;min-height:48px;font:700 12.5px/1.2 inherit;cursor:pointer">បោះបង់ · Cancel</button>
+            <button onClick="{{ confirmHhDelete }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#7C1220;border:none;color:#fff;border-radius:8px;min-height:48px;font:700 12.5px/1.2 inherit;cursor:pointer">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg>
+              <span>លុប · Delete</span>
+            </button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hhDelIdle }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ armHhDelete }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:1px solid #7C1220;color:#7C1220;border-radius:8px;min-height:48px;font:700 12.5px/1.2 inherit;cursor:pointer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg>
+            <span>លុបទិន្នន័យទាំងអស់នៅខ្នងផ្ទះនេះ · Delete all data for this household</span>
+          </button>
+        </sc-if>
+      </div>
     </sc-if>
 
     <sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
@@ -1295,6 +1318,16 @@ function normalize(rec) {
 function load() {
   try { return JSON.parse(localStorage.getItem(KEY) || "[]").map(normalize); } catch (e) { return []; }
 }
+// Households deleted on this phone but not yet cleared from the sheet. Kept so a
+// pull cannot bring them back, and so the deletion still reaches the sheet after
+// a delete made with no signal.
+const DEL = "ento.deleted.v1";
+function loadDel() {
+  try { return JSON.parse(localStorage.getItem(DEL) || "[]"); } catch (e) { return []; }
+}
+function saveDel(list) {
+  try { localStorage.setItem(DEL, JSON.stringify(list)); } catch (e) {}
+}
 function loadCtx() {
   try { return JSON.parse(localStorage.getItem(CTX) || "{}"); } catch (e) { return {}; }
 }
@@ -1316,6 +1349,7 @@ class Component extends DCLogic {
     editId: "",
     returnTo: "home",
     online: typeof navigator === "undefined" ? true : navigator.onLine,
+    pendingDel: [],
   };
 
   setCtx = (k) => (e) => {
@@ -1343,7 +1377,10 @@ class Component extends DCLogic {
     this.setState({
       records: migrated, collector: c.collector || "", cluster: c.cluster || "",
       target: c.target || "", sheetUrl: c.sheetUrl || SHEET_URL, lastSync: c.lastSync || "",
+      pendingDel: loadDel(),
     });
+    // A deletion made offline reaches the sheet as soon as the app is opened online.
+    if (loadDel().length) setTimeout(() => this.flushDeletes(), 3000);
     if (!this.seenAbout()) this.setState({ screen: "about" });
     this._on = () => this.setState({ online: navigator.onLine });
     this.startPolling();
@@ -1359,6 +1396,39 @@ class Component extends DCLogic {
     this.setState({ screen: "home" });
   };
 
+  // ---- Deletions ----
+  // Queue the household, then try to clear it from the sheet straight away. If that
+  // fails, the id stays queued and the next sync or delete retries it.
+  queueDelete(householdId) {
+    const q = loadDel();
+    if (q.indexOf(householdId) < 0) q.push(householdId);
+    saveDel(q);
+    this.setState({ pendingDel: q });
+    this.flushDeletes();
+  }
+  flushDeletes = () => {
+    const q = loadDel();
+    const url = String(this.state.sheetUrl || "").trim();
+    if (!q.length || !url) return Promise.resolve(0);
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ deletes: q.map((id) => ({ household_id: id })) }),
+    })
+      .then((res) => res.json())
+      .then((out) => {
+        if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
+        saveDel([]);
+        this.setState({ pendingDel: [],
+          syncMsg: "\u179b\u17bb\u1794\u1785\u17c1\u1789\u1796\u17b8 Google Sheet " + (out.deleted || 0) + " \u1794\u1793\u17d2\u1791\u17b6\u178f\u17cb \u00b7 " + (out.deleted || 0) + " row" + (out.deleted === 1 ? "" : "s") + " removed from the sheet" });
+        return out.deleted || 0;
+      })
+      .catch((err) => {
+        this.setState({ syncMsg: "\u179b\u17bb\u1794\u1793\u17c5\u1791\u17bc\u179a\u179f\u17d0\u1796\u17d2\u1791\u1794\u17b6\u1793 \u2014 \u179a\u1784\u17cb\u1785\u17b6\u17c6\u179b\u17bb\u1794\u1785\u17c1\u1789\u1796\u17b8 Sheet \u00b7 deleted on this phone; the sheet will be cleared on the next sync (" + (err && err.message ? err.message : "no connection") + ")" });
+        return 0;
+      });
+  };
+
   // ---- Google Sheet sync ----
   // Records are posted to a Google Apps Script web app (see google-sheet-receiver.gs).
   // Nothing is deleted locally; each sent record gets a synced_at stamp instead.
@@ -1366,16 +1436,21 @@ class Component extends DCLogic {
     const url = String(this.state.sheetUrl || "").trim();
     if (!url) { this.setState({ syncMsg: "\u1794\u1789\u17d2\u1785\u17bc\u179b URL \u1787\u17b6\u1798\u17bb\u1793 \u00b7 paste the Google Sheet web app URL first" }); return; }
     const pending = this.state.records.filter((r) => !r.synced_at);
-    if (!pending.length) { this.setState({ syncMsg: "\u1782\u17d2\u1798\u17b6\u1793\u17a2\u17d2\u179c\u17b8\u1793\u17c5\u179f\u179b\u17cb \u00b7 nothing to send" }); return; }
+    if (!pending.length) {
+      if (loadDel().length) return this.flushDeletes();
+      this.setState({ syncMsg: "\u1782\u17d2\u1798\u17b6\u1793\u17a2\u17d2\u179c\u17b8\u1793\u17c5\u179f\u179b\u17cb \u00b7 nothing to send" }); return;
+    }
+    const dels = loadDel();
     this.setState({ syncing: true, syncMsg: "\u1780\u17c6\u1796\u17bb\u1784\u1795\u17d2\u1789\u17be \u00b7 sending " + pending.length + "\u2026" });
     return fetch(url, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ records: pending }),
+      body: JSON.stringify({ records: pending, deletes: dels.map((id) => ({ household_id: id })) }),
     })
       .then((res) => res.json())
       .then((out) => {
         if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
+        if (dels.length) { saveDel([]); this.setState({ pendingDel: [] }); }
         const at = new Date().toISOString();
         const ids = {};
         pending.forEach((r) => { ids[r.record_id] = 1; });
@@ -1433,7 +1508,10 @@ class Component extends DCLogic {
       .then((res) => res.json())
       .then((out) => {
         if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
-        const incoming = (out.records || []).map(normalize);
+        // Households deleted here but still in the sheet must not come back.
+        const gone = {};
+        loadDel().forEach((id) => { gone[id] = 1; });
+        const incoming = (out.records || []).map(normalize).filter((r) => !gone[r.household_id]);
         const base = replace ? [] : this.state.records;
         const mine = {};
         base.forEach((r) => { mine[r.record_id] = r; });
@@ -1636,17 +1714,21 @@ class Component extends DCLogic {
     const blank = this.blankForm(type);
     const ctx = context || {};
     let form = blank;
+    let keptGps = null;
     if (ctx.edit) {
       // Editing an existing record: load its values back into the form.
       const r = this.state.records.find((x) => x.record_id === ctx.edit) || {};
       form = { ...blank };
       Object.keys(blank).forEach((k) => { if (r[k] != null && r[k] !== "") form[k] = r[k]; });
       form.collected_date = r.collected_date || today;
+      if (r.lat && r.lon) {
+        keptGps = { lat: Number(r.lat), lon: Number(r.lon), acc: Number(r.gps_accuracy_m) || 0, saved: true };
+      }
     }
     if (ctx.house) form.house = ctx.house;
     form = this.autoIds(type, form);
     this.setState({
-      screen: "form", type, form, error: "", gps: null, forceSave: false,
+      screen: "form", type, form, error: "", gps: keptGps, forceSave: false,
       ctxHouse: ctx.house || "", editId: ctx.edit || "", returnTo: ctx.returnTo || "home",
     });
   };
@@ -1912,14 +1994,18 @@ class Component extends DCLogic {
     if (again) {
       // Same household, same day, same location — only the trap changes.
       // Clear the IDs, then mint the next pair so the field is never empty.
+      const savedIds = built.map((r) => r.record_id).join(", ");
       this.setState((p) => ({
+        savedId: savedIds,
         form: this.autoIds(p.type, { ...form, trap_id_inside: "", trap_id_outside: "", _auto_trap_id_inside: "", _auto_trap_id_outside: "" }, p.records),
         error: "", forceSave: false,
       }));
     } else {
       // Stay on the form so several records can be entered in a row; the lists above
       // refresh with what was just saved.
+      const savedIds = built.map((r) => r.record_id).join(", ");
       this.setState((p) => ({
+        savedId: savedIds,
         form: this.autoIds(p.type, {
           ...this.blankForm(p.type),
           house: p.form.house || "",
@@ -1929,7 +2015,7 @@ class Component extends DCLogic {
         }, p.records),
         error: "", forceSave: false, savedFlash: true,
       }));
-      setTimeout(() => this.setState({ savedFlash: false }), 2200);
+      setTimeout(() => this.setState({ savedFlash: false, savedId: "" }), 2600);
     }
   }
 
@@ -2857,7 +2943,10 @@ class Component extends DCLogic {
             : g && g.pending ? "\u1780\u17c6\u1796\u17bb\u1784\u179a\u1780\u1791\u17b8\u178f\u17b6\u17c6\u1784\u2026 locating"
             : g && g.err ? "\u1798\u17b7\u1793\u1798\u17b6\u1793 \u00b7 not available"
             : "\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1799\u1780 \u00b7 not captured",
-          meta: g && g.lat ? "\u00b1" + Math.round(g.acc) + " m" : g && g.err ? g.err : "\u1785\u17b6\u17c6\u1794\u17b6\u1785\u17cb\u179f\u1798\u17d2\u179a\u17b6\u1794\u17cb\u1795\u17c2\u1793\u1791\u17b8 \u00b7 needed for the map",
+          meta: g && g.lat
+            ? (g.saved ? "\u1794\u17b6\u1793\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780\u179a\u17bb\u1785 \u00b7 saved" + (g.acc ? " \u00b7 \u00b1" + Math.round(g.acc) + " m" : "")
+              : "\u00b1" + Math.round(g.acc) + " m")
+            : g && g.err ? g.err : "\u1785\u17b6\u17c6\u1794\u17b6\u1785\u17cb\u179f\u1798\u17d2\u179a\u17b6\u1794\u17cb\u1795\u17c2\u1793\u1791\u17b8 \u00b7 needed for the map",
         };
       })(this.state.gps, this.captureGps),
       choice("structure", "Structure", ["House", "Apartment", "Shophouse", "Other"]),
@@ -3253,6 +3342,29 @@ class Component extends DCLogic {
         ? "\u1794\u17b7\u1791 \u00b7 show less"
         : "\u1798\u17be\u179b\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb " + ((current && current._rows.length) || 0) + " \u00b7 show all",
       toggleHhAll: () => this.setState((p) => ({ hhAll: !p.hhAll })),
+      // Deleting a household removes its registration and every record keyed to it.
+      // Two taps, and the count of already-synced rows is stated: those stay in the sheet.
+      hhDelArmed: !!(current && s.hhDelArm === current.household_id),
+      hhDelIdle: !(current && s.hhDelArm === current.household_id),
+      armHhDelete: () => current && this.setState({ hhDelArm: current.household_id }),
+      cancelHhDelete: () => this.setState({ hhDelArm: null }),
+      hhDelWarnKm: current
+        ? "\u179b\u17bb\u1794\u1780\u178f\u17cb\u178f\u17d2\u179a\u17b6 " + current._rows.length + " \u1793\u17c3\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7 " + current.household_id + " \u17d4 \u1798\u17b7\u1793\u17a2\u17b6\u1785\u1799\u1780\u1798\u1780\u179c\u17b7\u1789\u1794\u17b6\u1793\u17d4"
+        : "",
+      hhDelWarnEn: current
+        ? "Deletes all " + current._rows.length + " record" + (current._rows.length === 1 ? "" : "s") +
+          " for " + current.household_id + ", including its registration, on this phone and in the Google Sheet. This cannot be undone." +
+          (current._rows.filter((r) => r.synced_at).length
+            ? " " + current._rows.filter((r) => r.synced_at).length + " of them are in the sheet; the rows are removed there too, and the deletion is logged in the _history tab."
+            : "")
+        : "",
+      confirmHhDelete: () => {
+        if (!current) return;
+        const id = current.household_id;
+        this.persist(this.state.records.filter((r) => r.household_id !== id));
+        this.setState({ hhDelArm: null, hhId: null, hhAll: false, screen: "hh" });
+        this.queueDelete(id);
+      },
       hhRecordsShown: current ? (s.hhAll ? current._rows : current._rows.slice(0, 3)).map((r) => ({
         edit: () => this.open(r.form_type || r.type, {
           edit: r.record_id || r.id, house: r.household_id || "", returnTo: "hhdetail",
@@ -3469,7 +3581,9 @@ class Component extends DCLogic {
       isInstallForm: s.screen === "form" && s.type === "install",
       hasError: !!s.error, error: s.error,
       savedFlash: !!s.savedFlash,
-      savedFlashText: "\u1794\u17b6\u1793\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780 \u00b7 saved \u2014 \u1794\u1793\u17d2\u178f\u1794\u1789\u17d2\u1785\u17bc\u179b\u1794\u17b6\u1793 \u00b7 the form is ready for the next one",
+      savedFlashText: "\u1794\u17b6\u1793\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780 \u00b7 saved"
+        + (s.savedId ? "  \u00b7  " + s.savedId : "")
+        + " \u2014 \u1794\u1793\u17d2\u178f\u1794\u1789\u17d2\u1785\u17bc\u179b\u1794\u17b6\u1793 \u00b7 the form is ready for the next one",
       canSave: !(s.type === "lab" && this.specimenSources(s.ctxHouse || (s.form || {})._srcHouse, (s.form || {})._srcType).length === 0),
       captureGps: this.captureGps,
       gpsHasMap: !!(s.gps && s.gps.lat),
