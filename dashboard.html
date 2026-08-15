@@ -39,11 +39,11 @@ canvas{max-height:280px}
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
       <span style="font-size:12px;color:#A9CCE3">{{ statusText }}</span>
-      <button onClick="{{ reload }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font:700 12.5px/1 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
+      <button onClick="{{ reload }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
         <span>{{ reloadLabel }}</span>
       </button>
-      <button onClick="{{ downloadCsv }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font:700 12.5px/1 inherit;cursor:pointer">CSV</button>
+      <button onClick="{{ downloadCsv }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer">CSV</button>
     </div>
   </div>
 
@@ -58,7 +58,7 @@ canvas{max-height:280px}
         </select>
       </div>
     </sc-for>
-    <button onClick="{{ resetFilters }}" style="padding:8px 14px;background:{{ resetBg }};border:1.5px solid {{ resetBd }};border-radius:6px;font:700 12.5px/1 inherit;color:{{ resetFg }};cursor:pointer;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path></svg>{{ resetLabel }}</button>
+    <button onClick="{{ resetFilters }}" style="padding:8px 14px;background:{{ resetBg }};border:1.5px solid {{ resetBd }};border-radius:6px;font-weight:700;font-size:12.5px;line-height:1;color:{{ resetFg }};cursor:pointer;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path></svg>{{ resetLabel }}</button>
     <span style="margin-left:auto;font-size:12px;color:#64748B">{{ recCountLabel }}</span>
   </div>
 
@@ -73,7 +73,7 @@ canvas{max-height:280px}
 
   <div style="display:flex;gap:6px;flex-wrap:wrap">
     <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
-      <button onClick="{{ t.go }}" style="padding:9px 16px;border:1px solid {{ t.bd }};border-radius:20px;background:{{ t.bg }};color:{{ t.fg }};font:700 13px/1 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
+      <button onClick="{{ t.go }}" style="padding:9px 16px;border:1px solid {{ t.bd }};border-radius:20px;background:{{ t.bg }};color:{{ t.fg }};font-weight:700;font-size:13px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="{{ t.icon }}"></path></svg>
         <span>{{ t.label }}</span>
       </button>
@@ -120,7 +120,7 @@ canvas{max-height:280px}
             <span style="width:26px;height:26px;flex:none;border-radius:7px;background:#EEF4F8;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{ c.icon }}"></path></svg></span>
             <span style="flex:1;min-width:0;font-size:14px;font-weight:700;color:#1A2332">{{ c.title }} <span style="font-weight:400;color:#9AA5AE">{{ c.titleEn }}</span></span>
             <sc-if value="{{ c.clickable }}" hint-placeholder-val="{{ false }}">
-              <span style="flex:none;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#117996;background:#EEF4F8;border-radius:999px;padding:3px 8px">តម្រង · filter</span>
+              <span style="flex:none;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#117996;background:#EEF4F8;border-radius:999px;padding:3px 8px">តម្រង · filter</span>
             </sc-if>
           </div>
           <canvas data-chart="{{ c.key }}"></canvas>
@@ -134,7 +134,7 @@ canvas{max-height:280px}
       <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">ផែនទីគ្រួសារ <span style="font-weight:400;color:#9AA5AE">Household locations</span></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
         <sc-for list="{{ mapModes }}" as="m" hint-placeholder-count="3">
-          <button onClick="{{ m.go }}" style="padding:6px 12px;border:1px solid {{ m.bd }};border-radius:16px;background:{{ m.bg }};color:{{ m.fg }};font:700 12px/1 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+          <button onClick="{{ m.go }}" style="padding:6px 12px;border:1px solid {{ m.bd }};border-radius:16px;background:{{ m.bg }};color:{{ m.fg }};font-weight:700;font-size:12px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="{{ m.icon }}"></path></svg>
             <span>{{ m.label }}</span>
           </button>
