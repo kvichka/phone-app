@@ -198,19 +198,41 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
           <span style="width: 42px; height: 42px; border-radius: 12px; color: #fff; display: inline-flex; align-items: center; justify-content: center; background-color: #7C1220"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="M15.8 15.8 21 21"></path></svg></span>
           <span style="font-size:13px;font-weight:700;line-height:1.25;text-align:left"><span style="display: block; color: #003E78">ស្វែងរកខ្នងផ្ទះ</span><span style="display: block; font-size:11px;font-weight:400;color:#767676;margin-top:1px">Find household</span></span>
         </button>
-        
-        
-        
-        
-        
-        
+      </div>
+      <div style="background:#fff;border:1px solid #D9DEE4;border-top:3px solid #117996;border-radius:8px;overflow:hidden">
+      <button onClick="{{ toggleLatest }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:none;border-bottom:1px solid #EDF1F4;background:transparent;cursor:pointer;font-family:inherit;text-align:left">
+        <span style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">សកម្មភាពចុងក្រោយ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Last activity</span></span>
+        <span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ latestRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span>
+      </button>
+      <sc-if value="{{ latestOpen }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff;overflow:hidden">
+        <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
+          <span style="flex:1;min-width:0;font-weight:400;font-size:11px;line-height:1.3;color:#003E78">កំណត់ត្រា <span style="font-weight:400;color:#767676">Record</span></span>
+          <span style="width:62px;flex:none;text-align:right;font-weight:400;font-size:11px;line-height:1.3;color:#003E78;white-space:nowrap">សកម្មភាព</span>
+        </div>
+      <sc-for list="{{ latest }}" as="r" hint-placeholder-count="3">
+        <div style="border-top:1px solid #EDF1F4;border-left:8px solid {{ r.bar }};padding:6px 10px;display:flex;align-items:center;gap:8px">
+          <button onClick="{{ r.edit }}" style="flex:1;min-width:0;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit">
+            <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
+              <span style="font-size:12px;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span>
+              <span style="flex:1;min-width:0;font-size:11px;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
+            </span>
+            <span style="display:block;font-size:11px;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px">{{ r.detail }}</span>
+          </button>
+          <button onClick="{{ r.edit }}" title="កែ Edit" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #A8C8DC;background:#fff;color:#117996;border-radius:5px;width:27px;height:27px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+          <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #E3BFC4;background:#fff;color:#7C1220;border-radius:5px;width:27px;height:27px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
+        </div>
+      </sc-for>
+      </div>
+      </sc-if>
       </div>
       <sc-if value="{{ hasAdminRows }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-top:3px solid #117996;border-radius:8px;overflow:hidden">
-          <div style="display:flex;align-items:baseline;gap:8px;padding:10px 12px;border-bottom:1px solid #EDF1F4">
-            <span style="font-weight:700;font-size:11px;line-height:1.3;color:#003E78;text-transform:uppercase;letter-spacing:.06em">ខ្នងផ្ទះតាមឃុំ</span>
-            <span style="font-size:11px;color:#767676">Households by commune</span>
-          </div>
+          <button onClick="{{ toggleCommunes }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:none;border-bottom:1px solid #EDF1F4;background:transparent;cursor:pointer;font-family:inherit;text-align:left">
+            <span style="display:inline-flex;align-items:baseline;gap:8px;min-width:0"><span style="font-weight:700;font-size:11px;line-height:1.3;color:#003E78;text-transform:uppercase;letter-spacing:.06em">ខ្នងផ្ទះតាមឃុំ</span><span style="font-size:11px;color:#767676">Households by commune</span></span>
+            <span style="display:inline-flex;align-items:center;gap:7px;flex:none"><span style="font-size:11px;color:#767676">{{ adminTotalHh }} ខ្នងផ្ទះ</span><span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ communesRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span></span>
+          </button>
+          <sc-if value="{{ communesOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:baseline;gap:8px;padding:6px 12px;background:#F2F2F2">
             <span style="flex:1;min-width:0;font-weight:400;font-size:11px;line-height:1.3;color:#003E78">ឃុំ <span style="font-weight:400;color:#767676">Commune</span></span>
             <span style="width:104px;flex:none;font-weight:400;font-size:11px;line-height:1.3;color:#003E78">ស្រុក <span style="font-weight:400;color:#767676">District</span></span>
@@ -237,6 +259,7 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
             <span style="flex:1;min-width:0">សរុប · Total {{ adminVillages }}</span>
             <span style="width:58px;flex:none;text-align:right">{{ adminTotalHh }}</span>
           </div>
+          </sc-if>
         </div>
       </sc-if>
       <div style="border:1px solid #D9DEE4;border-radius:8px;background:#fff;overflow:hidden">
@@ -244,44 +267,18 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
           <span style="flex:0 1 66px;min-width:60px;font-weight:700;color:#003E78">ជុំ <span style="font-weight:400;color:#767676">Round</span></span>
           <span style="flex:0 1 34px;min-width:28px;text-align:right;line-height:1.25">ខ្នងផ្ទះ<span style="display:block;color:#767676">#HH</span></span>
           <span style="flex:0 1 74px;min-width:44px;text-align:right;line-height:1.25">ដាក់<span style="display:block;color:#767676">OVT / BGS</span></span>
-          <span style="flex:0 1 34px;min-width:28px;text-align:right;line-height:1.25">ប្រមូល<span style="display:block;color:#767676">Coll</span></span>
-          <span style="flex:0 1 36px;min-width:28px;text-align:right;line-height:1.25">មូសធំ<span style="display:block;color:#767676">Adult</span></span>
-          <span style="flex:0 1 38px;min-width:30px;text-align:right;line-height:1.25">ដង្កូវ<span style="display:block;color:#767676">Larvae</span></span>
-          <span style="flex:0 1 34px;min-width:28px;text-align:right;line-height:1.25">លទ្ធផល<span style="display:block;color:#767676">Lab</span></span>
-          <span style="flex:0 1 66px;min-width:60px;text-align:right;line-height:1.25;overflow:hidden">មូស · ពង<span style="display:block;color:#767676;overflow:hidden;text-overflow:ellipsis">Catch · eggs</span></span>
-          <span style="flex:1;min-width:66px;text-align:right;line-height:1.25;overflow:hidden">ភាជន៍<span style="display:block;color:#767676;overflow:hidden;text-overflow:ellipsis">Pos · index</span></span>
+          <span style="flex:0 1 40px;min-width:32px;text-align:right;line-height:1.25">ប្រមូល<span style="display:block;color:#767676">Coll</span></span>
+          <span style="flex:1;min-width:66px;text-align:right;line-height:1.25;overflow:hidden">មូស · ពង<span style="display:block;color:#767676;overflow:hidden;text-overflow:ellipsis">Catch · eggs</span></span>
         </div>
         <sc-for list="{{ homeRounds }}" as="r" hint-placeholder-count="2">
           <button onClick="{{ r.go }}" style="width:100%;box-sizing:border-box;text-align:left;font-family:inherit;cursor:pointer;background:#fff;display:flex;align-items:center;gap:6px;padding:7px 10px;border:none;border-top:1px solid #F2F2F2;border-left:4px solid #117996">
             <span style="flex:0 1 66px;min-width:60px;font-size:12px;font-weight:700;color:#003E78;white-space:nowrap">{{ r.label }}</span>
             <span style="flex:0 1 34px;min-width:28px;text-align:right;font-size:11px;color:#003E78">{{ r.hh }}</span>
             <span style="flex:0 1 74px;min-width:44px;text-align:right;font-size:11px;color:#003E78">{{ r.install }}</span>
-            <span style="flex:0 1 34px;min-width:28px;text-align:right;font-size:11px;color:#003E78">{{ r.collect }}</span>
-            <span style="flex:0 1 36px;min-width:28px;text-align:right;font-size:11px;color:#003E78">{{ r.adult }}</span>
-            <span style="flex:0 1 38px;min-width:30px;text-align:right;font-size:11px;color:#003E78">{{ r.larvae }}</span>
-            <span style="flex:0 1 34px;min-width:28px;text-align:right;font-size:11px;color:#003E78">{{ r.lab }}</span>
-            <span style="flex:0 1 66px;min-width:60px;text-align:right;font-size:11px;color:#003E78;white-space:nowrap">{{ r.catchEggs }}</span>
-            <span style="flex:1;min-width:66px;text-align:right;font-size:11px;font-weight:700;color:{{ r.indexFg }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.contIndex }}</span>
+            <span style="flex:0 1 40px;min-width:32px;text-align:right;font-size:11px;color:#003E78">{{ r.collect }}</span>
+            <span style="flex:1;min-width:66px;text-align:right;font-size:11px;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.catchEggs }}</span>
           </button>
         </sc-for>
-      </div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between">
-        <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ចុងក្រោយ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Latest</span></div>
-        <button onClick="{{ openData }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;background:transparent;color:#117996;font-weight:700;font-size:12px;line-height:1;cursor:pointer;padding:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12h13"></path><path d="M13 6.5 18.5 12 13 17.5"></path></svg>មើលទាំងអស់ · See all</button>
-      </div>
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
-        <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
-          <span style="flex:1;min-width:0;font-weight:400;font-size:11px;line-height:1.3;color:#003E78">កំណត់ត្រា <span style="font-weight:400;color:#767676">Record</span></span>
-          <span style="flex:0 1 118px;min-width:0;overflow:hidden;font-weight:400;font-size:11px;line-height:1.3;color:#003E78;white-space:nowrap">ពេលវេលា <span style="font-weight:400;color:#767676">Saved</span></span>
-          <span style="width:31px;flex:none"></span>
-        </div>
-      <sc-for list="{{ latest }}" as="r" hint-placeholder-count="3">
-        <div style="border-top:1px solid #EDF1F4;border-left:3px solid {{ r.bar }};padding:5px 10px;display:flex;align-items:center;gap:8px">
-          <button onClick="{{ r.edit }}" style="flex:1 1 auto;min-width:92px;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;font-weight:700;font-size:11px;line-height:1.35;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.title }}</button>
-          <span style="flex:0 1 118px;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.meta }}</span>
-          <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #E3BFC4;background:#fff;color:#7C1220;border-radius:5px;width:27px;height:27px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
-        </div>
-      </sc-for>
       </div>
       <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
         <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:12px 14px;font-size:12px;line-height:1.5;color:#003E78">No records yet. Everything you save stays on this phone, works with no signal, and leaves as a CSV file from the Results screen.</div>
@@ -347,16 +344,22 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
         <button onClick="{{ sortByStatus }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortStatusFg }}">ស្ថានភាព{{ sortStatusArrow }}</button>
       </div>
       <sc-for list="{{ households }}" as="h" hint-placeholder-count="4">
-        <button onClick="{{ h.open }}" style="text-align:left;background:#fff;border:none;border-top:1px solid #F2F2F2;border-left:4px solid {{ h.bar }};border-radius:0;padding:7px 10px;cursor:pointer;font-family:inherit;width:100%;box-sizing:border-box;display:flex;align-items:center;gap:9px">
-          <span style="flex:1;min-width:0">
+        <div style="background:#fff;border-top:1px solid #F2F2F2;border-left:8px solid {{ h.bar }};padding:6px 10px;display:flex;align-items:center;gap:8px">
+          <button onClick="{{ h.open }}" style="flex:1;min-width:0;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit">
             <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
               <span style="font:700 11px ui-monospace,Menlo,monospace;color:#003E78;white-space:nowrap">{{ h.id }}</span>
               <span style="flex:1;min-width:0;font-size:12px;font-weight:700;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ h.head }}</span>
             </span>
-            <span style="display:block;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px">{{ h.village }} · {{ h.commune }} · <span style="color:{{ h.progressFg }}">{{ h.progress }}</span></span>
+            <span style="display:block;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px">{{ h.village }} · {{ h.commune }}</span>
+          </button>
+          <span style="flex:none;display:flex;align-items:center;gap:5px">
+            <button onClick="{{ h.goInstall }}" title="ដាក់អន្ទាក់ · Trap installation" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #D9DEE4;background:#f6a06b;color:#003E78;border-radius:6px;width:28px;height:28px;flex:none;cursor:pointer;padding:0;opacity:{{ h.opInstall }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h12l-1.3 10.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 9Z"></path><path d="M12 2v4.2"></path><path d="M9.4 4.4 12 6.8l2.6-2.4"></path></svg></button>
+            <button onClick="{{ h.goCollect }}" title="ប្រមូលអន្ទាក់ · Trap collection" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #D9DEE4;background:#f0fae1;color:#003E78;border-radius:6px;width:28px;height:28px;flex:none;cursor:pointer;padding:0;opacity:{{ h.opCollect }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12l-1.3 7.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 12Z"></path><path d="M12 9.2V2.6"></path><path d="M9.4 5 12 2.4 14.6 5"></path></svg></button>
+            <button onClick="{{ h.goAdult }}" title="ប្រមូលមូសពេញវ័យ · Procopack" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #D9DEE4;background:#dcd3c4;color:#003E78;border-radius:6px;width:28px;height:28px;flex:none;cursor:pointer;padding:0;opacity:{{ h.opAdult }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="13.5" r="7"></circle><path d="M15.6 8.4 21 3"></path><path d="M7.5 11.5h6"></path><path d="M8 15.5h5"></path></svg></button>
+            <button onClick="{{ h.goLarvae }}" title="ប្រមូលដង្កូវទឹក · Larvae" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #D9DEE4;background:#ccdbb2;color:#003E78;border-radius:6px;width:28px;height:28px;flex:none;cursor:pointer;padding:0;opacity:{{ h.opLarvae }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.6 4 5.5 6.7 5.5 9.4A5.5 5.5 0 0 1 6.5 12c0-2.7 1.9-5.4 5.5-9.5Z"></path><path d="M8.4 13.6c1.1-.9 2.1-.9 3.2 0 1.1.9 2.1.9 3.2 0"></path></svg></button>
+            <button onClick="{{ h.goLab }}" title="លទ្ធផលមន្ទីរពិសោធន៍ · Lab result" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #D9DEE4;background:#ffe1d0;color:#003E78;border-radius:6px;width:28px;height:28px;flex:none;cursor:pointer;padding:0;opacity:{{ h.opLab }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></button>
           </span>
-          <span style="width:150px;flex:none;min-width:0;text-align:right"><span style="display:inline-block;max-width:100%;box-sizing:border-box;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;font-size:11px;font-weight:400;background:{{ h.tagBg }};color:{{ h.tagFg }};padding:4px 7px;border-radius:999px">{{ h.tag }}</span></span>
-        </button>
+        </div>
       </sc-for>
       </div>
       <sc-if value="{{ hhListMore }}" hint-placeholder-val="{{ false }}">
@@ -394,27 +397,27 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
 
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
           
-          <button onClick="{{ editHousehold }}" style="border: 1px solid #F3DFA8; border-radius: 8px; min-height: 64px; padding: 10px 12px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 10px; background-color: #FBCD81">
-            <span style="width:38px;height:38px;flex:none;border-radius:10px;background:#7C1220;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16v4Z"></path><path d="M14.5 5.5 18.5 9.5"></path></svg></span>
-            <span style="font-size:13px;font-weight:700;line-height:1.25;text-align:left;min-width:0"><span style="display:block">កែព័ត៌មានខ្នងផ្ទះ</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Edit household</span></span>
-          </button><button onClick="{{ hhInstall }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 64px; padding: 10px 12px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 10px; background-color: #f6a06b">
-            <span style="width:38px;height:38px;flex:none;border-radius:10px;background:#003E78;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h12l-1.3 10.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 9Z"></path><path d="M12 2v4.2"></path><path d="M9.4 4.4 12 6.8l2.6-2.4"></path></svg></span>
-            <span style="font-size:13px;font-weight:700;line-height:1.25;text-align:left;min-width:0"><span style="display:block">ដាក់អន្ទាក់</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Trap installation</span></span>
-          </button><button onClick="{{ hhCollect }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 64px; padding: 10px 12px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 10px; background-color: #f0fae1">
-            <span style="width:38px;height:38px;flex:none;border-radius:10px;background:#117996;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12l-1.3 7.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 12Z"></path><path d="M12 9.2V2.6"></path><path d="M9.4 5 12 2.4 14.6 5"></path></svg></span>
-            <span style="font-size:13px;font-weight:700;line-height:1.25;text-align:left;min-width:0"><span style="display:block">ប្រមូលអន្ទាក់</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Trap collection</span></span>
-          </button><button onClick="{{ hhLarvae }}" style="border: 1px solid #F3DFA8; border-radius: 8px; min-height: 64px; padding: 10px 12px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 10px; background-color: #ccdbb2">
-            <span style="width:38px;height:38px;flex:none;border-radius:10px;background:#002B53;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.6 4 5.5 6.7 5.5 9.4A5.5 5.5 0 0 1 6.5 12c0-2.7 1.9-5.4 5.5-9.5Z"></path><path d="M8.4 13.6c1.1-.9 2.1-.9 3.2 0 1.1.9 2.1.9 3.2 0"></path><path d="M9 17c1-.8 1.9-.8 2.9 0 1 .8 1.9.8 2.9 0"></path></svg></span>
-            <span style="font-size:13px;font-weight:700;line-height:1.25;text-align:left;min-width:0"><span style="display:block">ប្រមូលដង្កូវទឹក</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Larvae collection</span></span>
+          <button onClick="{{ editHousehold }}" style="border: 1px solid #F3DFA8; border-radius: 8px; min-height: 46px; padding: 7px 8px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 7px; background-color: #FBCD81">
+            <span style="width:28px;height:28px;flex:none;border-radius:8px;background:#7C1220;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16v4Z"></path><path d="M14.5 5.5 18.5 9.5"></path></svg></span>
+            <span style="font-size:12px;font-weight:700;line-height:1.2;text-align:left;min-width:0"><span style="display:block">កែព័ត៌មានខ្នងផ្ទះ</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Edit household</span></span>
+          </button><button onClick="{{ hhInstall }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 46px; padding: 7px 8px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 7px; background-color: #f6a06b">
+            <span style="width:28px;height:28px;flex:none;border-radius:8px;background:#003E78;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h12l-1.3 10.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 9Z"></path><path d="M12 2v4.2"></path><path d="M9.4 4.4 12 6.8l2.6-2.4"></path></svg></span>
+            <span style="font-size:12px;font-weight:700;line-height:1.2;text-align:left;min-width:0"><span style="display:block">ដាក់អន្ទាក់</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Trap installation</span></span>
+          </button><button onClick="{{ hhCollect }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 46px; padding: 7px 8px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 7px; background-color: #f0fae1">
+            <span style="width:28px;height:28px;flex:none;border-radius:8px;background:#117996;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12l-1.3 7.2a1.8 1.8 0 0 1-1.8 1.6H9.1a1.8 1.8 0 0 1-1.8-1.6L6 12Z"></path><path d="M12 9.2V2.6"></path><path d="M9.4 5 12 2.4 14.6 5"></path></svg></span>
+            <span style="font-size:12px;font-weight:700;line-height:1.2;text-align:left;min-width:0"><span style="display:block">ប្រមូលអន្ទាក់</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Trap collection</span></span>
+          </button><button onClick="{{ hhLarvae }}" style="border: 1px solid #F3DFA8; border-radius: 8px; min-height: 46px; padding: 7px 8px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 7px; background-color: #ccdbb2">
+            <span style="width:28px;height:28px;flex:none;border-radius:8px;background:#002B53;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c3.6 4 5.5 6.7 5.5 9.4A5.5 5.5 0 0 1 6.5 12c0-2.7 1.9-5.4 5.5-9.5Z"></path><path d="M8.4 13.6c1.1-.9 2.1-.9 3.2 0 1.1.9 2.1.9 3.2 0"></path><path d="M9 17c1-.8 1.9-.8 2.9 0 1 .8 1.9.8 2.9 0"></path></svg></span>
+            <span style="font-size:12px;font-weight:700;line-height:1.2;text-align:left;min-width:0"><span style="display:block">ប្រមូលដង្កូវទឹក</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Larvae collection</span></span>
           </button>
           
-          <button onClick="{{ hhAdult }}" style="border: 1px solid #A8C8DC; border-radius: 8px; min-height: 64px; padding: 10px 12px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 10px; background-color: #dcd3c4">
-            <span style="width:38px;height:38px;flex:none;border-radius:10px;background:#0D6177;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="13.5" r="7"></circle><path d="M15.6 8.4 21 3"></path><path d="M7.5 11.5h6"></path><path d="M8 15.5h5"></path></svg></span>
-            <span style="font-size:13px;font-weight:700;line-height:1.25;text-align:left;min-width:0"><span style="display:block">ប្រមូលមូសពេញវ័យ</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Adult collection</span></span>
+          <button onClick="{{ hhAdult }}" style="border: 1px solid #A8C8DC; border-radius: 8px; min-height: 46px; padding: 7px 8px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 7px; background-color: #dcd3c4">
+            <span style="width:28px;height:28px;flex:none;border-radius:8px;background:#0D6177;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="13.5" r="7"></circle><path d="M15.6 8.4 21 3"></path><path d="M7.5 11.5h6"></path><path d="M8 15.5h5"></path></svg></span>
+            <span style="font-size:12px;font-weight:700;line-height:1.2;text-align:left;min-width:0"><span style="display:block">ប្រមូលមូសពេញវ័យ</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Adult collection</span></span>
           </button>
-          <button onClick="{{ hhLab }}" style="border: 1px solid #F3DFA8; border-radius: 8px; min-height: 64px; padding: 10px 12px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 10px; background-color: #ffe1d0">
-            <span style="width:38px;height:38px;flex:none;border-radius:10px;background:#7C1220;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></span>
-            <span style="font-size:13px;font-weight:700;line-height:1.25;text-align:left;min-width:0"><span style="display:block">លទ្ធផលមន្ទីរពិសោធន៍</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Lab result</span></span>
+          <button onClick="{{ hhLab }}" style="border: 1px solid #F3DFA8; border-radius: 8px; min-height: 46px; padding: 7px 8px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 7px; background-color: #ffe1d0">
+            <span style="width:28px;height:28px;flex:none;border-radius:8px;background:#7C1220;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></span>
+            <span style="font-size:12px;font-weight:700;line-height:1.2;text-align:left;min-width:0"><span style="display:block">លទ្ធផលមន្ទីរពិសោធន៍</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Lab result</span></span>
           </button>
           
         </div>      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
@@ -433,14 +436,18 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
       </div>
 
 
-      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ប្រវត្តិសកម្មភាព <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Activity history</span></div>
+      <button onClick="{{ toggleHist }}" style="display:flex;width:100%;box-sizing:border-box;align-items:center;justify-content:space-between;gap:10px;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit;text-align:left">
+        <span style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ប្រវត្តិសកម្មភាព <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Activity history</span></span>
+        <span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ histRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span>
+      </button>
+      <sc-if value="{{ histOpen }}" hint-placeholder-val="{{ true }}">
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
         <sc-for list="{{ hhRecordsShown }}" as="r" hint-placeholder-count="3">
-          <button onClick="{{ r.edit }}" style="display:flex;align-items:center;gap:9px;width:100%;box-sizing:border-box;text-align:left;background:#fff;border:none;border-top:1px solid #F2F2F2;border-left:4px solid {{ r.bar }};padding:7px 10px;cursor:pointer;font-family:inherit">
+          <button onClick="{{ r.edit }}" style="display:flex;align-items:center;gap:9px;width:100%;box-sizing:border-box;text-align:left;background:#fff;border:none;border-top:1px solid #F2F2F2;border-left:8px solid {{ r.bar }};padding:7px 10px;cursor:pointer;font-family:inherit">
             <span style="flex:1;min-width:0">
               <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
                 <span style="font-size:12px;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span>
-                <span style="flex:1;min-width:0;font-size:11px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
+                <span style="flex:1;min-width:0;font-size:11px;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
               </span>
               <span style="display:block;font-size:11px;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px">{{ r.detail }}</span>
             </span>
@@ -454,15 +461,23 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
           <span>{{ hhMoreLabel }}</span>
         </button>
       </sc-if>
+      </sc-if>
 
-      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ជុំដែលបានទៅ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Rounds visited</span></div>
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:4px 12px">
-        <sc-for list="{{ hhRounds }}" as="p" hint-placeholder-count="2">
-          <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #F2F2F2">
-            <span style="width:82px;flex:none;font-size:12px;font-weight:700;color:#003E78">{{ p.label }}</span>
-            <span style="flex:1;min-width:0;font-size:11px;color:#767676">{{ p.meta }}</span>
-          </div>
-        </sc-for>
+      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
+        <button onClick="{{ toggleHhRounds }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border:none;background:transparent;cursor:pointer;font-family:inherit;text-align:left">
+          <span style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ជុំដែលបានទៅ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Rounds visited</span></span>
+          <span style="display:inline-flex;align-items:center;gap:7px;flex:none"><span style="font-size:11px;color:#767676">{{ hhRoundsCount }}</span><span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ hhRoundsRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span></span>
+        </button>
+        <sc-if value="{{ hhRoundsOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:0 12px 4px;border-top:1px solid #EDF1F4">
+          <sc-for list="{{ hhRounds }}" as="p" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #F2F2F2">
+              <span style="width:82px;flex:none;font-size:12px;font-weight:700;color:#003E78">{{ p.label }}</span>
+              <span style="flex:1;min-width:0;font-size:11px;color:#767676">{{ p.meta }}</span>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
       </div>
 
     </sc-if>
@@ -788,26 +803,6 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
         </div>
       </div>
 
-      <sc-if value="{{ dash.hasOutstanding }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
-            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">នៅសល់ត្រូវទៅ <span style="font-weight:400;color:#767676">Still to visit</span></span>
-            <span style="font-size:13px;font-weight:700;color:#7C1220">{{ dash.remaining }}</span>
-          </div>
-          <div style="border:1px solid #F2F2F2;border-radius:6px;overflow:hidden;margin-top:10px">
-            <sc-for list="{{ dash.outstanding }}" as="o" hint-placeholder-count="3">
-              <div style="display:flex;align-items:center;gap:10px;padding:9px 11px;border-bottom:1px solid #F2F2F2">
-                <span style="flex:1;min-width:0">
-                  <span style="display:block;font:700 12px ui-monospace,Menlo,monospace;color:#003E78">{{ o.id }}</span>
-                  <span style="display:block;font-size:11px;color:#767676;margin-top:2px">{{ o.name }} · {{ o.meta }}</span>
-                </span>
-                <span style="font-size:11px;font-weight:700;background:{{ o.tagBg }};color:{{ o.tagFg }};padding:4px 8px;border-radius:999px;white-space:nowrap">{{ o.tag }}</span>
-              </div>
-            </sc-for>
-          </div>
-        </div>
-      </sc-if>
-
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676;display:inline-flex;align-items:center;gap:8px"><span style="color:#117996;display:inline-flex"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:#D5E7EF;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5 10 4l4 2.5L20 4v13.5L14 20l-4-2.5L4 20V6.5Z"></path><path d="M10 4v13.5"></path><path d="M14 6.5V20"></path></svg></span></span>តំបន់រដ្ឋបាល · Administrative area</div>
         <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
@@ -854,10 +849,11 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
 
       <sc-if value="{{ dash.hasVillageTable }}" hint-placeholder-val="{{ false }}">
         <div style="border:1px solid #D9DEE4;border-radius:8px;background:#fff;overflow:hidden">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:12px 14px 10px">
+          <button onClick="{{ toggleVillages }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 10px;background:transparent;border:none;cursor:pointer;font-family:inherit;text-align:left">
             <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">សរុបតាមភូមិ <span style="font-weight:400;color:#767676">By village · {{ dash.roundLabel }}</span></span>
-            <span style="font-size:11px;color:#767676">{{ dash.villageTotals.visited }} / {{ dash.villageTotals.hh }} ខ្នងផ្ទះ</span>
-          </div>
+            <span style="display:inline-flex;align-items:center;gap:7px;flex:none"><span style="font-size:11px;color:#767676">{{ dash.villageTotals.visited }} / {{ dash.villageTotals.hh }} ខ្នងផ្ទះ</span><span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ villagesRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span></span>
+          </button>
+          <sc-if value="{{ villagesOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#F2F2F2;font-size:11px;font-weight:400;color:#767676">
             <span style="flex:1;min-width:0">ភូមិ village</span>
             <span style="width:82px;flex:none">ឃំុ commune</span>
@@ -884,6 +880,7 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
             <span style="width:46px;flex:none;text-align:right">{{ dash.containerIndex }}%</span>
             <span style="width:44px;flex:none;text-align:right">{{ dash.villageTotals.catch }}</span>
           </div>
+          </sc-if>
         </div>
       </sc-if>
 
@@ -971,7 +968,11 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
       </sc-if>
 
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">លម្អិតតាមជុំ <span style="font-weight:400;color:#767676">Round detail</span></div>
+        <button onClick="{{ toggleRounds }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit;text-align:left">
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">លម្អិតតាមជុំ <span style="font-weight:400;color:#767676">Round detail</span></span>
+          <span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ roundsRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span>
+        </button>
+        <sc-if value="{{ roundsOpen }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;padding:9px 0 7px;border-bottom:1px solid #D9DEE4;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#767676;margin-top:8px">
           <span style="flex:1">ជុំ · round</span>
           <span style="width:42px;text-align:right">ផ្ទះ</span>
@@ -990,6 +991,7 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
             <span style="width:40px;text-align:right">{{ r.catch }}</span>
           </div>
         </sc-for>
+        </sc-if>
       </div>
 
 
@@ -998,6 +1000,28 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
         <div ref="{{ mapRef }}" style="height:280px;margin-top:12px;border-radius:6px;border:1px solid #D9DEE4;background:#F8FAFB"></div>
         <div style="font-size:11px;color:#767676;margin-top:8px;line-height:1.5">ចំណុចមកពី GPS ពេលចុះបញ្ជី · pins come from the GPS captured at registration</div>
       </div>
+
+      <sc-if value="{{ dash.hasOutstanding }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
+          <button onClick="{{ toggleOutstanding }}" style="display:flex;width:100%;box-sizing:border-box;align-items:center;justify-content:space-between;gap:10px;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit;text-align:left">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">នៅសល់ត្រូវទៅ <span style="font-weight:400;color:#767676">Still to visit</span></span>
+            <span style="display:inline-flex;align-items:center;gap:7px;flex:none"><span style="font-size:13px;font-weight:700;color:#7C1220">{{ dash.remaining }}</span><span style="width:22px;height:22px;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ outstandingRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span></span>
+          </button>
+          <sc-if value="{{ outstandingOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px solid #F2F2F2;border-radius:6px;overflow:hidden;margin-top:10px">
+            <sc-for list="{{ dash.outstanding }}" as="o" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px;padding:9px 11px;border-bottom:1px solid #F2F2F2">
+                <span style="flex:1;min-width:0">
+                  <span style="display:block;font:700 12px ui-monospace,Menlo,monospace;color:#003E78">{{ o.id }}</span>
+                  <span style="display:block;font-size:11px;color:#767676;margin-top:2px">{{ o.name }} · {{ o.meta }}</span>
+                </span>
+                <span style="font-size:11px;font-weight:700;background:{{ o.tagBg }};color:{{ o.tagFg }};padding:4px 8px;border-radius:999px;white-space:nowrap">{{ o.tag }}</span>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+        </div>
+      </sc-if>
 
 
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
@@ -1036,13 +1060,15 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
           </sc-if>
           <sc-if value="{{ dash.hasNoResult }}" hint-placeholder-val="{{ false }}">
             <div style="border:1px solid #A8C8DC;border-left:4px solid #002B53;border-radius:6px;min-width:0;overflow:hidden">
-              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px">
+              <button onClick="{{ toggleNoResult }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:10px 12px;background:transparent;border:none;cursor:pointer;font-family:inherit;text-align:left">
                 <span style="font-size:17px;font-weight:700;color:#002B53;line-height:1;min-width:26px">{{ dash.trapNoResult }}</span>
                 <span style="flex:1;min-width:0">
                   <span style="display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.3">រង់ចាំលទ្ធផល · waiting lab result</span>
                   <span style="display:block;font-size:11px;color:#767676;margin-top:2px;line-height:1.3">បានប្រមូល តែមិនទាន់មានលទ្ធផល · collected, no result entered</span>
                 </span>
-              </div>
+                <span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #A8C8DC;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ noResultRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span>
+              </button>
+              <sc-if value="{{ noResultOpen }}" hint-placeholder-val="{{ false }}">
               <div style="border-top:1px solid #F2F2F2;max-height:210px;overflow:auto">
                 <sc-for list="{{ dash.noResultList }}" as="g" hint-placeholder-count="2">
                   <div>
@@ -1060,6 +1086,7 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
                   </div>
                 </sc-for>
               </div>
+              </sc-if>
             </div>
           </sc-if>
           <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="3">
@@ -1117,7 +1144,11 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
 
       <sc-if value="{{ dash.hasCollectors }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">តាមអ្នកប្រមូល <span style="font-weight:400;color:#767676">By collector</span></div>
+          <button onClick="{{ toggleCollectors }}" style="display:flex;width:100%;box-sizing:border-box;align-items:center;justify-content:space-between;gap:10px;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit;text-align:left">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">តាមអ្នកប្រមូល <span style="font-weight:400;color:#767676">By collector</span></span>
+            <span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ collectorsRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span>
+          </button>
+          <sc-if value="{{ collectorsOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:9px;margin-top:12px">
             <sc-for list="{{ dash.collectors }}" as="c" hint-placeholder-count="2">
               <div style="display:flex;align-items:center;gap:10px">
@@ -1127,6 +1158,7 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
               </div>
             </sc-for>
           </div>
+          </sc-if>
         </div>
       </sc-if>
 
@@ -1161,12 +1193,17 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
         <div style="font-size:12px;color:#767676;margin-top:10px;line-height:1.5">Each file carries record_id, household_id, trap_id, site_id, collected_date and epi_week, so you can link them in Excel, R or Stata. trap_id joins collections and adult catches to the installation record; household_id then reaches the registration, and is copied onto a collection automatically from its trap's installation.</div>
       </div>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
+        <button onClick="{{ toggleRecTable }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:transparent;border:none;cursor:pointer;font-family:inherit;text-align:left">
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">កំណត់ត្រាទាំងអស់ <span style="font-weight:400;color:#767676">All records</span></span>
+          <span style="width:22px;height:22px;flex:none;border-radius:5px;border:1px solid #D9DEE4;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ recTableRot }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></span>
+        </button>
+        <sc-if value="{{ recTableOpen }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;align-items:center;gap:8px;background:#F2F2F2;padding:6px 10px;font-size:11px;font-weight:400;color:#767676">
           <span style="flex:1;min-width:0">កំណត់ត្រា · Record</span>
-          <span style="width:150px;flex:none;text-align:right">សកម្មភាព · Actions</span>
+          <span style="width:72px;flex:none;text-align:right">សកម្មភាព · Actions</span>
         </div>
         <sc-for list="{{ allRecordsShown }}" as="r" hint-placeholder-count="4">
-          <div style="border-top:1px solid #F2F2F2;border-left:4px solid {{ r.bar }}">
+          <div style="border-top:1px solid #F2F2F2;border-left:8px solid {{ r.bar }}">
             <div style="display:flex;align-items:center;gap:8px;padding:6px 10px">
               <button onClick="{{ r.toggle }}" style="flex:1;min-width:0;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit">
                 <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
@@ -1174,8 +1211,8 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
                   <span style="flex:1;min-width:0;font-size:11px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.metaShort }}</span>
                 </span>
               </button>
-              <button onClick="{{ r.edit }}" title="កែ Edit" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #F2F2F2;background:#fff;color:#117996;border-radius:5px;width:44px;height:44px;flex:none;cursor:pointer;padding:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
-              <button onClick="{{ r.remove }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #D9DEE4;background:#fff;color:#7C1220;border-radius:6px;min-height:44px;padding:0 11px;font:700 11px/1 inherit;flex:none;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg>លុប Delete</button>
+              <button onClick="{{ r.edit }}" title="កែ Edit" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #D9DEE4;background:#fff;color:#117996;border-radius:5px;width:32px;height:32px;flex:none;cursor:pointer;padding:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+              <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #E3BFC4;background:#fff;color:#7C1220;border-radius:5px;width:32px;height:32px;flex:none;cursor:pointer;padding:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
             </div>
             <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
               <div style="font-size:12px;color:#003E78;line-height:1.5;padding:0 10px 9px 10px">
@@ -1185,6 +1222,7 @@ label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.2
             </sc-if>
           </div>
         </sc-for>
+        </sc-if>
       </div>
       <sc-if value="{{ hasMoreRecords }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ toggleAllRecords }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #D9DEE4;color:#003E78;border-radius:8px;min-height:44px;font:700 12px/1 inherit;cursor:pointer">
@@ -1522,13 +1560,13 @@ const SHEET_URL = "https://script.google.com/macros/s/AKfycbz5dYyX8PKVisxPxePppn
 const SEQ = "ento.seq.v1";
 
 const TYPES = {
-  household: { label: "Household", bar: "#003E78", prefix: "HH" },
-  install: { label: "Trap install", bar: "#117996", prefix: "TI" },
-  collect: { label: "Trap collection", bar: "#A8C8DC", prefix: "TC" },
-  adult: { label: "Adult collection", bar: "#1ED47F", prefix: "AC" },
-  larvae: { label: "Larvae collection", bar: "#F4B71B", prefix: "LC" },
+  household: { label: "Household", bar: "#FBCD81", tint: "#FBCD81", prefix: "HH" },
+  install: { label: "Trap install", bar: "#f6a06b", tint: "#f6a06b", prefix: "TI" },
+  collect: { label: "Trap collection", bar: "#f0fae1", tint: "#f0fae1", prefix: "TC" },
+  adult: { label: "Adult collection", bar: "#dcd3c4", tint: "#dcd3c4", prefix: "AC" },
+  larvae: { label: "Larvae collection", bar: "#ccdbb2", tint: "#ccdbb2", prefix: "LC" },
   // Khmer forms of the type labels live in KM below.
-  lab: { label: "Lab result", bar: "#A8C8DC", prefix: "LR" },
+  lab: { label: "Lab result", bar: "#ffe1d0", tint: "#ffe1d0", prefix: "LR" },
 };
 
 // Larvae are reared and identified to species; sex is not determined.
@@ -3632,10 +3670,10 @@ class Component extends DCLogic {
           inspected: sum(l, "containers_inspected"), positive: sum(l, "containers_positive"),
         };
       }),
-      provOptions: [{ value: "", label: "ខេត្តទាំងអស់ · All provinces" }].concat(this.adminOptions("province")),
-      distOptions: [{ value: "", label: "ស្រុកទាំងអស់ · All districts" }].concat(this.adminOptions("district", "province", s.dashProv)),
-      commOptions: [{ value: "", label: "ឃំុទាំងអស់ · All communes" }].concat(this.adminOptions("commune", "district", s.dashDist)),
-      villOptions: [{ value: "", label: "ភូមិទាំងអស់ · All villages" }].concat(this.adminOptions("village", "commune", s.dashComm)),
+      provOptions: [{ value: "", label: "—" }].concat(this.adminOptions("province")),
+      distOptions: [{ value: "", label: "—" }].concat(this.adminOptions("district", "province", s.dashProv)),
+      commOptions: [{ value: "", label: "—" }].concat(this.adminOptions("commune", "district", s.dashDist)),
+      villOptions: [{ value: "", label: "—" }].concat(this.adminOptions("village", "commune", s.dashComm)),
       prov: s.dashProv || "", dist: s.dashDist || "", comm: s.dashComm || "", vill: s.dashVill || "",
       target,
       installedN, collectedN,
@@ -4266,9 +4304,10 @@ class Component extends DCLogic {
         title: km(TYPES[type].label) + (trapType ? " \u00b7 " + trapType : "") + " \u00b7 " + rid,
         titleEn: TYPES[type].label,
         meta: new Date(ts).toLocaleString() + (r.period_label ? " \u00b7 " + r.period_label + " round" : "")
-          + (r.visit_no ? " \u00b7 visit " + r.visit_no : "") + (r.epi_week ? " \u00b7 week " + r.epi_week : ""),
+          + (r.visit_no ? " \u00b7 visit " + r.visit_no : "") + "",
         detail: this.describe(r),
         bar: TYPES[type].bar,
+        tint: TYPES[type].tint,
         remove: () => this.persist(this.state.records.filter((x) => (x.record_id || x.id) !== rid)),
         edit: () => this.open(type, { edit: rid, house: r.household_id || "", returnTo: "home" }),
       };
@@ -4330,6 +4369,30 @@ class Component extends DCLogic {
         : "\u1791\u17c6\u17a0\u17c6\u178a\u17be\u1798 \u00b7 compact, sized for a phone in the field",
       closeAbout: this.closeAbout, isForm: s.screen === "form", isData: s.screen === "data",
       isDash: s.screen === "dash",
+      recTableOpen: !!s.recTableOpen,
+      recTableRot: s.recTableOpen ? 180 : 0,
+      toggleRecTable: () => this.setState((p) => ({ recTableOpen: !p.recTableOpen })),
+      histOpen: s.histOpen !== false,
+      histRot: s.histOpen !== false ? 180 : 0,
+      toggleHist: () => this.setState((p) => ({ histOpen: p.histOpen === false })),
+      collectorsOpen: !!s.collectorsOpen,
+      collectorsRot: s.collectorsOpen ? 180 : 0,
+      toggleCollectors: () => this.setState((p) => ({ collectorsOpen: !p.collectorsOpen })),
+      roundsOpen: !!s.roundsOpen,
+      roundsRot: s.roundsOpen ? 180 : 0,
+      toggleRounds: () => this.setState((p) => ({ roundsOpen: !p.roundsOpen })),
+      communesOpen: !!s.communesOpen,
+      communesRot: s.communesOpen ? 180 : 0,
+      toggleCommunes: () => this.setState((p) => ({ communesOpen: !p.communesOpen })),
+      villagesOpen: !!s.villagesOpen,
+      villagesRot: s.villagesOpen ? 180 : 0,
+      toggleVillages: () => this.setState((p) => ({ villagesOpen: !p.villagesOpen })),
+      noResultOpen: !!s.noResultOpen,
+      noResultRot: s.noResultOpen ? 180 : 0,
+      toggleNoResult: () => this.setState((p) => ({ noResultOpen: !p.noResultOpen })),
+      outstandingOpen: !!s.outstandingOpen,
+      outstandingRot: s.outstandingOpen ? 180 : 0,
+      toggleOutstanding: () => this.setState((p) => ({ outstandingOpen: !p.outstandingOpen })),
       openDash: () => this.setState({ screen: "dash" }),
       dash: this.dashboard(),
       // React recreates these nodes whenever the screen changes, so a cached
@@ -4419,7 +4482,7 @@ class Component extends DCLogic {
         if (el) setTimeout(() => this.drawHhMap(), 0);
       },
       // A short list by default; the rest is one tap away.
-      hhListMore: hhFiltered.length > 8,
+      hhListMore: hhFiltered.length > 5,
       hhListMoreLabel: s.hhAllList
         ? "បិទ · show fewer"
         : "មើលទាំងអស់ " + hhFiltered.length + " · show all " + hhFiltered.length,
@@ -4449,7 +4512,7 @@ class Component extends DCLogic {
           : String(self.roundStatus(h._rows).rank);
         const ordered = list.slice().sort((a, b) =>
           (val(a).localeCompare(val(b), "km") * dir) || String(a.household_id).localeCompare(String(b.household_id)));
-        return all ? ordered : ordered.slice(0, 8);
+        return all ? ordered : ordered.slice(0, 5);
       })(hhFiltered, s.hhAllList, this, s.hhSort || "status", s.hhSortDir || 1).map((h) => ({
         id: h.household_id,
         head: h.head || "\u1798\u17b7\u1793\u1798\u17b6\u1793\u1788\u17d2\u1798\u17c4\u17c7 \u00b7 no name",
@@ -4486,6 +4549,20 @@ class Component extends DCLogic {
         bar: h.house_positive ? "#7C1220" : "#117996",
         ...this.roundStatus(h._rows),
         open: () => { this.pushHist(); this.setState({ screen: "hhdetail", hhId: h.household_id }); },
+        ...(function (self, rows) {
+          const p = self.currentRound();
+          const has = (t) => (rows || []).some((r) => (r.form_type || r.type) === t && r.period_month === p);
+          const op = (v) => (v ? "0.35" : "1");
+          return {
+            opInstall: op(has("install")), opCollect: op(has("collect")),
+            opAdult: op(has("adult")), opLarvae: op(has("larvae")), opLab: op(has("lab")),
+          };
+        })(this, h._rows),
+        goInstall: () => this.open("install", { house: h.household_id, returnTo: "hh" }),
+        goCollect: () => this.open("collect", { house: h.household_id, returnTo: "hh" }),
+        goAdult: () => this.open("adult", { house: h.household_id, returnTo: "hh" }),
+        goLarvae: () => this.open("larvae", { house: h.household_id, returnTo: "hh" }),
+        goLab: () => this.open("lab", { house: h.household_id, returnTo: "hh" }),
       })),
       hh: current ? {
         id: current.household_id, head: current.head || "\u1798\u17b7\u1793\u1798\u17b6\u1793\u1788\u17d2\u1798\u17c4\u17c7 \u00b7 no name",
@@ -4527,6 +4604,14 @@ class Component extends DCLogic {
         verdictBg: current.house_positive ? "#7C1220" : "#D5E7EF",
         verdictFg: current.house_positive ? "#fff" : "#003E78",
       } : null,
+      hhRoundsOpen: !!s.hhRoundsOpen,
+      hhRoundsRot: s.hhRoundsOpen ? 180 : 0,
+      toggleHhRounds: () => this.setState((p) => ({ hhRoundsOpen: !p.hhRoundsOpen })),
+      hhRoundsCount: current ? String(Object.keys((current._rows || []).reduce((a, r) => {
+        const m = r.period_month || String(r.collected_date || "").slice(0, 7);
+        if (m) a[m] = 1;
+        return a;
+      }, {})).length) + " ជុំ" : "",
       hhRounds: current ? (function (rows) {
         const map = {};
         rows.forEach((r) => {
@@ -4596,16 +4681,11 @@ class Component extends DCLogic {
           const share = last.catch ? Math.round((last.aeg / last.catch) * 1000) / 10 : null;
           const idx = last.insp ? Math.round((last.pos / last.insp) * 1000) / 10 : null;
           out.push({ dot: (idx && idx > 0) || (share && share >= 50) ? "#7C1220" : "#117996",
-            km: last.label + " \u00b7 \u1798\u17bc\u179f " + last.catch
+            km: last.label
               + " \u00b7 Ae. aegypti " + (share == null ? "\u2014" : share + "%")
-              + " \u00b7 \u1796\u1784 " + last.eggs
-              + " \u00b7 \u1797\u17b6\u1787\u1793\u17cd " + (last.insp || 0)
               + " \u00b7 \u179f\u1793\u17d2\u1791\u179f\u17d2\u179f\u1793\u17cd " + (idx == null ? "\u2014" : idx + "%"),
-            en: last.catch + " mosquitoes, "
-              + (share == null ? "no species split" : share + " percent Ae. aegypti") + ", "
-              + last.eggs + " eggs, "
-              + (last.insp ? last.pos + " of " + last.insp + " containers positive (index " + idx + " percent)"
-                : "no containers checked") + "." });
+            en: (share == null ? "no species split" : share + "% Ae. aegypti")
+              + ", " + (idx == null ? "no containers checked" : "container index " + idx + "%") + "." });
         }
         // How that compares with the round before.
         if (last && prev) {
@@ -4750,9 +4830,10 @@ class Component extends DCLogic {
             return t ? " \u00b7 " + t : "";
           })(this, r)
           + " \u00b7 " + (r.record_id || r.id),
-        meta: (r.collected_date || "") + " " + (r.collected_time || "") + (r.epi_week ? " \u00b7 week " + r.epi_week : "") + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
+        meta: (r.collected_date || "") + " " + (r.collected_time || "") + "" + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
         detail: this.describe(r),
         bar: TYPES[r.form_type || r.type].bar,
+        tint: TYPES[r.form_type || r.type].tint,
       })) : [],
       hhRecords: current ? current._rows.map((r) => ({
         title: km(TYPES[r.form_type || r.type].label)
@@ -4762,9 +4843,10 @@ class Component extends DCLogic {
             return t ? " \u00b7 " + t : "";
           })(this, r)
           + " \u00b7 " + (r.record_id || r.id),
-        meta: (r.collected_date || "") + " " + (r.collected_time || "") + (r.epi_week ? " \u00b7 week " + r.epi_week : "") + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
+        meta: (r.collected_date || "") + " " + (r.collected_time || "") + "" + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
         detail: this.describe(r),
         bar: TYPES[r.form_type || r.type].bar,
+        tint: TYPES[r.form_type || r.type].tint,
       })) : [],
       hasToast: !!s.toast,
       toastText: s.toast ? s.toast.text : "",
@@ -4944,7 +5026,13 @@ class Component extends DCLogic {
         : s.records.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 stored",
 
       todayCount: s.records.filter((r) => String(r.collected_at_utc || r.saved_at).slice(0, 10) === today).length,
-      latest: s.records.slice(0, 3).map(row),
+      latestOpen: true,
+      latestRot: s.latestAll ? 180 : 0,
+      toggleLatest: () => this.setState((p) => ({ latestAll: !p.latestAll })),
+      latest: s.records.slice()
+        .sort((a, b) => String(b.collected_at_utc || b.saved_at || "").localeCompare(String(a.collected_at_utc || a.saved_at || "")))
+        .slice(0, s.latestAll ? 25 : 5)
+        .map((r) => ({ ...row(r), meta: new Date(r.collected_at_utc || r.saved_at).toLocaleString() })),
       allRecordsShown: s.records.slice(0, s.dataAll ? s.records.length : 8).map((r, i) => ({
         ...row(r),
         dateShort: r.collected_date || "",
