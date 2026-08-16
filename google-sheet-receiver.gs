@@ -26,9 +26,131 @@
 
 var LOG_SHEET = '_history';
 // Bumped whenever this file changes, so the app can show which version it reached.
-var RECEIVER_VERSION = '2026-08-15 delete+log+admin scope';
+var RECEIVER_VERSION = '2026-08-16 delete+log+admin scope+accounts';
 var LOG_COLS = ['logged_at', 'action', 'record_id', 'form_type', 'household_id', 'trap_id',
   'trap_type', 'collected_date', 'period_label', 'collector', 'cluster', 'changed_fields', 'sheet_row'];
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Accounts
+ *
+ * A tab named _users holds one row per person allowed to use the app:
+ *   username | name | pin_hash | role | cluster | active | created_at | last_login
+ *
+ * Nobody types a PIN into this sheet directly — use Ento → Add or reset a user,
+ * which hashes it. The app posts { action:'login', username, pin }; a successful
+ * login returns a signed token that every later sync must carry.
+ *
+ * Writes and deletes always require a valid token. Reads (action=records) are
+ * left open by default so the dashboard keeps working; set ALLOW_ANON_READ to
+ * false once the dashboard also passes a token.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+var USERS_SHEET = '_users';
+var USER_COLS = ['username', 'name', 'pin_hash', 'role', 'cluster', 'active', 'created_at', 'last_login'];
+var TOKEN_DAYS = 30;
+var ALLOW_ANON_READ = true;
+
+// The signing secret. Set ENTO_SECRET in Project Settings → Script Properties;
+// the fallback below only exists so a fresh copy works before that is done.
+function serverKey_() {
+  return PropertiesService.getScriptProperties().getProperty('ENTO_SECRET')
+    || 'ento-change-this-secret-2026';
+}
+
+function jsonOut_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function sha256Hex_(text) {
+  var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, text, Utilities.Charset.UTF_8);
+  return bytes.map(function (b) {
+    return ('0' + (b < 0 ? b + 256 : b).toString(16)).slice(-2);
+  }).join('');
+}
+
+// Same recipe as the app, so the phone can check a cached PIN while offline.
+function pinHash_(username, pin) {
+  return sha256Hex_('ento:' + String(username).toLowerCase() + ':' + String(pin));
+}
+
+function sign_(text) {
+  var bytes = Utilities.computeHmacSha256Signature(text, serverKey_());
+  return bytes.map(function (b) {
+    return ('0' + (b < 0 ? b + 256 : b).toString(16)).slice(-2);
+  }).join('');
+}
+
+function usersSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(USERS_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(USERS_SHEET);
+    sh.getRange(1, 1, 1, USER_COLS.length).setValues([USER_COLS]).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function findUser_(username) {
+  var sh = usersSheet_();
+  if (sh.getLastRow() < 2) return null;
+  var vals = sh.getRange(1, 1, sh.getLastRow(), USER_COLS.length).getValues();
+  var header = vals[0].map(function (h) { return String(h).trim(); });
+  for (var i = 1; i < vals.length; i++) {
+    var row = {};
+    for (var c = 0; c < header.length; c++) row[header[c]] = vals[i][c];
+    if (String(row.username || '').trim().toLowerCase() === String(username).trim().toLowerCase()) {
+      row._row = i + 1;
+      return row;
+    }
+  }
+  return null;
+}
+
+function login_(body) {
+  var username = String(body.username || '').trim();
+  var pin = String(body.pin || '').trim();
+  if (!username || !pin) return { ok: false, error: 'username and PIN are required' };
+  var user = findUser_(username);
+  if (!user) return { ok: false, error: 'no account with that username' };
+  if (String(user.active).toLowerCase() === 'no' || String(user.active).toLowerCase() === 'false') {
+    return { ok: false, error: 'this account has been deactivated' };
+  }
+  if (String(user.pin_hash || '').trim().toLowerCase() !== pinHash_(user.username, pin)) {
+    return { ok: false, error: 'wrong PIN' };
+  }
+  var sh = usersSheet_();
+  var lastCol = USER_COLS.indexOf('last_login') + 1;
+  sh.getRange(user._row, lastCol).setValue(new Date());
+  var exp = new Date().getTime() + TOKEN_DAYS * 86400000;
+  var payload = String(user.username).trim() + '|' + exp;
+  return {
+    ok: true,
+    token: Utilities.base64EncodeWebSafe(payload + '|' + sign_(payload)),
+    user: {
+      username: String(user.username).trim(),
+      name: String(user.name || user.username).trim(),
+      role: String(user.role || 'collector').trim(),
+      cluster: String(user.cluster || '').trim()
+    },
+    version: RECEIVER_VERSION
+  };
+}
+
+function checkToken_(token) {
+  if (!token) return { ok: false, error: 'sign in required' };
+  var parts;
+  try {
+    parts = Utilities.newBlob(Utilities.base64DecodeWebSafe(token)).getDataAsString().split('|');
+  } catch (err) {
+    return { ok: false, error: 'bad token' };
+  }
+  if (parts.length !== 3) return { ok: false, error: 'bad token' };
+  if (sign_(parts[0] + '|' + parts[1]) !== parts[2]) return { ok: false, error: 'bad token' };
+  if (Number(parts[1]) < new Date().getTime()) return { ok: false, error: 'session expired — sign in again' };
+  return { ok: true, username: parts[0] };
+}
 
 function logRows(ss, rows) {
   if (!rows.length) return;
@@ -93,6 +215,13 @@ function doPost(e) {
   var out = { ok: false };
   try {
     var body = JSON.parse(e.postData.contents);
+    if (body.action === 'login') return jsonOut_(login_(body));
+    // The Kobo importer calls doPost in-process; it carries the secret instead.
+    if (String(body.server_key || '') !== serverKey_()) {
+      var auth = checkToken_(body.token);
+      if (!auth.ok) return jsonOut_({ ok: false, error: auth.error, auth: 'required' });
+      body.auth_username = auth.username;
+    }
     var records = body.records || [];
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var written = 0;
@@ -179,6 +308,10 @@ function doPost(e) {
  */
 function doGet(e) {
   var action = e && e.parameter ? e.parameter.action : '';
+  if (!ALLOW_ANON_READ && (action === 'records' || action === 'history')) {
+    var g = checkToken_(e && e.parameter ? e.parameter.token : '');
+    if (!g.ok) return jsonOut_({ ok: false, error: g.error, auth: 'required' });
+  }
   if (action === 'history') {
     var log = [];
     try {
@@ -431,7 +564,7 @@ function importFromKobo() {
   if (!all.length) throw new Error('Kobo returned no submissions. Check the token, the server URL and the form uids.');
 
   var slice = all.slice(cursor, cursor + KOBO_BATCH);
-  var out = doPost({ postData: { contents: JSON.stringify({ records: slice }) } });
+  var out = doPost({ postData: { contents: JSON.stringify({ records: slice, server_key: serverKey_() }) } });
   var parsed = JSON.parse(out.getContent());
   if (!parsed.ok) throw new Error('Writing to the sheet failed: ' + (parsed.error || 'unknown'));
 
@@ -460,6 +593,10 @@ function setupKoboTrigger() {
 
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Ento')
+    .addItem('Add or reset a user', 'addOrResetUser')
+    .addItem('List users', 'listUsers')
+    .addItem('Deactivate a user', 'deactivateUser')
+    .addSeparator()
     .addItem('Check Kobo fields', 'peekKobo')
     .addItem('Import from Kobo now', 'importFromKobo')
     .addItem('Schedule nightly Kobo import', 'setupKoboTrigger')
@@ -531,6 +668,60 @@ function deleteKoboRows() {
   Logger.log('Removed %s Kobo rows.', removed);
   SpreadsheetApp.getUi().alert('Removed ' + removed + ' Kobo rows. App records were not touched.');
   return removed;
+}
+
+/* ─── Account admin, from the Ento menu ─────────────────────────────────── */
+
+function addOrResetUser() {
+  var ui = SpreadsheetApp.getUi();
+  var u = ui.prompt('Username (no spaces, e.g. sokha)', ui.ButtonSet.OK_CANCEL);
+  if (u.getSelectedButton() !== ui.Button.OK) return;
+  var username = u.getResponseText().trim();
+  if (!username) return;
+  var p = ui.prompt('PIN for ' + username + ' (4–8 digits)', ui.ButtonSet.OK_CANCEL);
+  if (p.getSelectedButton() !== ui.Button.OK) return;
+  var pin = p.getResponseText().trim();
+  if (!pin) return;
+
+  var existing = findUser_(username);
+  var sh = usersSheet_();
+  if (existing) {
+    sh.getRange(existing._row, USER_COLS.indexOf('pin_hash') + 1).setValue(pinHash_(username, pin));
+    sh.getRange(existing._row, USER_COLS.indexOf('active') + 1).setValue('yes');
+    ui.alert('PIN reset for ' + username + '. The account is active.');
+    return;
+  }
+  var n = ui.prompt('Full name for ' + username + ' (this is stamped on records)', ui.ButtonSet.OK_CANCEL);
+  if (n.getSelectedButton() !== ui.Button.OK) return;
+  var r = ui.prompt('Role: collector, supervisor or admin', ui.ButtonSet.OK_CANCEL);
+  if (r.getSelectedButton() !== ui.Button.OK) return;
+  var c = ui.prompt('Cluster (optional, e.g. C2)', ui.ButtonSet.OK_CANCEL);
+  if (c.getSelectedButton() !== ui.Button.OK) return;
+  sh.appendRow([username, n.getResponseText().trim() || username, pinHash_(username, pin),
+    r.getResponseText().trim() || 'collector', c.getResponseText().trim(), 'yes', new Date(), '']);
+  ui.alert('Added ' + username + '. They can sign in on the app now.');
+}
+
+function deactivateUser() {
+  var ui = SpreadsheetApp.getUi();
+  var u = ui.prompt('Username to deactivate', ui.ButtonSet.OK_CANCEL);
+  if (u.getSelectedButton() !== ui.Button.OK) return;
+  var user = findUser_(u.getResponseText().trim());
+  if (!user) { ui.alert('No account with that username.'); return; }
+  usersSheet_().getRange(user._row, USER_COLS.indexOf('active') + 1).setValue('no');
+  ui.alert(user.username + ' can no longer sign in. Records already collected are kept.');
+}
+
+function listUsers() {
+  var sh = usersSheet_();
+  if (sh.getLastRow() < 2) { SpreadsheetApp.getUi().alert('No users yet. Ento → Add or reset a user.'); return; }
+  var vals = sh.getRange(2, 1, sh.getLastRow() - 1, USER_COLS.length).getValues();
+  var lines = vals.map(function (r) {
+    return r[0] + '  —  ' + r[1] + '  (' + (r[3] || 'collector') + ', ' +
+      (String(r[5]).toLowerCase() === 'no' ? 'inactive' : 'active') + ')' +
+      (r[7] ? '  last signed in ' + Utilities.formatDate(new Date(r[7]), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm') : '');
+  });
+  SpreadsheetApp.getUi().alert(lines.join('\n'));
 }
 
 function stopKoboImport() {

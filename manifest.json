@@ -1,32 +1,19 @@
 {
-  "id": "/index.html",
-  "name": "Entomology Data Collection",
+  "id": "/phone-app/",
+  "name": "Ento — Entomology field",
   "short_name": "Ento",
-  "description": "CHAI Cambodia \u2014 Wolbachia entomological surveillance data collection",
+  "description": "Aedes and Wolbachia entomological surveillance. Works offline; syncs to the programme Google Sheet.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "background_color": "#F7F9FB",
   "theme_color": "#003E78",
+  "lang": "km",
+  "dir": "ltr",
   "icons": [
-    {
-      "src": "icon-180.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

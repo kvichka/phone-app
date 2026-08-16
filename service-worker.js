@@ -1,83 +1,107 @@
-// Ento app service worker
-// Strategy:
-//  - Precache the app shell (everything needed to open the form with zero signal).
-//  - Cache-first for all GET requests (including CDN libs like Chart.js/Leaflet/fonts)
-//    so the first successful load banks a copy for later offline use.
-//  - NEVER touch requests to script.google.com (Google Sheet sync) — those must hit
-//    the real network so the app's own offline-queue/retry logic (in index.html)
-//    keeps working exactly as it does today.
-// Bump CACHE_NAME any time you redeploy so devices pick up the new files.
-const CACHE_NAME = "ento-shell-v1";
+/**
+ * Ento field app — service worker
+ *
+ * Cache-first for everything the app is made of, so it opens with no signal.
+ * Anything that talks to the Google Sheet is network-only and never cached:
+ * the app's own offline queue is what makes sync work, not this worker.
+ *
+ * BUMP CACHE_NAME ON EVERY PUSH. Skipping it leaves phones on stale files.
+ */
 
-const APP_SHELL = [
+const CACHE_NAME = "ento-shell-v6";
+
+const SHELL = [
   "./",
   "./index.html",
-  "./manifest.json",
   "./support.js",
+  "./manifest.json",
   "./locations-core.json",
   "./locations-villages.json",
   "./icon-180.png",
   "./icon-512.png",
+  "./dashboard.html",
   "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/styles.css",
   "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/_ds_bundle.js",
-  "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/tokens/typography.css",
   "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/tokens/colors.css",
-  "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/tokens/spacing.css",
   "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/tokens/fonts.css",
-  "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/fonts/Trebuchet_MS.ttf",
-  "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/fonts/Trebuchet_MS_Bold.ttf",
-  "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/fonts/Trebuchet_MS_Italic.ttf",
-  "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/fonts/Trebuchet_MS_Bold_Italic.ttf",
+  "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/tokens/spacing.css",
+  "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/tokens/typography.css",
+];
+
+// Fetched opportunistically: a miss here must never fail the install.
+const VENDOR = [
+  "https://cdn.jsdelivr.net/npm/chart.js@4.5.1",
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+  "https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&display=swap",
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) =>
-      // addAll fails the whole install if even one file 404s — go one by one instead
-      // so a single missing/renamed asset can't block the app from becoming installable.
-      Promise.all(
-        APP_SHELL.map((url) =>
-          cache.add(url).catch((err) => console.warn("[sw] precache skipped:", url, err))
-        )
-      )
-    ).then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(SHELL);
+    await Promise.all(VENDOR.map((url) =>
+      cache.add(new Request(url, { mode: "no-cors" })).catch(() => null)));
+    self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((names) =>
-      Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n)))
-    ).then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener("fetch", (event) => {
   const req = event.request;
-  const url = req.url;
-
-  // Only handle GETs; POSTs (sheet sync) always go straight to network untouched.
   if (req.method !== "GET") return;
 
-  // Google Apps Script sync/history/records calls: network only, never cached,
-  // never intercepted. Offline failures here are handled by index.html itself.
-  if (url.indexOf("script.google.com") !== -1) return;
+  const url = new URL(req.url);
 
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      const network = fetch(req)
-        .then((res) => {
-          // Only cache good, same-type responses (covers same-origin + CORS'd CDN assets).
-          if (res && res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => cached); // offline and not cached yet -> nothing we can do
+  // The sheet: always live, never cached, never intercepted on failure.
+  if (url.hostname.endsWith("script.google.com")
+    || url.hostname.endsWith("script.googleusercontent.com")) {
+    return;
+  }
 
-      // Cache-first: instant + works offline. Falls back to network if not cached yet.
-      return cached || network;
-    })
-  );
+  // Map tiles: try the network, fall back to whatever was seen before.
+  if (url.hostname.endsWith("tile.openstreetmap.org")) {
+    event.respondWith(
+      fetch(req).then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+        return res;
+      }).catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  event.respondWith((async () => {
+    const hit = await caches.match(req, { ignoreSearch: false });
+    if (hit) {
+      // Refresh in the background so the next open is current.
+      fetch(req).then((res) => {
+        if (res && (res.ok || res.type === "opaque")) {
+          caches.open(CACHE_NAME).then((c) => c.put(req, res.clone())).catch(() => {});
+        }
+      }).catch(() => {});
+      return hit;
+    }
+    try {
+      const res = await fetch(req);
+      if (res && (res.ok || res.type === "opaque")) {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+      }
+      return res;
+    } catch (err) {
+      if (req.mode === "navigate") {
+        const shell = await caches.match("./index.html");
+        if (shell) return shell;
+      }
+      throw err;
+    }
+  })());
 });
