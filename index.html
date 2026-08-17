@@ -108,6 +108,12 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       </div>
       <div style="font-size:11px;font-weight:700;color:{{ headerFg }};line-height:1.55;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ subtitle }}</div>
     </div>
+    <button onClick="{{ quickSync }}" title="{{ quickSyncTitle }}" style="position:relative;width:34px;height:34px;flex:none;border-radius:9px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;opacity:{{ quickSyncOpacity }}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5A8 8 0 0 0 6.3 6.3L4 8.5"></path><path d="M4 4.5v4h4"></path><path d="M4 12.5A8 8 0 0 0 17.7 17.7L20 15.5"></path><path d="M20 19.5v-4h-4"></path></svg>
+      <sc-if value="{{ hasQuickSync }}" hint-placeholder-val="{{ false }}">
+        <span style="position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;box-sizing:border-box;padding:0 4px;border-radius:999px;background:#F4B71B;color:#000;font-size:9px;font-weight:700;line-height:16px;text-align:center">{{ quickSyncCount }}</span>
+      </sc-if>
+    </button>
     <button onClick="{{ openSettings }}" title="ការកំណត់ · Settings" style="width:34px;height:34px;flex:none;border-radius:9px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v2.5"></path><path d="M12 18.5V21"></path><path d="M3 12h2.5"></path><path d="M18.5 12H21"></path><path d="M5.6 5.6l1.8 1.8"></path><path d="M16.6 16.6l1.8 1.8"></path><path d="M18.4 5.6l-1.8 1.8"></path><path d="M7.4 16.6l-1.8 1.8"></path></svg>
     </button>
@@ -308,6 +314,44 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         </sc-if>
       </div>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
+        <div style="padding:6px 10px;background:#F2F2F2;font-size:11px;color:#003E78">កំណត់ត្រាម្តងមួយ <span style="color:#767676">Each record · tap the pencil to edit</span></div>
+        <div style="max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch">
+          <sc-for list="{{ allRecordsShown }}" as="r" hint-placeholder-count="3">
+            <div style="border-top:1px solid #EDF1F4;border-left:4px solid {{ r.bar }};padding:7px 10px;display:flex;align-items:center;gap:9px">
+              <span style="flex:1;min-width:0">
+                <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
+                  <span style="font-size:12px;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span>
+                  <span style="flex:1;min-width:0;font-size:11px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
+                </span>
+                <span style="display:flex;align-items:center;gap:6px;margin-top:2px;min-width:0">
+                  <span style="flex:none;font-size:9px;font-weight:700;color:{{ r.actionFg }};background:{{ r.actionBg }};border-radius:999px;padding:1px 6px;white-space:nowrap">{{ r.action }}</span>
+                  <span style="flex:1;min-width:0;font-size:11px;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.detail }}</span>
+                </span>
+              </span>
+              <span title="{{ r.sentTitle }}" style="flex:none;color:{{ r.sentFg }};display:inline-flex;align-items:center;justify-content:center">
+                <sc-if value="{{ r.unsent }}" hint-placeholder-val="{{ false }}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"></rect><path d="M10.6 18.6h2.8"></path></svg>
+                </sc-if>
+                <sc-if value="{{ r.sent }}" hint-placeholder-val="{{ true }}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"></path></svg>
+                </sc-if>
+              </span>
+              <sc-if value="{{ r.canEdit }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ r.edit }}" title="កែ Edit" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#117996;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+                <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#7C1220;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasMoreRecords }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ toggleAllRecords }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:none;border-top:1px solid #EDF1F4;color:#003E78;min-height:32px;font-weight:700;font-size:11px;line-height:1;cursor:pointer;font-family:inherit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6 9.5 12 15.5l6-6"></path></svg>
+            <span>{{ moreRecordsLabel }}</span>
+          </button>
+        </sc-if>
+      </div>
+      <sc-if value="{{ hasLatest }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
         <div style="display:flex;align-items:center;gap:8px;padding:9px 10px">
           <div style="flex:1;min-width:0;font-size:13px;font-weight:700;color:#003E78">សកម្មភាពចុងក្រោយ <span style="font-weight:400;color:#767676">Last activity</span></div>
         </div>
@@ -315,40 +359,44 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           <span style="flex:1;min-width:0;font-weight:400;font-size:11px;line-height:1.3;color:#767676">កំណត់ត្រា · Record</span>
           <span style="flex:none;font-weight:400;font-size:11px;line-height:1.3;color:#767676;white-space:nowrap">សកម្មភាព · Actions</span>
         </div>
-      <div style="max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch">
-        <sc-for list="{{ latest }}" as="r" hint-placeholder-count="3">
-          <div style="border-top:1px solid #EDF1F4;border-left:4px solid {{ r.bar }};padding:7px 10px;display:flex;align-items:center;gap:9px">
-            <span style="flex:1;min-width:0">
-              <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
-                <span style="font-size:12px;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span>
-                <span style="flex:1;min-width:0;font-size:11px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
+        <div style="max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch">
+          <sc-for list="{{ latest }}" as="r" hint-placeholder-count="3">
+            <div style="border-top:1px solid #EDF1F4;border-left:4px solid {{ r.bar }};padding:7px 10px;display:flex;align-items:center;gap:9px">
+              <span style="flex:1;min-width:0">
+                <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
+                  <span style="font-size:12px;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span>
+                  <span style="flex:1;min-width:0;font-size:11px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
+                </span>
+                <span style="display:flex;align-items:center;gap:6px;margin-top:2px;min-width:0">
+                  <span style="flex:none;font-size:9px;font-weight:700;color:{{ r.actionFg }};background:{{ r.actionBg }};border-radius:999px;padding:1px 6px;white-space:nowrap">{{ r.action }}</span>
+                  <span style="flex:1;min-width:0;font-size:11px;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.detail }}</span>
+                </span>
               </span>
-              <span style="display:flex;align-items:center;gap:6px;margin-top:2px;min-width:0">
-                <span style="flex:none;font-size:9px;font-weight:700;color:{{ r.actionFg }};background:{{ r.actionBg }};border-radius:999px;padding:1px 6px;white-space:nowrap">{{ r.action }}</span>
-                <span style="flex:1;min-width:0;font-size:11px;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.detail }}</span>
+              <span title="{{ r.sentTitle }}" style="flex:none;color:{{ r.sentFg }};display:inline-flex;align-items:center;justify-content:center">
+                <sc-if value="{{ r.unsent }}" hint-placeholder-val="{{ false }}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"></rect><path d="M10.6 18.6h2.8"></path></svg>
+                </sc-if>
+                <sc-if value="{{ r.sent }}" hint-placeholder-val="{{ true }}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"></path></svg>
+                </sc-if>
               </span>
-            </span>
-            <span title="{{ r.sentTitle }}" style="flex:none;color:{{ r.sentFg }};display:inline-flex;align-items:center;justify-content:center">
-              <sc-if value="{{ r.unsent }}" hint-placeholder-val="{{ false }}">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"></rect><path d="M10.6 18.6h2.8"></path></svg>
+              <sc-if value="{{ r.canEdit }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ r.edit }}" title="កែ Edit" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#117996;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
               </sc-if>
-              <sc-if value="{{ r.sent }}" hint-placeholder-val="{{ true }}">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"></path></svg>
+              <sc-if value="{{ r.canUndo }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ r.undo }}" title="មិនលុប · Undo delete" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#117996;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5a8 8 0 1 1 2.6 5.9"></path><path d="M4 19v-4.5h4.5"></path></svg></button>
               </sc-if>
-            </span>
-            <sc-if value="{{ r.canEdit }}" hint-placeholder-val="{{ true }}">
-            <button onClick="{{ r.edit }}" title="កែ Edit" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#117996;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
-            </sc-if>
-            <sc-if value="{{ r.canUndo }}" hint-placeholder-val="{{ false }}">
-              <button onClick="{{ r.undo }}" title="មិនលុប · Undo delete" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#117996;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5a8 8 0 1 1 2.6 5.9"></path><path d="M4 19v-4.5h4.5"></path></svg></button>
-            </sc-if>
-            <sc-if value="{{ r.canEdit }}" hint-placeholder-val="{{ true }}">
-            <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#7C1220;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
-            </sc-if>
-          </div>
-        </sc-for>
+              <sc-if value="{{ r.canEdit }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#7C1220;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ latestEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:9px 10px;border-top:1px solid #EDF1F4;font-size:11px;color:#767676;line-height:1.4">{{ latestEmptyText }}</div>
+        </sc-if>
       </div>
-      </div>
+      </sc-if>
       <sc-if value="{{ hasAdminRows }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-top:3px solid #117996;border-radius:8px;overflow:hidden">
           <div style="display:flex;align-items:center;gap:8px;padding:8px 10px 8px 12px;border-bottom:1px solid #EDF1F4">
@@ -565,24 +613,36 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <span style="font-size:11px;font-weight:700;line-height:1.2;text-align:left;min-width:0"><span style="display:block">លទ្ធផលមន្ទីរពិសោធន៍</span><span style="display:block;font-size:10px;font-weight:400;color:#767676;margin-top:1px">Lab result</span></span>
           </button>
           
-        </div>      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:6px 10px;background:#F2F2F2">
-          <div style="font-size:11px;color:#003E78">សេចក្តីសង្ខេប <span style="color:#767676">Summary</span></div>
-          <div style="font-size:11px;color:#767676">{{ hhTotals }}</div>
-        </div>
-        <sc-for list="{{ hhInsights }}" as="k" hint-placeholder-count="3">
-          <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-top:1px solid #F2F2F2;border-left:4px solid {{ k.dot }}">
-            <span style="flex:1;min-width:0">
-              <span style="display:block;font-size:12px;font-weight:700;color:#003E78;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ k.km }}</span>
-              <span style="display:block;font-size:11px;color:#767676;line-height:1.35;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ k.en }}</span>
-            </span>
+        </div>      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ប្រវត្តិសកម្មភាព <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Activity history</span></div>
+      <sc-if value="{{ hhHasMonths }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:62px repeat(5,1fr) 46px;gap:0 6px;padding:5px 10px;background:#F2F2F2;font-size:10px;color:#767676;text-align:center">
+            <span style="text-align:left"></span>
+            <span>ដាក់<br>set</span>
+            <span>ប្រមូល<br>coll</span>
+            <span>ដង្កូវ<br>larv</span>
+            <span>មូស<br>adult</span>
+            <span>លទ្ធផល<br>lab</span>
+            <span>ពេញ<br>done</span>
           </div>
-        </sc-for>
-      </div>
-
-
-      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ប្រវត្តិសកម្មភាព <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Activity history</span></div>
+          <sc-for list="{{ hhMonths }}" as="m" hint-placeholder-count="2">
+            <div style="border-top:1px solid #F2F2F2;padding:6px 10px">
+              <div style="display:grid;grid-template-columns:62px repeat(5,1fr) 46px;gap:0 6px;align-items:center;text-align:center;font-size:12px">
+                <span style="text-align:left;font-weight:700;color:#003E78;font-size:11px">{{ m.label }}</span>
+                <sc-for list="{{ m.cells }}" as="c" hint-placeholder-count="5">
+                  <span style="font-weight:700;color:{{ c.fg }};white-space:nowrap">{{ c.v }}</span>
+                </sc-for>
+                <span style="justify-self:end;font-size:10px;font-weight:700;background:{{ m.pctBg }};color:{{ m.pctFg }};border-radius:4px;padding:2px 5px">{{ m.pct }}</span>
+              </div>
+              <sc-if value="{{ m.hasGaps }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:3px;padding-left:62px;font-size:10px;color:#7C1220">{{ m.gapText }}</div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
+        <div style="padding:6px 10px;background:#F2F2F2;font-size:11px;color:#003E78">កំណត់ត្រាម្តងមួយ <span style="color:#767676">Each record · tap the pencil to edit</span></div>
         <sc-for list="{{ hhRecordsShown }}" as="r" hint-placeholder-count="3">
           <button onClick="{{ r.edit }}" style="display:flex;align-items:center;gap:9px;width:100%;box-sizing:border-box;text-align:left;background:#fff;border:none;border-top:1px solid #F2F2F2;border-left:4px solid {{ r.bar }};padding:7px 10px;cursor:pointer;font-family:inherit">
             <span style="flex:1;min-width:0">
@@ -605,6 +665,21 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           <span>{{ hhMoreLabel }}</span>
         </button>
       </sc-if>
+
+      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:6px 10px;background:#F2F2F2">
+          <div style="font-size:11px;color:#003E78">សេចក្តីសង្ខេប <span style="color:#767676">Summary</span></div>
+          <div style="font-size:11px;color:#767676">{{ hhTotals }}</div>
+        </div>
+        <sc-for list="{{ hhInsights }}" as="k" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-top:1px solid #F2F2F2;border-left:4px solid {{ k.dot }}">
+            <span style="flex:1;min-width:0">
+              <span style="display:block;font-size:12px;font-weight:700;color:#003E78;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ k.km }}</span>
+              <span style="display:block;font-size:11px;color:#767676;line-height:1.35;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ k.en }}</span>
+            </span>
+          </div>
+        </sc-for>
+      </div>
 
       <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ជុំដែលបានទៅ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Rounds visited</span></div>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:4px 12px">
@@ -871,26 +946,102 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </sc-for>
         </div>
       </sc-if>
+      <sc-if value="{{ hasPrevLarvae }}" hint-placeholder-val="{{ false }}">
+        <div style="border:1px solid #D9DEE4;border-radius:8px;overflow:hidden;background:#fff">
+          <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
+            <span style="flex:0 0 118px;min-width:0;font-size:11px;line-height:1.3;color:#003E78">ការកំណត់ត្រា <span style="color:#767676">Survey</span></span>
+            <span style="flex:1 1 auto;min-width:0;font-size:11px;line-height:1.3;color:#003E78">ព័ត៌មាន <span style="color:#767676">Detail</span></span>
+            <span style="width:190px;flex:none;text-align:right;font-size:11px;line-height:1.3;color:#003E78">ស្ថានភាព <span style="color:#767676">Status</span></span>
+          </div>
+          <sc-for list="{{ prevLarvaeMonths }}" as="g" hint-placeholder-count="1">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 10px;border-top:1px solid #D9DEE4;background:#F8FAFB">
+            <span style="font-size:11px;font-weight:700;color:#003E78">{{ g.label }}</span>
+            <span style="font-size:10px;color:#767676">{{ g.count }}</span>
+          </div>
+          <sc-for list="{{ g.rows }}" as="l" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-top:1px solid #EDF1F4">
+              <span style="flex:0 0 118px;min-width:0;font:700 10.5px/1.35 ui-monospace,Menlo,monospace;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ l.id }}</span>
+              <span style="flex:1 1 auto;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ l.meta }}</span>
+              <span style="width:190px;flex:none;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+                <sc-if value="{{ l.notArmed }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ l.edit }}" title="កែសម្រួល · Edit this survey" style="display:inline-flex;align-items:center;gap:5px;max-width:100%;box-sizing:border-box;font-size:11px;font-weight:700;background:{{ l.tagBg }};color:{{ l.tagFg }};border:1px solid #A8C8DC;padding:3px 8px;border-radius:999px;cursor:pointer;font-family:inherit;overflow:hidden"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ l.tag }}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+                  <button onClick="{{ l.arm }}" title="លុប · Delete this survey" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #E3BFC4;background:#fff;color:#7C1220;border-radius:5px;width:28px;height:28px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
+                </sc-if>
+                <sc-if value="{{ l.armed }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ l.cancelDel }}" style="font-size:11px;font-weight:700;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit;white-space:nowrap">បោះបង់ Cancel</button>
+                  <button onClick="{{ l.confirmDel }}" style="font-size:11px;font-weight:700;background:#7C1220;color:#fff;border:none;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit;white-space:nowrap">លុប Delete</button>
+                </sc-if>
+              </span>
+            </div>
+          </sc-for>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasPrevAdult }}" hint-placeholder-val="{{ false }}">
+        <div style="border:1px solid #D9DEE4;border-radius:8px;overflow:hidden;background:#fff">
+          <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
+            <span style="flex:0 0 118px;min-width:0;font-size:11px;line-height:1.3;color:#003E78">ការកំណត់ត្រា <span style="color:#767676">Record</span></span>
+            <span style="flex:1 1 auto;min-width:0;font-size:11px;line-height:1.3;color:#003E78">ព័ត៌មាន <span style="color:#767676">Detail</span></span>
+            <span style="width:190px;flex:none;text-align:right;font-size:11px;line-height:1.3;color:#003E78">ស្ថានភាព <span style="color:#767676">Status</span></span>
+          </div>
+          <sc-for list="{{ prevAdultMonths }}" as="g" hint-placeholder-count="1">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 10px;border-top:1px solid #D9DEE4;background:#F8FAFB">
+            <span style="font-size:11px;font-weight:700;color:#003E78">{{ g.label }}</span>
+            <span style="font-size:10px;color:#767676">{{ g.count }}</span>
+          </div>
+          <sc-for list="{{ g.rows }}" as="a" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-top:1px solid #EDF1F4">
+              <span style="flex:0 0 118px;min-width:0;font:700 10.5px/1.35 ui-monospace,Menlo,monospace;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.id }}</span>
+              <span style="flex:1 1 auto;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.meta }}</span>
+              <span style="width:190px;flex:none;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+                <sc-if value="{{ a.notArmed }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ a.edit }}" title="កែសម្រួល · Edit this record" style="display:inline-flex;align-items:center;gap:5px;max-width:100%;box-sizing:border-box;font-size:11px;font-weight:700;background:{{ a.tagBg }};color:{{ a.tagFg }};border:1px solid #A8C8DC;padding:3px 8px;border-radius:999px;cursor:pointer;font-family:inherit;overflow:hidden"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.tag }}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+                  <button onClick="{{ a.arm }}" title="លុប · Delete this record" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #E3BFC4;background:#fff;color:#7C1220;border-radius:5px;width:28px;height:28px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
+                </sc-if>
+                <sc-if value="{{ a.armed }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ a.cancelDel }}" style="font-size:11px;font-weight:700;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit;white-space:nowrap">បោះបង់ Cancel</button>
+                  <button onClick="{{ a.confirmDel }}" style="font-size:11px;font-weight:700;background:#7C1220;color:#fff;border:none;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit;white-space:nowrap">លុប Delete</button>
+                </sc-if>
+              </span>
+            </div>
+          </sc-for>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasPrevLab }}" hint-placeholder-val="{{ false }}">
+        <div style="border:1px solid #D9DEE4;border-radius:8px;overflow:hidden;background:#fff">
+          <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
+            <span style="flex:0 0 118px;min-width:0;font-size:11px;line-height:1.3;color:#003E78">លទ្ធផល <span style="color:#767676">Result</span></span>
+            <span style="flex:1 1 auto;min-width:0;font-size:11px;line-height:1.3;color:#003E78">ព័ត៌មាន <span style="color:#767676">Detail</span></span>
+            <span style="width:190px;flex:none;text-align:right;font-size:11px;line-height:1.3;color:#003E78">ស្ថានភាព <span style="color:#767676">Status</span></span>
+          </div>
+          <sc-for list="{{ prevLabMonths }}" as="g" hint-placeholder-count="1">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 10px;border-top:1px solid #D9DEE4;background:#F8FAFB">
+            <span style="font-size:11px;font-weight:700;color:#003E78">{{ g.label }}</span>
+            <span style="font-size:10px;color:#767676">{{ g.count }}</span>
+          </div>
+          <sc-for list="{{ g.rows }}" as="b" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-top:1px solid #EDF1F4">
+              <span style="flex:0 0 118px;min-width:0;font:700 10.5px/1.35 ui-monospace,Menlo,monospace;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.id }}</span>
+              <span style="flex:1 1 auto;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.meta }}</span>
+              <span style="width:190px;flex:none;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+                <sc-if value="{{ b.notArmed }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ b.edit }}" title="កែសម្រួល · Edit this result" style="display:inline-flex;align-items:center;gap:5px;max-width:100%;box-sizing:border-box;font-size:11px;font-weight:700;background:{{ b.tagBg }};color:{{ b.tagFg }};border:1px solid #A8C8DC;padding:3px 8px;border-radius:999px;cursor:pointer;font-family:inherit;overflow:hidden"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.tag }}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+                  <button onClick="{{ b.arm }}" title="លុប · Delete this result" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #E3BFC4;background:#fff;color:#7C1220;border-radius:5px;width:28px;height:28px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
+                </sc-if>
+                <sc-if value="{{ b.armed }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ b.cancelDel }}" style="font-size:11px;font-weight:700;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit;white-space:nowrap">បោះបង់ Cancel</button>
+                  <button onClick="{{ b.confirmDel }}" style="font-size:11px;font-weight:700;background:#7C1220;color:#fff;border:none;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit;white-space:nowrap">លុប Delete</button>
+                </sc-if>
+              </span>
+            </div>
+          </sc-for>
+          </sc-for>
+        </div>
+      </sc-if>
     </sc-if>
 
     <sc-if value="{{ isDash }}" hint-placeholder-val="{{ false }}">
-      <sc-if value="{{ dash.hasTubes }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#D5E7EF;border-left:4px solid #003E78;padding:9px 11px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="width:22px;height:22px;flex:none;border-radius:6px;background:rgba(0,62,120,.12);color:#003E78;display:inline-flex;align-items:center;justify-content:center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M10 2.5v7.2L6.4 17a3 3 0 0 0 2.7 4.4h5.8a3 3 0 0 0 2.7-4.4L14 9.7V2.5"></path><path d="M7.6 14.5h8.8"></path></svg></span>
-            <span style="flex:1;min-width:0;font-size:12px;font-weight:700;color:#003E78;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">កំប៉ុងទៅមន្ទីរពិសោធន៍ <span style="font-weight:400;opacity:.7">Lab pipeline</span></span>
-            <span style="flex:none;font-size:11px;font-weight:700;color:#003E78">{{ dash.labsPct }}%</span>
-          </div>
-          <div style="font-size:10px;color:#003E78;opacity:.8;line-height:1.35;margin-top:3px">លទ្ធផលបានបញ្ចូល {{ dash.labsDone }} · រង់ចាំ {{ dash.labsPending }} · {{ dash.labsDone }} results in, {{ dash.labsPending }} tubes still waiting</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:8px;padding-top:7px;border-top:1px solid rgba(0,62,120,.18)">
-            <span style="flex:1 1 auto;min-width:64px;display:flex;flex-direction:column;gap:1px"><span style="font-size:15px;font-weight:700;color:#003E78;line-height:1">{{ dash.labsDone }}</span><span style="font-size:9px;color:#003E78;opacity:.75;line-height:1.2">លទ្ធផល · entered</span></span>
-            <span style="flex:1 1 auto;min-width:64px;display:flex;flex-direction:column;gap:1px"><span style="font-size:15px;font-weight:700;color:#7C1220;line-height:1">{{ dash.labsPending }}</span><span style="font-size:9px;color:#003E78;opacity:.75;line-height:1.2">រង់ចាំ · pending</span></span>
-            <span style="flex:1 1 auto;min-width:64px;display:flex;flex-direction:column;gap:1px"><span style="font-size:15px;font-weight:700;color:#003E78;line-height:1">{{ dash.speciesTotal }}</span><span style="font-size:9px;color:#003E78;opacity:.75;line-height:1.2">មូសពេញវ័យ · adults</span></span>
-            <span style="flex:1 1 auto;min-width:64px;display:flex;flex-direction:column;gap:1px"><span style="font-size:15px;font-weight:700;color:#003E78;line-height:1">{{ dash.larvalTotal }}</span><span style="font-size:9px;color:#003E78;opacity:.75;line-height:1.2">ដង្កូវទឹក · larvae</span></span>
-          </div>
-        </div>
-      </sc-if>
-
 
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid #F2F2F2">
@@ -1262,7 +1413,6 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
     </sc-if>
 
     <sc-if value="{{ isData }}" hint-placeholder-val="{{ false }}">
-      
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#003E78">ការផ្ទេរទិន្នន័យ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Sync</span></div>
         <div style="font-size:8px;color:#767676;line-height:1.35;text-transform:none;letter-spacing:0;margin-top:2px">ផ្ញើកំណត់ត្រាពីទូរស័ព្ទទៅ Google Sheet របស់កម្មវិធី · sends what you recorded on this phone to the programme's Google Sheet, so the team can see it</div>
@@ -2160,6 +2310,7 @@ class Component extends DCLogic {
     try { size = localStorage.getItem("ento.uisize.v1") || ""; } catch (e) {}
     try { scale = Number(localStorage.getItem("ento.textscale.v1")) || 1; } catch (e) {}
     if (!size) size = window.innerWidth >= 900 ? "web" : "phone";
+    try { this.setState({ lastPullAt: localStorage.getItem("ento.lastpull.v1") || "" }); } catch (e) {}
     this.setState({ uiSize: size, textScale: scale });
     this.applyUiSize(size, scale);
     this._onViewportResize = () => this.applyUiSize(this.state.uiSize || "phone");
@@ -2445,16 +2596,20 @@ class Component extends DCLogic {
         base.forEach((r) => { mine[r.record_id] = r; });
         let added = 0, updated = 0;
         const merged = base.slice();
+        const stamp = new Date().toISOString();
+        // Rows that arrived in this pull are stamped, so Last activity can show exactly
+        // what the pull brought in and nothing else.
         incoming.forEach((r) => {
           const local = mine[r.record_id];
-          if (!local) { merged.push({ ...r, synced_at: r.synced_at || new Date().toISOString() }); added += 1; return; }
+          if (!local) { merged.push({ ...r, synced_at: r.synced_at || stamp, _pulledAt: stamp }); added += 1; return; }
           if (!local.synced_at) return; // unsent local edit wins
           const i = merged.indexOf(local);
-          merged[i] = { ...r, synced_at: local.synced_at };
+          merged[i] = { ...r, synced_at: local.synced_at, _pulledAt: stamp };
           updated += 1;
         });
+        try { localStorage.setItem("ento.lastpull.v1", stamp); } catch (e) {}
+        this.setState({ lastPullAt: stamp });
         this.persist(merged);
-        const stamp = new Date().toISOString();
         if (quiet === true) {
           this.setState({ autoBusy: false, autoAt: stamp,
             autoMsg: (added + updated) ? added + " \u1790\u17d2\u1798\u17b8 \u00b7 " + updated + " refreshed" : "" });
@@ -2656,6 +2811,17 @@ class Component extends DCLogic {
     return id;
   }
 
+  // Delete one saved record: kept in the trash so it can be put back, queued so the
+  // deletion also reaches the sheet.
+  deleteRecordNow(id) {
+    const recs = this.state.records;
+    saveTrash(loadTrash().concat(recs.filter((r) => (r.record_id || r.id) === id)));
+    saveDelLog(loadDelLog().concat([{ id, kind: "record", at: new Date().toISOString(), by: this.state.collector || "" }]));
+    this.persist(recs.filter((r) => (r.record_id || r.id) !== id));
+    this.queueDeleteRecord(id);
+    this.toast(id + " បានលុប · " + id + " deleted — it leaves the sheet when you press Sync now", "ok");
+  }
+
   blankForm(type) {
     const today = new Date().toISOString().slice(0, 10);
     const blank = {
@@ -2664,7 +2830,11 @@ class Component extends DCLogic {
       collect: { trap_ids: [], trap_id: "", position: "Both", found: "Yes", condition: "Intact", paddle: 0, notes: "" },
       adult: { method: "Procopack", trap_id: "", house: "", specimens: 0, notes: "" },
       lab: { source_id: "", tube_id: "", house: "", trap_id: "", eggs: 0, aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
-      larvae: { house: "", specimens: 0, notes: "" },
+      // The per-container cells are part of the blank form, so editing a saved survey
+      // loads them back instead of reopening it as 0 / 0.
+      larvae: CONTAINERS.reduce((a, [k]) => {
+        a["inspected_" + k] = 0; a["positive_" + k] = 0; return a;
+      }, { house: "", specimens: 0, notes: "" }),
     }[type];
     blank.collected_date = today;
     return blank;
@@ -2880,6 +3050,15 @@ class Component extends DCLogic {
         const dates = recs.filter((r) => (r.form_type || r.type) === "install" && r.trap_id === id)
           .map((r) => r.collected_date).filter(Boolean).sort();
         if (dates.length && date < dates[0]) e.push("ថ្ងៃប្រមូលមុនថ្ងៃដាក់អន្ទាក់ · " + id + " was installed on " + dates[0] + ", so it cannot be collected earlier.");
+        // One collection per trap per round. The tick list hides collected traps, but a
+        // pick can also arrive from a saved form or a typed trap_id, so block it here too.
+        const month = period(date).month;
+        const dup = recs.find((r) => (r.form_type || r.type) === "collect"
+          && r.record_id !== editing
+          && r.trap_id === id
+          && (r.period_month || "") === month);
+        if (dup) e.push("អន្ទាក់នេះបានប្រមូលរួចហើយក្នុងជុំនេះ · " + id + " was already collected this round on "
+          + (dup.collected_date || "") + " (" + (dup.record_id || "") + "). Edit that record instead.");
       });
     }
 
@@ -2920,9 +3099,6 @@ class Component extends DCLogic {
   softWarnings(type, f, gps) {
     const w = [];
     const recs = this.state.records;
-    const date = String(f.collected_date || "").slice(0, 10);
-    const days = (Date.now() - new Date(date + "T12:00:00Z").getTime()) / 86400000;
-    if (days > 30) w.push("That date is more than 30 days ago.");
 
     if (type === "household") {
       const dup = recs.some((r) => (r.form_type || r.type) === "household"
@@ -4043,14 +4219,13 @@ class Component extends DCLogic {
     };
   }
 
-  // Outstanding traps as a tick list. Traps already collected in this round are hidden.
+  // Outstanding traps as a tick list. A trap that has already been collected is not
+  // shown again at all — an empty list says there is nothing left to collect.
   trapPicksField(form, traps) {
-    const month = period(form.collected_date).month;
     const done = {};
     this.state.records.forEach((r) => {
       if ((r.form_type || r.type) !== "collect" || !r.trap_id) return;
       if (r.record_id === this.state.editId) return;
-      if ((r.period_month || "") !== month) return;
       const prev = done[r.trap_id];
       if (!prev || String(r.updated_at || r.collected_date || "") >= String(prev.updated_at || prev.collected_date || "")) done[r.trap_id] = r;
     });
@@ -4098,7 +4273,7 @@ class Component extends DCLogic {
         ? picked.length + " \u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb \u00b7 selected \u2014 saving writes one record for each"
         : "\u1787\u17d2\u179a\u17be\u179f\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb \u00b7 tick every trap collected on this visit",
       noRows: open.length === 0,
-      empty: "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb\u1794\u17b6\u1793\u1794\u17d2\u179a\u1798\u17bc\u179b\u1780\u17d2\u1793\u17bb\u1784\u1787\u17bb\u17c6\u1793\u17c1\u17c7 \u00b7 every trap here is already collected this round",
+      empty: "\u1798\u17b7\u1793\u1798\u17b6\u1793\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u178f\u17d2\u179a\u17bc\u179c\u1794\u17d2\u179a\u1798\u17bc\u179b \u00b7 no trap to collect \u2014 every trap here is already collected",
     };
   }
 
@@ -4556,6 +4731,7 @@ class Component extends DCLogic {
   }
 
   renderVals() {
+    this.pushNav();
     const s = this.state;
     const t = s.type ? TYPES[s.type] : null;
     const hhList = this.households();
@@ -4782,6 +4958,16 @@ class Component extends DCLogic {
       signOut: this.signOut,
       showSettings: !!s.showSettings,
       openSettings: () => this.setState({ showSettings: true }),
+      // Sync from the header, so records can go up without walking to Settings.
+      quickSync: () => {
+        if (s.syncing) return;
+        const n = s.records.filter((r) => !r.synced_at && !r._draft).length + (s.pendingDel || []).length;
+        this.setState({ syncAsk: n || 1 });
+      },
+      quickSyncCount: String(s.records.filter((r) => !r.synced_at && !r._draft).length + (s.pendingDel || []).length),
+      hasQuickSync: (s.records.filter((r) => !r.synced_at && !r._draft).length + (s.pendingDel || []).length) > 0,
+      quickSyncTitle: s.syncing ? "កំពុងផ្ញើ · syncing" : "ផ្ញើ · Sync now",
+      quickSyncOpacity: s.syncing ? ".5" : "1",
       closeSettings: () => this.setState({ showSettings: false }),
       ...(function (self, cur) {
         const steps = [0.9, 1, 1.15, 1.3];
@@ -5206,6 +5392,202 @@ class Component extends DCLogic {
           prevTrapsLabel: "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u1798\u17b6\u1793\u179a\u17bd\u1785 \u00b7 traps already at this household",
         };
       })(this, s),
+      // Larvae surveys already done at this household, listed under the larvae form
+      // so the containers counted last time are visible while entering this one.
+      ...(function (self, st) {
+        const house = st.ctxHouse || (st.form || {}).house || "";
+        const on = st.screen === "form" && st.type === "larvae" && house;
+        const rows = on
+          ? self.state.records
+              .filter((r) => (r.form_type || r.type) === "larvae" && r.household_id === house && r.record_id !== st.editId)
+              .sort((a, b) => String(b.collected_at_utc).localeCompare(String(a.collected_at_utc)))
+              .map((r) => {
+                const insp = Number(r.containers_inspected) || 0;
+                const pos = Number(r.containers_positive) || 0;
+                const tubes = Number(r.specimens) || 0;
+                const armed = st.prevDelArm === r.record_id;
+                return {
+                  id: r.record_id || "",
+                  month: r.period_month || String(r.collected_date || "").slice(0, 7),
+                  monthLabel: r.period_label || r.period_month || "",
+                  meta: [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10)),
+                    insp ? pos + " / " + insp + " ភាជន៍" : "គ្មានភាជន៍",
+                    tubes ? tubes + " កំប៉ុង" : ""].filter(Boolean).join(" · "),
+                  tag: insp
+                    ? "សន្ទស្សន៍ · index " + Math.round((pos / insp) * 1000) / 10 + "%"
+                    : "គ្មានភាជន៍ · no containers",
+                  tagBg: !insp ? "#F2F2F2" : pos ? "#F6DCDF" : "#D5E7EF",
+                  tagFg: !insp ? "#767676" : pos ? "#7C1220" : "#003E78",
+                  armed: armed,
+                  notArmed: !armed,
+                  edit: () => self.open("larvae", { edit: r.record_id, house: house, returnTo: st.returnTo }),
+                  arm: () => self.setState({ prevDelArm: r.record_id }),
+                  cancelDel: () => self.setState({ prevDelArm: "" }),
+                  confirmDel: () => { self.setState({ prevDelArm: "" }); self.deleteRecordNow(r.record_id); },
+                };
+              })
+          : [];
+        const byMonth = [];
+        rows.forEach((r) => {
+          const g = byMonth.find((x) => x.month === r.month);
+          if (g) g.rows.push(r); else byMonth.push({ month: r.month, label: r.monthLabel, rows: [r] });
+        });
+        return {
+          prevLarvaeMonths: byMonth.map((g) => ({
+            label: g.label,
+            count: g.rows.length + " កំណត់ត្រា · records",
+            rows: g.rows,
+          })),
+          hasPrevLarvae: rows.length > 0,
+          prevLarvaeLabel: "\u1780\u17b6\u179a\u1780\u17c6\u178e\u178f\u17cb\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780\u1798\u17bb\u1793 \u00b7 larvae surveys already at this household",
+        };
+      })(this, s),
+      // Adult collections already made at this household, with edit and delete, so a
+      // wrong entry can be corrected from the form itself.
+      ...(function (self, st) {
+        const house = st.ctxHouse || (st.form || {}).house || "";
+        const on = st.screen === "form" && st.type === "adult" && house;
+        const rows = on
+          ? self.state.records
+              .filter((r) => (r.form_type || r.type) === "adult" && r.household_id === house && r.record_id !== st.editId)
+              .sort((a, b) => String(b.collected_at_utc).localeCompare(String(a.collected_at_utc)))
+              .map((r) => {
+                const tubes = Number(r.specimens) || 0;
+                const armed = st.prevDelArm === r.record_id;
+                return {
+                  id: r.record_id || "",
+                  month: r.period_month || String(r.collected_date || "").slice(0, 7),
+                  monthLabel: r.period_label || r.period_month || "",
+                  meta: [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10)),
+                    r.method || "",
+                    tubes ? tubes + " កំប៉ុង" : "គ្មានកំប៉ុង"].filter(Boolean).join(" · "),
+                  tag: r.total_catch !== "" && r.total_catch != null && Number(r.total_catch)
+                    ? "មូស · catch " + Number(r.total_catch)
+                    : "កំប៉ុង · tubes " + tubes,
+                  tagBg: "#D5E7EF",
+                  tagFg: "#003E78",
+                  armed: armed,
+                  notArmed: !armed,
+                  edit: () => self.open("adult", { edit: r.record_id, house: house, returnTo: st.returnTo }),
+                  arm: () => self.setState({ prevDelArm: r.record_id }),
+                  cancelDel: () => self.setState({ prevDelArm: "" }),
+                  confirmDel: () => { self.setState({ prevDelArm: "" }); self.deleteRecordNow(r.record_id); },
+                };
+              })
+          : [];
+        // Grouped by round, so a household with many visits reads month by month.
+        const byMonth = [];
+        rows.forEach((r) => {
+          const g = byMonth.find((x) => x.month === r.month);
+          if (g) g.rows.push(r); else byMonth.push({ month: r.month, label: r.monthLabel, rows: [r] });
+        });
+        return {
+          prevAdultMonths: byMonth.map((g) => ({
+            label: g.label,
+            count: g.rows.length + " កំណត់ត្រា · records",
+            rows: g.rows,
+          })),
+          hasPrevAdult: rows.length > 0,
+        };
+      })(this, s),
+      // Lab results already entered for this household, by round, with edit and delete.
+      ...(function (self, st) {
+        const house = st.ctxHouse || (st.form || {}).house || "";
+        const on = st.screen === "form" && st.type === "lab" && house;
+        const rows = on
+          ? self.state.records
+              .filter((r) => (r.form_type || r.type) === "lab" && r.household_id === house && r.record_id !== st.editId)
+              .sort((a, b) => String(b.collected_at_utc).localeCompare(String(a.collected_at_utc)))
+              .map((r) => {
+                const armed = st.prevDelArm === r.record_id;
+                const eggs = Number(r.eggs) || 0;
+                const catchN = Number(r.total_catch) || 0;
+                return {
+                  id: r.record_id || "",
+                  month: r.period_month || String(r.collected_date || "").slice(0, 7),
+                  monthLabel: r.period_label || r.period_month || "",
+                  meta: [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10)),
+                    r.tube_id || "", r.trap_id || "",
+                    eggs ? eggs + " ពង" : "", catchN ? catchN + " មូស" : ""].filter(Boolean).join(" · "),
+                  tag: r.wmel && r.wmel !== "Not tested"
+                    ? "wMel · " + r.wmel
+                    : (catchN || eggs ? "បានបញ្ចូល · entered" : "គ្មានចំនួន · no counts"),
+                  tagBg: catchN || eggs ? "#D5E7EF" : "#F2F2F2",
+                  tagFg: catchN || eggs ? "#003E78" : "#767676",
+                  armed: armed,
+                  notArmed: !armed,
+                  edit: () => self.open("lab", { edit: r.record_id, house: house, returnTo: st.returnTo }),
+                  arm: () => self.setState({ prevDelArm: r.record_id }),
+                  cancelDel: () => self.setState({ prevDelArm: "" }),
+                  confirmDel: () => { self.setState({ prevDelArm: "" }); self.deleteRecordNow(r.record_id); },
+                };
+              })
+          : [];
+        const byMonth = [];
+        rows.forEach((r) => {
+          const g = byMonth.find((x) => x.month === r.month);
+          if (g) g.rows.push(r); else byMonth.push({ month: r.month, label: r.monthLabel, rows: [r] });
+        });
+        return {
+          prevLabMonths: byMonth.map((g) => ({
+            label: g.label,
+            count: g.rows.length + " លទ្ធផល · results",
+            rows: g.rows,
+          })),
+          hasPrevLab: rows.length > 0,
+        };
+      })(this, s),
+      // What happened at this household, month by month: how many of each activity,
+      // with the IN / OUT split for traps.
+      hhMonths: current ? (function (rows) {
+        const map = {};
+        rows.forEach((r) => {
+          const t = r.form_type || r.type;
+          if (t === "household") return;
+          const m = r.period_month || String(r.collected_date || "").slice(0, 7);
+          if (!m) return;
+          const e = map[m] || (map[m] = { label: r.period_label || m, install: 0, insIn: 0, insOut: 0, collect: 0, colIn: 0, colOut: 0, larvae: 0, adult: 0, lab: 0 });
+          const pos = String(r.position || "").toLowerCase();
+          const tid = String(r.trap_id || "").toUpperCase();
+          const isOut = Number(r.pos_outside) === 1 || pos.indexOf("out") >= 0 || tid.indexOf("-OUT") >= 0;
+          const isIn = Number(r.pos_inside) === 1 || pos.indexOf("in") >= 0 || tid.indexOf("-IN") >= 0;
+          const both = pos.indexOf("both") >= 0;
+          if (t === "install") { e.install += 1; if (isOut || both) e.insOut += 1; if (isIn || both) e.insIn += 1; }
+          else if (t === "collect") { e.collect += 1; if (isOut || both) e.colOut += 1; if (isIn || both) e.colIn += 1; }
+          else if (t === "larvae") e.larvae += 1;
+          else if (t === "adult") e.adult += 1;
+          else if (t === "lab") e.lab += 1;
+        });
+        const split = (n, i, o) => (n ? n + (i && o ? " (" + i + "/" + o + ")" : o ? " (O)" : i ? " (I)" : "") : "\u2014");
+        return Object.keys(map).sort().reverse().map((m) => {
+          const e = map[m];
+          const cells = [
+            { v: split(e.install, e.insIn, e.insOut), on: !!e.install },
+            { v: split(e.collect, e.colIn, e.colOut), on: !!e.collect },
+            { v: e.larvae ? String(e.larvae) : "\u2014", on: !!e.larvae },
+            { v: e.adult ? String(e.adult) : "\u2014", on: !!e.adult },
+            { v: e.lab ? String(e.lab) : "\u2014", on: !!e.lab },
+          ].map((c) => ({ v: c.v, fg: c.on ? "#003E78" : "#B9C2CC" }));
+          // The chain for the month: every trap set should be collected, and every
+          // collection should have a result. Complete, or what is still missing.
+          const need = e.install * 2;
+          const done = Math.min(e.collect, e.install) + Math.min(e.lab, e.collect);
+          const pct = need ? Math.round((done / need) * 100) : 0;
+          const gaps = [];
+          if (e.collect < e.install) gaps.push((e.install - e.collect) + " ប្រមូល · collection");
+          if (e.lab < e.collect) gaps.push((e.collect - e.lab) + " លទ្ធផល · result");
+          return {
+            label: e.label,
+            cells: cells,
+            pct: need ? pct + "%" : "\u2014",
+            pctBg: !need ? "#F2F2F2" : gaps.length ? (pct >= 50 ? "#FDF1D1" : "#F6DCDF") : "#D5E7EF",
+            pctFg: !need ? "#B9C2CC" : gaps.length ? (pct >= 50 ? "#6B4E06" : "#7C1220") : "#003E78",
+            hasGaps: gaps.length > 0,
+            gapText: "ខ្វះ missing " + gaps.join(", "),
+          };
+        });
+      })(current._rows) : [],
+      hhHasMonths: !!(current && current._rows.some((r) => (r.form_type || r.type) !== "household")),
       hhHasMore: !!(current && current._rows.length > 3),
       hhMoreLabel: s.hhAll
         ? "\u1794\u17b7\u1791 \u00b7 show less"
@@ -5477,52 +5859,19 @@ class Component extends DCLogic {
       todayCount: s.records.filter((r) => String(r.collected_at_utc || r.saved_at).slice(0, 10) === today).length,
       // Five rows by default, then twenty more per press — a phone never has to
       // render the whole store at once.
-      // Queued deletions have no record left to list, so they are shown from the queue,
-      // newest first, with the bin button undoing the deletion.
-      // Deletions stay in Record as their own rows, from a small on-phone log, so the
-      // trace survives the sync that removes them from the sheet.
-      latest: loadDelLog().slice().reverse().slice(0, 3).map((d) => {
-        const queued = (s.pendingDel || []).some((x) => (typeof x === "string" ? x : (x && x.record_id)) === d.id);
-        return {
-          title: "\u179b\u17bb\u1794 \u00b7 " + d.id,
-          titleEn: "deleted",
-          meta: (function (iso) {
-            const dt = new Date(iso);
-            const p = (n) => ("0" + n).slice(-2);
-            return isNaN(dt.getTime()) ? "" : p(dt.getMonth() + 1) + "-" + p(dt.getDate()) + "-" + p(dt.getFullYear() % 100)
-              + ", " + dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-          })(d.at),
-          detail: (d.kind === "household" ? "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7\u1791\u17b6\u17c6\u1784\u1798\u17bc\u179b \u00b7 whole household" : "\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1798\u17bd\u1799 \u00b7 one record")
-            + (d.by ? "  \u00b7  " + d.by : ""),
-          action: "\u179b\u17bb\u1794 \u00b7 deleted",
-          actionBg: "#F7E7E9",
-          actionFg: "#7C1220",
-          bar: "#7C1220",
-          canEdit: false,
-          canUndo: queued,
-          unsent: queued,
-          sent: !queued,
-          sentDot: queued ? "#F4B71B" : "#1ED47F",
-          sentTitle: queued ? "\u179a\u1784\u17cb\u1785\u17b6\u17c6\u1795\u17d2\u1789\u17be \u00b7 waiting sync" : "\u179b\u17bb\u1794\u1785\u17c1\u1789\u1796\u17b8 Sheet \u00b7 removed from the sheet",
-          sentLabel: queued ? "\u1780\u17d2\u1793\u17bb\u1784\u1791\u17bc\u179a\u179f\u17d0\u1796\u17d2\u1791 \u00b7 phone" : "Sheet",
-          sentBg: queued ? "#FDF1D1" : "#E3F6EC",
-          sentFg: queued ? "#6B4A00" : "#06492B",
-          edit: null,
-          undo: () => {
-            const kept = (s.pendingDel || []).filter((x) => (typeof x === "string" ? x : (x && x.record_id)) !== d.id);
-            saveDel(kept);
-            const trash = loadTrash();
-            const back = trash.filter((r) => (d.kind === "household" ? r.household_id === d.id : (r.record_id || r.id) === d.id));
-            saveTrash(trash.filter((r) => back.indexOf(r) < 0));
-            saveDelLog(loadDelLog().filter((x) => x.id !== d.id || x.at !== d.at));
-            if (back.length) this.persist(this.state.records.concat(back));
-            this.setState({ pendingDel: kept });
-            this.toast("\u1794\u17b6\u1793\u1799\u1780\u1798\u1780\u179c\u17b7\u1789 " + back.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 " + back.length + " record" + (back.length === 1 ? "" : "s") + " restored", "ok");
-          },
-        };
-      }).concat(s.records.slice()
+      // Last activity is the history the newest pull brought in: nothing until a pull
+      // has run, and blank if that pull matched no records.
+      hasLatest: !!(s.lastPullAt && s.records.some((r) => r._pulledAt === s.lastPullAt)),
+      latestEmpty: !(s.lastPullAt && s.records.some((r) => r._pulledAt === s.lastPullAt)),
+      latestEmptyText: s.lastPullAt
+        ? "រកមិនឃើញកំណត់ត្រាថ្មី · the last pull brought in no records"
+        : "ចុច ទាញពី Sheet ដើម្បីមើលប្រវត្តិថ្មី · pull from the sheet to see new history here",
+      // Only the rows the newest pull brought in — deletions live in their own log and
+      // are not listed here.
+      latest: s.records
+        .filter((r) => s.lastPullAt && r._pulledAt === s.lastPullAt)
         .sort((x, y) => String(y.collected_at_utc || y.saved_at || "").localeCompare(String(x.collected_at_utc || x.saved_at || "")))
-        .map(row)),
+        .map(row),
       toggleLatest: () => this.setState((p) => {
         const shown = p.latestShown || 5;
         return { latestShown: shown >= p.records.length ? 5 : shown + 20 };
