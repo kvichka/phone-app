@@ -108,16 +108,16 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       </div>
       <div style="font-size:11px;font-weight:700;color:{{ headerFg }};line-height:1.55;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ subtitle }}</div>
     </div>
-    <button onClick="{{ quickSync }}" title="{{ quickSyncTitle }}" style="position:relative;width:34px;height:34px;flex:none;border-radius:9px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;opacity:{{ quickSyncOpacity }}">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5A8 8 0 0 0 6.3 6.3L4 8.5"></path><path d="M4 4.5v4h4"></path><path d="M4 12.5A8 8 0 0 0 17.7 17.7L20 15.5"></path><path d="M20 19.5v-4h-4"></path></svg>
+    <button onClick="{{ quickSync }}" title="{{ quickSyncTitle }}" style="position:relative;width:28px;height:28px;flex:none;margin-left:-6px;border-radius:7px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;opacity:{{ quickSyncOpacity }}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5A8 8 0 0 0 6.3 6.3L4 8.5"></path><path d="M4 4.5v4h4"></path><path d="M4 12.5A8 8 0 0 0 17.7 17.7L20 15.5"></path><path d="M20 19.5v-4h-4"></path></svg>
       <sc-if value="{{ hasQuickSync }}" hint-placeholder-val="{{ false }}">
         <span style="position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;box-sizing:border-box;padding:0 4px;border-radius:999px;background:#F4B71B;color:#000;font-size:9px;font-weight:700;line-height:16px;text-align:center">{{ quickSyncCount }}</span>
       </sc-if>
     </button>
-    <button onClick="{{ openSettings }}" title="ការកំណត់ · Settings" style="width:34px;height:34px;flex:none;border-radius:9px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v2.5"></path><path d="M12 18.5V21"></path><path d="M3 12h2.5"></path><path d="M18.5 12H21"></path><path d="M5.6 5.6l1.8 1.8"></path><path d="M16.6 16.6l1.8 1.8"></path><path d="M18.4 5.6l-1.8 1.8"></path><path d="M7.4 16.6l-1.8 1.8"></path></svg>
+    <button onClick="{{ openSettings }}" title="ការកំណត់ · Settings" style="width:28px;height:28px;flex:none;margin-left:-6px;border-radius:7px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v2.5"></path><path d="M12 18.5V21"></path><path d="M3 12h2.5"></path><path d="M18.5 12H21"></path><path d="M5.6 5.6l1.8 1.8"></path><path d="M16.6 16.6l1.8 1.8"></path><path d="M18.4 5.6l-1.8 1.8"></path><path d="M7.4 16.6l-1.8 1.8"></path></svg>
     </button>
-    <button onClick="{{ openAbout }}" title="អំពីកម្មវិធី · About" style="width:34px;height:34px;flex:none;border-radius:9px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;overflow:hidden">
+    <button onClick="{{ openAbout }}" title="អំពីកម្មវិធី · About" style="width:28px;height:28px;flex:none;margin-left:-6px;border-radius:7px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;overflow:hidden">
       <img src="icon-180.png" alt="អំពីកម្មវិធី · About" style="width:26px;height:26px;display:block;border-radius:6px">
     </button>
     <div style="text-align:right;flex:none">
@@ -350,53 +350,6 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </button>
         </sc-if>
       </div>
-      <sc-if value="{{ hasLatest }}" hint-placeholder-val="{{ false }}">
-      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
-        <div style="display:flex;align-items:center;gap:8px;padding:9px 10px">
-          <div style="flex:1;min-width:0;font-size:13px;font-weight:700;color:#003E78">សកម្មភាពចុងក្រោយ <span style="font-weight:400;color:#767676">Last activity</span></div>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F7F9FB;border-bottom:1px solid #EDF1F4">
-          <span style="flex:1;min-width:0;font-weight:400;font-size:11px;line-height:1.3;color:#767676">កំណត់ត្រា · Record</span>
-          <span style="flex:none;font-weight:400;font-size:11px;line-height:1.3;color:#767676;white-space:nowrap">សកម្មភាព · Actions</span>
-        </div>
-        <div style="max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch">
-          <sc-for list="{{ latest }}" as="r" hint-placeholder-count="3">
-            <div style="border-top:1px solid #EDF1F4;border-left:4px solid {{ r.bar }};padding:7px 10px;display:flex;align-items:center;gap:9px">
-              <span style="flex:1;min-width:0">
-                <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
-                  <span style="font-size:12px;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span>
-                  <span style="flex:1;min-width:0;font-size:11px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
-                </span>
-                <span style="display:flex;align-items:center;gap:6px;margin-top:2px;min-width:0">
-                  <span style="flex:none;font-size:9px;font-weight:700;color:{{ r.actionFg }};background:{{ r.actionBg }};border-radius:999px;padding:1px 6px;white-space:nowrap">{{ r.action }}</span>
-                  <span style="flex:1;min-width:0;font-size:11px;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.detail }}</span>
-                </span>
-              </span>
-              <span title="{{ r.sentTitle }}" style="flex:none;color:{{ r.sentFg }};display:inline-flex;align-items:center;justify-content:center">
-                <sc-if value="{{ r.unsent }}" hint-placeholder-val="{{ false }}">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"></rect><path d="M10.6 18.6h2.8"></path></svg>
-                </sc-if>
-                <sc-if value="{{ r.sent }}" hint-placeholder-val="{{ true }}">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"></path></svg>
-                </sc-if>
-              </span>
-              <sc-if value="{{ r.canEdit }}" hint-placeholder-val="{{ true }}">
-                <button onClick="{{ r.edit }}" title="កែ Edit" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#117996;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
-              </sc-if>
-              <sc-if value="{{ r.canUndo }}" hint-placeholder-val="{{ false }}">
-                <button onClick="{{ r.undo }}" title="មិនលុប · Undo delete" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#117996;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5a8 8 0 1 1 2.6 5.9"></path><path d="M4 19v-4.5h4.5"></path></svg></button>
-              </sc-if>
-              <sc-if value="{{ r.canEdit }}" hint-placeholder-val="{{ true }}">
-                <button onClick="{{ r.remove }}" title="លុប Delete" style="display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:#7C1220;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
-              </sc-if>
-            </div>
-          </sc-for>
-        </div>
-        <sc-if value="{{ latestEmpty }}" hint-placeholder-val="{{ true }}">
-          <div style="padding:9px 10px;border-top:1px solid #EDF1F4;font-size:11px;color:#767676;line-height:1.4">{{ latestEmptyText }}</div>
-        </sc-if>
-      </div>
-      </sc-if>
       <sc-if value="{{ hasAdminRows }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-top:3px solid #117996;border-radius:8px;overflow:hidden">
           <div style="display:flex;align-items:center;gap:8px;padding:8px 10px 8px 12px;border-bottom:1px solid #EDF1F4">
@@ -494,6 +447,14 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <label>ឃុំ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Commune</span></label>
             <select value="{{ hhComm }}" onChange="{{ setHhComm }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ hhCommOptions }}" as="o" hint-placeholder-count="2">
+                <option value="{{ o.value }}">{{ o.label }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <div style="flex:1;min-width:120px">
+            <label>ភូមិ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Village</span></label>
+            <select value="{{ hhVill }}" onChange="{{ setHhVill }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+              <sc-for list="{{ hhVillOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
             </select>
@@ -3640,8 +3601,16 @@ class Component extends DCLogic {
   setSource = (e) => {
     const v = e && e.target ? e.target.value : e;
     const larval = this.stageOf(v) === "Larvae";
+    // One tube still open means there is nothing to choose: pick it.
+    const src = this.state.records.find((r) => r.record_id === v);
+    const ids = String((src && src.tube_ids) || "").split(" ").filter(Boolean);
+    const taken = {};
+    this.state.records.forEach((r) => {
+      if ((r.form_type || r.type) === "lab" && r.tube_id && r.record_id !== this.state.editId) taken[r.tube_id] = 1;
+    });
+    const open = ids.filter((id) => !taken[id]);
     this.setState((p) => {
-      const f = { ...p.form, source_id: v, tube_id: "" };
+      const f = { ...p.form, source_id: v, tube_id: open.length === 1 ? open[0] : "" };
       (larval ? TAXA : LARVAL_TAXA).forEach(([k]) => { f[k] = 0; });
       return { form: f, error: "" };
     });
@@ -4615,7 +4584,9 @@ class Component extends DCLogic {
     ].concat(
       ctx ? [] : [{ label: "Household", isSelect: true, value: form._srcHouse || "", onChange: this.setSrcFilter("_srcHouse"),
         options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all households" }].concat(reg.hh) }],
-      [
+      // Nothing left waiting on a result means there is nothing to narrow: the whole
+      // Activity picker is left out rather than shown reading (0).
+      this.specimenSources(ctx || form._srcHouse, "").length ? [
       // Each activity shows how many collections there are still waiting on a result.
       (function (self, house) {
         const n = (t) => self.specimenSources(house, t).length;
@@ -4627,7 +4598,8 @@ class Component extends DCLogic {
               ["collect:BG-Sentinel", "BG-Sentinel"]]
               .filter(([k]) => n(k) > 0 || form._srcType === k)
               .map(([k, label]) => ({ value: k, label: label + " (" + n(k) + ")" }))) };
-      })(this, ctx || form._srcHouse),
+      })(this, ctx || form._srcHouse)] : [],
+      [
       (function (sources) {
         return sources.length
           ? { label: "Collection record *", isSelect: true, value: form.source_id || "", onChange: this.setSource,
@@ -4756,9 +4728,15 @@ class Component extends DCLogic {
     const commList = [];
     commPool.forEach((h) => { if (h.commune && commList.indexOf(h.commune) < 0) commList.push(h.commune); });
     const activeComm = s.hhComm && commList.indexOf(s.hhComm) >= 0 ? s.hhComm : "";
+    // Village narrows within whatever province and commune are already picked.
+    const villPool = activeComm ? commPool.filter((h) => h.commune === activeComm) : commPool;
+    const villList = [];
+    villPool.forEach((h) => { if (h.village && villList.indexOf(h.village) < 0) villList.push(h.village); });
+    const activeVill = s.hhVill && villList.indexOf(s.hhVill) >= 0 ? s.hhVill : "";
     const hhFiltered = hhList.filter((h) => {
       if (activeProv && (provKey(h.province_code) || h.province) !== activeProv) return false;
       if (activeComm && h.commune !== activeComm) return false;
+      if (activeVill && h.village !== activeVill) return false;
       if (!q) return true;
       return [h.household_id, h.head, h.village, h.commune, h.district, h.province, h.cluster,
         h.address, h.trap_ids].join(" ").toLowerCase().indexOf(q) >= 0;
@@ -5038,9 +5016,9 @@ class Component extends DCLogic {
       openHh: () => this.setState({ screen: "hh" }),
       hhQuery: s.hhQuery,
       setHhQuery: (e) => this.setState({ hhQuery: e.target.value }),
-      clearHhQuery: () => this.setState({ hhQuery: "", hhProv: "", hhComm: "" }),
+      clearHhQuery: () => this.setState({ hhQuery: "", hhProv: "", hhComm: "", hhVill: "" }),
       hhProv: activeProv,
-      setHhProv: (e) => this.setState({ hhProv: e.target.value, hhComm: "" }),
+      setHhProv: (e) => this.setState({ hhProv: e.target.value, hhComm: "", hhVill: "" }),
       collectedTraps: (function (self) {
         const st = self.state;
         const house = st.ctxHouse || (st.form || {}).house || "";
@@ -5054,7 +5032,12 @@ class Component extends DCLogic {
         return self.trapListField(house, st.form || {}, "collected").rows.length > 0;
       })(this),
       hhComm: activeComm,
-      setHhComm: (e) => this.setState({ hhComm: e.target.value }),
+      setHhComm: (e) => this.setState({ hhComm: e.target.value, hhVill: "" }),
+      hhVill: activeVill,
+      setHhVill: (e) => this.setState({ hhVill: e.target.value }),
+      hhVillOptions: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }].concat(villList.sort().map((v) => ({
+        value: v, label: v + " (" + villPool.filter((x) => x.village === v).length + ")",
+      }))),
       hhCommOptions: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }].concat(commList.sort().map((c) => ({
         value: c, label: c + " (" + commPool.filter((x) => x.commune === c).length + ")",
       }))),

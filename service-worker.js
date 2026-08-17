@@ -8,7 +8,7 @@
  * BUMP CACHE_NAME ON EVERY PUSH. Skipping it leaves phones on stale files.
  */
 
-const CACHE_NAME = "ento-shell-v8";
+const CACHE_NAME = "ento-shell-v9";
 
 const SHELL = [
   "./",
