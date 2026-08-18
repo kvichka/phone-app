@@ -385,19 +385,16 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       </div>
       <sc-if value="{{ hasAdminRows }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-top:3px solid #117996;border-radius:8px;overflow:hidden">
-          <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #EDF1F4">
-            <span style="font-weight:700;font-size:11px;line-height:1.3;color:#003E78">ខ្នងផ្ទះតាមឃុំ</span>
-            <span style="flex:1;min-width:0;font-size:11px;color:#767676">Households by commune</span>
-            <button onClick="{{ toggleAdmin }}" title="{{ adminToggleTitle }}" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #A8C8DC;background:#fff;color:#117996;border-radius:5px;width:22px;height:22px;flex:none;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ adminChevron }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></button>
-          </div>
-          <sc-if value="{{ adminOpen }}" hint-placeholder-val="{{ true }}">
-          <div style="display:flex;align-items:baseline;gap:8px;padding:6px 12px;background:#F2F2F2">
+          <button onClick="{{ toggleAdmin }}" title="{{ adminToggleTitle }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F2F2F2;border:none;cursor:pointer;font-family:inherit;text-align:left">
+            <span style="flex:none;width:16px;height:16px;box-sizing:content-box;border:1px solid #A8C8DC;border-radius:5px;color:#117996;font-size:11px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ adminCaret }}</span>
             <span style="flex:1;min-width:0;font-weight:400;font-size:11px;line-height:1.3;color:#003E78">ឃុំ <span style="color:#767676">Commune</span></span>
-            <span style="width:104px;flex:none;font-weight:400;font-size:11px;line-height:1.3;color:#003E78">ស្រុក <span style="font-weight:400;color:#767676">District</span></span>
-            <span style="width:58px;flex:none;text-align:right;font-weight:400;font-size:11px;line-height:1.3;color:#003E78;white-space:nowrap">ផ្ទះ <span style="font-weight:400;color:#767676">#HH</span></span>
-          </div>
+            <span style="width:104px;flex:none;font-weight:400;font-size:11px;line-height:1.3;color:#003E78">ស្រុក <span style="color:#767676">District</span></span>
+            <span style="width:58px;flex:none;text-align:right;font-weight:400;font-size:11px;line-height:1.3;color:#003E78;white-space:nowrap">ផ្ទះ <span style="color:#767676">#HH</span></span>
+          </button>
+          <sc-if value="{{ adminOpen }}" hint-placeholder-val="{{ true }}">
           <sc-for list="{{ adminRows }}" as="a" hint-placeholder-count="3">
-            <button onClick="{{ a.toggle }}" style="width:100%;display:flex;align-items:center;gap:8px;padding:5px 10px;border:none;border-top:1px solid #EDF1F4;background:{{ a.rowBg }};font-weight:400;font-size:11px;line-height:1.35;color:#003E78;text-align:left;cursor:pointer">
+            <button onClick="{{ a.toggle }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:5px 10px;border:none;border-top:1px solid #EDF1F4;background:{{ a.rowBg }};font-weight:400;font-size:11px;line-height:1.35;color:#003E78;text-align:left;cursor:pointer">
+              <span style="flex:none;width:18px"></span>
               <span style="flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.commune }}</span>
               <span style="width:104px;flex:none;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.district }}</span>
               <span style="width:58px;flex:none;text-align:right;font-weight:700;color:#117996">{{ a.hh }}</span>
@@ -421,35 +418,27 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         </div>
       </sc-if>
       <div style="border:1px solid #D9DEE4;border-radius:8px;background:#fff;overflow:hidden">
-        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #EDF1F4">
-          <span style="font-weight:700;font-size:11px;line-height:1.3;color:#003E78">តាមជុំ</span>
+        <button onClick="{{ toggleRounds }}" title="{{ roundsToggleTitle }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F2F2F2;border:none;cursor:pointer;font-family:inherit;text-align:left">
+          <span style="flex:none;width:16px;height:16px;box-sizing:content-box;border:1px solid #A8C8DC;border-radius:5px;color:#117996;font-size:11px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ roundsCaret }}</span>
+          <span style="flex:none;font-weight:700;font-size:11px;line-height:1.3;color:#003E78">តាមជុំ</span>
           <span style="flex:1;min-width:0;font-size:11px;color:#767676">By round</span>
-          <button onClick="{{ toggleRounds }}" title="{{ roundsToggleTitle }}" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #A8C8DC;background:#fff;color:#117996;border-radius:5px;width:22px;height:22px;flex:none;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate({{ roundsChevron }}deg)"><path d="M6 9.5 12 15.5 18 9.5"></path></svg></button>
-        </div>
+        </button>
         <sc-if value="{{ roundsOpen }}" hint-placeholder-val="{{ true }}">
-        <div style="display:flex;align-items:center;gap:4px;padding:5px 8px;background:#F2F2F2;font-size:11px;color:#767676">
-          <span style="flex:0 1 66px;min-width:60px;font-weight:700;color:#003E78">ជុំ <span style="font-weight:400;color:#767676">Round</span></span>
-          <span style="flex:0 1 34px;min-width:28px;text-align:right;line-height:1.25">ខ្នងផ្ទះ<span style="display:block;color:#767676">#HH</span></span>
-          <span style="flex:0 1 74px;min-width:44px;text-align:right;line-height:1.25">ដាក់<span style="display:block;color:#767676">OVT / BGS</span></span>
-          <span style="flex:0 1 34px;min-width:28px;text-align:right;line-height:1.25">ប្រមូល<span style="display:block;color:#767676">Coll</span></span>
-          <span style="flex:0 1 36px;min-width:28px;text-align:right;line-height:1.25">មូសធំ<span style="display:block;color:#767676">Adult</span></span>
-          <span style="flex:0 1 38px;min-width:30px;text-align:right;line-height:1.25">ដង្កូវទឹក<span style="display:block;color:#767676">Larvae</span></span>
-          <span style="flex:0 1 34px;min-width:28px;text-align:right;line-height:1.25">លទ្ធផល<span style="display:block;color:#767676">Lab</span></span>
-          <span style="flex:0 1 66px;min-width:60px;text-align:right;line-height:1.25;overflow:hidden">មូស · ពង<span style="display:block;color:#767676;overflow:hidden;text-overflow:ellipsis">Catch · eggs</span></span>
-          <span style="flex:1;min-width:66px;text-align:right;line-height:1.25;overflow:hidden">ភាជន៍<span style="display:block;color:#767676;overflow:hidden;text-overflow:ellipsis">Pos · index</span></span>
-        </div>
         <sc-for list="{{ homeRounds }}" as="r" hint-placeholder-count="2">
-          <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-top:1px solid #F2F2F2;border-left:4px solid #117996">
-            <span style="flex:0 1 66px;min-width:60px;font-size:12px;font-weight:700;color:#003E78;white-space:nowrap">{{ r.label }}</span>
-            <span style="flex:0 1 34px;min-width:28px;text-align:right;font-size:11px;color:#003E78">{{ r.hh }}</span>
-            <span style="flex:0 1 74px;min-width:44px;text-align:right;font-size:11px;color:#003E78">{{ r.install }}</span>
-            <span style="flex:0 1 34px;min-width:28px;text-align:right;font-size:11px;color:#003E78">{{ r.collect }}</span>
-            <span style="flex:0 1 36px;min-width:28px;text-align:right;font-size:11px;color:#003E78">{{ r.adult }}</span>
-            <span style="flex:0 1 38px;min-width:30px;text-align:right;font-size:11px;color:#003E78">{{ r.larvae }}</span>
-            <span style="flex:0 1 34px;min-width:28px;text-align:right;font-size:11px;color:#003E78">{{ r.lab }}</span>
-            <span style="flex:0 1 66px;min-width:60px;text-align:right;font-size:11px;color:#003E78;white-space:nowrap">{{ r.catchEggs }}</span>
-            <span style="flex:1;min-width:66px;text-align:right;font-size:11px;font-weight:700;color:{{ r.indexFg }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.contIndex }}</span>
-          </div>
+          <button onClick="{{ r.openMonth }}" title="បើមើលកំណត់ត្រា · open these records" style="width:100%;box-sizing:border-box;display:block;text-align:left;padding:6px 10px;border:none;border-top:1px solid #F2F2F2;border-left:4px solid #117996;background:#fff;cursor:pointer;font-family:inherit">
+            <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
+              <span style="flex:none;font-size:12px;font-weight:700;color:#003E78;white-space:nowrap">{{ r.label }}</span>
+              <span style="flex:1;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.hh }} ខ្នងផ្ទះ · #HH</span>
+              <span style="flex:none;display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ភាជន៍ Pos<span style="font-weight:700;color:{{ r.indexFg }}">{{ r.contIndex }}</span></span>
+            </span>
+            <span style="display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:3px">
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ដាក់ Set<span style="font-weight:700;color:#003E78">{{ r.install }}</span></span>
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ប្រមូល Col<span style="font-weight:700;color:#003E78">{{ r.collect }}</span></span>
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ដង្កូវទឹក Lar<span style="font-weight:700;color:#003E78">{{ r.larvae }}</span></span>
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">មូស Adu<span style="font-weight:700;color:#003E78">{{ r.adult }}</span></span>
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">លទ្ធផល Lab<span style="font-weight:700;color:#003E78">{{ r.lab }}</span></span>
+            </span>
+          </button>
         </sc-for>
         </sc-if>
       </div>
@@ -480,6 +469,14 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <label>ឃុំ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Commune</span></label>
             <select value="{{ hhComm }}" onChange="{{ setHhComm }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ hhCommOptions }}" as="o" hint-placeholder-count="2">
+                <option value="{{ o.value }}">{{ o.label }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <div style="flex:none;width:104px">
+            <label>ជុំ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Round</span></label>
+            <select value="{{ matrixRound }}" onChange="{{ setMatrixRound }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+              <sc-for list="{{ matrixRoundOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
             </select>
@@ -516,20 +513,13 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
 
       <sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
       <div style="border:1px solid #D9DEE4;border-radius:8px;background:#fff;overflow:hidden">
-        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #F2F2F2">
-          <span style="width:24px;height:24px;flex:none;border-radius:5px;background:#D5E7EF;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3.5l9 7"></path><path d="M5.5 9.6V20h13V9.6"></path><path d="M9.8 20v-5.5h4.4V20"></path></svg></span>
-          <span style="flex:1;min-width:0">
-            <span style="display:block;font-size:13px;font-weight:700;color:#003E78;line-height:1.25">បញ្ជីខ្នងផ្ទះ <span style="font-weight:400;color:#767676">Households</span></span>
-            <span style="display:block;font-size:11px;color:#767676;line-height:1.35">ចុចដើម្បីមើលប្រវត្តិពេញ · tap one for its full history</span>
-          </span>
-        </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 10px;background:#F7F9FB;border-bottom:1px solid #EDF1F4;font-size:11px;color:#767676"><span style="flex:none;color:#767676;margin-right:2px">រៀបតាម · sort by</span>
         <button onClick="{{ sortById }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortIdFg }}">ID{{ sortIdArrow }}</button>
         <button onClick="{{ sortByName }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortNameFg }}">ឈ្មោះ{{ sortNameArrow }}</button>
         <button onClick="{{ sortByVillage }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortVillageFg }}">ភូមិ Village{{ sortVillageArrow }}</button>
-        <button onClick="{{ sortByCommune }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortCommuneFg }}">ឃំុ Commune{{ sortCommuneArrow }}</button>
-        <button onClick="{{ sortByStatus }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortStatusFg }}">ស្ថានភាព{{ sortStatusArrow }}</button>
+        <button onClick="{{ sortByStatus }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortStatusFg }}">ស្ថានភាព {{ sortStatusCount }}{{ sortStatusArrow }}</button>
       </div>
+      <sc-if value="{{ hhCardOpen }}" hint-placeholder-val="{{ true }}">
       <sc-for list="{{ households }}" as="h" hint-placeholder-count="4">
         <div style="background:#fff;border-top:1px solid #F2F2F2;border-left:4px solid {{ h.bar }};padding:4px 10px;display:flex;align-items:center;gap:8px">
           <button onClick="{{ h.open }}" style="flex:1;min-width:0;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit">
@@ -548,6 +538,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </span>
         </div>
       </sc-for>
+      </sc-if>
       </div>
       <sc-if value="{{ hhListMore }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ toggleHhList }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1px solid #D9DEE4;color:#003E78;border-radius:8px;min-height:38px;font-weight:700;font-size:11px;line-height:1;cursor:pointer">
@@ -1011,14 +1002,15 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
 
     <sc-if value="{{ isDash }}" hint-placeholder-val="{{ false }}">
 
+      <a href="dashboard.html" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:9px;background:#D5E7EF;border:1px solid #A8C8DC;border-radius:8px;padding:8px 10px;text-decoration:none">
+        <span style="width:24px;height:24px;flex:none;border-radius:5px;background:#117996;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"></rect><path d="M3.5 9.5h17"></path><path d="M9.5 9.5v10"></path></svg></span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:12px;font-weight:700;color:#003E78;line-height:1.3">ផ្ទាំងបង្ហាញពេញ <span style="font-weight:400;color:#767676">Full dashboard</span></span>
+          <span style="display:block;font-size:11px;color:#767676;line-height:1.35">អានពី Sheet ទាំងអស់ · reads the whole sheet, needs signal</span>
+        </span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M9 6.5 15.5 12 9 17.5"></path></svg>
+      </a>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid #F2F2F2">
-          <span style="width:28px;height:28px;flex:none;border-radius:6px;background:#D5E7EF;color:#117996;display:inline-flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5 10 4l4 2.5L20 4v13.5L14 20l-4-2.5L4 20V6.5Z"></path><path d="M10 4v13.5"></path><path d="M14 6.5V20"></path></svg></span>
-          <span style="flex:1;min-width:0">
-            <span style="display:block;font-size:13px;font-weight:700;color:#003E78;line-height:1.25">តំបន់រដ្ឋបាល <span style="font-weight:400;color:#767676">Administrative area</span></span>
-            <span style="display:block;font-size:11px;color:#767676;line-height:1.35">ជ្រើសដើម្បីតម្រង · pick to filter</span>
-          </span>
-        </div>
         <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
           <div style="min-width:0">
             <label style="margin-bottom:3px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ខេត្ត<span style="font-size:11px;font-weight:400;color:#767676;margin-left:4px">Province</span></label>
@@ -1151,6 +1143,40 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         </div>
         <sc-if value="{{ gapsClear }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:10px;font-size:12px;font-weight:700;color:#003E78">ត្រួតពិនិត្យបានគ្រប់ · All checks pass.</div>
+        </sc-if>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
+        <button onClick="{{ toggleMatrix }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F2F2F2;border:none;cursor:pointer;font-family:inherit;text-align:left">
+          <span style="flex:none;width:16px;height:16px;box-sizing:content-box;border:1px solid #A8C8DC;border-radius:5px;color:#117996;font-size:11px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ matrixCaret }}</span>
+          <span style="flex:none;font-weight:700;font-size:11px;line-height:1.3;color:#003E78">សកម្មភាពតាមជុំ</span>
+          <span style="flex:1;min-width:0;font-size:11px;color:#767676">Activities by round</span>
+        </button>
+        <sc-if value="{{ matrixOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #EDF1F4">
+            <span style="flex:none;font-size:11px;color:#767676">ជុំ Round</span>
+            <select value="{{ matrixRound }}" onChange="{{ setMatrixRound }}" style="flex:1;min-width:0;font-size:11px;line-height:1.2;padding:4px 22px 4px 8px;min-height:28px;height:28px;background-position:calc(100% - 12px) 11px,calc(100% - 7px) 11px">
+              <sc-for list="{{ matrixRoundOptions }}" as="o" hint-placeholder-count="2">
+                <option value="{{ o.value }}">{{ o.label }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <div style="padding:5px 10px;background:#F7F9FB;border-bottom:1px solid #EDF1F4;font-size:11px;color:#003E78">{{ matrixTotals }}</div>
+          <div style="display:flex;align-items:baseline;gap:6px;padding:5px 10px;background:#F2F2F2">
+            <span style="flex:1;min-width:0;font-size:11px;color:#003E78">ខ្នងផ្ទះ <span style="color:#767676">#HH</span></span>
+            <sc-for list="{{ matrixCols }}" as="c" hint-placeholder-count="4">
+              <span style="width:38px;flex:none;text-align:center;font-size:11px;color:#003E78">{{ c }}</span>
+            </sc-for>
+          </div>
+          <div style="max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch">
+            <sc-for list="{{ matrixRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-top:1px solid #EDF1F4">
+                <button onClick="{{ r.open }}" style="flex:1;min-width:0;text-align:left;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit;font:700 11px ui-monospace,Menlo,monospace;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.id }}</button>
+                <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="4">
+                  <button onClick="{{ c.go }}" title="{{ c.title }}" style="width:38px;flex:none;padding:3px 0;border:none;background:transparent;color:{{ c.fg }};font-size:11px;font-weight:700;line-height:1.2;cursor:pointer;font-family:inherit">{{ c.mark }}</button>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
         </sc-if>
       </div>
       <sc-if value="{{ dash.hasSpecies }}" hint-placeholder-val="{{ false }}">
@@ -1753,12 +1779,12 @@ const KM = {
   "Eggs counted": "\u1785\u17c6\u1793\u17bd\u1793\u1796\u1784",
   "Time": "\u1798\u17c9\u17c4\u1784",
   "Collection method": "\u179c\u17b7\u1792\u17b8\u1794\u17d2\u179a\u1798\u17bc\u179b",
-  "Tubes collected": "\u1785\u17c6\u1793\u17bd\u1793\u1780\u17c6\u1794\u17c9\u17bb\u1784\u1794\u17d2\u179a\u1798\u17bc\u179b",
+  "Tube": "\u1780\u17c6\u1794\u17c9\u17bb\u1784",
   "Aspirator": "\u1798\u17c9\u17b6\u179f\u17bc\u1794\u1798\u17bc\u179f",
   "Identification": "\u1780\u17b6\u179a\u1785\u17c6\u178e\u17b6\u178f\u17cb\u1794\u17d2\u179a\u1797\u17c1\u1791",
   "Containers by type": "\u1797\u17b6\u1787\u1793\u17cd\u178f\u17b6\u1798\u1794\u17d2\u179a\u1797\u17c1\u1791",
   "House total": "\u179f\u179a\u17bb\u1794\u1797\u17b6\u1787\u1793\u17cd",
-  "Larvae tubes collected": "\u1780\u17c6\u1794\u17c9\u17bb\u1784\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
+  "Lar tube": "\u1780\u17c6\u1794\u17c9\u17bb\u1784\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
   "Collection record *": "\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Tube *": "\u1780\u17c6\u1794\u17c9\u17bb\u1784",
   "Tube ID": "\u179b\u17c1\u1781 \u1780\u17c6\u1794\u17c9\u17bb\u1784",
@@ -1826,7 +1852,7 @@ function period(dateStr) {
   const d = String(dateStr || "").slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return { month: "", label: "" };
   const m = Number(d.slice(5, 7));
-  return { month: d.slice(0, 7), label: MONTHS[m - 1] + " " + d.slice(0, 4) };
+  return { month: d.slice(0, 7), label: MONTHS[m - 1] + "-" + d.slice(2, 4) };
 }
 
 function isoWeek(d) {
@@ -2451,7 +2477,12 @@ class Component extends DCLogic {
     this._poll = setInterval(tick, 1800000);
   }
   dismissSyncAsk = () => this.setState({ syncAsk: 0 });
-  acceptSyncAsk = () => { this.setState({ syncAsk: 0 }); this.syncNow(); };
+  acceptSyncAsk = () => {
+    this.setState({ syncAsk: 0 });
+    const p = this.syncNow();
+    const back = () => this.pullNow(false, false);
+    if (p && p.then) p.then(back).catch(back); else back();
+  };
 
   // Pull everything back out of the sheet, so this phone sees households and history
   // recorded by other phones. Local records that have not been sent yet always win.
@@ -3392,7 +3423,7 @@ class Component extends DCLogic {
 
   // Where a household stands in the current round, and how urgent that is.
   roundStatus(rows) {
-    const p = this.currentRound();
+    const p = /^\d{4}-\d{2}$/.test(String(this.state.matrixRound || "")) ? this.state.matrixRound : this.currentRound();
     const inRound = (t) => (rows || []).filter((r) => (r.form_type || r.type) === t && r.period_month === p);
     const installs = inRound("install"), collects = inRound("collect");
     // A collection is outstanding until a lab record names it as its source.
@@ -3405,10 +3436,12 @@ class Component extends DCLogic {
       const done = all.filter((x) => (x.form_type || x.type) === "lab" && x.source_id === r.record_id).length;
       return tubes ? done < tubes : !answered(r);
     }).length;
-    if (!installs.length) return { rank: 0, tag: "\u178a\u17b6\u1780\u17cb\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb \u00b7 trap due", tagBg: "#FDF1D1", tagFg: "#6B4A00" };
-    if (!collects.length) return { rank: 1, tag: "\u1794\u17d2\u179a\u1798\u17bc\u179b \u00b7 to collect", tagBg: "#FDF1D1", tagFg: "#3d2c00" };
-    if (waiting) return { rank: 2, tag: "\u179b\u1791\u17d2\u1792\u1795\u179b \u00b7 result due", tagBg: "#D5E7EF", tagFg: "#003E78" };
-    return { rank: 3, tag: "\u179a\u17bd\u1785\u179a\u17b6\u179b\u17cb \u00b7 done", tagBg: "#F2F2F2", tagFg: "#767676" };
+    const uncollected = Math.max(0, installs.length - collects.length);
+    const open = (installs.length ? 0 : 1) + uncollected + waiting;
+    if (!installs.length) return { open: open, rank: 0, tag: "\u178a\u17b6\u1780\u17cb\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb \u00b7 trap due", tagBg: "#FDF1D1", tagFg: "#6B4A00" };
+    if (!collects.length) return { open: open, rank: 1, tag: "\u1794\u17d2\u179a\u1798\u17bc\u179b \u00b7 to collect", tagBg: "#FDF1D1", tagFg: "#3d2c00" };
+    if (waiting) return { open: open, rank: 2, tag: "\u179b\u1791\u17d2\u1792\u1795\u179b \u00b7 result due", tagBg: "#D5E7EF", tagFg: "#003E78" };
+    return { open: 0, rank: 3, tag: "\u179a\u17bd\u1785\u179a\u17b6\u179b\u17cb \u00b7 done", tagBg: "#F2F2F2", tagFg: "#767676" };
   }
 
   // ---- Analysis layer: households as entities, records as their linked events ----
@@ -3715,10 +3748,27 @@ class Component extends DCLogic {
         if (tubes.length) return labs.filter((x) => x.tube_id).length < tubes.length;
         return labs.length === 0;
       })
-      .map((r) => ({
-        value: r.record_id,
-        label: r.record_id,
-      }));
+      .map((r) => {
+        // Three letters for the activity, plus IN/OUT for a trap that has a position,
+        // so one line says what the collection was.
+        const t = r.form_type || r.type;
+        const trapType = r.trap_type || (function (self, id) {
+          const inst = self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === id);
+          return (inst && inst.trap_type) || "";
+        })(this, r.trap_id);
+        const kind = t === "adult" ? "Pro" : t === "larvae" ? "Lar"
+          : String(trapType).indexOf("BG") === 0 ? "BG" : "Ovi";
+        const pos = (function (raw) {
+          const s2 = String(raw).toUpperCase();
+          if (/-OUT$/.test(s2) || Number(r.pos_outside) === 1) return "OUT";
+          if (/-IN$/.test(s2) || Number(r.pos_inside) === 1) return "IN";
+          return "";
+        })(r.trap_id || "");
+        return {
+          value: r.record_id,
+          label: r.record_id + " · " + kind + (pos ? " " + pos : ""),
+        };
+      });
   }
 
   // Plots the captured coordinates against their own bounding box — works with no signal,
@@ -3844,8 +3894,8 @@ class Component extends DCLogic {
   // single household, so both read the same taxa keys and colours.
   speciesFor(rows) {
     const SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
-      ["aegypti", "Ae. aegypti (larval)"], ["albopictus_f", "Ae. albopictus \u2640"],
-      ["albopictus_m", "Ae. albopictus \u2642"], ["albopictus", "Ae. albopictus (larval)"],
+      ["aegypti", "Ae. aegypti"], ["albopictus_f", "Ae. albopictus \u2640"],
+      ["albopictus_m", "Ae. albopictus \u2642"], ["albopictus", "Ae. albopictus"],
       ["culex", "Culex spp."], ["other", "Other / damaged"]];
     const COLORS = { aegypti_f: "#003E78", aegypti_m: "#117996", aegypti: "#0D6177",
       albopictus_f: "#A8C8DC", albopictus_m: "#1ED47F", albopictus: "#D5E7EF", culex: "#F4B71B", other: "#767676" };
@@ -4085,8 +4135,8 @@ class Component extends DCLogic {
 
     // Species composition across all identified specimens (adult and larval keys).
     const SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
-      ["aegypti", "Ae. aegypti (larval)"], ["albopictus_f", "Ae. albopictus \u2640"],
-      ["albopictus_m", "Ae. albopictus \u2642"], ["albopictus", "Ae. albopictus (larval)"],
+      ["aegypti", "Ae. aegypti"], ["albopictus_f", "Ae. albopictus \u2640"],
+      ["albopictus_m", "Ae. albopictus \u2642"], ["albopictus", "Ae. albopictus"],
       ["culex", "Culex spp."], ["other", "Other / damaged"]];
     const speciesRows = SPECIES.map(([k, label]) => ({ key: k, label, n: sum(labs, k) })).filter((r) => r.n > 0);
     const speciesTotal = speciesRows.reduce((a, r) => a + r.n, 0) || 1;
@@ -4651,9 +4701,9 @@ class Component extends DCLogic {
     );
     if (type === "adult") return [
       dateField, timeField,
-      { label: "Collection method", isNote: true, value: "Procopack \u2014 handheld aspirator, no trap ID." },
+      { label: "Collection method", isNote: true, value: "Procopack \u2014 no trap ID." },
       sel("house", "Household *", reg.hh, { placeholder: "HH-0001" }),
-      txt("specimens", "Tubes collected", { type: "number", inputmode: "numeric", placeholder: "0" }),
+      txt("specimens", "Tube", { type: "number", inputmode: "numeric", placeholder: "0" }),
       { label: "Tube IDs", isNote: true, narrow: true,
         noteId: (Number(form.specimens) || 0) > 0
           ? (function (base, n) {
@@ -4663,7 +4713,7 @@ class Component extends DCLogic {
             })(this.peekId(TYPES[type].prefix), Number(form.specimens) || 0)
           : this.peekId(TYPES[type].prefix) + "-T1",
         value: (Number(form.specimens) || 0) > 0
-          ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1780\u17c6\u1794\u17c9\u17bb\u1784 \u00b7 write these on the tubes"
+          ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17be\u1780\u17c6\u1794\u17c9\u17bb\u1784 \u00b7 label tubes"
           : "" },
       txt("notes", "Notes", { placeholder: "Rooms swept, time on site" }),
     ];
@@ -4681,10 +4731,10 @@ class Component extends DCLogic {
         const n = (t) => self.specimenSources(house, t).length;
         // Activities with nothing waiting on a result are left out of the list.
         return { label: "Activity", isSelect: true, value: form._srcType || "", onChange: self.setSrcFilter("_srcType"),
-          options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all activities (" + n("") + ")" }]
-            .concat([["adult", "Procopack"], ["larvae", km("Larvae collection")],
-              ["collect:Ovitrap", "Ovitrap"],
-              ["collect:BG-Sentinel", "BG-Sentinel"]]
+          options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all (" + n("") + ")" }]
+            .concat([["adult", "\u1798\u17bc\u179f \u00b7 Pro"], ["larvae", "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 Lar"],
+              ["collect:Ovitrap", "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u1796\u1784 \u00b7 Ovi"],
+              ["collect:BG-Sentinel", "BG"]]
               .filter(([k]) => n(k) > 0 || form._srcType === k)
               .map(([k, label]) => ({ value: k, label: label + " (" + n(k) + ")" }))) };
       })(this, ctx || form._srcHouse)] : [],
@@ -4741,7 +4791,7 @@ class Component extends DCLogic {
             return i ? p + " / " + i + " containers positive \u00b7 container index " + (Math.round((p / i) * 1000) / 10) + " \u1797\u17b6\u1782\u179a\u1799"
               : "No containers counted yet.";
           })(form) },
-        txt("specimens", "Larvae tubes collected", { type: "number", inputmode: "numeric", placeholder: "0" }),
+        txt("specimens", "Lar tube", { type: "number", inputmode: "numeric", placeholder: "0" }),
         { label: "Tube IDs", isNote: true, narrow: true,
           noteId: (Number(form.specimens) || 0) > 0
             ? (function (base, n) {
@@ -4751,7 +4801,7 @@ class Component extends DCLogic {
               })(this.peekId(TYPES[type].prefix), Number(form.specimens) || 0)
             : this.peekId(TYPES[type].prefix) + "-T1",
           value: (Number(form.specimens) || 0) > 0
-            ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17c1\u1781\u1793\u17c1\u17c7\u179b\u17be\u1780\u17c6\u1794\u17c9\u17bb\u1784 \u00b7 write these on the tubes"
+            ? "  \u2014 \u179f\u179a\u179f\u17c1\u179a\u179b\u17be\u1780\u17c6\u1794\u17c9\u17bb\u1784 \u00b7 label tubes"
             : "" },
         txt("notes", "Notes", { placeholder: "Treatment applied, refusals" }),
       ]
@@ -5003,7 +5053,10 @@ class Component extends DCLogic {
       needsLogin: !s.auth,
       exportAsk: !!s.exportAsk,
       syncAsk: !!s.syncAsk,
-      syncAskText: (s.syncAsk || 0) + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1795\u17d2\u1791\u17c1\u179a \u00b7 " + (s.syncAsk || 0) + " records are still only on this phone.",
+      syncAskText: (s.syncAsk || 0) + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1795\u17d2\u1791\u17c1\u179a \u00b7 " + (s.syncAsk || 0) + " records are still only on this phone. \u1794\u1793\u17d2\u1791\u17b6\u1794\u17cb\u1798\u1780 \u1791\u17b6\u1789\u1796\u17b8 Sheet \u00b7 then the sheet is read back for " + (s.pullScopeShort || "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 everything"),
+      // What the pull half of the sync will cover, so the dialog can name it.
+      pullScopeShort: [s.pullVill, s.pullComm, s.pullDist, s.pullProv].filter(Boolean).length
+        ? this.pullScopeNames().join(" \u203a ") : "",
       dismissSyncAsk: this.dismissSyncAsk,
       acceptSyncAsk: this.acceptSyncAsk,
       exportPin: s.exportPin || "",
@@ -5167,6 +5220,10 @@ class Component extends DCLogic {
       hhListMoreLabel: s.hhAllList
         ? "បិទ · show fewer"
         : "មើលទាំងអស់ " + hhFiltered.length + " · show all " + hhFiltered.length,
+      hhCardOpen: s.hhCardOpen !== false,
+      hhCardCaret: s.hhCardOpen !== false ? "\u2212" : "+",
+      hhCardTitle: s.hhCardOpen !== false ? "\u1794\u1789\u17d2\u1785\u17bc\u179b \u00b7 collapse" : "\u1794\u17be\u1780 \u00b7 expand",
+      toggleHhCard: () => this.setState((p) => ({ hhCardOpen: p.hhCardOpen === false })),
       toggleHhList: () => this.setState((p) => ({ hhAllList: !p.hhAllList })),
       // The list is a small table: tap a column to sort, tap again to reverse.
       // Status order keeps the work that needs doing at the top.
@@ -5190,9 +5247,14 @@ class Component extends DCLogic {
           : key === "name" ? String(h.head || "")
           : key === "village" ? String(h.village || "")
           : key === "commune" ? String(h.commune || "")
-          : String(self.roundStatus(h._rows).rank);
-        const ordered = list.slice().sort((a, b) =>
-          (val(a).localeCompare(val(b), "km") * dir) || String(a.household_id).localeCompare(String(b.household_id)));
+          : null;
+        const openOf = (h) => Number(self.roundStatus(h._rows).open) || 0;
+        const ordered = list.slice().sort((a, b) => {
+          if (key === "status") {
+            return ((openOf(b) - openOf(a)) * dir) || String(a.household_id).localeCompare(String(b.household_id));
+          }
+          return (val(a).localeCompare(val(b), "km") * dir) || String(a.household_id).localeCompare(String(b.household_id));
+        });
         return all ? ordered : ordered.slice(0, 8);
       })(hhFiltered, s.hhAllList, this, s.hhSort || "status", s.hhSortDir || 1).map((h) => ({
         id: h.household_id,
@@ -5243,12 +5305,21 @@ class Component extends DCLogic {
             ["act" + type + "Op"]: on ? 1 : 0.4,
             ["act" + type]: go(type.toLowerCase()),
           });
+          // Lit means still to do this round: not conducted yet, or conducted with
+          // results outstanding. An activity that is finished goes dim.
+          const p = /^\d{4}-\d{2}$/.test(String(self.state.matrixRound || "")) ? self.state.matrixRound : self.currentRound();
+          const rows = (hh._rows || []).filter((r) => r.period_month === p);
+          const of = (t) => rows.filter((r) => (r.form_type || r.type) === t);
+          const labs = of("lab");
+          const answered = (r) => labs.some((x) => x.source_id === r.record_id);
+          const waiting = of("collect").concat(of("adult"), of("larvae"))
+            .filter((r) => self.needsLab(r) && !answered(r)).length;
           return {
-            ...tone("Install", true),
-            ...tone("Collect", traps > 0),
-            ...tone("Adult", coll > 0),
-            ...tone("Larvae", true),
-            ...tone("Lab", coll > 0),
+            ...tone("Install", of("install").length === 0),
+            ...tone("Collect", of("install").length > of("collect").length),
+            ...tone("Adult", of("adult").length === 0),
+            ...tone("Larvae", of("larvae").length === 0),
+            ...tone("Lab", waiting > 0),
           };
         })(this, h),
       })),
@@ -5299,12 +5370,16 @@ class Component extends DCLogic {
           if (!m) return;
           (map[m] = map[m] || { month: m, label: r.period_label || m, n: 0, types: {} });
           map[m].n += 1;
-          map[m].types[(r.form_type || r.type)] = 1;
+          const tk = r.form_type || r.type;
+          map[m].types[tk] = (map[m].types[tk] || 0) + 1;
         });
         return Object.keys(map).sort().reverse().map((m) => ({
           label: map[m].label,
           meta: map[m].n + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 "
-            + Object.keys(map[m].types).map((t) => km(TYPES[t].label)).join(", "),
+            + Object.keys(map[m].types)
+              .map((t) => map[m].types[t] + " "
+                + ({ install: "Set", collect: "Col", adult: "Pro", larvae: "Lar", lab: "Lab", household: "HH" }[t] || t))
+              .join(" · "),
         }));
       })(current._rows, this) : [],
       // Per-round totals for the household's own small dashboard.
@@ -5365,11 +5440,8 @@ class Component extends DCLogic {
             // the container index. The counts behind them are in the tables below.
             km: last.label + " \u00b7 Ae. aegypti " + (share == null ? "\u2014" : share + "%")
               + " \u00b7 \u179f\u1793\u17d2\u1791\u179f\u17d2\u179f\u1793\u17cd " + (idx == null ? "\u2014" : idx + "%"),
-            en: last.catch + " mosquitoes, "
-              + (share == null ? "no species split" : share + " percent Ae. aegypti") + ", "
-              + last.eggs + " eggs, "
-              + (last.insp ? last.pos + " of " + last.insp + " containers positive (index " + idx + " percent)"
-                : "no containers checked") + "." });
+            en: [last.catch + " mos", last.eggs + " eggs",
+              last.insp ? last.pos + "/" + last.insp + " cont" : "no cont"].join(" · ") });
         }
         // How that compares with the round before.
         if (last && prev) {
@@ -5582,8 +5654,11 @@ class Component extends DCLogic {
         });
         return {
           prevTrapRecMonths: byMonth.map((g) => ({
-            label: g.label,
-            count: g.rows.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 records",
+            label: (function (k, fallback) {
+              const mm = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(String(k).slice(5, 7)) - 1];
+              return mm ? mm + "-" + String(k).slice(2, 4) : fallback;
+            })(g.month, g.label),
+            count: g.rows.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 rec",
             rows: g.rows,
             open: !!(st.openMonths || {})[g.month],
             caret: (st.openMonths || {})[g.month] ? "\u2212" : "+",
@@ -5673,12 +5748,13 @@ class Component extends DCLogic {
                   monthLabel: r.period_label || r.period_month || "",
                   meta: [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10)),
                     r.tube_id || "", r.trap_id || "",
-                    eggs ? eggs + " ពង" : "", catchN ? catchN + " មូស" : ""].filter(Boolean).join(" · "),
+                    eggs ? eggs + " ពង" : (String(r.trap_id || "").toUpperCase().indexOf("OVT") === 0 ? "គ្មានពង · no egg" : ""),
+                    catchN ? catchN + " មូស" : ""].filter(Boolean).join(" · "),
                   tag: r.wmel && r.wmel !== "Not tested"
                     ? "wMel · " + r.wmel
-                    : (catchN || eggs ? "បានបញ្ចូល · entered" : "គ្មានចំនួន · no counts"),
-                  tagBg: catchN || eggs ? "#D5E7EF" : "#F2F2F2",
-                  tagFg: catchN || eggs ? "#003E78" : "#767676",
+                    : "\u2713",
+                  tagBg: "#fff",
+                  tagFg: "#1ED47F",
                   armed: armed,
                   notArmed: !armed,
                   edit: () => self.open("lab", { edit: r.record_id, house: house, returnTo: st.returnTo }),
@@ -5732,10 +5808,10 @@ class Component extends DCLogic {
           else if (t === "collect") {
             e.collect += 1; if (isOut || both) e.colOut += 1; if (isIn || both) e.colIn += 1;
             if (r.trap_id) (e.gotTraps = e.gotTraps || []).push(r.trap_id);
-            (e.sources = e.sources || []).push({ id: r.record_id, trap: r.trap_id || "" });
+            (e.sources = e.sources || []).push({ id: r.record_id, trap: r.trap_id || "", kind: String(r.trap_type || "").indexOf("BG") === 0 ? "BG" : "Ovi" });
           }
-          else if (t === "larvae") { e.larvae += 1; (e.other = e.other || []).push({ id: r.record_id, needsLab: self0.needsLab(r) }); }
-          else if (t === "adult") { e.adult += 1; (e.other = e.other || []).push({ id: r.record_id, needsLab: self0.needsLab(r) }); }
+          else if (t === "larvae") { e.larvae += 1; (e.other = e.other || []).push({ id: r.record_id, kind: "Lar", needsLab: self0.needsLab(r) }); }
+          else if (t === "adult") { e.adult += 1; (e.other = e.other || []).push({ id: r.record_id, kind: "Pro", needsLab: self0.needsLab(r) }); }
           else if (t === "lab") { e.lab += 1; if (r.source_id) (e.results = e.results || []).push(r.source_id); }
         });
         const split = (n, i, o) => (n ? n + (i && o ? " (" + i + "/" + o + ")" : o ? " (O)" : i ? " (I)" : "") : "\u2014");
@@ -5761,8 +5837,14 @@ class Component extends DCLogic {
           const done = Math.max(0, units - missing);
           const pct = need ? Math.round((done / need) * 100) : 0;
           const gaps = [];
-          if (uncollected.length) gaps.push(uncollected.length + " \u1794\u17d2\u179a\u1798\u17bc\u179b");
-          if (noResult.length) gaps.push(noResult.length + " \u179b\u1791\u17d2\u1792\u1795\u179b");
+          const shortId = (id) => {
+            const s2 = String(id || "").toUpperCase();
+            return /-OUT$/.test(s2) ? s2.slice(0, s2.length - 4).split("-").pop() + " OUT"
+              : /-IN$/.test(s2) ? s2.slice(0, s2.length - 3).split("-").pop() + " IN"
+              : s2.split("-").pop();
+          };
+          if (uncollected.length) gaps.push("\u1794\u17d2\u179a\u1798\u17bc\u179b: " + uncollected.map(shortId).join(", "));
+          if (noResult.length) gaps.push("\u179b\u1791\u17d2\u1792\u1795\u179b: " + noResult.map((s2) => s2.trap ? (s2.kind ? s2.kind + " " : "") + shortId(s2.trap) : (s2.kind || "")).join(", "));
           return {
             label: e.label,
             cells: cells,
@@ -5838,7 +5920,11 @@ class Component extends DCLogic {
             return t ? " \u00b7 " + t : "";
           })(this, r)
           + " \u00b7 " + (r.record_id || r.id),
-        meta: (function (d) { const p = String(d || "").split("-"); return p.length === 3 ? p[1] + "-" + p[2] + "-" + p[0].slice(2) : (d || ""); })(r.collected_date) + " " + (r.collected_time || "") + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
+        meta: (function (d) { const p = String(d || "").split("-"); return p.length === 3 ? p[1] + "-" + p[2] + "-" + p[0].slice(2) : (d || ""); })(r.collected_date) + " " + (r.collected_time || "")
+          + (function (id) {
+            const s2 = String(id || "").toUpperCase();
+            return /-OUT$/.test(s2) ? " \u00b7 OUT" : /-IN$/.test(s2) ? " \u00b7 IN" : "";
+          })(r.trap_id),
         detail: this.describe(r),
         bar: TYPES[r.form_type || r.type].bar,
       })) : [],
@@ -5850,7 +5936,11 @@ class Component extends DCLogic {
             return t ? " \u00b7 " + t : "";
           })(this, r)
           + " \u00b7 " + (r.record_id || r.id),
-        meta: (function (d) { const p = String(d || "").split("-"); return p.length === 3 ? p[1] + "-" + p[2] + "-" + p[0].slice(2) : (d || ""); })(r.collected_date) + " " + (r.collected_time || "") + (r.trap_id ? " \u00b7 " + r.trap_id : ""),
+        meta: (function (d) { const p = String(d || "").split("-"); return p.length === 3 ? p[1] + "-" + p[2] + "-" + p[0].slice(2) : (d || ""); })(r.collected_date) + " " + (r.collected_time || "")
+          + (function (id) {
+            const s2 = String(id || "").toUpperCase();
+            return /-OUT$/.test(s2) ? " \u00b7 OUT" : /-IN$/.test(s2) ? " \u00b7 IN" : "";
+          })(r.trap_id),
         detail: this.describe(r),
         bar: TYPES[r.form_type || r.type].bar,
       })) : [],
@@ -5921,7 +6011,7 @@ class Component extends DCLogic {
             const d = {};
             recs.forEach((r) => { if (r.collected_date) d[r.collected_date] = (d[r.collected_date] || 0) + 1; });
             return Object.keys(d).sort().reverse().map((k) => ({
-              id: k, name: d[k] + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 records",
+              id: k, name: d[k] + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 rec",
               go: () => self.setState({ screen: "data" }),
             }));
           })(s.records, this) },
@@ -5938,8 +6028,62 @@ class Component extends DCLogic {
           caret: s.gapOpen === i ? "\u2212" : "+",
         }))),
       gapsClear: openGaps.length === 0,
+      // One round, every household, four activities: did it happen or not. Registration
+      // is not an activity, so it never appears here.
+      ...(function (self, st) {
+        const round = /^\d{4}-\d{2}$/.test(String(st.matrixRound || "")) ? st.matrixRound : self.currentRound();
+        const months = {};
+        st.records.forEach((r) => {
+          const m = r.period_month || String(r.collected_date || "").slice(0, 7);
+          if (m && (r.form_type || r.type) !== "household") months[m] = 1;
+        });
+        if (!months[round]) months[round] = 1;
+        const list = self.households();
+        const KINDS = [["install", "Set"], ["collect", "Col"], ["adult", "Pro"], ["larvae", "Lar"], ["lab", "Resu"]];
+        const rows = list.map((h) => {
+          const rows2 = (h._rows || []).filter((r) => r.period_month === round);
+          return {
+            id: h.household_id,
+            open: () => self.setState({ screen: "hhdetail", hhId: h.household_id }),
+            cells: KINDS.map(([t, label]) => {
+              const done = rows2.some((r) => (r.form_type || r.type) === t);
+              return {
+                mark: done ? "\u2713" : "\u2014",
+                fg: done ? "#1ED47F" : "#B9C2CC",
+                title: label + (done ? " \u00b7 done" : " \u00b7 not yet"),
+                go: () => self.open(t, { house: h.household_id, returnTo: "dash" }),
+              };
+            }),
+          };
+        });
+        const totals = KINDS.map(([t, label]) =>
+          rows.filter((r, i) => (list[i]._rows || []).some((x) => x.period_month === round && (x.form_type || x.type) === t)).length
+          + "/" + list.length + " " + label).join(" \u00b7 ");
+        return {
+          matrixOpen: st.matrixOpen === true,
+          matrixCaret: st.matrixOpen === true ? "\u2212" : "+",
+          toggleMatrix: () => self.setState((p) => ({ matrixOpen: !p.matrixOpen })),
+          matrixRound: round,
+          setMatrixRound: (e) => self.setState({ matrixRound: e.target.value }),
+          matrixRoundOptions: Object.keys(months).sort().reverse().map((m) => ({
+            value: m,
+            label: (["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(m.slice(5, 7)) - 1] || m.slice(5, 7)) + "-" + m.slice(2, 4),
+          })),
+          matrixCols: KINDS.map(([, label]) => label),
+          // How many activity slots this round still owes against how many are finished.
+          sortStatusCount: (function (a) {
+            return a[0] + "/" + (a[0] + a[1]);
+          })((function () {
+            let todo = 0, done = 0;
+            rows.forEach((r) => r.cells.forEach((c) => { if (c.mark === "\u2713") done += 1; else todo += 1; }));
+            return [todo, done];
+          })()),
+          matrixRows: rows,
+          matrixTotals: totals,
+        };
+      })(this, s),
       // Every round entered so far, newest first, with what was done in each.
-      homeRounds: (function (recs) {
+      homeRounds: (function (recs, self) {
         const by = {};
         recs.forEach((r) => {
           const m = r.period_month || String(r.collected_date || "").slice(0, 7);
@@ -5966,7 +6110,11 @@ class Component extends DCLogic {
           }
         });
         return Object.keys(by).sort().reverse().map((m) => ({
-          label: by[m].label, hh: Object.keys(by[m].houses).length,
+          label: (function (k) {
+            const mm = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(String(k).slice(5, 7)) - 1] || String(k).slice(5, 7);
+            return mm + "-" + String(k).slice(2, 4);
+          })(m),
+          hh: Object.keys(by[m].houses).length,
           install: by[m].ovt + " / " + by[m].bgs, collect: by[m].collect, adult: by[m].adult,
           larvae: by[m].larvae, lab: by[m].lab,
           catchEggs: by[m].catch + " · " + by[m].eggs,
@@ -5974,8 +6122,10 @@ class Component extends DCLogic {
             ? by[m].pos + "/" + by[m].insp + " · " + (Math.round((by[m].pos / by[m].insp) * 1000) / 10) + "%"
             : "\u2014",
           indexFg: by[m].insp && by[m].pos ? "#7C1220" : "#767676",
+          // Opens this month in the record list above.
+          openMonth: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [m]: true } })),
         }));
-      })(s.records),
+      })(s.records, this),
       isEmpty: s.records.length === 0,
       home: this.goBack,
       showLeave: !!s.showLeave,
@@ -6068,6 +6218,7 @@ class Component extends DCLogic {
       roundsOpen: s.roundsOpen === true,
       toggleRounds: () => this.setState((p) => ({ roundsOpen: !p.roundsOpen })),
       roundsChevron: s.roundsOpen === true ? 180 : 0,
+      roundsCaret: s.roundsOpen === true ? "\u2212" : "+",
       roundsToggleTitle: s.roundsOpen === true
         ? "\u1794\u1784\u17d2\u179a\u17bd\u1798 \u00b7 show fewer"
         : "\u1798\u17be\u179b\u1794\u1793\u17d2\u1790\u17c2\u1798 \u00b7 show more",
@@ -6102,6 +6253,7 @@ class Component extends DCLogic {
       adminOpen: s.adminOpen === true,
       toggleAdmin: () => this.setState((p) => ({ adminOpen: !p.adminOpen })),
       adminChevron: s.adminOpen === true ? 180 : 0,
+      adminCaret: s.adminOpen === true ? "\u2212" : "+",
       adminToggleTitle: s.adminOpen !== true
         ? "\u1798\u17be\u179b\u1794\u1793\u17d2\u1790\u17c2\u1798 \u00b7 show more"
         : "\u1794\u1784\u17d2\u179a\u17bd\u1798 \u00b7 show fewer",
@@ -6158,8 +6310,11 @@ class Component extends DCLogic {
         });
         return {
           recordMonths: byMonth.sort((a, b) => String(b.month).localeCompare(String(a.month))).map((g) => ({
-            label: g.label,
-            count: g.rows.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 records",
+            label: (function (k, fallback) {
+              const mm = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(String(k).slice(5, 7)) - 1];
+              return mm ? mm + "-" + String(k).slice(2, 4) : fallback;
+            })(g.month, g.label),
+            count: g.rows.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 rec",
             rows: g.rows,
             open: !!(st.openMonths || {})[g.month],
             caret: (st.openMonths || {})[g.month] ? "\u2212" : "+",
@@ -6338,11 +6493,9 @@ class Component extends DCLogic {
       undoSaved: this.undoSaved,
       saveLabelKh: s.editId ? "រក្សាទុកការកែ" : "រក្សាទុក",
       // The second button adds another of whatever this form records.
-      addLabelKh: s.type === "install" ? "\u1794\u1793\u17d2\u1790\u17c2\u1798\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb" : "\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780 \u17a0\u17be\u1799\u1794\u1793\u17d2\u1790\u17c2\u1798",
-      addLabel: s.type === "install" ? "Add trap" : "Save and add another",
-      saveLabel: s.editId ? "Save edit"
-        : s.type === "household" || s.type === "install" ? "Save and close"
-        : "Save",
+      addLabelKh: s.type === "install" ? "\u1794\u1793\u17d2\u1790\u17c2\u1798" : "\u1794\u1793\u17d2\u1790\u17c2\u1798",
+      addLabel: s.type === "install" ? "Add trap" : "Add more",
+      saveLabel: s.editId ? "Save edit" : "Save",
       visitRows: (s.savedTraps || []).map((v, i) => {
         const rec = s.records.find((r) => (v.rid ? r.record_id === v.rid : r.trap_id === v.id));
         const saved = !!rec && !rec._draft;
