@@ -688,7 +688,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               <div style="flex:{{ f.labelFlex }};min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25;margin-bottom:{{ f.labelGap }};white-space:{{ f.labelWrap }}">{{ f.labelKm }}<span style="font-weight:400;color:#767676;margin-left:5px">{{ f.labelEn }}</span></div>
             </sc-if>
             <sc-if value="{{ f.isText }}" hint-placeholder-val="{{ true }}">
-              <input type="{{ f.type }}" inputmode="{{ f.inputmode }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.placeholder }}" list="{{ f.listId }}">
+              <input type="{{ f.type }}" inputmode="{{ f.inputmode }}" value="{{ f.value }}" onChange="{{ f.onChange }}" onFocus="{{ f.onFocus }}" onBlur="{{ f.onBlur }}" placeholder="{{ f.placeholder }}" list="{{ f.listId }}">
               <sc-if value="{{ f.hasList }}" hint-placeholder-val="{{ false }}">
                 <datalist id="{{ f.listId }}">
                   <sc-for list="{{ f.suggestions }}" as="o" hint-placeholder-count="0">
@@ -737,7 +737,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               </div>
             </sc-if>
             <sc-if value="{{ f.isCounter }}" hint-placeholder-val="{{ false }}">
-              <input type="number" inputmode="numeric" min="0" value="{{ f.value }}" onChange="{{ f.onChange }}" style="width:100%;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:38px">
+              <input type="number" inputmode="numeric" min="0" value="{{ f.value }}" onChange="{{ f.onChange }}" onFocus="{{ f.onFocus }}" onBlur="{{ f.onBlur }}" style="width:100%;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:38px">
             </sc-if>
             <sc-if value="{{ f.isGeo4 }}" hint-placeholder-val="{{ false }}">
               <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
@@ -762,19 +762,19 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <sc-if value="{{ f.isRow }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;align-items:center;gap:8px">
                 <span style="width:88px;flex:none;font-size:12px;font-weight:700;color:#003E78;line-height:1.3">{{ f.rowLabel }}</span>
-                <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
-                <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
+                <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
+                <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
               </div>
             </sc-if>
             <sc-if value="{{ f.isPair }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;align-items:center;gap:8px">
                 <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
                   <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ f.aCap }}</div>
-                  <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
+                  <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
                 </div>
                 <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
                   <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ f.bCap }}</div>
-                  <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
+                  <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
                 </div>
               </div>
             </sc-if>
@@ -1840,11 +1840,11 @@ KM["Intact"] = "\u179b\u17d2\u17a2";
 const km = (s) => KM[s] || s;
 
 // Routine entomological rounds run monthly at the same households, so the month
-// One date format everywhere on screen: mm-dd-yy. Stored values stay ISO.
+// One date format everywhere on screen: m-d-yy. Stored values stay ISO.
 function mdy(value) {
   const d = String(value || "").slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return String(value || "");
-  return d.slice(5, 7) + "-" + d.slice(8, 10) + "-" + d.slice(2, 4);
+  return Number(d.slice(5, 7)) + "-" + Number(d.slice(8, 10)) + "-" + d.slice(2, 4);
 }
 
 // of collection is the round key: 2026-08 is one round, 2026-09 the next.
@@ -2082,12 +2082,11 @@ class Component extends DCLogic {
         }
         return;
       }
-      return fetch(url, {
+      return this.apiFetch(url, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "login", username: user, pin: pin }),
       })
-        .then((res) => res.json())
         .then((out) => {
           if (!out || !out.ok) throw new Error((out && out.error) || "sign in refused");
           // A receiver that predates accounts answers ok with no user attached.
@@ -2341,12 +2340,11 @@ class Component extends DCLogic {
     const q = loadDel();
     const url = String(this.state.sheetUrl || "").trim();
     if (!q.length || !url) return Promise.resolve(0);
-    return fetch(url, {
+    return this.apiFetch(url, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ token: this.authToken(), deletes: this.delTargets(q) }),
     })
-      .then((res) => res.json())
       .then((out) => {
         if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
         // A receiver that predates delete support answers ok without a deleted count.
@@ -2397,12 +2395,11 @@ class Component extends DCLogic {
     const dels = loadDel();
     this.startProgress();
     this.setState({ syncing: true, syncMsg: "\u1780\u17c6\u1796\u17bb\u1784\u1795\u17d2\u1789\u17be \u00b7 sending " + pending.length + "\u2026" });
-    return fetch(url, {
+    return this.apiFetch(url, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ token: this.authToken(), records: pending, deletes: this.delTargets(dels) }),
     })
-      .then((res) => res.json())
       .then((out) => {
         if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
         if (dels.length && out.deleted !== undefined) { saveDel([]); saveTrash([]); this.setState({ pendingDel: [] }); }
@@ -2441,8 +2438,8 @@ class Component extends DCLogic {
     if (!url) { this.setState({ sheetLogMsg: "\u1794\u1789\u17d2\u1785\u17bc\u179b URL \u1787\u17b6\u1798\u17bb\u1793 \u00b7 paste the URL first" }); return; }
     if (this.state.sheetLog) { this.setState({ sheetLog: null, sheetLogMsg: "" }); return; }
     this.setState({ sheetLogBusy: true, sheetLogMsg: "" });
-    fetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "action=history&token=" + encodeURIComponent(this.authToken()))
-      .then((res) => res.json())
+    this.apiFetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "action=history&token=" + encodeURIComponent(this.authToken()))
+
       .then((out) => {
         if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
         const rows = out.history || [];
@@ -2513,8 +2510,8 @@ class Component extends DCLogic {
       .filter((p) => p[1])
       .map((p) => "&" + p[0] + "=" + encodeURIComponent(p[1]))
       .join("");
-    fetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "action=records&token=" + encodeURIComponent(this.authToken()) + scope)
-      .then((res) => res.json())
+    this.apiFetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "action=records&token=" + encodeURIComponent(this.authToken()) + scope)
+
       .then((out) => {
         if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
         // Households deleted here but still in the sheet must not come back.
@@ -2877,10 +2874,41 @@ class Component extends DCLogic {
     const v = e && e.target ? e.target.value : e;
     this.setState((p) => ({ form: { ...p.form, _village: v, trap_id: "" }, error: "" }));
   };
+  // A zero shows so the field reads as counted, but clears on focus so the
+  // number can be typed straight in; leaving it blank saves it back as 0.
+  numFocus = (k) => (e) => {
+    if (!Number(this.state.form[k])) {
+      this.setState((p) => ({ form: { ...p.form, [k]: "" } }));
+      if (e && e.target) e.target.value = "";
+    }
+  };
+  numBlur = (k) => () => {
+    if (this.state.form[k] === "") this.setState((p) => ({ form: { ...p.form, [k]: 0 } }));
+  };
+  // Apps Script sometimes answers with an HTML page instead of JSON — a transient
+  // Google error, or a sign-in redirect when the deployment is not public. Read the
+  // body as text so the parse failure is ours to handle, retry once after a pause,
+  // and only then report something a field worker can act on.
+  asJson = (res) => res.text().then((txt) => {
+    try { return JSON.parse(txt); } catch (err) {
+      const e = new Error(/^\s*</.test(txt)
+        ? "\u1798\u17c1\u179f\u17c2\u179c\u17d0\u179a\u1798\u17b7\u1793\u178f\u17c4\u1794 \u00b7 server sent a web page, not data"
+        : "\u1785\u1798\u17d2\u179b\u17be\u1799\u1798\u17b7\u1793\u178f\u17d2\u179a\u17b9\u1798\u178f\u17d2\u179a\u17bc\u179c \u00b7 bad reply from server");
+      e.retryable = true;
+      throw e;
+    }
+  });
+  apiFetch = (url, opts) => {
+    const once = () => fetch(url, opts).then(this.asJson);
+    return once().catch((e) => {
+      if (!e || !e.retryable) throw e;
+      return new Promise((r) => setTimeout(r, 1500)).then(once);
+    });
+  };
   // Counters can also be typed into directly.
   setNum = (k) => (e) => {
     const raw = e && e.target ? e.target.value : e;
-    const v = raw === "" ? 0 : Math.max(0, Math.floor(Number(raw) || 0));
+    const v = raw === "" ? "" : Math.max(0, Math.floor(Number(raw) || 0));
     this.setState((p) => ({ form: { ...p.form, [k]: v }, error: "" }));
   };
   bump = (k, d) => () => this.setState((p) => ({ form: { ...p.form, [k]: Math.max(0, (Number(p.form[k]) || 0) + d) } }));
@@ -4549,6 +4577,8 @@ class Component extends DCLogic {
     const txt = (k, label, opts) => ({
       label, isText: true, type: (opts && opts.type) || "text", inputmode: (opts && opts.inputmode) || "text",
       placeholder: (opts && opts.placeholder) || "", value: form[k] == null ? "" : String(form[k]), onChange: this.set(k), k,
+      ...((opts && opts.type) === "number"
+        ? { onFocus: this.numFocus(k), onBlur: this.numBlur(k) } : {}),
     });
     const choice = (k, label, options) => ({
       label, isChoice: true, k,
@@ -4581,8 +4611,10 @@ class Component extends DCLogic {
         })[v] || ["#003E78", "#fff"]),
       })),
     });
-    const counter = (k, label) => ({ label, isCounter: true, value: String(form[k] || 0),
-      inc: this.bump(k, 1), dec: this.bump(k, -1), onChange: this.setNum(k) });
+    const numStr = (v) => (v === "" ? "" : String(v || 0));
+    const counter = (k, label) => ({ label, isCounter: true, value: numStr(form[k]),
+      inc: this.bump(k, 1), dec: this.bump(k, -1), onChange: this.setNum(k),
+      onFocus: this.numFocus(k), onBlur: this.numBlur(k) });
     const reg = this.registered();
     const ctx = this.state.ctxHouse;
     const hhLabel = (function (recs, id) {
@@ -4763,8 +4795,10 @@ class Component extends DCLogic {
             const a = list[i], b = list[i + 1];
             rows.push({
               label: "", isPair: true,
-              aCap: km(a[1]), aValue: String(form[a[0]] || 0), aChange: self.setNum(a[0]),
-              bCap: b ? km(b[1]) : "", bValue: b ? String(form[b[0]] || 0) : "", bChange: b ? self.setNum(b[0]) : null,
+              aCap: km(a[1]), aValue: form[a[0]] === "" ? "" : String(form[a[0]] || 0), aChange: self.setNum(a[0]),
+              aFocus: self.numFocus(a[0]), aBlur: self.numBlur(a[0]),
+              bCap: b ? km(b[1]) : "", bValue: b ? (form[b[0]] === "" ? "" : String(form[b[0]] || 0)) : "", bChange: b ? self.setNum(b[0]) : null,
+              bFocus: b ? self.numFocus(b[0]) : null, bBlur: b ? self.numBlur(b[0]) : null,
             });
           }
           return rows;
@@ -4781,14 +4815,16 @@ class Component extends DCLogic {
       CONTAINERS.map(([k, label]) => ({
         label: "", isRow: true, rowLabel: km(label),
         aLabel: "Inspected", bLabel: "Positive",
-        aValue: String(form["inspected_" + k] || 0), bValue: String(form["positive_" + k] || 0),
+        aValue: numStr(form["inspected_" + k]), bValue: numStr(form["positive_" + k]),
         aChange: this.setNum("inspected_" + k), bChange: this.setNum("positive_" + k),
+        aFocus: this.numFocus("inspected_" + k), aBlur: this.numBlur("inspected_" + k),
+        bFocus: this.numFocus("positive_" + k), bBlur: this.numBlur("positive_" + k),
       })),
       [
         { label: "House total", isNote: true, value: (function (f) {
             let i = 0, p = 0;
             CONTAINERS.forEach(([k]) => { i += Number(f["inspected_" + k]) || 0; p += Number(f["positive_" + k]) || 0; });
-            return i ? p + " / " + i + " containers positive \u00b7 container index " + (Math.round((p / i) * 1000) / 10) + " \u1797\u17b6\u1782\u179a\u1799"
+            return i ? p + " / " + i + " containers positive \u00b7 CI " + (Math.round((p / i) * 1000) / 10) + "%"
               : "No containers counted yet.";
           })(form) },
         txt("specimens", "Lar tube", { type: "number", inputmode: "numeric", placeholder: "0" }),
@@ -5655,10 +5691,13 @@ class Component extends DCLogic {
         return {
           prevTrapRecMonths: byMonth.map((g) => ({
             label: (function (k, fallback) {
+              if (k === "__del") return "\u179b\u17bb\u1794 \u00b7 deleted";
               const mm = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(String(k).slice(5, 7)) - 1];
               return mm ? mm + "-" + String(k).slice(2, 4) : fallback;
             })(g.month, g.label),
-            count: g.rows.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 rec",
+            count: g.month === "__del"
+              ? g.rows.length + " \u179b\u17bb\u1794 \u00b7 deleted"
+              : g.rows.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 rec",
             rows: g.rows,
             open: !!(st.openMonths || {})[g.month],
             caret: (st.openMonths || {})[g.month] ? "\u2212" : "+",
@@ -5746,10 +5785,17 @@ class Component extends DCLogic {
                   id: r.record_id || "",
                   month: r.period_month || String(r.collected_date || "").slice(0, 7),
                   monthLabel: r.period_label || r.period_month || "",
-                  meta: [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10)),
-                    r.tube_id || "", r.trap_id || "",
-                    eggs ? eggs + " ពង" : (String(r.trap_id || "").toUpperCase().indexOf("OVT") === 0 ? "គ្មានពង · no egg" : ""),
-                    catchN ? catchN + " មូស" : ""].filter(Boolean).join(" · "),
+                  meta: (function () {
+                    const tid = String(r.trap_id || "").toUpperCase();
+                    const ovi = tid.indexOf("OVT") === 0
+                      ? (tid.indexOf("-OUT") >= 0 ? "Ovi-OUT" : (tid.indexOf("-IN") >= 0 ? "Ovi-IN" : "Ovi"))
+                      : "";
+                    const parts = [r.tube_id || "", ovi || r.trap_id || "",
+                      eggs ? eggs + " ពង" : (String(r.trap_id || "").toUpperCase().indexOf("OVT") === 0 ? "គ្មានពង · no egg" : ""),
+                      catchN ? catchN + ((String(r.tube_id || "") + " " + String(r.trap_id || "")).toUpperCase().indexOf("LC-") >= 0 ? " ដង្កូវទឹក" : " មូស") : ""].filter(Boolean);
+                    if (!parts.length) parts.push("គ្មានកំប៉ុងវិជ្ជមាន · no pos tube");
+                    return [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10))].concat(parts).join(" · ");
+                  })(),
                   tag: r.wmel && r.wmel !== "Not tested"
                     ? "wMel · " + r.wmel
                     : "\u2713",
@@ -6270,10 +6316,12 @@ class Component extends DCLogic {
           const stamp = new Date(d.at || Date.now());
           const queued = self.delTargets(st.pendingDel || []);
           return {
-            month: stamp.toISOString().slice(0, 7),
-            monthLabel: stamp.toLocaleString([], { month: "short", year: "numeric" }),
+            // Deletions are filed on their own, not into the round they were deleted in:
+            // a batch deleted this month otherwise reads as this month's fieldwork.
+            month: "__del",
+            monthLabel: "\u179b\u17bb\u1794 \u00b7 deleted",
             shortId: d.id,
-            rowMeta: p2(stamp.getMonth() + 1) + "-" + p2(stamp.getDate()) + "-" + p2(stamp.getFullYear() % 100)
+            rowMeta: (stamp.getMonth() + 1) + "-" + stamp.getDate() + "-" + p2(stamp.getFullYear() % 100)
               + " \u00b7 " + (queued.some((x) => x === d.id || (x && x.record_id === d.id) || (x && x.household_id === d.id))
                 ? "\u179a\u1784\u17cb\u179b\u17bb\u1794 \u00b7 queued" : "\u179b\u17bb\u1794\u1796\u17b8 Sheet \u00b7 from sheet"),
             bar: "#7C1220",
@@ -6311,10 +6359,13 @@ class Component extends DCLogic {
         return {
           recordMonths: byMonth.sort((a, b) => String(b.month).localeCompare(String(a.month))).map((g) => ({
             label: (function (k, fallback) {
+              if (k === "__del") return "\u179b\u17bb\u1794 \u00b7 deleted";
               const mm = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(String(k).slice(5, 7)) - 1];
               return mm ? mm + "-" + String(k).slice(2, 4) : fallback;
             })(g.month, g.label),
-            count: g.rows.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 rec",
+            count: g.month === "__del"
+              ? g.rows.length + " \u179b\u17bb\u1794 \u00b7 deleted"
+              : g.rows.length + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 rec",
             rows: g.rows,
             open: !!(st.openMonths || {})[g.month],
             caret: (st.openMonths || {})[g.month] ? "\u2212" : "+",
