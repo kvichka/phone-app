@@ -2199,7 +2199,21 @@ class Component extends DCLogic {
     root.style.setProperty("--ento-vh", (window.innerHeight / z) + "px");
   }
 
+  // Deep links from the dashboard: index.html#hh=HH-050102 or index.html#rec=LR-50477.
+  // A record link lands on its household so the record sits in context.
+  openFromHash = () => {
+    const m = /[#&](hh|rec)=([A-Za-z0-9_-]+)/.exec(String(window.location.hash || ""));
+    if (!m) return;
+    if (m[1] === "hh") { this.setState({ screen: "hhdetail", hhId: m[2] }); return; }
+    const hit = (this.state.records || []).find((x) => (x.record_id || x.id) === m[2]);
+    if (hit && hit.household_id) { this.setState({ screen: "hhdetail", hhId: hit.household_id }); return; }
+    // The dashboard reads the sheet, so it can link a record this phone has not pulled yet.
+    this.setState({ error: m[2] + " \u2014 \u1798\u17b7\u1793\u1798\u17b6\u1793\u1780\u17d2\u1793\u17bb\u1784\u1791\u17bc\u179a\u179f\u1796\u17d2\u1791 \u00b7 not on this phone; pull from the sheet first" });
+  };
+
   componentDidMount() {
+    this.openFromHash();
+    window.addEventListener("hashchange", this.openFromHash);
     let size = "";
     let scale = 1;
     try { size = localStorage.getItem("ento.uisize.v1") || ""; } catch (e) {}

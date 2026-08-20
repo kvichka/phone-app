@@ -8,7 +8,7 @@
  * BUMP CACHE_NAME ON EVERY PUSH. Skipping it leaves phones on stale files.
  */
 
-const CACHE_NAME = "ento-shell-v13";
+const CACHE_NAME = "ento-shell-v14";
 
 const SHELL = [
   "./",
@@ -20,6 +20,7 @@ const SHELL = [
   "./icon-180.png",
   "./icon-512.png",
   "./dashboard.html",
+  "./chai-logo-white.svg",
   "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/styles.css",
   "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/_ds_bundle.js",
   "./_ds/chai-design-system-eb475a38-cb32-41b6-a2ce-822ca75afe8d/tokens/colors.css",
