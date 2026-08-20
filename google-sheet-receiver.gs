@@ -26,7 +26,7 @@
 
 var LOG_SHEET = '_history';
 // Bumped whenever this file changes, so the app can show which version it reached.
-var RECEIVER_VERSION = '2026-08-16 delete+log+admin scope+accounts';
+var RECEIVER_VERSION = '2026-08-20 delete+log+admin scope+accounts+dashboard login+dashboard user admin';
 var LOG_COLS = ['logged_at', 'action', 'record_id', 'form_type', 'household_id', 'trap_id',
   'trap_type', 'collected_date', 'period_label', 'collector', 'cluster', 'changed_fields', 'sheet_row'];
 
@@ -40,15 +40,22 @@ var LOG_COLS = ['logged_at', 'action', 'record_id', 'form_type', 'household_id',
  * which hashes it. The app posts { action:'login', username, pin }; a successful
  * login returns a signed token that every later sync must carry.
  *
- * Writes and deletes always require a valid token. Reads (action=records) are
- * left open by default so the dashboard keeps working; set ALLOW_ANON_READ to
- * false once the dashboard also passes a token.
+ * Writes and deletes always require a valid token. Reads (action=records and
+ * action=history) also require one, from either list.
+ *
+ * The dashboard has its OWN account list, a tab named _dash_users with the same
+ * columns. Those accounts can read but never write: their token carries a
+ * "dash:" prefix and doPost rejects it. Use Ento -> Add or reset a dashboard user.
  * ────────────────────────────────────────────────────────────────────────── */
 
 var USERS_SHEET = '_users';
 var USER_COLS = ['username', 'name', 'pin_hash', 'role', 'cluster', 'active', 'created_at', 'last_login'];
 var TOKEN_DAYS = 30;
-var ALLOW_ANON_READ = true;
+var ALLOW_ANON_READ = false;
+
+var DASH_USERS_SHEET = '_dash_users';
+var DASH_TOKEN_DAYS = 7;
+var DASH_PREFIX = 'dash:';
 
 // The signing secret. Set ENTO_SECRET in Project Settings → Script Properties;
 // the fallback below only exists so a fresh copy works before that is done.
@@ -106,6 +113,169 @@ function findUser_(username) {
     }
   }
   return null;
+}
+
+/* ─── Dashboard accounts (read-only, separate list) ─────────────────────── */
+
+function dashUsersSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(DASH_USERS_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(DASH_USERS_SHEET);
+    sh.getRange(1, 1, 1, USER_COLS.length).setValues([USER_COLS]).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+// Different salt from the field app, so the two lists never share a hash.
+function dashPinHash_(username, pin) {
+  return sha256Hex_('entodash:' + String(username).toLowerCase() + ':' + String(pin));
+}
+
+function findDashUser_(username) {
+  var sh = dashUsersSheet_();
+  if (sh.getLastRow() < 2) return null;
+  var vals = sh.getRange(1, 1, sh.getLastRow(), USER_COLS.length).getValues();
+  var header = vals[0].map(function (h) { return String(h).trim(); });
+  for (var i = 1; i < vals.length; i++) {
+    var row = {};
+    for (var c = 0; c < header.length; c++) row[header[c]] = vals[i][c];
+    if (String(row.username || '').trim().toLowerCase() === String(username).trim().toLowerCase()) {
+      row._row = i + 1;
+      return row;
+    }
+  }
+  return null;
+}
+
+function dashLogin_(body) {
+  var username = String(body.username || '').trim();
+  var pin = String(body.pin || '').trim();
+  if (!username || !pin) return { ok: false, error: 'username and PIN are required' };
+  var user = findDashUser_(username);
+  if (!user) return { ok: false, error: 'no dashboard account with that username' };
+  var active = String(user.active).toLowerCase();
+  if (active === 'no' || active === 'false') return { ok: false, error: 'this account has been deactivated' };
+  if (String(user.pin_hash || '').trim().toLowerCase() !== dashPinHash_(user.username, pin)) {
+    return { ok: false, error: 'wrong PIN' };
+  }
+  dashUsersSheet_().getRange(user._row, USER_COLS.indexOf('last_login') + 1).setValue(new Date());
+  var exp = new Date().getTime() + DASH_TOKEN_DAYS * 86400000;
+  var payload = DASH_PREFIX + String(user.username).trim() + '|' + exp;
+  return {
+    ok: true,
+    token: Utilities.base64EncodeWebSafe(payload + '|' + sign_(payload)),
+    user: {
+      username: String(user.username).trim(),
+      name: String(user.name || user.username).trim(),
+      role: String(user.role || 'guest').trim(),
+      cluster: String(user.cluster || '').trim()
+    },
+    version: RECEIVER_VERSION
+  };
+}
+
+/* ─── Dashboard account admin, called from the dashboard itself ──────────
+ * Every action below needs a dashboard token whose account has role 'admin'.
+ * These actions only ever touch _dash_users; field app accounts stay in the
+ * sheet menu. Roles: guest (charts only), analyst (also village detail),
+ * admin (also CSV, reload and this screen).
+ * ──────────────────────────────────────────────────────────────────────── */
+
+var DASH_ROLES = ['guest', 'analyst', 'admin'];
+
+function dashRole_(v) {
+  var r = String(v || '').trim().toLowerCase();
+  return DASH_ROLES.indexOf(r) >= 0 ? r : 'guest';
+}
+
+function requireDashAdmin_(token) {
+  var t = checkToken_(token);
+  if (!t.ok) return { ok: false, error: t.error, auth: 'required' };
+  if (t.username.indexOf(DASH_PREFIX) !== 0) return { ok: false, error: 'not a dashboard account' };
+  var user = findDashUser_(t.username.slice(DASH_PREFIX.length));
+  if (!user) return { ok: false, error: 'account no longer exists', auth: 'required' };
+  if (dashRole_(user.role) !== 'admin') return { ok: false, error: 'only an admin can manage users' };
+  return { ok: true, user: user };
+}
+
+function dashUserList_() {
+  var sh = dashUsersSheet_();
+  var out = [];
+  if (sh.getLastRow() > 1) {
+    var vals = sh.getRange(2, 1, sh.getLastRow() - 1, USER_COLS.length).getValues();
+    vals.forEach(function (r) {
+      if (!String(r[0] || '').trim()) return;
+      out.push({
+        username: String(r[0]).trim(),
+        name: String(r[1] || '').trim(),
+        role: dashRole_(r[3]),
+        active: !(String(r[5]).toLowerCase() === 'no' || String(r[5]).toLowerCase() === 'false'),
+        created_at: r[6] instanceof Date ? Utilities.formatDate(r[6], 'UTC', "yyyy-MM-dd'T'HH:mm:ss'Z'") : String(r[6] || ''),
+        last_login: r[7] instanceof Date ? Utilities.formatDate(r[7], 'UTC', "yyyy-MM-dd'T'HH:mm:ss'Z'") : String(r[7] || '')
+      });
+    });
+  }
+  return { ok: true, users: out, roles: DASH_ROLES, version: RECEIVER_VERSION };
+}
+
+// Add a user, reset a PIN, rename, or change a role. PIN is optional on an update.
+function dashUserSave_(body) {
+  var username = String(body.username || '').trim();
+  if (!username || /\s/.test(username)) return { ok: false, error: 'a username without spaces is required' };
+  var pin = String(body.pin || '').trim();
+  var sh = dashUsersSheet_();
+  var existing = findDashUser_(username);
+  if (!existing) {
+    if (!/^\d{4,8}$/.test(pin)) return { ok: false, error: 'a new user needs a PIN of 4 to 8 digits' };
+    sh.appendRow([username, String(body.name || username).trim(), dashPinHash_(username, pin),
+      dashRole_(body.role), '', 'yes', new Date(), '']);
+    return dashUserList_();
+  }
+  if (pin) {
+    if (!/^\d{4,8}$/.test(pin)) return { ok: false, error: 'a PIN must be 4 to 8 digits' };
+    sh.getRange(existing._row, USER_COLS.indexOf('pin_hash') + 1).setValue(dashPinHash_(username, pin));
+  }
+  if (body.name) sh.getRange(existing._row, USER_COLS.indexOf('name') + 1).setValue(String(body.name).trim());
+  if (body.role) sh.getRange(existing._row, USER_COLS.indexOf('role') + 1).setValue(dashRole_(body.role));
+  return dashUserList_();
+}
+
+function dashUserActive_(body, meUsername) {
+  var username = String(body.username || '').trim();
+  var user = findDashUser_(username);
+  if (!user) return { ok: false, error: 'no dashboard account with that username' };
+  var on = !(body.active === false || String(body.active) === 'false');
+  if (!on && username.toLowerCase() === String(meUsername).toLowerCase()) {
+    return { ok: false, error: 'you cannot deactivate your own account' };
+  }
+  if (!on && dashAdminCount_() < 2 && dashRole_(user.role) === 'admin') {
+    return { ok: false, error: 'keep at least one active admin' };
+  }
+  dashUsersSheet_().getRange(user._row, USER_COLS.indexOf('active') + 1).setValue(on ? 'yes' : 'no');
+  return dashUserList_();
+}
+
+function dashUserDelete_(body, meUsername) {
+  var username = String(body.username || '').trim();
+  var user = findDashUser_(username);
+  if (!user) return { ok: false, error: 'no dashboard account with that username' };
+  if (username.toLowerCase() === String(meUsername).toLowerCase()) {
+    return { ok: false, error: 'you cannot delete your own account' };
+  }
+  if (dashRole_(user.role) === 'admin' && dashAdminCount_() < 2) {
+    return { ok: false, error: 'keep at least one active admin' };
+  }
+  dashUsersSheet_().deleteRow(user._row);
+  return dashUserList_();
+}
+
+function dashAdminCount_() {
+  var list = dashUserList_().users;
+  var n = 0;
+  list.forEach(function (u) { if (u.role === 'admin' && u.active) n++; });
+  return n;
 }
 
 function login_(body) {
@@ -216,8 +386,22 @@ function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
     if (body.action === 'login') return jsonOut_(login_(body));
+    if (body.action === 'dash-login') return jsonOut_(dashLogin_(body));
+    if (body.action && body.action.indexOf('dash-user') === 0) {
+      var adm = requireDashAdmin_(body.token);
+      if (!adm.ok) return jsonOut_(adm);
+      var me = String(adm.user.username).trim();
+      if (body.action === 'dash-users') return jsonOut_(dashUserList_());
+      if (body.action === 'dash-user-save') return jsonOut_(dashUserSave_(body));
+      if (body.action === 'dash-user-active') return jsonOut_(dashUserActive_(body, me));
+      if (body.action === 'dash-user-delete') return jsonOut_(dashUserDelete_(body, me));
+      return jsonOut_({ ok: false, error: 'unknown action' });
+    }
     var auth = checkToken_(body.token);
     if (!auth.ok) return jsonOut_({ ok: false, error: auth.error, auth: 'required' });
+    if (auth.username.indexOf(DASH_PREFIX) === 0) {
+      return jsonOut_({ ok: false, error: 'dashboard accounts are read-only' });
+    }
     body.auth_username = auth.username;
     var records = body.records || [];
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -394,6 +578,10 @@ function onOpen() {
     .addItem('List users', 'listUsers')
     .addItem('Deactivate a user', 'deactivateUser')
     .addSeparator()
+    .addItem('Add or reset a dashboard user', 'addOrResetDashUser')
+    .addItem('List dashboard users', 'listDashUsers')
+    .addItem('Deactivate a dashboard user', 'deactivateDashUser')
+    .addSeparator()
     .addItem('Create history log', 'ensureHistorySheet')
     .addToUi();
 }
@@ -464,3 +652,55 @@ function listUsers() {
   SpreadsheetApp.getUi().alert(lines.join('\n'));
 }
 
+
+/* ─── Dashboard account admin ───────────────────────────────────────────── */
+
+function addOrResetDashUser() {
+  var ui = SpreadsheetApp.getUi();
+  var u = ui.prompt('Dashboard username (no spaces)', ui.ButtonSet.OK_CANCEL);
+  if (u.getSelectedButton() !== ui.Button.OK) return;
+  var username = u.getResponseText().trim();
+  if (!username) return;
+  var p = ui.prompt('PIN for ' + username + ' (4-8 digits)', ui.ButtonSet.OK_CANCEL);
+  if (p.getSelectedButton() !== ui.Button.OK) return;
+  var pin = p.getResponseText().trim();
+  if (!pin) return;
+
+  var sh = dashUsersSheet_();
+  var existing = findDashUser_(username);
+  if (existing) {
+    sh.getRange(existing._row, USER_COLS.indexOf('pin_hash') + 1).setValue(dashPinHash_(username, pin));
+    sh.getRange(existing._row, USER_COLS.indexOf('active') + 1).setValue('yes');
+    ui.alert('PIN reset for ' + username + '. The dashboard account is active.');
+    return;
+  }
+  var n = ui.prompt('Full name for ' + username, ui.ButtonSet.OK_CANCEL);
+  if (n.getSelectedButton() !== ui.Button.OK) return;
+  var r = ui.prompt('Role: guest, analyst or admin', ui.ButtonSet.OK_CANCEL);
+  if (r.getSelectedButton() !== ui.Button.OK) return;
+  var role = dashRole_(r.getResponseText());
+  sh.appendRow([username, n.getResponseText().trim() || username, dashPinHash_(username, pin),
+    role, '', 'yes', new Date(), '']);
+  ui.alert('Added ' + username + ' as ' + role + '. Dashboard accounts can read only; they never write to the sheet.');
+}
+
+function deactivateDashUser() {
+  var ui = SpreadsheetApp.getUi();
+  var u = ui.prompt('Dashboard username to deactivate', ui.ButtonSet.OK_CANCEL);
+  if (u.getSelectedButton() !== ui.Button.OK) return;
+  var user = findDashUser_(u.getResponseText().trim());
+  if (!user) { ui.alert('No dashboard account with that username.'); return; }
+  dashUsersSheet_().getRange(user._row, USER_COLS.indexOf('active') + 1).setValue('no');
+  ui.alert(user.username + ' can no longer open the dashboard.');
+}
+
+function listDashUsers() {
+  var sh = dashUsersSheet_();
+  if (sh.getLastRow() < 2) { SpreadsheetApp.getUi().alert('No dashboard users yet. Ento -> Add or reset a dashboard user.'); return; }
+  var vals = sh.getRange(2, 1, sh.getLastRow() - 1, USER_COLS.length).getValues();
+  var lines = vals.map(function (r) {
+    return r[0] + '  -  ' + r[1] + '  (' + (r[3] || 'guest') + ', ' + (String(r[5]).toLowerCase() === 'no' ? 'inactive' : 'active') + ')' +
+      (r[7] ? '  last signed in ' + Utilities.formatDate(new Date(r[7]), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm') : '');
+  });
+  SpreadsheetApp.getUi().alert(lines.join('\n'));
+}

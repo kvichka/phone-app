@@ -27,13 +27,56 @@ button,select,input,textarea{font-family:inherit}
 *{box-sizing:border-box}
 a{color:var(--chai-turquoise,#117996)}a:hover{color:var(--color-accent-hover,#0d6177)}
 select{font-family:inherit;font-size:13px;padding:6px 10px;border:1px solid #D9DEE4;border-radius:6px;background:#fff;color:#1E293B;min-width:0;max-width:100%}
-canvas{max-height:320px}
+canvas{max-height:320px;max-width:100%}
+@keyframes ento-spin{to{transform:rotate(360deg)}}
+[data-cols="pair"]>*,[data-cols="kpi"]>*{min-width:0}
 .leaflet-tooltip.hh-label{background:rgba(255,255,255,.92);border:1px solid #C6D5E4;box-shadow:none;padding:2px 6px;border-radius:4px;white-space:nowrap}
 .leaflet-tooltip.hh-label:before{display:none}
+@media (max-width:820px){
+  [data-shell="1"]{width:100vw;padding:10px;gap:12px}
+  [data-cols="kpi"],[data-cols="pair"]{grid-template-columns:1fr!important}
+  [data-scroll-x="1"]{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  [data-scroll-x="1"]>*{min-width:640px}
+  [data-tabs="1"]{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  [data-tabs="1"]>*{flex:none;white-space:nowrap}
+  canvas{max-height:260px}
+}
 </style>
 </helmet>
 
-<div style="width:96vw;max-width:1700px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:16px">
+<sc-if value="{{ needLogin }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:5000;background:#003E78;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto">
+    <form onSubmit="{{ submitLogin }}" style="width:100%;max-width:390px;background:#fff;border-radius:10px;padding:26px 24px 24px;box-shadow:0 16px 40px rgba(0,20,50,.4)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <img src="icon-180.png" alt="" width="40" height="40" style="width:40px;height:40px;border-radius:8px;flex:none">
+        <div style="min-width:0">
+          <div style="font-size:15px;font-weight:700;color:#003E78;line-height:1.35">ចូលប្រើផ្ទាំងព័ត៌មាន</div>
+          <div style="font-size:12px;color:#767676;margin-top:2px">Sign in to the dashboard</div>
+        </div>
+      </div>
+
+      <label style="display:block;margin-bottom:14px">
+        <span style="display:block;font-size:11px;font-weight:700;color:#003E78">ឈ្មោះអ្នកប្រើ <span style="color:#767676;font-weight:400">Username</span></span>
+        <input type="text" autoComplete="username" autoCapitalize="none" spellCheck="false" value="{{ loginUser }}" onChange="{{ setLoginUser }}" style="width:100%;margin-top:5px;padding:9px 11px;font-size:15px;border:1.5px solid #D9DEE4;border-radius:6px;color:#1E293B;background:#fff" style-focus="border-color:#117996;outline:none;box-shadow:0 0 0 3px rgba(17,121,150,.15)">
+      </label>
+
+      <label style="display:block;margin-bottom:16px">
+        <span style="display:block;font-size:11px;font-weight:700;color:#003E78">លេខសម្ងាត់ <span style="color:#767676;font-weight:400">PIN</span></span>
+        <input type="password" inputMode="numeric" autoComplete="current-password" value="{{ loginPin }}" onChange="{{ setLoginPin }}" style="width:100%;margin-top:5px;padding:9px 11px;font-size:15px;letter-spacing:2px;border:1.5px solid #D9DEE4;border-radius:6px;color:#1E293B;background:#fff" style-focus="border-color:#117996;outline:none;box-shadow:0 0 0 3px rgba(17,121,150,.15)">
+      </label>
+
+      <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#F7E3E6;border-left:3px solid #7C1220;color:#7C1220;font-size:12.5px;padding:8px 10px;border-radius:4px;margin-bottom:14px">{{ loginError }}</div>
+      </sc-if>
+
+      <button type="submit" disabled="{{ loginBusy }}" style="width:100%;padding:11px;border:0;border-radius:6px;background:#003E78;color:#fff;font-weight:700;font-size:14px;cursor:pointer" style-hover="background:#002b53">{{ loginBtn }}</button>
+
+      <div style="font-size:11.5px;color:#767676;margin-top:14px;line-height:1.5">សម្រាប់ព័ត៌មាន សូមទាក់ទងអ្នកគ្រប់គ្រង · For info and access, contact the admin.</div>
+    </form>
+  </div>
+</sc-if>
+
+<div data-shell="1" style="width:96vw;max-width:1700px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:16px">
 
   <div style="background:#003E78;color:#fff;border-radius:8px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
     <div style="display:flex;align-items:center;gap:14px;min-width:0">
@@ -44,12 +87,26 @@ canvas{max-height:320px}
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:12px;color:#A9CCE3">{{ statusText }}</span>
-      <button onClick="{{ reload }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
+      <span style="font-size:12px;color:#A9CCE3;display:inline-flex;align-items:center;gap:7px">
+        <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:ento-spin .9s linear infinite;flex:none"><path d="M12 3a9 9 0 1 0 9 9" opacity=".95"></path></svg>
+        </sc-if>
+        <span>{{ statusText }}</span>
+      </span>
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ reload }}" title="{{ reloadLabel }}" aria-label="Reload" style="padding:8px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
-        <span>{{ reloadLabel }}</span>
       </button>
       <button onClick="{{ downloadCsv }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer">CSV</button>
+      </sc-if>
+      <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:8px;padding-left:10px;margin-left:2px;border-left:1px solid rgba(255,255,255,.25)">
+          <span style="font-size:12px;color:#fff;font-weight:700;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ authName }}</span>
+          <button onClick="{{ signOut }}" title="ចេញ · Sign out" aria-label="Sign out" style="padding:8px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:transparent;color:#A9CCE3;line-height:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center" style-hover="color:#fff;background:rgba(255,255,255,.12)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+          </button>
+        </div>
+      </sc-if>
     </div>
   </div>
 
@@ -73,7 +130,7 @@ canvas{max-height:320px}
   </sc-if>
 
   <div style="background:#D5E7EF;border-left:4px solid #003E78;border-radius:6px;padding:14px 16px">
-    <div style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#003E78">
+    <div style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#003E78">
       <span style="flex:none;width:32px;height:32px;border-radius:50%;background:#F4B71B;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(244,183,27,.28);transition:transform 180ms ease,box-shadow 180ms ease;cursor:default" style-hover="transform:scale(1.12);box-shadow:0 0 0 7px rgba(244,183,27,.4)">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#003E78" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"></path></svg>
       </span>
@@ -83,7 +140,7 @@ canvas{max-height:320px}
     <div style="font-size:12px;line-height:1.6;color:#333;margin-top:4px">{{ story.en }}</div>
   </div>
 
-  <div style="display:flex;flex-wrap:wrap;gap:6px;background:#fff;border:1px solid #E2E8F0;border-radius:9px;padding:7px;box-shadow:0 2px 10px rgba(0,62,120,.08)">
+  <div data-tabs="1" style="display:flex;flex-wrap:wrap;gap:6px;background:#fff;border:1px solid #E2E8F0;border-radius:9px;padding:7px;box-shadow:0 2px 10px rgba(0,62,120,.08)">
     <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
       <button onClick="{{ t.go }}" style="padding:9px 15px;border:none;border-radius:6px;background:{{ t.bg }};color:{{ t.fg }};font-weight:{{ t.weight }};font-size:14px;line-height:1.2;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background 150ms ease,color 150ms ease" style-hover="background:#EEF4F8;color:#003E78">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none;opacity:{{ t.iconOpacity }}"><path d="{{ t.icon }}"></path></svg>
@@ -92,7 +149,8 @@ canvas{max-height:320px}
     </sc-for>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(162px,1fr));gap:12px">
+  <sc-if value="{{ showKpis }}" hint-placeholder-val="{{ true }}">
+  <div data-cols="kpi" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(162px,1fr));gap:12px">
     <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
       <div style="position:relative;min-height:100px;background:{{ k.tint }};border:1px solid {{ k.line }};border-radius:7px;padding:12px 14px 11px;overflow:hidden;transition:background 160ms ease" style-hover="background:#fff">
         <span style="position:absolute;left:0;top:0;bottom:0;width:3px;background:{{ k.color }}"></span>
@@ -103,9 +161,10 @@ canvas{max-height:320px}
       </div>
     </sc-for>
   </div>
+  </sc-if>
 
   <sc-if value="{{ showTables }}" hint-placeholder-val="{{ true }}">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div data-cols="pair" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div style="background:#fff;border:1px solid #F1F5F9;border-radius:8px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,62,120,.08)">
         <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">សូចនាករមូសពេញវ័យ <span style="font-weight:400;color:#9AA5AE">Adult survey indicators</span></div>
         <sc-for list="{{ adultIndicators }}" as="r" hint-placeholder-count="4">
@@ -127,7 +186,7 @@ canvas{max-height:320px}
 
   <sc-if value="{{ showCharts }}" hint-placeholder-val="{{ true }}">
     <div style="font-size:12px;color:#64748B">{{ chartHint }}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div data-cols="pair" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <sc-for list="{{ charts }}" as="c" hint-placeholder-count="4">
         <div style="background:#fff;border:1px solid #F1F5F9;border-radius:8px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,62,120,.08)">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -175,10 +234,80 @@ canvas{max-height:320px}
     </div>
   </sc-if>
 
+  <sc-if value="{{ showUsers }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#fff;border:1px solid #F1F5F9;border-radius:8px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,62,120,.08);margin-bottom:18px">
+      <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:4px">អ្នកប្រើផ្ទាំងព័ត៌មាន <span style="font-weight:400;color:#9AA5AE">Dashboard users and permissions</span></div>
+      <div style="font-size:12px;color:#64748B;margin-bottom:14px;line-height:1.6">ភ្ញៀវ Guest — គ្រាហ្វិក និង PNG · charts and PNG downloads. អ្នកវិភាគ Analyst — បន្ថែមតារាងភូមិ · also the village detail table. អ្នកគ្រប់គ្រង Admin — បន្ថែម CSV និងអ្នកប្រើ · also CSV, reload and this list.</div>
+
+      <form onSubmit="{{ addUser }}" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:#F8FAFB;border:1px solid #E2E8F0;border-radius:6px;padding:12px;margin-bottom:14px">
+        <label style="display:flex;flex-direction:column;gap:4px;flex:1 1 130px;min-width:0">
+          <span style="font-size:11px;font-weight:700;color:#003E78">ឈ្មោះអ្នកប្រើ <span style="color:#767676;font-weight:400">Username</span></span>
+          <input type="text" autoCapitalize="none" spellCheck="false" value="{{ newUser }}" onChange="{{ setNewUser }}" style="padding:7px 9px;font-size:13px;border:1.5px solid #D9DEE4;border-radius:6px;color:#1E293B;background:#fff;min-width:0">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:0">
+          <span style="font-size:11px;font-weight:700;color:#003E78">ឈ្មោះពេញ <span style="color:#767676;font-weight:400">Full name</span></span>
+          <input type="text" value="{{ newName }}" onChange="{{ setNewName }}" style="padding:7px 9px;font-size:13px;border:1.5px solid #D9DEE4;border-radius:6px;color:#1E293B;background:#fff;min-width:0">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:4px;flex:0 1 110px;min-width:0">
+          <span style="font-size:11px;font-weight:700;color:#003E78">លេខសម្ងាត់ <span style="color:#767676;font-weight:400">PIN</span></span>
+          <input type="text" inputMode="numeric" value="{{ newPin }}" onChange="{{ setNewPin }}" style="padding:7px 9px;font-size:13px;letter-spacing:1px;border:1.5px solid #D9DEE4;border-radius:6px;color:#1E293B;background:#fff;min-width:0">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:4px;flex:0 1 150px;min-width:0">
+          <span style="font-size:11px;font-weight:700;color:#003E78">សិទ្ធិ <span style="color:#767676;font-weight:400">Role</span></span>
+          <select value="{{ newRole }}" onChange="{{ setNewRole }}">
+            <sc-for list="{{ newRoleOptions }}" as="o" hint-placeholder-count="3">
+              <option value="{{ o.value }}">{{ o.label }}</option>
+            </sc-for>
+          </select>
+        </label>
+        <button type="submit" disabled="{{ usersBusy }}" style="padding:9px 16px;border:0;border-radius:6px;background:#003E78;color:#fff;font-weight:700;font-size:13px;cursor:pointer" style-hover="background:#002b53">បន្ថែម · Add user</button>
+        <button type="button" onClick="{{ refreshUsers }}" style="padding:9px 14px;border:1px solid #A8C8DC;border-radius:6px;background:#fff;color:#117996;font-weight:700;font-size:13px;cursor:pointer" style-hover="background:#D5E7EF">ទាញបញ្ជី · Refresh</button>
+      </form>
+
+      <sc-if value="{{ usersMsg }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:12.5px;padding:8px 10px;border-radius:4px;margin-bottom:12px;color:{{ usersMsgFg }};background:{{ usersMsgBg }}">{{ usersMsg }}</div>
+      </sc-if>
+
+      <div data-scroll-x="1" style="border:1px solid #D9DEE4;border-radius:6px;overflow:auto">
+        <div style="display:flex;background:#003E78;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px">
+          <span style="flex:1 1 120px;min-width:0;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Username</span>
+          <span style="flex:1 1 140px;min-width:0;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Name</span>
+          <span style="flex:none;width:160px;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Role</span>
+          <span style="flex:none;width:90px;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Status</span>
+          <span style="flex:none;width:110px;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Last sign-in</span>
+          <span style="flex:none;width:250px;padding:9px 10px">Actions</span>
+        </div>
+        <sc-if value="{{ usersEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top:1px solid #E8EDF1;padding:14px 12px;font-size:12.5px;color:#64748B">{{ usersEmptyText }}</div>
+        </sc-if>
+        <sc-for list="{{ userRows }}" as="u" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;font-size:12.5px;border-top:1px solid #E8EDF1;color:#1A2332">
+            <span style="flex:1 1 120px;min-width:0;padding:8px 10px;font-weight:700;color:#003E78;overflow-wrap:anywhere;border-right:1px solid #E8EDF1">{{ u.username }}</span>
+            <span style="flex:1 1 140px;min-width:0;padding:8px 10px;color:#475569;overflow-wrap:anywhere;border-right:1px solid #E8EDF1">{{ u.name }}</span>
+            <span style="flex:none;width:160px;padding:6px 10px;border-right:1px solid #E8EDF1">
+              <select value="{{ u.role }}" onChange="{{ u.setRole }}" style="width:100%">
+                <sc-for list="{{ u.roleOptions }}" as="o" hint-placeholder-count="3">
+                  <option value="{{ o.value }}">{{ o.label }}</option>
+                </sc-for>
+              </select>
+            </span>
+            <span style="flex:none;width:90px;padding:8px 10px;border-right:1px solid #E8EDF1"><span style="font-size:11px;font-weight:700;padding:3px 7px;border-radius:999px;color:{{ u.statusFg }};background:{{ u.statusBg }}">{{ u.statusLabel }}</span></span>
+            <span style="flex:none;width:110px;padding:8px 10px;color:#64748B;border-right:1px solid #E8EDF1">{{ u.lastLogin }}</span>
+            <span style="flex:none;width:250px;padding:6px 10px;display:flex;gap:6px;flex-wrap:wrap">
+              <button onClick="{{ u.resetPin }}" style="padding:5px 9px;border:1px solid #A8C8DC;border-radius:5px;background:#fff;color:#117996;font-weight:700;font-size:11.5px;cursor:pointer" style-hover="background:#D5E7EF">PIN</button>
+              <button onClick="{{ u.toggle }}" style="padding:5px 9px;border:1px solid #D9DEE4;border-radius:5px;background:#fff;color:#475569;font-weight:700;font-size:11.5px;cursor:pointer" style-hover="background:#F1F5F9">{{ u.toggleLabel }}</button>
+              <button onClick="{{ u.remove }}" style="padding:5px 9px;border:1px solid #E8C9CE;border-radius:5px;background:#fff;color:#7C1220;font-weight:700;font-size:11.5px;cursor:pointer" style-hover="background:#F7E3E6">លុប · Delete</button>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ showTable }}" hint-placeholder-val="{{ false }}">
     <div style="background:#fff;border:1px solid #F1F5F9;border-radius:8px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,62,120,.08);margin-bottom:18px">
       <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">សេចក្ដីសង្ខេបតាមភូមិ <span style="font-weight:400;color:#9AA5AE">Village detail summary · dengue vector surveillance</span></div>
-      <div style="max-height:560px;overflow:auto;border:1px solid #D9DEE4;border-radius:6px">
+      <div data-scroll-x="1" style="max-height:560px;overflow:auto;border:1px solid #D9DEE4;border-radius:6px">
         <div style="display:flex;position:sticky;top:0;z-index:2;background:#003E78;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px">
           <span style="flex:none;width:34px;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">No</span>
           <span style="flex:1 1 80px;min-width:0;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">Sangkat</span>
@@ -258,6 +387,23 @@ canvas{max-height:320px}
 
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:900}}">
+const SESSION_DAYS = 7;
+// guest: charts and PNG. analyst: also the village detail table. admin: also CSV, reload and this list.
+const USER_ROLES = [["guest", "ភ្ញៀវ · Guest"], ["analyst", "អ្នកវិភាគ · Analyst"], ["admin", "អ្នកគ្រប់គ្រង · Admin"]];
+const AUTH_KEY = "ento-dash-auth";
+
+// A signed-in session, or null. Expired sessions are dropped on read.
+function readAuth() {
+  try {
+    const a = JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
+    if (a && a.token && a.exp && a.exp > Date.now()) return a;
+  } catch (e) {}
+  return null;
+}
+function writeAuth(a) {
+  try { if (a) localStorage.setItem(AUTH_KEY, JSON.stringify(a)); else localStorage.removeItem(AUTH_KEY); } catch (e) {}
+}
+
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbz5dYyX8PKVisxPxePppnmu3qzy1S3pJPCfEQWgrP4osxJkoBA1vyx9DTDROASbA3-P/exec";
 const CONTAINERS = [["jar", "ពាងទឹក", "Water jar"], ["tyre", "សំបកកង់ចាស់ៗ", "Tyre"],
   ["pot", "ថូផ្កា", "Plant pot"], ["tank", "អាងទឹក", "Water tank"], ["other", "ផ្សេងៗ", "Other"]];
@@ -286,6 +432,67 @@ const num = (v) => Number(v) || 0;
 const fmt = (v) => (typeof v === "number" || (v !== "" && v != null && !isNaN(Number(v))))
   ? Number(v).toLocaleString("en-US") : v;
 
+// Wet season in Cambodia runs May to October; the band sits behind the lines so a
+// rise can be read against the season. Read off the English month in each label.
+const SEASON_PLUGIN = {
+  id: "wetSeason",
+  beforeDatasetsDraw(chart) {
+    const x = chart.scales && chart.scales.x;
+    if (!x || !chart.data.labels) return;
+    const area = chart.chartArea;
+    const n = chart.data.labels.length;
+    const half = n > 1 ? (x.width / n) / 2 : x.width / 2;
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.fillStyle = "rgba(17,121,150,.07)";
+    chart.data.labels.forEach((label, i) => {
+      if (!/\b(May|Jun|Jul|Aug|Sep|Oct)\b/.test(String(label))) return;
+      const c = x.getPixelForTick(i);
+      ctx.fillRect(c - half, area.top, half * 2, area.bottom - area.top);
+    });
+    ctx.restore();
+  }
+};
+
+// Value labels on every chart: small, above bars and points, inside doughnut arcs.
+const VALUE_LABEL_PLUGIN = {
+  id: "valueLabels",
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.font = "700 10px " + FONT;
+    ctx.textAlign = "center";
+    chart.data.datasets.forEach((ds, di) => {
+      const meta = chart.getDatasetMeta(di);
+      if (!meta || meta.hidden) return;
+      if (/threshold/i.test(String(ds.label || ""))) return;  // the WHO line needs no repeated 20
+      const total = (ds.data || []).reduce((a, v) => a + (Number(v) || 0), 0);
+      meta.data.forEach((el, i) => {
+        const raw = ds.data[i];
+        if (raw === null || raw === undefined || raw === "" || Number(raw) === 0) return;
+        const isArc = meta.type === "doughnut" || meta.type === "pie";
+        const text = isArc
+          ? (total ? Math.round((Number(raw) / total) * 100) + "%" : String(raw))
+          : (typeof raw === "number" ? String(Math.round(raw * 10) / 10) : String(raw));
+        if (isArc) {
+          const p = el.tooltipPosition();
+          ctx.fillStyle = "#fff";
+          ctx.textBaseline = "middle";
+          ctx.strokeStyle = "rgba(0,0,0,.35)";
+          ctx.lineWidth = 2.5;
+          ctx.strokeText(text, p.x, p.y);
+          ctx.fillText(text, p.x, p.y);
+        } else {
+          ctx.fillStyle = "#333";
+          ctx.textBaseline = "bottom";
+          ctx.fillText(text, el.x, el.y - 4);
+        }
+      });
+    });
+    ctx.restore();
+  }
+};
+
 const TAB_COLOR = {
   overview: { solid: "#003E78", tint: "#EDF3F8", line: "#C6D5E4" },
   larval:   { solid: "#117996", tint: "#E6F2F5", line: "#B7DCE4" },
@@ -293,6 +500,7 @@ const TAB_COLOR = {
   ovitrap:  { solid: "#B47A0A", tint: "#FDF6E3", line: "#F3DFA8" },
   map:      { solid: "#0E7A5F", tint: "#E7F6F1", line: "#B5E0D3" },
   table:    { solid: "#4B5563", tint: "#F1F5F9", line: "#D9DEE4" },
+  epi:      { solid: "#5B2E86", tint: "#F1EAF8", line: "#D6C4E8" },
 };
 
 // tabs reuse the KPI glyphs so a tab and its metric read alike
@@ -303,7 +511,8 @@ const TAB_ICON = {
   "ovitrap": KPI_ICON.egg,
   "map": KPI_ICON.pin,
   "table": KPI_ICON.records,
-  "eggs": KPI_ICON.egg
+  "eggs": KPI_ICON.egg,
+  "epi": "M3 17l5-5 4 4 8-8M17 8h4v4"
 };
 
 // Romanised or English place names seen in the Kobo forms → gazetteer code + name.
@@ -392,21 +601,117 @@ function cleanRecords(list) {
 
 class Component extends DCLogic {
   state = { records: [], loading: true, error: "", tab: "overview",
-    prov: "", dist: "", comm: "", vill: "", month: "", mapMode: "ci", sortKey: "ci", sortDir: "desc" };
+    prov: "", dist: "", comm: "", vill: "", month: "", mapMode: "ci", sortKey: "ci", sortDir: "desc",
+    auth: readAuth(), loginUser: "", loginPin: "", loginBusy: false, loginError: "",
+    users: [], usersBusy: false, usersLoaded: false, usersMsg: "", usersErr: false,
+    newUser: "", newName: "", newPin: "", newRole: "guest" };
 
-  componentDidMount() { this.load(); [0, 300, 900, 2000].forEach((ms) => setTimeout(this.draw, ms)); }
-  componentDidUpdate() { this.draw(); }
+  role() { return String((this.state.auth && this.state.auth.role) || "guest").toLowerCase(); }
+
+  /* ─── account admin (admin only) ──────────────────────────────────── */
+
+  post = (body) => fetch(SHEET_URL, { method: "POST",
+    body: JSON.stringify(Object.assign({ token: this.state.auth ? this.state.auth.token : "" }, body)) })
+    .then((r) => r.json());
+
+  userAction = (body, okMsg) => {
+    this.setState({ usersBusy: true, usersMsg: "", usersErr: false });
+    this.post(body)
+      .then((out) => {
+        if (!out || !out.ok) throw new Error((out && out.error) || "the sheet refused the request");
+        this.setState({ users: out.users || [], usersBusy: false, usersLoaded: true,
+          usersMsg: okMsg || "", usersErr: false });
+      })
+      .catch((e) => this.setState({ usersBusy: false, usersErr: true,
+        usersMsg: e && e.message ? e.message : "no connection to the sheet" }));
+  };
+
+  loadUsers = () => this.userAction({ action: "dash-users" }, "");
+
+  addUser = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const username = String(this.state.newUser || "").trim();
+    const pin = String(this.state.newPin || "").trim();
+    if (!username || !/^\d{4,8}$/.test(pin)) {
+      this.setState({ usersErr: true, usersMsg: "បញ្ចូលឈ្មោះ និងលេខសម្ងាត់ ៤–៨ ខ្ទង់ · a username and a 4 to 8 digit PIN are required" });
+      return;
+    }
+    this.userAction({ action: "dash-user-save", username, pin,
+      name: String(this.state.newName || "").trim() || username, role: this.state.newRole },
+      "បានបន្ថែម · added " + username + " — លេខសម្ងាត់ PIN " + pin + " · note it now, it cannot be shown again");
+    this.setState({ newUser: "", newName: "", newPin: "", newRole: "guest" });
+  };
+
+  saveUser = (patch) => this.userAction(Object.assign({ action: "dash-user-save" }, patch),
+    "បានរក្សាទុក · saved " + patch.username);
+
+  resetPin = (username) => {
+    const pin = window.prompt("New PIN for " + username + " (4–8 digits)");
+    if (!pin) return;
+    if (!/^\d{4,8}$/.test(pin.trim())) { this.setState({ usersErr: true, usersMsg: "a PIN must be 4 to 8 digits" }); return; }
+    this.userAction({ action: "dash-user-save", username, pin: pin.trim() },
+      "លេខសម្ងាត់ថ្មីរបស់ " + username + " · new PIN " + pin.trim() + " — note it now, it cannot be shown again");
+  };
+
+  setUserActive = (username, active) =>
+    this.userAction({ action: "dash-user-active", username, active },
+      (active ? "reactivated " : "deactivated ") + username);
+
+  removeUser = (username) => {
+    if (!window.confirm("Delete the dashboard account " + username + "? This cannot be undone.")) return;
+    this.userAction({ action: "dash-user-delete", username }, "deleted " + username);
+  };
+
+  componentDidMount() {
+    if (this.state.auth) this.load(); else this.setState({ loading: false });
+    [0, 300, 900, 2000].forEach((ms) => setTimeout(this.draw, ms));
+  }
+  componentDidUpdate(prevProps, prevState) {
+    this.draw();
+    if (this.state.tab === "users" && prevState.tab !== "users" && this.role() === "admin") this.loadUsers();
+  }
+
+  /* ─── sign in ─────────────────────────────────────────────────────── */
+
+  submitLogin = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const username = String(this.state.loginUser || "").trim();
+    const pin = String(this.state.loginPin || "").trim();
+    if (!username || !pin) { this.setState({ loginError: "បញ្ចូលឈ្មោះ និងលេខសម្ងាត់ · enter a username and PIN" }); return; }
+    this.setState({ loginBusy: true, loginError: "" });
+    // No custom headers: Apps Script accepts a text/plain body without a CORS preflight.
+    fetch(SHEET_URL, { method: "POST", body: JSON.stringify({ action: "dash-login", username, pin }) })
+      .then((r) => r.json())
+      .then((out) => {
+        if (!out || !out.ok) throw new Error((out && out.error) || "sign in failed");
+        if (String(out.user.role || "").toLowerCase() !== "admin" && this.state.tab === "table") this.setState({ tab: "overview" });
+        const auth = { token: out.token, username: out.user.username, name: out.user.name, role: out.user.role,
+          exp: Date.now() + SESSION_DAYS * 86400000 };
+        writeAuth(auth);
+        this.setState({ auth, loginBusy: false, loginPin: "", loginError: "" }, this.load);
+      })
+      .catch((err) => this.setState({ loginBusy: false,
+        loginError: err && err.message ? err.message : "no connection to the sheet" }));
+  };
+
+  signOut = () => {
+    writeAuth(null);
+    this.setState({ auth: null, records: [], loading: false, error: "", loginPin: "", loginError: "" });
+  };
 
   load = () => {
+    if (!this.state.auth) return;
     this.setState({ loading: true, error: "" });
-    const url = SHEET_URL + (SHEET_URL.indexOf("?") >= 0 ? "&" : "?") + "action=records";
+    const url = SHEET_URL + (SHEET_URL.indexOf("?") >= 0 ? "&" : "?") + "action=records"
+      + "&token=" + encodeURIComponent(this.state.auth.token);
     fetch(url)
       .then((r) => r.json())
       .then((out) => {
+        if (out && out.auth === "required") { writeAuth(null); this.setState({ auth: null, loading: false, records: [] }); return; }
         if (!out || !out.ok) throw new Error((out && out.error) || "the sheet refused the request");
         // Both sources live in the sheet now; each row says which it came from.
         const sheet = cleanRecords(out.records || []);
-        this.setState({ records: sheet, loading: false });
+        this.setState({ records: sheet, loading: false, loadedAt: new Date() });
       })
       .catch((e) => this.setState({ loading: false,
         error: "មិនអាចទាញទិន្នន័យ · could not load from the sheet: " + (e && e.message ? e.message : "no connection")
@@ -687,6 +992,173 @@ class Component extends DCLogic {
     return Object.keys(map).map((k) => map[k]).sort((a, b) => b.total - a.total);
   }
 
+  // One row per village per round: the numerators and denominators every
+  // epidemiological index needs, so a round with too little survey can be
+  // left as a gap rather than drawn as a zero.
+  villageRounds(rows) {
+    const cell = {}, months = {}, villages = {};
+    rows.forEach((r) => {
+      const m = this.monthKey(r);
+      const vname = r.village || r.village_code || "—";
+      if (!m || !vname) return;
+      months[m] = 1;
+      villages[vname] = 1;
+      const key = vname + "|" + m;
+      const c = cell[key] || (cell[key] = { insp: 0, pos: 0, seen: {}, posH: {}, eggs: 0,
+        adults: 0, oviTraps: 0, adultTraps: 0, aeg: 0, spec: 0,
+        oviRead: 0, oviPos: 0, femAeg: 0 });
+      const t = this.type(r);
+      if (t === "larvae") {
+        c.insp += num(r.containers_inspected);
+        c.pos += num(r.containers_positive);
+        if (r.household_id) {
+          c.seen[r.household_id] = 1;
+          if (num(r.containers_positive) > 0) c.posH[r.household_id] = 1;
+        }
+      }
+      if (t === "install") {
+        if (String(r.trap_type || "").toLowerCase().indexOf("ovi") >= 0) c.oviTraps += 1;
+      }
+      // The adult denominator is the collection itself: every adult record is one trap catch.
+      if (t === "adult") c.adultTraps += 1;
+      if (t === "lab") {
+        c.eggs += num(r.eggs);
+        const aeg = num(r.aegypti_f) + num(r.aegypti_m) + num(r.aegypti);
+        const alb = num(r.albopictus_f) + num(r.albopictus_m) + num(r.albopictus);
+        const rest = num(r.culex) + num(r.other);
+        c.aeg += aeg;
+        c.spec += aeg + alb + rest;
+        if (!isLarval(r)) {
+          c.adults += num(r.total_catch);
+          c.femAeg += num(r.aegypti_f);
+        }
+        // Ovitrap positivity: each read trap counts once, positive if it held any egg.
+        if (this.methodOf(r) === "Ovitrap") {
+          c.oviRead += 1;
+          if (num(r.eggs) > 0) c.oviPos += 1;
+        }
+      }
+    });
+    const monthKeys = Object.keys(months).sort();
+    const rank = this.byVillage(rows).map((v) => v.name).filter((n) => villages[n]);
+    return { monthKeys, villages: rank, at: (v, m) => cell[v + "|" + m] || null };
+  }
+
+  // Wilson 95% interval — behaves properly when a village inspected few containers,
+  // which the Wald interval does not.
+  wilson(k, n) {
+    if (!n) return null;
+    const z = 1.96, p = k / n;
+    const d = 1 + (z * z) / n;
+    const centre = p + (z * z) / (2 * n);
+    const half = z * Math.sqrt((p * (1 - p) + (z * z) / (4 * n)) / n);
+    const lo = Math.max(0, (centre - half) / d), hi = Math.min(1, (centre + half) / d);
+    return { p: p * 100, lo: lo * 100, hi: hi * 100 };
+  }
+
+  // Indicators per village for the latest round and the one before it.
+  epiIndicators(rows) {
+    const s = this.villageRounds(rows);
+    const one = (n) => Math.round(n * 10) / 10;
+    const keys = s.monthKeys;
+    const now = keys[keys.length - 1] || "", prev = keys[keys.length - 2] || "";
+    const read = (v, m) => {
+      const c = m ? s.at(v, m) : null;
+      if (!c) return null;
+      const seen = Object.keys(c.seen).length, posH = Object.keys(c.posH).length;
+      const ciW = this.wilson(c.pos, c.insp), hiW = this.wilson(posH, seen);
+      return {
+        ci: c.insp ? one((c.pos / c.insp) * 100) : null, ciN: c.insp,
+        ciLo: ciW ? one(ciW.lo) : null, ciHi: ciW ? one(ciW.hi) : null,
+        hi: seen ? one((posH / seen) * 100) : null, hiN: seen,
+        hiLo: hiW ? one(hiW.lo) : null, hiHi: hiW ? one(hiW.hi) : null,
+        bi: seen ? one((c.pos / seen) * 100) : null, biN: seen,
+        eggs: c.oviTraps ? one(c.eggs / c.oviTraps) : null, eggsN: c.oviTraps,
+        adults: c.adultTraps ? one(c.adults / c.adultTraps) : null, adultsN: c.adultTraps,
+      };
+    };
+    return { nowLabel: now ? this.monthLabel(now) : "", prevLabel: prev ? this.monthLabel(prev) : "",
+      villages: s.villages.map((v) => ({ name: v, now: read(v, now), prev: read(v, prev) })) };
+  }
+
+  // The Epidemiology tab: one line per village, gaps where the survey was too small.
+  epiSpecs(rows) {
+    const EPI_MIN_CONTAINERS = 20;
+    const series = this.villageRounds(rows);
+    const labels = series.monthKeys.map((k) => this.monthLabel(k));
+    const shown = series.villages.slice(0, 5);
+    // nFn gives the denominator behind each point, shown in the tooltip.
+    const line = (fn, nFn) => shown.map((v, i) => ({
+      label: v,
+      data: series.monthKeys.map((m) => fn(series.at(v, m))),
+      nList: series.monthKeys.map((m) => (nFn ? nFn(series.at(v, m)) : null)),
+      borderColor: COLORS[i % COLORS.length],
+      backgroundColor: COLORS[i % COLORS.length],
+      spanGaps: false, tension: .3, borderWidth: 2, pointRadius: 3, fill: false }));
+    const one = (n) => Math.round(n * 10) / 10;
+    const seen = (c) => (c ? Object.keys(c.seen).length : 0);
+    // Denominator in every tooltip, plus wet-season shading behind the lines.
+    const opt = (unit) => ({ plugins: { tooltip: { callbacks: {
+      label: (it) => it.dataset.label + ": " + it.formattedValue + (unit || ""),
+      footer: (items) => {
+        const it = items && items[0];
+        const n = it && (it.dataset.nList || [])[it.dataIndex];
+        return n === null || n === undefined ? "" : "n = " + fmt(n);
+      } } } } });
+    const contPosByRound = CONTAINERS.map(([k, , en], i) => ({
+      label: en,
+      data: series.monthKeys.map((m) => rows.reduce((a, r) =>
+        a + (this.monthKey(r) === m ? num(r["positive_" + k]) : 0), 0)),
+      borderColor: COLORS[i % COLORS.length], backgroundColor: COLORS[i % COLORS.length],
+      tension: .3, borderWidth: 2, pointRadius: 3, fill: false }));
+    const wet = [SEASON_PLUGIN];
+    return [
+      { key: "epiCiRound", title: "សន្ទស្សន៍ភាជន៍តាមភូមិ និងតាមជុំ",
+        titleEn: "Container index % by round, per village — gaps: fewer than 20 containers",
+        spec: { type: "line", opt: opt("%"), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (c && c.insp >= EPI_MIN_CONTAINERS ? one((c.pos / c.insp) * 100) : null),
+          (c) => (c ? c.insp : null)) } } },
+      { key: "epiHiRound", title: "សន្ទស្សន៍ផ្ទះតាមភូមិ និងតាមជុំ",
+        titleEn: "House index % by round, per village",
+        spec: { type: "line", opt: opt("%"), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (seen(c) ? one((Object.keys(c.posH).length / seen(c)) * 100) : null),
+          (c) => (c ? seen(c) : null)) } } },
+      { key: "epiBiRound", title: "សន្ទស្សន៍ Breteau តាមជុំ",
+        titleEn: "Breteau index by round, per village — positive containers per 100 houses",
+        spec: { type: "line", opt: opt(""), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (seen(c) ? one((c.pos / seen(c)) * 100) : null),
+          (c) => (c ? seen(c) : null)) } } },
+      { key: "epiOviPosRound", title: "អត្រាអន្ទាក់មានពងតាមជុំ",
+        titleEn: "Ovitrap positivity % by round, per village — traps holding at least one egg",
+        spec: { type: "line", opt: opt("%"), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (c && c.oviRead ? one((c.oviPos / c.oviRead) * 100) : null),
+          (c) => (c ? c.oviRead : null)) } } },
+      { key: "epiEggsRound", title: "ពងក្នុងមួយអន្ទាក់តាមជុំ",
+        titleEn: "Ovitrap eggs per trap by round, per village",
+        spec: { type: "line", opt: opt(""), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (c && c.oviTraps ? one(c.eggs / c.oviTraps) : null),
+          (c) => (c ? c.oviTraps : null)) } } },
+      { key: "epiAdultsRound", title: "មូសពេញវ័យក្នុងមួយអន្ទាក់តាមជុំ",
+        titleEn: "Adult mosquitoes per trap by round, per village",
+        spec: { type: "line", opt: opt(""), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (c && c.adultTraps ? one(c.adults / c.adultTraps) : null),
+          (c) => (c ? c.adultTraps : null)) } } },
+      { key: "epiFemAegRound", title: "Ae. aegypti ញី ក្នុងមួយអន្ទាក់តាមជុំ",
+        titleEn: "Female Ae. aegypti per trap by round, per village — one collection counted as one trap",
+        spec: { type: "line", opt: opt(""), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (c && c.adultTraps ? one(c.femAeg / c.adultTraps) : null),
+          (c) => (c ? c.adultTraps : null)) } } },
+      { key: "epiAegRound", title: "សមាមាត្រ Ae. aegypti តាមជុំ",
+        titleEn: "Ae. aegypti share of specimens % by round, per village",
+        spec: { type: "line", opt: opt("%"), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (c && c.spec ? one((c.aeg / c.spec) * 100) : null),
+          (c) => (c ? c.spec : null)) } } },
+      { key: "epiContRound", title: "ភាជន៍មានដង្កូវតាមប្រភេទ និងតាមជុំ",
+        titleEn: "Positive containers by type, by round — all villages",
+        spec: { type: "line", chartPlugins: wet, data: { labels, datasets: contPosByRound } } },
+    ];
+  }
+
   chartSpecs() {
     const rows = this.rows();
     const vil = this.byVillage(rows);
@@ -705,6 +1177,7 @@ class Component extends DCLogic {
     this._monKeyByLabel = {};
     mon.forEach((m) => { this._monKeyByLabel[this.monthLabel(m.key)] = m.key; });
 
+    if (t === "epi") return this.epiSpecs(rows);
     if (t === "larval") {
       const contInsp = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["inspected_" + k]), 0));
       const contPos = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["positive_" + k]), 0));
@@ -715,7 +1188,7 @@ class Component extends DCLogic {
             whoLine(labels.length)] } } },
         { key: "cont", title: "ភាជន៍តាមប្រភេទ", titleEn: "Containers by type",
           spec: { type: "bar", data: { labels: contLabels(),
-            datasets: [{ label: "Inspected", data: contInsp, backgroundColor: "#D5E7EF", borderRadius: 3 },
+            datasets: [{ label: "Inspected", data: contInsp, backgroundColor: "#117996", borderRadius: 3 },
               { label: "Positive", data: contPos, backgroundColor: "#7C1220", borderRadius: 3 }] } } },
         { key: "ciRound", title: "សន្ទស្សន៍ភាជន៍តាមជុំ", titleEn: "Container index % by round — pale bars: fewer than 20 containers",
           insp: mon.map((m) => m.insp),
@@ -763,7 +1236,7 @@ class Component extends DCLogic {
       return [
         { key: "eggsVil", title: "\u1785\u17c6\u1793\u17bd\u1793\u1796\u1784\u178f\u17b6\u1798\u1797\u17bc\u1798\u17b7", titleEn: "Ovitrap eggs by village",
           spec: { type: "bar", data: { labels: vilKeys,
-            datasets: [{ label: "Eggs", data: vilKeys.map((k) => byVil[k]), backgroundColor: "#F4B71B", borderRadius: 3 }] } } },
+            datasets: [{ label: "Eggs", data: vilKeys.map((k) => byVil[k]), backgroundColor: "#0d6177", borderRadius: 3 }] } } },
         { key: "eggsMonth", title: "\u1785\u17c6\u1793\u17bd\u1793\u1796\u1784\u178f\u17b6\u1798\u1781\u17c2", titleEn: "Ovitrap eggs by round",
           spec: (function (self, list) {
             const m = {};
@@ -773,7 +1246,7 @@ class Component extends DCLogic {
             });
             const keys = Object.keys(m).sort();
             return { type: "line", data: { labels: keys, datasets: [{ label: "Eggs", data: keys.map((k) => m[k]),
-              borderColor: "#F4B71B", backgroundColor: "rgba(244,183,27,.18)", fill: true, tension: .3 }] } };
+              borderColor: "#0d6177", backgroundColor: "rgba(13,97,119,.16)", fill: true, tension: .3 }] } };
           })(this, ovi) },
       ];
     }
@@ -788,7 +1261,7 @@ class Component extends DCLogic {
           whoLine(mon.length)] } } },
       { key: "eggsHot", title: "ពងតាមភូមិ", titleEn: "Ovitrap eggs by village — where the mosquitoes are breeding",
         spec: { type: "bar", data: { labels, datasets: [
-          { label: "Eggs", data: take((v) => v.eggs), backgroundColor: "#F4B71B", borderRadius: 3 }] } } },
+          { label: "Eggs", data: take((v) => v.eggs), backgroundColor: "#0d6177", borderRadius: 3 }] } } },
       { key: "ciVil", title: "សន្ទស្សន៍ភាជន៍ និងផ្ទះតាមភូមិ", titleEn: "Container index % and house index % by village",
         spec: { type: "bar", data: { labels, datasets: [
           { label: "CI %", data: take((v) => v.ci), backgroundColor: "#117996", borderRadius: 3 },
@@ -876,18 +1349,37 @@ class Component extends DCLogic {
       const i = top(tot);
       return labels[i] + " accounts for " + tot[i] + " of the " + sum(tot) + " adults caught.";
     }
+    if (k.indexOf("epi") === 0) {
+      const read = (d) => {
+        const pts = d.data.map((x, i) => ({ x, i })).filter((p) => p.x !== null && p.x !== undefined);
+        return pts.length ? { name: d.label, last: pts[pts.length - 1],
+          prev: pts.length > 1 ? pts[pts.length - 2] : null } : null;
+      };
+      const reads = ds.map(read).filter(Boolean);
+      if (!reads.length) return "Nothing measurable in this view.";
+      const moved = reads.filter((r) => r.prev);
+      if (!moved.length) {
+        const only = reads.slice().sort((a, b) => b.last.x - a.last.x)[0];
+        return only.name + " is highest at " + one(only.last.x) + " in " + labels[only.last.i] + ".";
+      }
+      const big = moved.slice().sort((a, b) =>
+        Math.abs(b.last.x - b.prev.x) - Math.abs(a.last.x - a.prev.x))[0];
+      const d0 = big.last.x - big.prev.x;
+      return big.name + " " + (d0 > 0 ? "rose" : d0 < 0 ? "fell" : "held") + " from " + one(big.prev.x)
+        + " to " + one(big.last.x) + " between " + labels[big.prev.i] + " and " + labels[big.last.i] + ".";
+    }
     if (k === "eggsVil" || k === "eggsHot") {
       const v = set(0);
       if (!sum(v)) return "No ovitrap eggs counted in view.";
       const i = top(v);
-      return labels[i] + " collected the most eggs, " + v[i] + " of " + sum(v) + " counted.";
+      return labels[i] + " collected the most eggs, " + fmt(v[i]) + " of " + fmt(sum(v)) + " counted.";
     }
     if (k === "eggsMonth") {
       const v = set(0);
       if (!v.length) return "No ovitrap rounds in view.";
-      if (v.length === 1) return labels[0] + " is the only round in view, with " + v[0] + " eggs counted.";
+      if (v.length === 1) return labels[0] + " is the only round in view, with " + fmt(v[0]) + " eggs counted.";
       const last = v[v.length - 1], prev = v[v.length - 2];
-      return "Egg counts " + (last >= prev ? "rose" : "fell") + " from " + prev + " in "
+      return "Egg counts " + (last >= prev ? "rose" : "fell") + " from " + fmt(prev) + " in "
         + labels[labels.length - 2] + " to " + last + " in " + labels[labels.length - 1] + ".";
     }
     const v = set(0);
@@ -929,9 +1421,9 @@ class Component extends DCLogic {
     }
     if (k === "cont") {
       const insp = set(0), pos = set(1);
-      if (!sum(pos)) return "គ្មានភាជន៍មានដង្កូវ ក្នុងចំណោម " + sum(insp) + " ដែលបានពិនិត្យ។";
+      if (!sum(pos)) return "គ្មានភាជន៍មានដង្កូវ ក្នុងចំណោម " + fmt(sum(insp)) + " ដែលបានពិនិត្យ។";
       const i = top(pos);
-      return "ភាជន៍ប្រភេទ " + labels[i] + " មានដង្កូវច្រើនបំផុត៖ " + pos[i] + " ក្នុងចំណោម "
+      return "ភាជន៍ប្រភេទ " + labels[i] + " មានដង្កូវច្រើនជាងគេ៖ " + fmt(pos[i]) + " ក្នុងចំណោម "
         + insp[i] + " ដែលបានពិនិត្យ ក្នុងសរុប " + sum(pos) + " ភាជន៍មានដង្កូវ។";
     }
     if (k === "typePie") {
@@ -958,7 +1450,7 @@ class Component extends DCLogic {
       const tot = labels.map((_, i) => set(0)[i] + set(1)[i] + set(2)[i]);
       if (!sum(tot)) return "គ្មានមូសពេញវ័យក្នុងទិដ្ឋភាពនេះ។";
       const i = top(tot);
-      return labels[i] + " ចាប់បានមូសពេញវ័យច្រើនបំផុត " + tot[i] + " ក្នុងចំណោម " + sum(tot) + "។";
+      return labels[i] + " ចាប់បានមូសពេញវ័យច្រើនជាងគេ " + fmt(tot[i]) + " ក្នុងចំណោម " + fmt(sum(tot)) + "។";
     }
     if (k === "sexSplit") {
       const f = set(0), m = set(1), t = f[0] + m[0];
@@ -975,15 +1467,37 @@ class Component extends DCLogic {
       const v = set(0);
       if (!sum(v)) return "គ្មានពងអន្ទាក់ក្នុងទិដ្ឋភាពនេះ។";
       const i = top(v);
-      return labels[i] + " ប្រមូលបានពងច្រើនបំផុត " + v[i] + " ក្នុងចំណោម " + sum(v) + "។";
+      return labels[i] + " ប្រមូលបានពងច្រើនជាងគេ " + fmt(v[i]) + " ក្នុងចំណោម " + fmt(sum(v)) + "។";
     }
     if (k === "eggsMonth") {
       const v = set(0);
       if (!v.length) return "គ្មានជុំអន្ទាក់ពងក្នុងទិដ្ឋភាពនេះ។";
-      if (v.length === 1) return "មានតែជុំ " + labels[0] + " ដែលមានពង " + v[0] + "។";
+      if (v.length === 1) return "មានតែជុំ " + labels[0] + " ដែលមានពង " + fmt(v[0]) + "។";
       const last = v[v.length - 1], prev = v[v.length - 2];
-      return "ចំនួនពង" + (last >= prev ? "ឡើង" : "ចុះ") + "ពី " + prev + " ក្នុងជុំ "
+      return "ចំនួនពង" + (last >= prev ? "ឡើង" : "ចុះ") + "ពី " + fmt(prev) + " ក្នុងជុំ "
         + labels[labels.length - 2] + " ទៅ " + last + " ក្នុងជុំ " + labels[labels.length - 1] + "។";
+    }
+    if (k.indexOf("epi") === 0) {
+      const ds = (c.spec.data.datasets || []);
+      const read = (d) => {
+        const pts = d.data.map((x, i) => ({ x, i })).filter((p) => p.x !== null && p.x !== undefined);
+        return pts.length ? { name: d.label, last: pts[pts.length - 1],
+          prev: pts.length > 1 ? pts[pts.length - 2] : null } : null;
+      };
+      const reads = ds.map(read).filter(Boolean);
+      if (!reads.length) return "គ្មានរង្វាស់គ្រប់គ្រាន់ក្នុងទិដ្ឋភាពនេះ។";
+      const moved = reads.filter((r) => r.prev);
+      if (!moved.length) {
+        const only = reads.slice().sort((a, b) => b.last.x - a.last.x)[0];
+        return only.name + " ខ្ពស់ជាងគេ " + one(only.last.x) + " ក្នុងជុំ " + labels[only.last.i] + "។";
+      }
+      const big = moved.slice().sort((a, b) =>
+        Math.abs(b.last.x - b.prev.x) - Math.abs(a.last.x - a.prev.x))[0];
+      const delta = one(big.last.x - big.prev.x);
+      const dirKm = delta > 0 ? "ឡើង" : delta < 0 ? "ចុះ" : "ដូចគ្នា";
+      const dirEn = delta > 0 ? "rose" : delta < 0 ? "fell" : "held";
+      return big.name + " " + dirKm + " ពី " + one(big.prev.x) + " ទៅ " + one(big.last.x)
+        + " រវាងជុំ " + labels[big.prev.i] + " និង " + labels[big.last.i] + "។";
     }
     const v = set(0);
     if (!v.length || !sum(v)) return "គ្មានទិន្នន័យក្នុងទិដ្ឋភាពនេះ។";
@@ -1065,8 +1579,10 @@ class Component extends DCLogic {
     el.style.cssText = "position:fixed;left:-99999px;top:0;width:" + w + "px;height:" + h + "px";
     document.body.appendChild(el);
     const stacked = !!(spec.data.datasets[0] && spec.data.datasets[0].stack);
-    const chart = new window.Chart(el, { type: spec.type, data: spec.data, options: {
+    const chart = new window.Chart(el, { type: spec.type, data: spec.data,
+      plugins: [VALUE_LABEL_PLUGIN].concat(spec.chartPlugins || []), options: {
       responsive: false, maintainAspectRatio: false, animation: false, devicePixelRatio: ratio,
+      datasets: { bar: { maxBarThickness: 64 } },
       plugins: { legend: { display: spec.data.datasets.length > 1 || spec.type === "doughnut",
         position: "bottom", labels: { font: { size: 16, family: FONT }, boxWidth: 18, padding: 14 } } },
       scales: spec.type === "doughnut" ? {} : {
@@ -1147,6 +1663,8 @@ class Component extends DCLogic {
       const dim = this.chartDim(s.key);
       const options = {
         responsive: true, maintainAspectRatio: false,
+        // a round or two of data should not produce a bar the width of the card
+        datasets: { bar: { maxBarThickness: 64 } },
         onClick: dim ? (evt, els, chart) => {
           if (!els || !els.length) return;
           const label = chart.data.labels[els[0].index];
@@ -1166,17 +1684,21 @@ class Component extends DCLogic {
             ticks: { font: { size: 12, family: FONT }, color: "#333", precision: 0 } },
         },
       };
+      const extra = s.spec.opt || {};
+      const merged = Object.assign({}, options, extra,
+        { plugins: Object.assign({}, options.plugins, extra.plugins || {}) });
       const existing = this._charts[s.key];
       if (existing && existing.canvas === el && existing.config.type === s.spec.type) {
         existing.data = s.spec.data;
-        existing.options = options;
+        existing.options = merged;
         existing.update();
         return;
       }
       if (existing) existing.destroy();
       const prior = window.Chart.getChart(el);
       if (prior) prior.destroy();
-      this._charts[s.key] = new window.Chart(el, { type: s.spec.type, data: s.spec.data, options });
+      this._charts[s.key] = new window.Chart(el, { type: s.spec.type, data: s.spec.data,
+        options: merged, plugins: [VALUE_LABEL_PLUGIN].concat(s.spec.chartPlugins || []) });
     });
     // Leaflet map, only while its tab is open.
     if (this.state.tab === "map" && this._mapEl && window.L) {
@@ -1294,9 +1816,12 @@ class Component extends DCLogic {
     const insp = hh.reduce((a, h) => a + h.insp, 0);
     const pos = hh.reduce((a, h) => a + h.pos, 0);
     const inspected = hh.filter((h) => h.larvaeRecords > 0);
-    const tabs = [["overview", "ទូទៅ · Overview"], ["larval", "ដង្កូវទឹក · Larval & CI"],
+    const tabs = [["overview", "ទូទៅ · Overview"], ["larval", "ដង្កូវទឹក · Larvae"],
       ["adult", "មូសពេញវ័យ · Adults"], ["ovitrap", "អន្ទាក់ពង · Ovitrap"],
-      ["map", "ផែនទី · Map"], ["table", "តារាង · Table"]];
+      ["map", "ផែនទី · Map"], ["epi", "ជំងឺរាតត្បាត · Epidemiology"]];
+    // guest sees charts only; analyst also sees the village table; admin also manages users.
+    if (this.role() === "analyst" || this.role() === "admin") tabs.push(["table", "តារាង · Table"]);
+    if (this.role() === "admin") tabs.push(["users", "អ្នកប្រើ · Users"]);
     const kpiSets = {
       overview: [
         { ico: "house", label: "ខ្នងផ្ទះ · Households", value: fmt(hh.length), sub: "registered in view", color: "#003E78" },
@@ -1340,7 +1865,24 @@ class Component extends DCLogic {
     const specs = this.chartSpecs();
     this._canvas = this._canvas || {};
     return {
-      statusText: s.loading ? "កំពុងទាញ · loading…" : fmt(this.state.records.length) + " records from the sheet",
+      needLogin: !s.auth,
+      signedIn: !!s.auth,
+      isAdmin: this.role() === "admin",
+      canSeeVillages: this.role() === "admin" || this.role() === "analyst",
+      authName: s.auth ? s.auth.name || s.auth.username : "",
+      loginUser: s.loginUser,
+      loginPin: s.loginPin,
+      loginBusy: s.loginBusy,
+      loginError: s.loginError,
+      loginBtn: s.loginBusy ? "កំពុងចូល… · signing in" : "ចូល · Sign in",
+      setLoginUser: (e) => this.setState({ loginUser: e.target.value }),
+      setLoginPin: (e) => this.setState({ loginPin: e.target.value }),
+      submitLogin: this.submitLogin,
+      signOut: this.signOut,
+      isLoading: !!s.loading,
+      statusText: s.loading ? "កំពុងទាញ · loading…"
+        : "ទិន្នន័យចុងក្រោយ · up to date · " + fmt(this.state.records.length) + " records"
+          + (s.loadedAt ? " · " + s.loadedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""),
       reloadLabel: s.loading ? "កំពុងទាញ…" : "ទាញឡើងវិញ · Reload",
       reload: this.load,
       downloadCsv: this.downloadCsv,
@@ -1402,13 +1944,45 @@ class Component extends DCLogic {
         { label: "Containers positive", value: fmt(pos) },
         { label: "Reared Ae. aegypti", value: fmt(sp.larvAeg) },
       ],
-      showCharts: s.tab !== "map" && s.tab !== "table",
+      showEpi: s.tab === "epi",
+      ...(function (self) {
+        if (s.tab !== "epi") return { epiRows: [], epiNow: "", epiPrev: "" };
+        const ind = self.epiIndicators(rows);
+        const arrow = (now, prev) => {
+          if (now === null || now === undefined || prev === null || prev === undefined) return { mark: "", fg: "#9AA5AE", txt: "" };
+          const d = Math.round((now - prev) * 10) / 10;
+          if (d === 0) return { mark: "=", fg: "#767676", txt: "0" };
+          return d > 0
+            ? { mark: "▲", fg: "#7C1220", txt: "+" + d }
+            : { mark: "▼", fg: "#0F6B47", txt: String(d) };
+        };
+        const cell = (nowV, prevV, n, lo, hi) => {
+          const a = arrow(nowV, prevV);
+          return { value: nowV === null || nowV === undefined ? "—" : String(nowV),
+            n: n ? "n " + fmt(n) : "", ci: lo === null || lo === undefined ? "" : lo + "–" + hi,
+            mark: a.mark, delta: a.txt, fg: a.fg };
+        };
+        return {
+          epiNow: ind.nowLabel, epiPrev: ind.prevLabel,
+          epiRows: ind.villages.map((v, i) => {
+            const n = v.now || {}, p = v.prev || {};
+            return { no: i + 1, name: v.name,
+              ci: cell(n.ci, p.ci, n.ciN, n.ciLo, n.ciHi),
+              hi: cell(n.hi, p.hi, n.hiN, n.hiLo, n.hiHi),
+              bi: cell(n.bi, p.bi, n.biN),
+              eggs: cell(n.eggs, p.eggs, n.eggsN),
+              adults: cell(n.adults, p.adults, n.adultsN) };
+          })
+        };
+      })(this),
+      showCharts: s.tab !== "map" && s.tab !== "table" && s.tab !== "users",
+      showKpis: s.tab !== "users",
       // Two readings of the same figures: Khmer first, English below.
       // A round with no larval survey is reported as unmeasured, never as an index of zero.
       story: (function (self, list, months, species, pending) {
         if (!list.length) return { km: "គ្មានទិន្នន័យក្នុងតម្រងនេះ។", en: "No records match the current filters." };
-        const km = [fmt(list.length) + " ខ្នងផ្ទះក្នុងទិដ្ឋភាពនេះ។"];
-        const en = [fmt(list.length) + " households in view."];
+        const km = ["ក្នុង " + fmt(list.length) + " ខ្នងផ្ទះ។"];
+        const en = ["In " + fmt(list.length) + " households."];
         const last = months.length ? months[months.length - 1] : null;
         const MIN_CONTAINERS = 20;
         const measured = months.filter((m) => m.insp >= MIN_CONTAINERS);
@@ -1450,9 +2024,8 @@ class Component extends DCLogic {
               : now.ci < prev.ci ? "down from " + prev.ci + "% in " + self.monthLabel(prev.key)
               : "unchanged from " + self.monthLabel(prev.key))
             : "";
-          km.push("សន្ទស្សន៍ភាជន៍ " + now.ci + "% " + verdictKm(now.ci) + "។");
-          en.push("In " + self.monthLabel(now.key) + " the container index was " + now.ci + "%"
-            + (dirEn ? " (" + dirEn + ")" : "") + ", " + verdictEn(now.ci) + ".");
+          km.push("សន្ទស្សន៍ភាជន៍ " + now.ci + "%។");
+          en.push("Container index " + now.ci + "%.");
         } else {
           km.push("គ្មានការស្រាវជ្រាវធំល្មមអាចអានជាសន្ទស្សន៍ក្នុងទិដ្ឋភាពនេះ។");
           en.push("No larval survey large enough to read as an index has been recorded for this view.");
@@ -1463,15 +2036,15 @@ class Component extends DCLogic {
         const pct = (n, d) => Math.round((n / d) * 1000) / 10;
         if (adultTot) {
           km.push("មូស Ae. aegypti មាន " + pct(species.adultAeg, adultTot)
-            + "% នៃមូសពេញវ័យ " + fmt(adultTot) + " ដែលបាន​ចាប់។");
-          en.push("Ae. aegypti, the dengue vector, is " + pct(species.adultAeg, adultTot)
-            + " percent of the " + fmt(adultTot) + " adult mosquitoes identified.");
+            + "% ក្នុងមូស " + fmt(adultTot) + " ដែលបាន​ចាប់។");
+          en.push("Ae. aegypti is " + pct(species.adultAeg, adultTot)
+            + "% of the " + fmt(adultTot) + " mosquitoes caught.");
         }
         if (larvTot) {
           km.push("ក្នុងចំណោមដង្កូវទឹក " + fmt(larvTot) + " មាន Ae. aegypti មាន "
             + pct(species.larvAeg, larvTot) + "%។");
           en.push("Among the " + fmt(larvTot) + " larvae identified, Ae. aegypti is "
-            + pct(species.larvAeg, larvTot) + " percent.");
+            + pct(species.larvAeg, larvTot) + "%.");
         }
         if (last && last.installs > last.collects) {
           km.push("អន្ទាក់ " + fmt(last.installs - last.collects) + " ដែលដំឡើងក្នុងជុំ "
@@ -1523,7 +2096,39 @@ class Component extends DCLogic {
       })(hh, s.mapMode),
       mapNote: "ចំណុចធំ និងក្រហម មានតម្លៃខ្ពស់ · larger, redder circles carry the higher value. "
         + hh.filter((h) => h.lat && h.lon).length + " of " + hh.length + " households have coordinates.",
-      showTable: s.tab === "table",
+      showTable: s.tab === "table" && (this.role() === "analyst" || this.role() === "admin"),
+      showUsers: s.tab === "users" && this.role() === "admin",
+      userRows: (s.users || []).map((u) => ({
+        username: u.username,
+        name: u.name || u.username,
+        role: u.role,
+        roleOptions: USER_ROLES.map((r) => ({ value: r[0], label: r[1] })),
+        setRole: (e) => this.saveUser({ username: u.username, role: e.target.value }),
+        statusLabel: u.active ? "សកម្ម · active" : "បិទ · off",
+        statusFg: u.active ? "#0F6B47" : "#7C1220",
+        statusBg: u.active ? "#E4F5EC" : "#F7E3E6",
+        lastLogin: u.last_login ? String(u.last_login).slice(0, 10) : "—",
+        toggleLabel: u.active ? "បិទ · Deactivate" : "បើក · Reactivate",
+        toggle: () => this.setUserActive(u.username, !u.active),
+        resetPin: () => this.resetPin(u.username),
+        remove: () => this.removeUser(u.username)
+      })),
+      usersBusy: !!s.usersBusy,
+      usersEmpty: !s.usersBusy && !(s.users || []).length,
+      usersEmptyText: s.usersLoaded
+        ? "គ្មានគណនីផ្ទាំងព័ត៌មាននៅឡើយ · no dashboard accounts yet — add one above"
+        : "កំពុងទាញបញ្ជី · loading the list from the sheet…",
+      refreshUsers: this.loadUsers,
+      usersMsg: s.usersMsg || "",
+      usersMsgFg: s.usersErr ? "#7C1220" : "#0F6B47",
+      usersMsgBg: s.usersErr ? "#F7E3E6" : "#E4F5EC",
+      newUser: s.newUser || "", newName: s.newName || "", newPin: s.newPin || "", newRole: s.newRole || "guest",
+      newRoleOptions: USER_ROLES.map((r) => ({ value: r[0], label: r[1] })),
+      setNewUser: (e) => this.setState({ newUser: e.target.value }),
+      setNewName: (e) => this.setState({ newName: e.target.value }),
+      setNewPin: (e) => this.setState({ newPin: e.target.value }),
+      setNewRole: (e) => this.setState({ newRole: e.target.value }),
+      addUser: this.addUser,
       ...(() => {
         const vs = this.villages(rows);
         const scale = (v, max, hot) => {
