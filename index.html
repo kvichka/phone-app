@@ -457,7 +457,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           <button onClick="{{ clearHhQuery }}" title="សម្អាត · Clear" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #D9DEE4;background:#fff;color:#767676;border-radius:6px;height:30px;padding:0 9px;font-weight:400;font-size:11px;line-height:1;cursor:pointer;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="8.5"></circle><path d="M9 9l6 6M15 9l-6 6"></path></svg>សម្អាត Clear</button>
         </div>
         <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap">
-          <div style="flex:1;min-width:120px">
+          <div style="flex:1 1 calc(25% - 6px);min-width:0">
             <label>ខេត្ត / រាជធានី<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Province</span></label>
             <select value="{{ hhProv }}" onChange="{{ setHhProv }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ hhProvOptions }}" as="o" hint-placeholder-count="2">
@@ -465,7 +465,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               </sc-for>
             </select>
           </div>
-          <div style="flex:1;min-width:120px">
+          <div style="flex:1 1 calc(25% - 6px);min-width:0">
             <label>ឃុំ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Commune</span></label>
             <select value="{{ hhComm }}" onChange="{{ setHhComm }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ hhCommOptions }}" as="o" hint-placeholder-count="2">
@@ -473,18 +473,18 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               </sc-for>
             </select>
           </div>
-          <div style="flex:none;width:104px">
-            <label>ជុំ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Round</span></label>
-            <select value="{{ matrixRound }}" onChange="{{ setMatrixRound }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
-              <sc-for list="{{ matrixRoundOptions }}" as="o" hint-placeholder-count="2">
+          <div style="flex:1 1 calc(25% - 6px);min-width:0">
+            <label>ភូមិ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Village</span></label>
+            <select value="{{ hhVill }}" onChange="{{ setHhVill }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+              <sc-for list="{{ hhVillOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
             </select>
           </div>
-          <div style="flex:1;min-width:120px">
-            <label>ភូមិ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Village</span></label>
-            <select value="{{ hhVill }}" onChange="{{ setHhVill }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
-              <sc-for list="{{ hhVillOptions }}" as="o" hint-placeholder-count="2">
+          <div style="flex:1 1 calc(25% - 6px);min-width:0">
+            <label>ជុំ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Round</span></label>
+            <select value="{{ matrixRound }}" onChange="{{ setMatrixRound }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+              <sc-for list="{{ matrixRoundOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
             </select>
@@ -569,7 +569,18 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           <span style="display:flex;gap:5px;align-items:baseline;min-width:0"><span style="flex:none;font-size:11px;color:#767676">ក្រុម Cluster</span><span style="min-width:0;font-size:11px;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hh.cluster }}</span></span>
         </div>
       </div>
-      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">កត់ត្រានៅខ្នងផ្ទះនេះ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Record at this household</span></div>
+      <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+        <div style="flex:1;min-width:150px;font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">កត់ត្រានៅខ្នងផ្ទះនេះ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Record at this household</span></div>
+        <div style="flex:none;display:flex;align-items:center;gap:7px">
+          <span style="flex:none;font-size:11px;color:#767676">ជុំ Round</span>
+          <select value="{{ hhRound }}" onChange="{{ setMatrixRound }}" style="width:104px;font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <sc-for list="{{ hhRoundOptions }}" as="o" hint-placeholder-count="3">
+              <option value="{{ o.value }}">{{ o.label }}</option>
+            </sc-for>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#767676;margin-top:-6px">{{ hhRoundNote }}</div>
       
 
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
@@ -1663,7 +1674,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 const KEY = "ento.records.v1";
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbz5dYyX8PKVisxPxePppnmu3qzy1S3pJPCfEQWgrP4osxJkoBA1vyx9DTDROASbA3-P/exec";
+const SHEET_URL = "https://kfmgacwxudhslustwmvm.supabase.co/functions/v1/swift-processor";
 const SEQ = "ento.seq.v1";
 
 const TYPES = {
@@ -2189,6 +2200,80 @@ class Component extends DCLogic {
     this.applyUiSize(this.state.uiSize || "phone", v);
   };
 
+  // Focus zoom: on the phone layout, tapping a field enlarges that field only — the type
+  // being entered grows, the layout width does not, so nothing pans sideways. Restored on blur.
+
+  _isFieldEl(el) {
+    if (!el || !el.tagName) return false;
+    const t = el.tagName;
+    if (t === "TEXTAREA" || t === "SELECT") return true;
+    if (t !== "INPUT") return false;
+    return !/^(checkbox|radio|button|submit|reset|file|range|color)$/i.test(el.type || "text");
+  }
+
+  _zoomValue() {
+    const size = this.state.uiSize || "phone";
+    return (size === "web" ? 1.2 : 1) * (this.state.textScale || 1);
+  }
+
+  _keepFieldInView(el) {
+    requestAnimationFrame(() => {
+      if (!el || !el.getBoundingClientRect || !el.isConnected) return;
+      const r = el.getBoundingClientRect();
+      const delta = r.top - window.innerHeight * 0.3;
+      if (Math.abs(delta) < 20) return;
+      let node = el.parentElement, sc = null;
+      while (node && node !== document.body) {
+        const st = getComputedStyle(node);
+        if (/(auto|scroll)/.test(st.overflowY) && node.scrollHeight - node.clientHeight > 4) { sc = node; break; }
+        node = node.parentElement;
+      }
+      if (sc) sc.scrollTop += delta / this._zoomValue();
+      else window.scrollBy(0, delta);
+    });
+  }
+
+  _shrinkField() {
+    const el = this._fzEl, prev = this._fzPrev;
+    if (el && prev) { for (const k in prev) el.style[k] = prev[k]; }
+    this._fzEl = null;
+    this._fzPrev = null;
+  }
+
+  _growField(el) {
+    if (this._fzEl === el) return;
+    this._shrinkField();
+    const keys = ["fontSize", "fontWeight", "minHeight", "padding", "lineHeight"];
+    const prev = {};
+    keys.forEach((k) => { prev[k] = el.style[k] || ""; });
+    this._fzEl = el;
+    this._fzPrev = prev;
+    el.style.fontSize = "22px";
+    el.style.fontWeight = "700";
+    el.style.lineHeight = "1.25";
+    el.style.padding = el.tagName === "TEXTAREA" ? "10px 12px" : "8px 12px";
+    el.style.minHeight = el.tagName === "TEXTAREA" ? "96px" : "44px";
+  }
+
+  _onFieldFocusIn = (e) => {
+    if ((this.state.uiSize || "phone") !== "phone") return;
+    if (!this._isFieldEl(e.target)) return;
+    clearTimeout(this._fzTimer);
+    this._growField(e.target);
+    this._keepFieldInView(e.target);
+  };
+
+  _onFieldFocusOut = () => {
+    if (!this._fzEl) return;
+    clearTimeout(this._fzTimer);
+    // A short delay so moving from one field to the next does not flicker.
+    this._fzTimer = setTimeout(() => {
+      const a = document.activeElement;
+      if (a === this._fzEl) return;
+      this._shrinkField();
+    }, 120);
+  };
+
   applyUiSize(size, scale) {
     const root = document.getElementById("dc-root") || document.body;
     const s = scale != null ? scale : (this.state.textScale || 1);
@@ -2225,6 +2310,8 @@ class Component extends DCLogic {
     this._onViewportResize = () => this.applyUiSize(this.state.uiSize || "phone");
     window.addEventListener("resize", this._onViewportResize);
     window.addEventListener("orientationchange", this._onViewportResize);
+    document.addEventListener("focusin", this._onFieldFocusIn, true);
+    document.addEventListener("focusout", this._onFieldFocusOut, true);
     // Province/district/commune arrive first (42 KB) so the form is usable at once;
     // the village list (455 KB) streams in behind it.
     const ok = (r) => { if (!r.ok) throw new Error("http " + r.status); return r.json(); };
@@ -2241,7 +2328,9 @@ class Component extends DCLogic {
     try { localStorage.setItem(KEY, JSON.stringify(migrated)); } catch (e) {}
     this.setState({
       records: migrated, collector: c.collector || "", cluster: c.cluster || "",
-      target: c.target || "", round: c.round || "", sheetUrl: c.sheetUrl || SHEET_URL, lastSync: c.lastSync || "",
+      target: c.target || "", round: c.round || "",
+      sheetUrl: c.sheetUrl && c.sheetUrl.indexOf("script.google.com") < 0 ? c.sheetUrl : SHEET_URL,
+      lastSync: c.lastSync || "",
       pendingDel: loadDel(),
     });
     const saved = loadAuth();
@@ -2675,6 +2764,9 @@ class Component extends DCLogic {
     if (this._poll) { clearInterval(this._poll); this._poll = null; }
     window.removeEventListener("online", this._on);
     window.removeEventListener("offline", this._on);
+    document.removeEventListener("focusin", this._onFieldFocusIn, true);
+    document.removeEventListener("focusout", this._onFieldFocusOut, true);
+    clearTimeout(this._fzTimer);
   }
 
   // A trap collection carries no household field, so its household_id is filled from the
@@ -6091,13 +6183,16 @@ class Component extends DCLogic {
       // One round, every household, four activities: did it happen or not. Registration
       // is not an activity, so it never appears here.
       ...(function (self, st) {
-        const round = /^\d{4}-\d{2}$/.test(String(st.matrixRound || "")) ? st.matrixRound : self.currentRound();
         const months = {};
         st.records.forEach((r) => {
           const m = r.period_month || String(r.collected_date || "").slice(0, 7);
           if (m && (r.form_type || r.type) !== "household") months[m] = 1;
         });
-        if (!months[round]) months[round] = 1;
+        // Only rounds that exist in the sheet are offered; the newest is the default.
+        const monthKeys = Object.keys(months).sort().reverse();
+        const round = (/^\d{4}-\d{2}$/.test(String(st.matrixRound || "")) && months[st.matrixRound])
+          ? st.matrixRound : (monthKeys[0] || self.currentRound());
+        if (!monthKeys.length) monthKeys.push(round);
         const list = self.households();
         const KINDS = [["install", "Set"], ["collect", "Col"], ["adult", "Pro"], ["larvae", "Lar"], ["lab", "Resu"]];
         const rows = list.map((h) => {
@@ -6125,10 +6220,43 @@ class Component extends DCLogic {
           toggleMatrix: () => self.setState((p) => ({ matrixOpen: !p.matrixOpen })),
           matrixRound: round,
           setMatrixRound: (e) => self.setState({ matrixRound: e.target.value }),
-          matrixRoundOptions: Object.keys(months).sort().reverse().map((m) => ({
+          matrixRoundOptions: monthKeys.map((m) => ({
             value: m,
             label: (["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(m.slice(5, 7)) - 1] || m.slice(5, 7)) + "-" + m.slice(2, 4),
           })),
+          // On a household you record into the current round or the two before it,
+          // whether or not the sheet already holds data for them.
+          ...(function () {
+            const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            const now = new Date();
+            const label = (m) => (MON[Number(m.slice(5, 7)) - 1] || m.slice(5, 7)) + "-" + m.slice(2, 4);
+            const last3 = [0, 1, 2].map((k) => {
+              const d = new Date(now.getFullYear(), now.getMonth() - k, 1);
+              return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+            });
+            const cur = (self.households() || []).find((h) => h.household_id === st.hhId);
+            const rows = (cur && cur._rows) || [];
+            const doneIn = (m) => rows.some((r) => r.period_month === m
+              && (r.form_type || r.type) !== "household");
+            // A round this household has already been recorded in is not offered again.
+            // The household round follows the selection as typed, even for a month the
+            // sheet holds no data for yet — that is the point of recording into it.
+            const sel = /^\d{4}-\d{2}$/.test(String(st.matrixRound || "")) ? st.matrixRound : round;
+            // Rounds already recorded at this household drop out — except the one
+            // currently selected, which always stays visible in the box.
+            let keys = last3.filter((m) => !doneIn(m) || m === sel);
+            if (keys.indexOf(sel) < 0) keys = [sel].concat(keys);
+            const n = rows.filter((r) => r.period_month === sel
+              && (r.form_type || r.type) !== "household").length;
+            return {
+              hhRound: sel,
+              hhRoundOptions: keys.map((m) => ({ value: m, label: label(m) })),
+              hhRoundNote: !cur ? ""
+                : n
+                  ? n + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 record" + (n === 1 ? "" : "s") + " in " + label(sel)
+                  : "\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1798\u17b6\u1793\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 nothing recorded yet in " + label(sel),
+            };
+          })(),
           matrixCols: KINDS.map(([, label]) => label),
           // How many activity slots this round still owes against how many are finished.
           sortStatusCount: (function (a) {
