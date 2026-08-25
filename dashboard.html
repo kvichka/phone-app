@@ -662,7 +662,56 @@ class Component extends DCLogic {
     this.userAction({ action: "dash-user-delete", username }, "deleted " + username);
   };
 
+  // Focus zoom, the same behaviour as the phone app: the field being typed into
+  // grows, the layout width does not, and it is restored on blur.
+  _isFieldEl(el) {
+    if (!el || !el.tagName) return false;
+    const t = el.tagName;
+    if (t === "TEXTAREA" || t === "SELECT") return true;
+    if (t !== "INPUT") return false;
+    return !/^(checkbox|radio|button|submit|reset|file|range|color)$/i.test(el.type || "text");
+  }
+  _shrinkField() {
+    const el = this._fzEl, prev = this._fzPrev;
+    if (el && prev) { for (const k in prev) el.style[k] = prev[k]; }
+    this._fzEl = null;
+    this._fzPrev = null;
+  }
+  _growField(el) {
+    if (this._fzEl === el) return;
+    this._shrinkField();
+    const keys = ["fontSize", "fontWeight", "minHeight", "padding", "lineHeight"];
+    const prev = {};
+    keys.forEach((k) => { prev[k] = el.style[k] || ""; });
+    this._fzEl = el;
+    this._fzPrev = prev;
+    el.style.fontSize = "22px";
+    el.style.fontWeight = "700";
+    el.style.lineHeight = "1.25";
+    el.style.padding = el.tagName === "TEXTAREA" ? "10px 12px" : "8px 12px";
+    el.style.minHeight = el.tagName === "TEXTAREA" ? "96px" : "44px";
+  }
+  _onFieldFocusIn = (e) => {
+    if (!this._isFieldEl(e.target)) return;
+    clearTimeout(this._fzTimer);
+    this._growField(e.target);
+  };
+  _onFieldFocusOut = () => {
+    if (!this._fzEl) return;
+    clearTimeout(this._fzTimer);
+    this._fzTimer = setTimeout(() => {
+      if (document.activeElement === this._fzEl) return;
+      this._shrinkField();
+    }, 120);
+  };
+  componentWillUnmount() {
+    document.removeEventListener("focusin", this._onFieldFocusIn, true);
+    document.removeEventListener("focusout", this._onFieldFocusOut, true);
+    clearTimeout(this._fzTimer);
+  }
   componentDidMount() {
+    document.addEventListener("focusin", this._onFieldFocusIn, true);
+    document.addEventListener("focusout", this._onFieldFocusOut, true);
     if (this.state.auth) this.load(); else this.setState({ loading: false });
     [0, 300, 900, 2000].forEach((ms) => setTimeout(this.draw, ms));
   }
@@ -1663,6 +1712,7 @@ class Component extends DCLogic {
       const dim = this.chartDim(s.key);
       const options = {
         responsive: true, maintainAspectRatio: false,
+        devicePixelRatio: Math.max(2, window.devicePixelRatio || 1),
         // a round or two of data should not produce a bar the width of the card
         datasets: { bar: { maxBarThickness: 64 } },
         onClick: dim ? (evt, els, chart) => {

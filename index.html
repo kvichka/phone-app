@@ -27,6 +27,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
+@keyframes ento-spin { to { transform: rotate(360deg); } }
 .leaflet-tooltip.hh-label { background:rgba(255,255,255,.92); border:1px solid #D9DEE4; box-shadow:none; padding:1px 5px; border-radius:5px; white-space:nowrap; }
 .leaflet-tooltip.hh-label:before { display:none; }
 .leaflet-container, .leaflet-popup-content, .leaflet-tooltip { font-family:"Kantumruy Pro","Trebuchet MS","Fira Sans",system-ui,sans-serif; }
@@ -118,25 +119,67 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ stripMeta }}</span>
         </span>
       </div>
-      <sc-if value="{{ hasProgress }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-          <div style="flex:1;min-width:0;height:4px;border-radius:5px;background:rgba(255,255,255,.35);overflow:hidden"><div style="width:{{ progressPct }};max-width:100%;height:4px;background:#117996;transition:width 250ms ease"></div></div>
-          <span style="flex:none;font-size:11px;font-weight:700;color:{{ headerFg }}">{{ progressLabel }}</span>
-        </div>
-      </sc-if>
     </div>
-    <button onClick="{{ quickSync }}" title="{{ quickSyncTitle }}" style="position:relative;width:30px;height:30px;flex:none;margin-left:-5px;border-radius:6px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;opacity:{{ quickSyncOpacity }}">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5A8 8 0 0 0 6.3 6.3L4 8.5"></path><path d="M4 4.5v4h4"></path><path d="M4 12.5A8 8 0 0 0 17.7 17.7L20 15.5"></path><path d="M20 19.5v-4h-4"></path></svg>
+    <button onClick="{{ quickSync }}" title="{{ quickSyncTitle }}" style="position:relative;width:clamp(30px,4.2vw,42px);height:clamp(30px,4.2vw,42px);flex:none;margin-left:-5px;border-radius:6px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;opacity:{{ quickSyncOpacity }}">
+      <sc-if value="{{ hasProgress }}" hint-placeholder-val="{{ false }}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:52%;height:52%;animation:ento-spin 900ms linear infinite"><path d="M20 11.5A8 8 0 0 0 6.3 6.3L4 8.5"></path><path d="M4 4.5v4h4"></path><path d="M4 12.5A8 8 0 0 0 17.7 17.7L20 15.5"></path><path d="M20 19.5v-4h-4"></path></svg>
+      </sc-if>
+      <sc-if value="{{ noProgress }}" hint-placeholder-val="{{ true }}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:52%;height:52%"><path d="M20 11.5A8 8 0 0 0 6.3 6.3L4 8.5"></path><path d="M4 4.5v4h4"></path><path d="M4 12.5A8 8 0 0 0 17.7 17.7L20 15.5"></path><path d="M20 19.5v-4h-4"></path></svg>
+      </sc-if>
+      <sc-if value="{{ hasProgress }}" hint-placeholder-val="{{ false }}">
+        <span style="position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);padding:0 3px;border-radius:999px;background:#117996;color:#fff;font-size:11px;font-weight:700;line-height:1.35;white-space:nowrap">{{ progressLabel }}</span>
+      </sc-if>
       <sc-if value="{{ hasQuickSync }}" hint-placeholder-val="{{ false }}">
         <span style="position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;box-sizing:border-box;padding:0 4px;border-radius:999px;background:#F4B71B;color:#000;font-size:11px;font-weight:700;line-height:16px;text-align:center">{{ quickSyncCount }}</span>
       </sc-if>
     </button>
-    <button onClick="{{ openSettings }}" title="ការកំណត់ · Settings" style="width:30px;height:30px;flex:none;margin-left:-5px;border-radius:6px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v2.5"></path><path d="M12 18.5V21"></path><path d="M3 12h2.5"></path><path d="M18.5 12H21"></path><path d="M5.6 5.6l1.8 1.8"></path><path d="M16.6 16.6l1.8 1.8"></path><path d="M18.4 5.6l-1.8 1.8"></path><path d="M7.4 16.6l-1.8 1.8"></path></svg>
-    </button>
-    <button onClick="{{ openAbout }}" title="អំពីកម្មវិធី · About" style="width:30px;height:30px;flex:none;margin-left:-5px;border-radius:6px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;overflow:hidden">
-      <img src="icon-180.png" alt="អំពីកម្មវិធី · About" style="width:26px;height:26px;display:block;border-radius:6px">
-    </button>
+    <div style="position:relative;flex:none;margin-left:-5px">
+      <button onClick="{{ toggleHdrMenu }}" title="ម៉ឺនុយ · Menu" style="width:clamp(30px,4.2vw,42px);height:clamp(30px,4.2vw,42px);border-radius:6px;border:1px solid {{ headerLine }};background:transparent;color:{{ headerFg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0">
+        <span style="width:52%;height:1.8px;background:currentColor;border-radius:2px"></span>
+        <span style="width:52%;height:1.8px;background:currentColor;border-radius:2px"></span>
+        <span style="width:52%;height:1.8px;background:currentColor;border-radius:2px"></span>
+      </button>
+      <sc-if value="{{ hdrMenuOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ toggleHdrMenu }}" style="position:fixed;left:0;right:0;top:0;bottom:61px;z-index:3900;background:rgba(0,62,120,.35)"></div>
+        <div style="position:fixed;top:0;right:0;z-index:4000;width:33.33%;min-width:230px;max-width:380px;height:calc(var(--ento-vh, 100vh) - 61px);box-sizing:border-box;background:#fff;border-left:1px solid #D9DEE4;box-shadow:-8px 0 24px rgba(0,62,120,.22);padding:10px;display:flex;flex-direction:column;gap:2px;overflow:auto">
+          <div style="display:flex;align-items:center;gap:8px;padding:2px 5px 8px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:700;color:#003E78;line-height:1.25">ការគ្រប់គ្រង <span style="font-weight:400;color:#767676">Manage</span></div>
+              <div style="font-size:11px;color:#767676;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ authName }} · {{ authMeta }}</div>
+            </div>
+            <button onClick="{{ toggleHdrMenu }}" title="បិទ · Close" style="flex:none;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:6px;width:26px;height:26px;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5 18.5 18.5"></path><path d="M18.5 5.5 5.5 18.5"></path></svg>
+            </button>
+          </div>
+          <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:2px">
+          <button onClick="{{ menuSettings }}" style="display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;background:transparent;border:0;border-radius:6px;padding:8px 9px;cursor:pointer;text-align:left;color:#003E78;font:700 13px/1.3 inherit" style-hover="background:#D5E7EF">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v2.5"></path><path d="M12 18.5V21"></path><path d="M3 12h2.5"></path><path d="M18.5 12H21"></path><path d="M5.6 5.6l1.8 1.8"></path><path d="M16.6 16.6l1.8 1.8"></path><path d="M18.4 5.6l-1.8 1.8"></path><path d="M7.4 16.6l-1.8 1.8"></path></svg>
+            <span>ការកំណត់ <span style="font-weight:400;color:#767676">Settings</span></span>
+          </button>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ menuUsers }}" style="display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;background:transparent;border:0;border-radius:6px;padding:8px 9px;cursor:pointer;text-align:left;color:#003E78;font:700 13px/1.3 inherit" style-hover="background:#D5E7EF">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="9" cy="8" r="3.4"></circle><path d="M3 20c0-3.2 2.7-5.2 6-5.2s6 2 6 5.2"></path><path d="M17 8.5h4"></path><path d="M19 6.5v4"></path></svg>
+              <span>អ្នកប្រើប្រាស់ <span style="font-weight:400;color:#767676">Users &amp; roles</span></span>
+            </button>
+          </sc-if>
+          <button onClick="{{ menuAbout }}" style="display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;background:transparent;border:0;border-radius:6px;padding:8px 9px;cursor:pointer;text-align:left;color:#003E78;font:700 13px/1.3 inherit" style-hover="background:#D5E7EF">
+            <img src="icon-180.png" alt="" style="width:18px;height:18px;flex:none;border-radius:4px;display:block">
+            <span>អំពីកម្មវិធី <span style="font-weight:400;color:#767676">About</span></span>
+          </button>
+          <button onClick="{{ menuClearCache }}" style="display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;background:transparent;border:0;border-radius:6px;padding:8px 9px;cursor:pointer;text-align:left;color:#003E78;font:700 13px/1.3 inherit" style-hover="background:#D5E7EF">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path><path d="M10 10.5v6"></path><path d="M14 10.5v6"></path></svg>
+            <span>សម្អាត <span style="font-weight:400;color:#767676">Clear cache</span></span>
+          </button>
+          </div>
+          <div style="flex:none;height:1px;background:#D9DEE4;margin:6px 5px 3px"></div>
+          <button onClick="{{ menuSignOut }}" style="flex:none;display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;background:transparent;border:0;border-radius:6px;padding:8px 9px;cursor:pointer;text-align:left;color:#7C1220;font:700 13px/1.3 inherit" style-hover="background:#F5E6E8">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M14.5 3.5H18a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-3.5"></path><path d="M10 16.5 14.5 12 10 7.5"></path><path d="M14.5 12H4"></path></svg>
+            <span>ចាក់ចេញ​ <span style="font-weight:400;color:#767676">Sign out</span></span>
+          </button>
+        </div>
+      </sc-if>
+    </div>
     <div style="text-align:right;flex:none">
       
       
@@ -320,7 +363,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       <div>
         <div style="display:flex;align-items:center;gap:8px;background:#F7F9FB;border:1px solid #E3E9EF;border-radius:8px;padding:4px 8px">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="M15.8 15.8 21 21"></path></svg>
-          <input type="search" value="{{ findQ }}" onChange="{{ setFindQ }}" placeholder="HH-010101 · OVT-…-IN · AC-…-T1 · name" style="flex:1;min-width:0;font-size:11px;line-height:1.2;padding:4px 2px;min-height:28px;height:28px;border:none;background:transparent">
+          <input type="search" value="{{ findQ }}" onChange="{{ setFindQ }}" placeholder="HH-010101 · Ov-…-IN · AC-…-T1 · name" style="flex:1;min-width:0;font-size:11px;line-height:1.2;padding:4px 2px;min-height:28px;height:28px;border:none;background:transparent">
         </div>
         <sc-if value="{{ hasFind }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:7px;border-top:1px solid #F2F2F2">
@@ -343,6 +386,9 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
           <span style="flex:0 0 92px;min-width:0;font-size:11px;line-height:1.3;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">កំណត់ត្រា <span style="color:#767676">ID</span></span>
           <span style="flex:1 1 auto;min-width:0;font-size:11px;line-height:1.3;color:#003E78">ព័ត៌មាន <span style="color:#767676">Detail</span></span>
+          <sc-if value="{{ hasRecTypeFilter }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ clearRecTypeFilter }}" title="សម្អាតតម្រង · clear filter" style="flex:none;background:#D5E7EF;color:#003E78;border:1px solid #A8C8DC;border-radius:999px;padding:1px 8px;font:700 11px/1.35 inherit;cursor:pointer">{{ recTypeFilterLabel }} ✕</button>
+          </sc-if>
           <span style="flex:none;text-align:right;font-size:11px;line-height:1.3;color:#003E78">ស្ថានភាព <span style="color:#767676">Status</span></span>
         </div>
         <sc-for list="{{ recordMonths }}" as="g" hint-placeholder-count="1">
@@ -425,20 +471,20 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         </button>
         <sc-if value="{{ roundsOpen }}" hint-placeholder-val="{{ true }}">
         <sc-for list="{{ homeRounds }}" as="r" hint-placeholder-count="2">
-          <button onClick="{{ r.openMonth }}" title="បើមើលកំណត់ត្រា · open these records" style="width:100%;box-sizing:border-box;display:block;text-align:left;padding:6px 10px;border:none;border-top:1px solid #F2F2F2;border-left:4px solid #117996;background:#fff;cursor:pointer;font-family:inherit">
+          <div style="width:100%;box-sizing:border-box;padding:6px 10px;border-top:1px solid #F2F2F2;border-left:4px solid #117996;background:#fff">
             <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
-              <span style="flex:none;font-size:12px;font-weight:700;color:#003E78;white-space:nowrap">{{ r.label }}</span>
+              <button onClick="{{ r.openMonth }}" title="បើមើលកំណត់ត្រា · open these records" style="flex:none;background:transparent;border:0;padding:6px 8px;margin:-6px -8px;min-height:28px;font:700 12px/1.3 inherit;color:#003E78;white-space:nowrap;cursor:pointer">{{ r.label }}</button>
               <span style="flex:1;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.hh }} ខ្នងផ្ទះ · #HH</span>
               <span style="flex:none;display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ភាជន៍ Pos<span style="font-weight:700;color:{{ r.indexFg }}">{{ r.contIndex }}</span></span>
             </span>
-            <span style="display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:3px">
-              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ដាក់ Set<span style="font-weight:700;color:#003E78">{{ r.install }}</span></span>
-              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ប្រមូល Col<span style="font-weight:700;color:#003E78">{{ r.collect }}</span></span>
-              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ដង្កូវទឹក Lar<span style="font-weight:700;color:#003E78">{{ r.larvae }}</span></span>
-              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">មូស Adu<span style="font-weight:700;color:#003E78">{{ r.adult }}</span></span>
-              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">លទ្ធផល Lab<span style="font-weight:700;color:#003E78">{{ r.lab }}</span></span>
+            <span style="display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:6px">
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ដាក់ Set<button onClick="{{ r.openInstall }}" title="Set · open these records" style="background:transparent;border:0;padding:6px 8px;margin:-6px -8px;min-height:28px;font:700 11px/1.3 inherit;color:#117996;text-decoration:underline;cursor:pointer">{{ r.install }}</button></span>
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ប្រមូល Col<button onClick="{{ r.openCollect }}" title="Col · open these records" style="background:transparent;border:0;padding:6px 8px;margin:-6px -8px;min-height:28px;font:700 11px/1.3 inherit;color:#117996;text-decoration:underline;cursor:pointer">{{ r.collect }}</button></span>
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">ដង្កូវទឹក Lar<button onClick="{{ r.openLarvae }}" title="Lar · open these records" style="background:transparent;border:0;padding:6px 8px;margin:-6px -8px;min-height:28px;font:700 11px/1.3 inherit;color:#117996;text-decoration:underline;cursor:pointer">{{ r.larvae }}</button></span>
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">មូស Adu<button onClick="{{ r.openAdult }}" title="Adu · open these records" style="background:transparent;border:0;padding:6px 8px;margin:-6px -8px;min-height:28px;font:700 11px/1.3 inherit;color:#117996;text-decoration:underline;cursor:pointer">{{ r.adult }}</button></span>
+              <span style="display:inline-flex;align-items:baseline;gap:4px;font-size:11px;color:#767676;white-space:nowrap">លទ្ធផល Lab<button onClick="{{ r.openLab }}" title="Lab · open these records" style="background:transparent;border:0;padding:6px 8px;margin:-6px -8px;min-height:28px;font:700 11px/1.3 inherit;color:#117996;text-decoration:underline;cursor:pointer">{{ r.lab }}</button></span>
             </span>
-          </button>
+          </div>
         </sc-for>
         </sc-if>
       </div>
@@ -501,7 +547,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       </div>
       <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
-          <div ref="{{ hhMapRef }}" style="height:300px;border-radius:6px;border:1px solid #D9DEE4;background:#F8FAFB"></div>
+          <div ref="{{ hhMapRef }}" style="position:relative;z-index:0;height:300px;border-radius:6px;border:1px solid #D9DEE4;background:#F8FAFB"></div>
           <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px">
             <sc-for list="{{ villageLegend }}" as="v" hint-placeholder-count="3">
               <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#003E78"><span style="width:11px;height:11px;flex:none;border-radius:50%;background:{{ v.color }};border:2px solid #fff;box-shadow:0 0 0 1px #D9DEE4"></span>{{ v.name }} · {{ v.n }}</span>
@@ -637,18 +683,26 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         </div>
       </sc-if>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;overflow:hidden">
-        <div style="padding:6px 10px;background:#F2F2F2;font-size:11px;color:#003E78">កំណត់ត្រាម្តងមួយ <span style="color:#767676">Each record · tap the pencil to edit</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F2F2F2;font-size:11px;color:#003E78">
+          <span style="flex:1;min-width:0">កំណត់ត្រាម្តងមួយ <span style="color:#767676">Each record · tap the pencil to edit</span></span>
+          <button onClick="{{ sortHhActivity }}" style="flex:none;background:{{ hhSortActBg }};color:{{ hhSortActFg }};border:1px solid #D9DEE4;border-radius:999px;padding:2px 9px;font:700 11px/1.3 inherit;cursor:pointer">សកម្មភាព Activity{{ hhSortActArrow }}</button>
+          <button onClick="{{ sortHhDate }}" style="flex:none;background:{{ hhSortDateBg }};color:{{ hhSortDateFg }};border:1px solid #D9DEE4;border-radius:999px;padding:2px 9px;font:700 11px/1.3 inherit;cursor:pointer">ថ្ងៃ Date{{ hhSortDateArrow }}</button>
+        </div>
         <sc-for list="{{ hhRecordsShown }}" as="r" hint-placeholder-count="3">
           <button onClick="{{ r.edit }}" style="display:flex;align-items:center;gap:9px;width:100%;box-sizing:border-box;text-align:left;background:#fff;border:none;border-top:1px solid #F2F2F2;border-left:4px solid {{ r.bar }};padding:7px 10px;cursor:pointer;font-family:inherit">
             <span style="flex:1;min-width:0">
               <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
                 <span style="font-size:12px;font-weight:700;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span>
-                <span style="flex:1;min-width:0;font-size:11px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
+                <span style="flex:1;min-width:0;font-size:11px;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</span>
               </span>
               <span style="display:flex;align-items:center;gap:6px;margin-top:2px;min-width:0">
               <span style="flex:none;font-size:11px;font-weight:700;color:{{ r.actionFg }};background:{{ r.actionBg }};border-radius:999px;padding:1px 6px;white-space:nowrap">{{ r.action }}</span>
               <span style="flex:1;min-width:0;font-size:11px;color:#003E78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.detail }}</span>
             </span>
+            </span>
+            <span style="flex:none;text-align:right;white-space:nowrap">
+              <span style="display:block;font-size:11px;color:#003E78">{{ r.when }}</span>
+              <span style="display:block;font-size:11px;color:#767676">{{ r.whenTime }}</span>
             </span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg>
           </button>
@@ -798,7 +852,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
                 <button onClick="{{ f.capture }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #117996;background:#fff;color:#117996;border-radius:6px;min-height:30px;padding:0 11px;font-weight:700;font-size:11px;line-height:1.2;cursor:pointer;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="7.5"></circle><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"></path></svg>យក · Capture</button>
               </div>
               <sc-if value="{{ f.hasFix }}" hint-placeholder-val="{{ false }}">
-                <div ref="{{ formMapRef }}" style="height:180px;margin-top:8px;border:1px solid #D9DEE4;border-radius:6px;background:#F8FAFB"></div>
+                <div ref="{{ formMapRef }}" style="position:relative;z-index:0;height:180px;margin-top:8px;border:1px solid #D9DEE4;border-radius:6px;background:#F8FAFB"></div>
               </sc-if>
             </sc-if>
             <sc-if value="{{ f.isPicks }}" hint-placeholder-val="{{ false }}">
@@ -992,7 +1046,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           <sc-for list="{{ g.rows }}" as="b" hint-placeholder-count="2">
             <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-top:1px solid #EDF1F4">
               <span style="flex:0 0 92px;min-width:0;font:700 11px/1.35 ui-monospace,Menlo,monospace;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.id }}</span>
-              <span style="flex:1 1 auto;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.meta }}</span>
+              <span style="flex:1 1 auto;min-width:0;font-size:11px;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.meta }}</span>
               <span style="flex:none;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:6px">
                 <sc-if value="{{ b.notArmed }}" hint-placeholder-val="{{ true }}">
                   <button onClick="{{ b.edit }}" title="កែសម្រួល · Edit this result" style="display:inline-flex;align-items:center;gap:5px;max-width:100%;box-sizing:border-box;font-size:11px;font-weight:700;background:{{ b.tagBg }};color:{{ b.tagFg }};border:1px solid #A8C8DC;padding:3px 8px;border-radius:999px;cursor:pointer;font-family:inherit;overflow:hidden"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.tag }}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
@@ -1267,8 +1321,12 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <span style="display:block;font-size:13px;font-weight:700;color:#003E78;line-height:1.25">ផែនទីគ្រួសារ <span style="font-weight:400;color:#767676">Household map</span></span>
             <span style="display:block;font-size:11px;color:#767676;line-height:1.35">ចំណុចមកពី GPS ពេលចុះបញ្ជី · pins from registration</span>
           </span>
+          <button onClick="{{ exportHhGps }}" title="ទាញយក CSV · Download household detail with GPS" style="flex:none;background:#fff;color:#117996;border:1px solid #117996;border-radius:8px;min-height:30px;padding:0 10px;font:700 11px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v10"></path><path d="M8.2 9.8 12 13.6l3.8-3.8"></path><path d="M4.5 15.5V19a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3.5"></path></svg>
+            CSV
+          </button>
         </div>
-        <div ref="{{ mapRef }}" style="height:280px;margin-top:12px;border-radius:6px;border:1px solid #D9DEE4;background:#F8FAFB"></div>
+        <div ref="{{ mapRef }}" style="position:relative;z-index:0;height:280px;margin-top:12px;border-radius:6px;border:1px solid #D9DEE4;background:#F8FAFB"></div>
         <div style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:7px">
           <sc-for list="{{ dash.riskLegend }}" as="r" hint-placeholder-count="4">
             <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;line-height:1.3;color:#003E78"><span style="width:7px;height:7px;flex:none;border-radius:50%;background:{{ r.color }};border:1px solid #fff;box-shadow:0 0 0 1px rgba(0,62,120,.2)"></span>{{ r.km }}<span style="color:#767676">{{ r.en }}</span></span>
@@ -1558,6 +1616,208 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
   </sc-if>
 
 
+  <sc-if value="{{ showUsers }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:3200;background:#F2F2F2;display:flex;flex-direction:column;overflow:hidden">
+      <div style="flex:none;background:#003E78;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;min-height:56px;box-sizing:border-box">
+        <button onClick="{{ closeUsers }}" title="ត្រឡប់ · Back" style="flex:none;width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5 8 12l6.5 7"></path></svg>
+        </button>
+        <div style="flex:1;min-width:0;font-size:17px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">គ្រប់គ្រងអ្នកប្រើប្រាស់</div>
+        <button onClick="{{ usersReload }}" title="ផ្ទុកឡើងវិញ · Reload" style="flex:none;width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5A8 8 0 0 0 6.3 6.3L4 8.5"></path><path d="M4 4.5v4h4"></path><path d="M4 12.5A8 8 0 0 0 17.7 17.7L20 15.5"></path><path d="M20 19.5v-4h-4"></path></svg>
+        </button>
+      </div>
+
+      <div ref="{{ usersScrollRef }}" style="flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px">
+        <sc-if value="{{ usersOffline }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FDF3D7;border:1px solid #F4B71B;border-radius:8px;padding:8px 10px;font-size:11px;color:#003E78;line-height:1.45">គ្មានអ៊ីនធឺណិត · offline — this is the last saved list. Changes need a connection.</div>
+        </sc-if>
+        <sc-if value="{{ usersErr }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#F7E7EA;border:1px solid #E3BFC4;border-radius:8px;padding:8px 10px;font-size:11px;color:#7C1220;line-height:1.45">{{ usersErr }}</div>
+        </sc-if>
+
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+          <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:flex;align-items:baseline;gap:8px">
+            <span style="font-size:22px;font-weight:700;color:#003E78;line-height:1">{{ statTotal }}</span>
+            <span style="font-size:13px;color:#767676;line-height:1.3">Users provisioned</span>
+          </div>
+          <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:flex;align-items:baseline;gap:8px">
+            <span style="font-size:22px;font-weight:700;color:#117996;line-height:1">{{ statActive }}</span>
+            <span style="font-size:13px;color:#767676;line-height:1.3">Active</span>
+          </div>
+          <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:flex;align-items:baseline;gap:8px">
+            <span style="font-size:22px;font-weight:700;color:#F4B71B;line-height:1">{{ statPending }}</span>
+            <span style="font-size:13px;color:#767676;line-height:1.3">Pending first sign-in</span>
+          </div>
+          <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:flex;align-items:baseline;gap:8px">
+            <span style="font-size:22px;font-weight:700;color:#7C1220;line-height:1">{{ statOff }}</span>
+            <span style="font-size:13px;color:#767676;line-height:1.3">Deactivated</span>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px">
+          <label style="display:flex;align-items:center;gap:8px;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;min-height:40px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+            <input value="{{ usersQ }}" onChange="{{ setUsersQ }}" placeholder="Search name, username, area" style="flex:1;min-width:0;border:0;outline:none;font-size:13px;color:#003E78;background:transparent">
+          </label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+            <select value="{{ usersRoleF }}" onChange="{{ setUsersRoleF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;font-weight:700;color:#003E78;background:#fff">
+              <option value="">All roles</option>
+              <sc-for list="{{ usersRoleOptions }}" as="r" hint-placeholder-count="3">
+                <option value="{{ r.value }}">{{ r.label }}</option>
+              </sc-for>
+            </select>
+            <select value="{{ usersProvF }}" onChange="{{ setUsersProvF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;font-weight:700;color:#003E78;background:#fff">
+              <option value="">All provinces</option>
+              <sc-for list="{{ usersProvOptions }}" as="o" hint-placeholder-count="3">
+                <option value="{{ o.value }}">{{ o.label }}</option>
+              </sc-for>
+            </select>
+            <select value="{{ usersStatusF }}" onChange="{{ setUsersStatusF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;font-weight:700;color:#003E78;background:#fff">
+              <option value="">All</option>
+              <option value="active">Active</option>
+              <option value="off">Deactivated</option>
+              <option value="pending">Pending first sign-in</option>
+            </select>
+            <button onClick="{{ usersCsv }}" style="min-height:40px;background:#fff;color:#117996;border:1px solid #117996;border-radius:8px;padding:0 12px;font:700 13px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v10"></path><path d="M8.2 9.8 12 13.6l3.8-3.8"></path><path d="M4.5 15.5V19a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3.5"></path></svg>
+              Export CSV
+            </button>
+          </div>
+          <button onClick="{{ uNew }}" style="align-self:flex-start;min-height:44px;background:#003E78;color:#fff;border:0;border-radius:8px;padding:0 18px;font:700 15px/1.2 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px">+ New user</button>
+        </div>
+
+        <sc-if value="{{ uFormOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:none;background:#fff;border:1px solid #003E78;border-radius:8px;padding:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,62,120,.12)">
+            <div style="display:flex;align-items:center;gap:10px;margin:-12px -12px 12px;padding:11px 12px;background:#D5E7EF;border-bottom:1px solid #BBD4E2">
+              <span style="flex:none;width:30px;height:30px;border-radius:8px;background:#003E78;color:#fff;display:inline-flex;align-items:center;justify-content:center">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"></circle><path d="M3 20c0-3.2 2.7-5.2 6-5.2s6 2 6 5.2"></path><path d="M17 8.5h4"></path><path d="M19 6.5v4"></path></svg>
+              </span>
+              <span style="flex:1;min-width:0;font-size:15px;font-weight:700;color:#003E78;line-height:1.3">{{ uFormTitle }}</span>
+              <button onClick="{{ uCancel }}" title="បិទ · Close" style="flex:none;background:#fff;color:#003E78;border:1px solid #BBD4E2;border-radius:8px;width:30px;height:30px;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5 18.5 18.5"></path><path d="M18.5 5.5 5.5 18.5"></path></svg>
+              </button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+              <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                <span style="font-size:11px;font-weight:700;color:#003E78">ឈ្មោះចូល <span style="font-weight:400;color:#767676">Username</span></span>
+                <input value="{{ uUsername }}" onChange="{{ uSetUsername }}" disabled="{{ uLocked }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:13px;color:#003E78;background:{{ uUsernameBg }}">
+              </label>
+              <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                <span style="font-size:11px;font-weight:700;color:#003E78">ឈ្មោះ <span style="font-weight:400;color:#767676">Name</span></span>
+                <input value="{{ uName }}" onChange="{{ uSetName }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:13px;color:#003E78">
+              </label>
+              <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                <span style="font-size:11px;font-weight:700;color:#003E78">ប្រភេទ <span style="font-weight:400;color:#767676">Account</span></span>
+                <select value="{{ uKind }}" onChange="{{ uSetKind }}" disabled="{{ uLocked }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78;background:{{ uUsernameBg }}">
+                  <option value="field">កម្មវិធី · Field app</option>
+                  <option value="dash">ផ្ទាំងបង្ហាញ · Dashboard</option>
+                  <option value="both">ទាំងពីរ · Both</option>
+                </select>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                <span style="font-size:11px;font-weight:700;color:#003E78">តួនាទី <span style="font-weight:400;color:#767676">Role</span></span>
+                <select value="{{ uRole }}" onChange="{{ uSetRole }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78">
+                  <sc-for list="{{ uRoleOptions }}" as="r" hint-placeholder-count="2">
+                    <option value="{{ r.value }}">{{ r.label }}</option>
+                  </sc-for>
+                </select>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                <span style="font-size:11px;font-weight:700;color:#003E78">លេខសម្ងាត់ <span style="font-weight:400;color:#767676">{{ uPinHint }}</span></span>
+                <input value="{{ uPin }}" onChange="{{ uSetPin }}" inputmode="numeric" placeholder="4–8 digits" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:13px;color:#003E78">
+              </label>
+              <div style="grid-column:1 / -1;border-top:1px solid #E3E9EF;padding-top:10px">
+                <div style="font-size:11px;font-weight:700;color:#003E78;margin-bottom:8px">តំបន់អនុញ្ញាត <span style="font-weight:400;color:#767676">Area this account may access — leave blank for everywhere</span></div>
+                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+                  <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                    <span style="font-size:11px;font-weight:700;color:#003E78">ខេត្ត <span style="font-weight:400;color:#767676">Province</span></span>
+                    <select value="{{ uProvince }}" onChange="{{ uSetProvince }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78">
+                      <option value="">ទាំងអស់ · all</option>
+                      <sc-for list="{{ uProvinceOptions }}" as="o" hint-placeholder-count="3">
+                        <option value="{{ o.value }}">{{ o.label }}</option>
+                      </sc-for>
+                    </select>
+                  </label>
+                  <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                    <span style="font-size:11px;font-weight:700;color:#003E78">ស្រុក <span style="font-weight:400;color:#767676">District</span></span>
+                    <select value="{{ uDistrict }}" onChange="{{ uSetDistrict }}" disabled="{{ uDistrictOff }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78;background:{{ uDistrictBg }}">
+                      <option value="">ទាំងអស់ · all</option>
+                      <sc-for list="{{ uDistrictOptions }}" as="o" hint-placeholder-count="0">
+                        <option value="{{ o.value }}">{{ o.label }}</option>
+                      </sc-for>
+                    </select>
+                  </label>
+                  <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                    <span style="font-size:11px;font-weight:700;color:#003E78">ឃុំ <span style="font-weight:400;color:#767676">Commune</span></span>
+                    <select value="{{ uCommune }}" onChange="{{ uSetCommune }}" disabled="{{ uCommuneOff }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78;background:{{ uCommuneBg }}">
+                      <option value="">ទាំងអស់ · all</option>
+                      <sc-for list="{{ uCommuneOptions }}" as="o" hint-placeholder-count="0">
+                        <option value="{{ o.value }}">{{ o.label }}</option>
+                      </sc-for>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px">
+              <button onClick="{{ uCancel }}" style="background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:8px;min-height:40px;padding:0 16px;font:700 13px/1.2 inherit;cursor:pointer">បោះបង់ · Cancel</button>
+              <button onClick="{{ uSave }}" disabled="{{ usersBusy }}" style="background:#003E78;color:#fff;border:0;border-radius:8px;min-height:40px;padding:0 20px;font:700 13px/1.2 inherit;cursor:pointer;opacity:{{ usersBusyOpacity }}">រក្សាទុក · Save</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#767676">{{ usersCountLabel }}</div>
+
+        <sc-for list="{{ usersRows }}" as="u" hint-placeholder-count="3">
+          <div style="background:#fff;border:1px solid #D9DEE4;border-top:3px solid {{ u.edgeColor }};border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span style="flex:none;width:12px;height:12px;border-radius:50%;background:{{ u.dotColor }};margin-top:5px"></span>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:15px;font-weight:700;color:#003E78;line-height:1.3;overflow:hidden;text-overflow:ellipsis">{{ u.name }}</div>
+                <div style="font-size:13px;color:#767676;line-height:1.4">{{ u.username }}</div>
+              </div>
+              <div style="flex:none;display:flex;gap:6px">
+                <button onClick="{{ u.onEdit }}" title="កែ · Edit" style="background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:8px;width:40px;height:40px;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16v4Z"></path><path d="M14.5 5.5 18.5 9.5"></path></svg>
+                </button>
+                <button onClick="{{ u.onPin }}" title="លេខសម្ងាត់ថ្មី · Reset PIN" style="background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:8px;width:40px;height:40px;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"></rect><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"></path><path d="M12 14.5v2.5"></path></svg>
+                </button>
+                <button onClick="{{ u.onToggle }}" title="{{ u.toggleTitle }}" style="background:#fff;color:{{ u.toggleFg }};border:1px solid #D9DEE4;border-radius:8px;width:40px;height:40px;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v8"></path><path d="M6.6 6.6a7.5 7.5 0 1 0 10.8 0"></path></svg>
+                </button>
+                <button onClick="{{ u.onDelete }}" title="លុប · Delete" style="background:#fff;color:#7C1220;border:1px solid #E3BFC4;border-radius:8px;width:40px;height:40px;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9 7V4.5h6V7"></path><path d="M6.5 7l1 13h9l1-13"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;align-items:center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20c0-3.4 3.1-5.6 7-5.6s7 2.2 7 5.6"></path></svg>
+              <span style="font-size:13px;font-weight:700;color:#003E78">{{ u.roleLabel }}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.4 7-11a7 7 0 1 0-14 0c0 4.6 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
+              <span style="font-size:13px;color:#003E78">{{ u.cluster }}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M8.5 12.4l2.4 2.4 4.6-5"></path></svg>
+              <span style="font-size:13px;font-weight:700;color:{{ u.statusFg }}">{{ u.statusLabel }}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"></rect><path d="M11 18.6h2"></path></svg>
+              <span style="font-size:13px;color:#767676">{{ u.kindLabel }}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>
+              <span style="font-size:13px;color:#767676">{{ u.activity }}</span>
+              <sc-if value="{{ u.hasRoleExtra }}" hint-placeholder-val="{{ false }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="4.2" width="17.6" height="15.6" rx="2.4"></rect><path d="M3.2 9.2h17.6"></path><path d="M7.8 16.4V13"></path><path d="M12 16.4v-4.8"></path><path d="M16.2 16.4v-2.4"></path></svg>
+                <span style="font-size:13px;color:#767676">{{ u.roleExtra }}</span>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ usersEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:16px;font-size:13px;color:#767676">{{ usersEmptyLabel }}</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ showSettings }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;z-index:3000;background:rgba(0,62,120,.55);display:flex;align-items:center;justify-content:center;padding:20px">
       <div style="background:#fff;border-radius:8px;max-width:560px;width:100%;box-shadow:0 18px 48px rgba(0,62,120,.35);overflow:hidden;max-height:calc(var(--ento-vh, 100vh) - 40px);display:flex;flex-direction:column">
@@ -1581,37 +1841,6 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               <input type="range" min="0" max="3" step="1" value="{{ textStep }}" onChange="{{ setTextStep }}" style="flex:1 1 60px;min-width:0;height:18px">
               <span style="flex:none;font-size:18px;font-weight:700;color:#003E78;line-height:1">A</span>
               <div style="flex:none;font-size:11px;color:#767676;white-space:nowrap">{{ textStepLabel }}</div>
-            </div>
-          </div>
-          <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:6px 11px;margin-bottom:9px;min-height:30px;box-sizing:border-box;display:flex;align-items:center;gap:10px">
-            <div style="flex:1;min-width:0;display:flex;align-items:baseline;gap:8px;overflow:hidden;white-space:nowrap">
-              <span style="flex:none;font-size:11px;font-weight:700;color:#003E78">អ្នកប្រើ<span style="font-weight:400;color:#767676;margin-left:5px">User</span></span>
-              <span style="flex:none;font-size:13px;font-weight:700;color:#003E78">{{ authName }}</span>
-              <span style="flex:1;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis">{{ authMeta }}</span>
-            </div>
-            <button onClick="{{ signOut }}" title="ចេញ · Sign out" style="flex:none;background:#fff;color:#7C1220;border:1px solid #E3BFC4;border-radius:8px;width:32px;height:32px;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 3.5H18a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-3.5"></path><path d="M10 16.5 14.5 12 10 7.5"></path><path d="M14.5 12H4"></path></svg>
-            </button>
-          </div>
-          <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:11px;margin-bottom:9px">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#003E78">អ្នកប្រមូលទិន្នន័យ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Data collector</span></div>
-            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px;align-items:end">
-              <div>
-                <label style="margin-bottom:4px;font-weight:400">អ្នកប្រមូល<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">Collector</span></label>
-                <input type="text" value="{{ collector }}" readonly="{{ true }}" title="ពីគណនីដែលចូលប្រើ · from the signed-in account" placeholder="Your name" style="font-size:11px;line-height:1.2;padding:5px 8px;min-height:30px;height:30px;background:#F2F2F2;color:#767676">
-              </div>
-              <div>
-                <label style="margin-bottom:4px;font-weight:400">ចង្កោម<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">Cluster</span></label>
-                <input type="text" value="{{ cluster }}" readonly="{{ true }}" title="ពីគណនីដែលចូលប្រើ · from the signed-in account" placeholder="C2" style="font-size:11px;line-height:1.2;padding:5px 8px;min-height:30px;height:30px;background:#F2F2F2;color:#767676">
-              </div>
-              <div>
-                <label style="margin-bottom:4px;font-weight:400">គោលដៅ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">Target</span></label>
-                <input type="number" inputmode="numeric" value="{{ target }}" onChange="{{ setTarget }}" placeholder="30" style="font-size:11px;line-height:1.2;padding:5px 8px;min-height:30px;height:30px">
-              </div>
-              <div>
-                <label style="margin-bottom:4px;font-weight:400">ជុំប្រមូល<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">Round</span></label>
-                <input type="month" value="{{ round }}" onChange="{{ setRound }}" style="font-size:11px;line-height:1.2;padding:5px 8px;min-height:30px;height:30px">
-              </div>
             </div>
           </div>
         </div>
@@ -1647,11 +1876,11 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       <div style="background:#fff;border-radius:8px;max-width:420px;width:100%;box-shadow:0 18px 48px rgba(0,62,120,.35);overflow:hidden;max-height:calc(var(--ento-vh, 100vh) - 40px);display:flex;flex-direction:column">
         <div style="background:{{ pullDoneBg }};color:#fff;padding:14px;display:flex;align-items:center;gap:10px">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3.5v11"></path><path d="M7.5 10.5 12 15l4.5-4.5"></path><path d="M4.5 19.5h15"></path></svg>
-          <span style="flex:1;font-size:13px;font-weight:700">{{ pullDoneTitle }}</span>
+          <span style="flex:1;font-size:15px;font-weight:700;line-height:1.3">{{ pullDoneTitle }}</span>
         </div>
         <div style="padding:14px;overflow:auto;min-height:0">
-          <div style="font-size:13px;color:#003E78;line-height:1.7">{{ pullDoneKm }}</div>
-          <div style="font-size:12px;color:#767676;line-height:1.65;margin-top:6px">{{ pullDoneEn }}</div>
+          <div style="font-size:13px;font-weight:700;color:#003E78;line-height:1.6">{{ pullDoneKm }}</div>
+          <div style="font-size:12px;color:#767676;line-height:1.6;margin-top:4px">{{ pullDoneEn }}</div>
           <sc-if value="{{ hasPullDoneScope }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:10px;background:#D5E7EF;border-left:4px solid #003E78;padding:9px 11px;font-size:12px;color:#003E78;line-height:1.5">{{ pullDoneScopeLabel }}</div>
           </sc-if>
@@ -1659,8 +1888,8 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <div style="padding:0 16px 16px">
           <sc-if value="{{ pullDoneEmpty }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:8px">
-              <button onClick="{{ pullChangeArea }}" style="flex:1;box-sizing:border-box;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:8px;min-height:38px;font-weight:700;font-size:11px;line-height:1.25;cursor:pointer">ប្តូរតំបន់ · Change area</button>
-              <button onClick="{{ pullAgain }}" style="flex:1;box-sizing:border-box;background:#003E78;color:#fff;border:none;border-radius:8px;min-height:38px;font-weight:700;font-size:11px;line-height:1.25;cursor:pointer">ទាញម្តងទៀត · Pull again</button>
+              <button onClick="{{ pullChangeArea }}" style="flex:1;box-sizing:border-box;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:8px;min-height:38px;font-weight:700;font-size:13px;line-height:1.25;cursor:pointer">ប្តូរតំបន់ · Change area</button>
+              <button onClick="{{ pullAgain }}" style="flex:1;box-sizing:border-box;background:#003E78;color:#fff;border:none;border-radius:8px;min-height:38px;font-weight:700;font-size:13px;line-height:1.25;cursor:pointer">ទាញម្តងទៀត · Pull again</button>
             </div>
           </sc-if>
           <sc-if value="{{ pullDoneNormal }}" hint-placeholder-val="{{ true }}">
@@ -1998,16 +2227,18 @@ function loadCtx() {
 // caches the person and a hash of their PIN on the phone, so the same person can
 // unlock the app in the field with no signal for AUTH_DAYS after that.
 const AUTH = "ento.auth.v1";
-const AUTH_DAYS = 30;
+const AUTH_DAYS = 1;         // a sign-in lasts 24 hours, then the PIN is asked again
+const AUTH_OFFLINE_DAYS = 7; // with no signal there is no way to sign in, so the cached
+                             // PIN keeps unlocking the phone for a week
 function loadAuth() {
   try { return JSON.parse(localStorage.getItem(AUTH) || "null"); } catch (e) { return null; }
 }
 function saveAuth(a) {
   try { a ? localStorage.setItem(AUTH, JSON.stringify(a)) : localStorage.removeItem(AUTH); } catch (e) {}
 }
-function authFresh(a) {
+function authFresh(a, days) {
   if (!a || !a.username || !a.savedAt) return false;
-  return (Date.now() - (Date.parse(a.savedAt) || 0)) < AUTH_DAYS * 86400000;
+  return (Date.now() - (Date.parse(a.savedAt) || 0)) < (days || AUTH_DAYS) * 86400000;
 }
 // The same recipe the receiver uses, so an offline check matches the sheet.
 function pinHash(username, pin) {
@@ -2061,9 +2292,13 @@ class Component extends DCLogic {
     if (a.cluster) c.cluster = a.cluster;
     try { localStorage.setItem(CTX, JSON.stringify(c)); } catch (e) {}
     this.setState({
+      // Every sign-in lands on About, so the app explains itself before recording.
+      screen: "about",
       auth: a, loginPin: "", loginErr: "", loginBusy: false,
       collector: c.collector, cluster: c.cluster || "",
-    });
+      // An account limited to an area pulls and sees only that area.
+      pullProv: a.province_code || "", pullDist: a.district_code || "", pullComm: a.commune_code || "",
+    }, () => this.setState({ records: this.inScopeList(this.link(load())) }));
     this.toast("\u179f\u17bd\u179f\u17d2\u178f\u17b8 " + (a.name || a.username) + " \u00b7 signed in", "ok");
   }
 
@@ -2080,7 +2315,7 @@ class Component extends DCLogic {
       // Signal or not, the last person to sign in here can always get back in.
       const offline = () => {
         const a = loadAuth();
-        if (a && authFresh(a) && String(a.username).toLowerCase() === user.toLowerCase() && a.pinHash === hash) {
+        if (a && authFresh(a, AUTH_OFFLINE_DAYS) && String(a.username).toLowerCase() === user.toLowerCase() && a.pinHash === hash) {
           this.applyAuth({ ...a, offlineAt: new Date().toISOString() });
           return true;
         }
@@ -2107,6 +2342,10 @@ class Component extends DCLogic {
           this.applyAuth({
             username: out.user.username, name: out.user.name || out.user.username,
             role: out.user.role || "collector", cluster: out.user.cluster || "",
+            // The area this account may see, straight from the login reply.
+            province_code: out.user.province_code || "",
+            district_code: out.user.district_code || "",
+            commune_code: out.user.commune_code || "",
             token: out.token, pinHash: hash, savedAt: new Date().toISOString(),
           });
         })
@@ -2160,8 +2399,11 @@ class Component extends DCLogic {
   // computer scales the whole app up so it is readable at arm's length.
   setUiSize(size) {
     try { localStorage.setItem("ento.uisize.v1", size); } catch (e) {}
-    this.setState({ uiSize: size });
-    this.applyUiSize(size);
+    // The computer setting starts one step up; the slider still overrides it.
+    const scale = size === "web" ? Math.max(1.5, this.state.textScale || 1) : 1;
+    try { localStorage.setItem("ento.textscale.v1", String(scale)); } catch (e) {}
+    this.setState({ uiSize: size, textScale: scale });
+    this.applyUiSize(size, scale);
     this._onViewportResize = () => this.applyUiSize(this.state.uiSize || "phone");
     window.addEventListener("resize", this._onViewportResize);
     window.addEventListener("orientationchange", this._onViewportResize);
@@ -2211,10 +2453,7 @@ class Component extends DCLogic {
     return !/^(checkbox|radio|button|submit|reset|file|range|color)$/i.test(el.type || "text");
   }
 
-  _zoomValue() {
-    const size = this.state.uiSize || "phone";
-    return (size === "web" ? 1.2 : 1) * (this.state.textScale || 1);
-  }
+  _zoomValue() { return this.state.textScale || 1; }
 
   _keepFieldInView(el) {
     requestAnimationFrame(() => {
@@ -2256,7 +2495,6 @@ class Component extends DCLogic {
   }
 
   _onFieldFocusIn = (e) => {
-    if ((this.state.uiSize || "phone") !== "phone") return;
     if (!this._isFieldEl(e.target)) return;
     clearTimeout(this._fzTimer);
     this._growField(e.target);
@@ -2277,7 +2515,7 @@ class Component extends DCLogic {
   applyUiSize(size, scale) {
     const root = document.getElementById("dc-root") || document.body;
     const s = scale != null ? scale : (this.state.textScale || 1);
-    const z = (size === "web" ? 1.2 : 1) * s;
+    const z = s;
     root.style.zoom = z === 1 ? "" : String(z);
     // Viewport units inside a zoomed subtree resolve before the zoom, so a 100vh box
     // would render 20 percent too tall. Feed the real height in, divided by the zoom.
@@ -2303,6 +2541,13 @@ class Component extends DCLogic {
     let scale = 1;
     try { size = localStorage.getItem("ento.uisize.v1") || ""; } catch (e) {}
     try { scale = Number(localStorage.getItem("ento.textscale.v1")) || 1; } catch (e) {}
+    // Older versions saved 0.9 / 1.15 / 1.3; those fractional zooms are what made
+    // text look soft, so snap anything off the ladder to the nearest step.
+    const ladder = [1, 1.25, 1.5, 1.75];
+    if (!ladder.some((v) => Math.abs(scale - v) < 0.001)) {
+      scale = ladder.reduce((best, v) => (Math.abs(v - scale) < Math.abs(best - scale) ? v : best), 1);
+      try { localStorage.setItem("ento.textscale.v1", String(scale)); } catch (e) {}
+    }
     if (!size) size = window.innerWidth >= 900 ? "web" : "phone";
     try { this.setState({ lastPullAt: localStorage.getItem("ento.lastpull.v1") || "" }); } catch (e) {}
     this.setState({ uiSize: size, textScale: scale });
@@ -2327,7 +2572,7 @@ class Component extends DCLogic {
     const migrated = this.link(load());
     try { localStorage.setItem(KEY, JSON.stringify(migrated)); } catch (e) {}
     this.setState({
-      records: migrated, collector: c.collector || "", cluster: c.cluster || "",
+      records: this.inScopeList(migrated), collector: c.collector || "", cluster: c.cluster || "",
       target: c.target || "", round: c.round || "",
       sheetUrl: c.sheetUrl && c.sheetUrl.indexOf("script.google.com") < 0 ? c.sheetUrl : SHEET_URL,
       lastSync: c.lastSync || "",
@@ -2377,6 +2622,174 @@ class Component extends DCLogic {
     try { return localStorage.getItem("ento_about_seen") === "1"; } catch (e) { return true; }
   }
   openAbout = () => this.setState({ screen: "about" });
+  toggleHdrMenu = () => this.setState((s) => ({ hdrMenu: !s.hdrMenu }));
+  menuSettings = () => this.setState({ hdrMenu: false, showSettings: true });
+  menuSignOut = () => { this.setState({ hdrMenu: false }); this.signOut(); };
+  // Clears only the cached app files (the service-worker shell), never the records
+  // or the sign-in saved on this phone, then reloads to fetch the newest version.
+  menuClearCache = () => {
+    const pending = (this.state.records || []).filter((r) => !r.synced_at).length;
+    const msg = pending
+      ? "មាន " + pending + " កំណត់ត្រាមិនទាន់ផ្ញើ · " + pending + " records are not yet synced. Clearing the cache keeps them, but sync first to be safe. Continue?"
+      : "សម្អាតឃ្លាំងកម្មវិធី ហើយផ្ទុកឡើងវិញ? · Clear the cached app files and reload? Your records stay on this phone.";
+    if (!window.confirm(msg)) return;
+    this.setState({ hdrMenu: false });
+    const done = () => window.location.reload();
+    const jobs = [];
+    if (window.caches && caches.keys) {
+      jobs.push(caches.keys().then((ks) => Promise.all(ks.map((k) => caches.delete(k)))));
+    }
+    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+      jobs.push(navigator.serviceWorker.getRegistrations().then((rs) => Promise.all(rs.map((r) => r.unregister()))));
+    }
+    Promise.all(jobs).then(done, done);
+  };
+  menuUsers = () => { this.setState({ hdrMenu: false, showUsers: true, usersErr: "" }); this.loadUsers(); };
+
+  // ── accounts and roles (admins only) ──────────────────────────────────
+  // Both account types come back in one list. The last good list is cached so
+  // the screen still reads offline; every change needs a connection.
+  USERS_CACHE = "ento.users.v1";
+  usersApi(payload) {
+    const url = String(this.state.sheetUrl || "").trim();
+    if (!url) {
+      const e = new Error("គ្មានទីតាំងម៉ាស៊ីន · no server address is set in Settings");
+      this.setState({ usersBusy: false, usersErr: e.message });
+      return Promise.reject(e);
+    }
+    return this.apiFetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ ...payload, token: this.authToken() }),
+    }).then((out) => {
+      if (!out || !out.ok) throw new Error((out && out.error) || "request failed");
+      // An older deployment does not know these actions and answers the record-push
+      // reply instead. Never cache that — it would wipe the offline list.
+      if (!Array.isArray(out.users)) {
+        throw new Error("ម៉ាស៊ីនមិនទាន់បានធ្វើបច្ចុប្បន្នភាព · this server has not been updated — deploy the ento-api function");
+      }
+      const list = out.users;
+      try { localStorage.setItem(this.USERS_CACHE, JSON.stringify(list)); } catch (e) {}
+      this.setState({ users: list, usersBusy: false, usersErr: "" });
+      return list;
+    }).catch((e) => {
+      this.setState({ usersBusy: false, usersErr: (e && e.message) || "request failed" });
+      throw e;
+    });
+  }
+  loadUsers = () => {
+    let cached = [];
+    try { cached = JSON.parse(localStorage.getItem(this.USERS_CACHE) || "[]"); } catch (e) {}
+    this.setState({ users: cached, usersBusy: true, usersErr: "" });
+    this.usersApi({ action: "admin-users" }).catch(() => {});
+  };
+  _toForm() { const el = this._usersScroll; if (el) setTimeout(() => { el.scrollTop = 0; }, 0); }
+  uNew = () => this.setState({
+    uForm: { kind: "field", username: "", name: "", role: "collector", pin: "", isNew: true,
+      province_code: "", district_code: "", commune_code: "" },
+    usersErr: "",
+  }, () => this._toForm());
+  uEdit = (u) => () => this.setState({
+    uForm: { kind: u.kind, username: u.username, name: u.name, role: u.role, pin: "", isNew: false,
+      province_code: u.province_code || "", district_code: u.district_code || "", commune_code: u.commune_code || "" },
+    usersErr: "",
+  }, () => this._toForm());
+  uCancel = () => this.setState({ uForm: null, usersErr: "" });
+  uOpenRow = (u) => () => this.setState((s) => ({ uOpen: s.uOpen === u.username ? "" : u.username }));
+  uResetPin = (u) => () => this.setState({
+    uForm: { kind: u.kind, username: u.username, name: u.name, role: u.role, pin: "", isNew: false,
+      province_code: u.province_code || "", district_code: u.district_code || "", commune_code: u.commune_code || "" },
+    usersErr: "",
+  }, () => this._toForm());
+  usersCsv = () => {
+    const rows = [["username", "name", "account", "role", "province_code", "district_code", "commune_code", "active", "last_login", "records"]]
+      .concat(this.mergeUsers(this.state.users || []).map((u) => [
+        u.username, u.name || "", (u.parts || [u.kind]).join("+"), u.role || "",
+        u.province_code || "", u.district_code || "", u.commune_code || "",
+        u.active ? "yes" : "no", u.last_login || "", String(u.records || 0),
+      ]));
+    const csv = rows.map((r) => r.map((c) => '"' + String(c).replace(/"/g, '""') + '"').join(",")).join("\r\n");
+    const url = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url; a.download = "ento-users.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  };
+  uField = (k) => (e) => {
+    const v = e && e.target ? e.target.value : e;
+    this.setState((s) => ({ uForm: { ...s.uForm, [k]: v } }));
+  };
+  // Picking a wider level clears the narrower ones, so a scope is never inconsistent.
+  uSetScope = (level) => (e) => {
+    const v = e && e.target ? e.target.value : e;
+    this.setState((s) => ({
+      uForm: {
+        ...s.uForm,
+        province_code: level === "province" ? v : s.uForm.province_code,
+        district_code: level === "province" ? "" : level === "district" ? v : s.uForm.district_code,
+        commune_code: level === "commune" ? v : "",
+      },
+    }));
+  };
+  uSetKind = (e) => {
+    const v = e && e.target ? e.target.value : e;
+    this.setState((s) => ({ uForm: { ...s.uForm, kind: v, role: v === "dash" ? "guest" : "collector" } }));
+  };
+  uSave = () => {
+    const f = this.state.uForm || {};
+    if (!String(f.username || "").trim()) { this.setState({ usersErr: "a username is required" }); return; }
+    if (f.isNew && !/^\d{4,8}$/.test(String(f.pin || "").trim())) {
+      this.setState({ usersErr: "a new account needs a PIN of 4 to 8 digits" }); return;
+    }
+    this.setState({ usersBusy: true, usersErr: "" });
+    const base = {
+      action: "admin-user-save", username: String(f.username).trim(),
+      name: f.name, pin: String(f.pin || "").trim(),
+      province_code: f.province_code || "", district_code: f.district_code || "", commune_code: f.commune_code || "",
+    };
+    // "Both" writes the same person into both account tables. The dashboard list
+    // has its own roles, so a field admin becomes a dashboard admin and anyone
+    // else becomes an analyst.
+    const jobs = f.kind === "both"
+      ? [{ ...base, kind: "field", role: f.role }, { ...base, kind: "dash", role: f.role === "admin" ? "admin" : "analyst" }]
+      : [{ ...base, kind: f.kind, role: f.role }];
+    jobs.reduce((p, job) => p.then(() => this.usersApi(job)), Promise.resolve())
+      .then(() => this.setState({ uForm: null })).catch(() => {});
+  };
+  // One person, one row: a username present in both tables shows once, labelled
+  // "app & dashboard", and every action applies to both entries.
+  mergeUsers(list) {
+    const by = {};
+    const order = [];
+    list.forEach((u) => {
+      const key = String(u.username).toLowerCase();
+      if (!by[key]) { by[key] = { ...u, parts: [u.kind] }; order.push(key); return; }
+      const m = by[key];
+      m.parts.push(u.kind);
+      m.kind = "both";
+      if (u.kind === "dash") m.dashRole = u.role;
+      else { m.role = u.role; m.records = u.records; m.name = u.name || m.name; }
+      if (!u.active) m.active = false;
+      if (String(u.last_login || "") > String(m.last_login || "")) m.last_login = u.last_login;
+    });
+    return order.map((k) => by[k]);
+  }
+  uToggle = (u) => () => {
+    this.setState({ usersBusy: true, usersErr: "" });
+    (u.parts || [u.kind]).reduce(
+      (p, kind) => p.then(() => this.usersApi({ action: "admin-user-active", kind, username: u.username, active: !u.active })),
+      Promise.resolve(),
+    ).catch(() => {});
+  };
+  uDelete = (u) => () => {
+    if (!window.confirm("លុបគណនី · Delete account " + u.username + "?")) return;
+    this.setState({ usersBusy: true, usersErr: "" });
+    (u.parts || [u.kind]).reduce(
+      (p, kind) => p.then(() => this.usersApi({ action: "admin-user-delete", kind, username: u.username })),
+      Promise.resolve(),
+    ).catch(() => {});
+  };
+  menuAbout = () => { this.setState({ hdrMenu: false }); this.setState({ screen: "about" }); };
   closeAbout = () => {
     try { localStorage.setItem("ento_about_seen", "1"); } catch (e) {}
     this.setState({ screen: "home" });
@@ -2707,6 +3120,11 @@ class Component extends DCLogic {
     if (canvas && window.Chart) {
       const labels = d.villages.map((v) => v.name);
       const values = d.villages.map((v) => v.visits);
+      // The app scales itself with CSS zoom, which stretches a canvas and blurs the
+      // labels drawn in it. Render at screen pixel density times that zoom.
+      const crisp = (window.devicePixelRatio || 1) * this._zoomValue();
+      if (this._chart && this._chartDpr !== crisp) { this._chart.destroy(); this._chart = null; }
+      this._chartDpr = crisp;
       if (!this._chart) {
         // Chart.js draws to canvas, so it needs the Khmer font named explicitly.
         window.Chart.defaults.font.family = '"Kantumruy Pro","Trebuchet MS","Fira Sans",system-ui,sans-serif';
@@ -2716,7 +3134,7 @@ class Component extends DCLogic {
           type: "bar",
           data: { labels, datasets: [{ label: "Households visited", data: values, backgroundColor: "#117996", borderRadius: 3 }] },
           options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false, devicePixelRatio: crisp,
             plugins: { legend: { display: false } },
             scales: {
               x: { grid: { display: false }, ticks: { font: { size: 10 } } },
@@ -2737,7 +3155,7 @@ class Component extends DCLogic {
       if (!this._map) {
         this._map = window.L.map(mapEl, { scrollWheelZoom: true });
         window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19, attribution: "\u00a9 OpenStreetMap",
+          maxZoom: 19, attribution: "\u00a9 OpenStreetMap", detectRetina: true,
         }).addTo(this._map);
         this._markers = window.L.layerGroup().addTo(this._map);
       }
@@ -2803,10 +3221,55 @@ class Component extends DCLogic {
     });
   }
 
+  // The area an account may access, from its login reply. Blank means everywhere.
+  scopeCodes() {
+    // Falls back to the saved session, because start-up filters the records before
+    // auth has reached state.
+    const a = this.state.auth || loadAuth() || {};
+    return {
+      province: this.bareCode(a.province_code),
+      district: this.bareCode(a.district_code),
+      commune: this.bareCode(a.commune_code),
+    };
+  }
+  bareCode(v) { return String(v == null ? "" : v).trim().replace(/^0+/, ""); }
+  hasScope() {
+    const c = this.scopeCodes();
+    return !!(c.province || c.district || c.commune);
+  }
+  inScope(r) {
+    const c = this.scopeCodes();
+    if (!c.province && !c.district && !c.commune) return true;
+    // Anything typed on this phone and not yet sent stays visible, so it can never
+    // be stranded by an area limit set after it was recorded.
+    if (!r.synced_at) return true;
+    const at = (level, want) => !want || this.bareCode(r[level + "_code"] || r[level]) === want;
+    return at("province", c.province) && at("district", c.district) && at("commune", c.commune);
+  }
+  // Splitting keeps the records this account may not see in memory, so a save or a
+  // sync writes them back to storage untouched instead of dropping them.
+  inScopeList(list) {
+    const all = list || [];
+    this._outOfScope = all.filter((r) => !this.inScope(r));
+    return all.filter((r) => this.inScope(r));
+  }
+  // Where the account is pinned to one province, district or commune, that level
+  // offers only that choice — no "all", nothing outside it.
+  scopeLimit(level, options) {
+    const want = this.scopeCodes()[level];
+    if (!want) return options;
+    const hit = (options || []).filter((o) => this.bareCode(o.value) === want);
+    return hit.length ? hit : options;
+  }
+
   persist(records) {
     const linked = this.link(records);
-    try { localStorage.setItem(KEY, JSON.stringify(linked)); } catch (e) {}
-    this.setState({ records: linked });
+    const hidden = this._outOfScope || [];
+    const seen = {};
+    linked.forEach((r) => { seen[r.record_id || r.id] = 1; });
+    const whole = linked.concat(hidden.filter((r) => !seen[r.record_id || r.id]));
+    try { localStorage.setItem(KEY, JSON.stringify(whole)); } catch (e) {}
+    this.setState({ records: linked.filter((r) => this.inScope(r)) });
   }
 
   // What the next record's ID will be, without consuming it — used to show tube IDs
@@ -2927,7 +3390,7 @@ class Component extends DCLogic {
   };
   pick = (k, v) => () => this.setState((p) => ({ form: this.autoIds(p.type, { ...p.form, [k]: v }), error: "" }));
 
-  // One standard trap ID format everywhere: TYPE-HOUSE-POSITION, e.g. OVT-0009-IN,
+  // One standard trap ID format everywhere: TYPE-HOUSE-POSITION, e.g. Ov-0009-IN,
   // BGS-0009-OUT. Regenerated while the field still holds an auto value; typing over it wins.
   autoIds(type, f, records) {
     // The household comes from the form, or from the household the form was opened inside.
@@ -2941,7 +3404,7 @@ class Component extends DCLogic {
       while (taken[base + "-" + i]) i += 1;
       return base + "-" + i;
     };
-    const prefix = f.trap_type === "BG-Sentinel" ? "BGS" : "OVT";
+    const prefix = f.trap_type === "BG-Sentinel" ? "BGS" : "Ov";
     const stem = prefix + "-" + String(house).replace(/^HH-/, "");
     const out = { ...f };
     const apply = (key, suffix, wanted) => {
@@ -3658,6 +4121,92 @@ class Component extends DCLogic {
       "\uFEFF" + this.toCsv(cols, rows), "text/csv;charset=utf-8");
   };
 
+  // The households behind the map, with their GPS fix — the area filters on the
+  // dashboard apply, so what downloads is what is plotted.
+  exportHhGps = () => {
+    const s = this.state;
+    const at = (r, level, code) => !code || String(r[level + "_code"] || r[level] || "") === String(code);
+    const keep = {};
+    this.state.records.forEach((r) => {
+      if (at(r, "province", s.dashProv) && at(r, "district", s.dashDist)
+        && at(r, "commune", s.dashComm) && at(r, "village", s.dashVill) && r.household_id) keep[r.household_id] = 1;
+    });
+    const rows = this.households()
+      .filter((hh) => keep[hh.household_id])
+      .map((hh) => ({
+        household_id: hh.household_id, head: hh.head || "", lat: hh.lat || "", lon: hh.lon || "",
+        village: hh.village || "", commune: hh.commune || "", district: hh.district || "", province: hh.province || "",
+        village_code: hh.village_code || "", commune_code: hh.commune_code || "",
+        district_code: hh.district_code || "", province_code: hh.province_code || "",
+        address: hh.address || "", cluster: hh.cluster || "", consent: hh.consent || "",
+        registered_date: hh.registered_date || "",
+        traps_installed: hh.traps_installed || 0, trap_ids: hh.trap_ids || "",
+        collections: hh.collections || 0, lab_results: hh.lab_results || 0,
+        eggs_total: hh.eggs_total || 0, total_catch: hh.total_catch || 0,
+        aegypti_total: hh.aegypti_total || 0, container_index_pct: hh.container_index_pct || "",
+        house_positive: hh.house_positive || "", last_activity_date: hh.last_activity_date || "",
+      }));
+    if (!rows.length) return;
+    const cols = ["household_id", "head", "lat", "lon", "village", "commune", "district", "province",
+      "village_code", "commune_code", "district_code", "province_code", "address", "cluster", "consent",
+      "registered_date", "traps_installed", "trap_ids", "collections", "lab_results", "eggs_total",
+      "total_catch", "aegypti_total", "container_index_pct", "house_positive", "last_activity_date"];
+    this.download("ento-household-gps-" + new Date().toISOString().slice(0, 10) + ".csv",
+      "\uFEFF" + this.toCsv(cols, rows), "text/csv;charset=utf-8");
+  };
+
+  // One row per trap — the chain flattened, so a join in Excel is not needed.
+  exportTrapChain = () => {
+    const recs = this.state.records;
+    const map = {};
+    recs.forEach((r) => {
+      const t = r.form_type || r.type;
+      if (["install", "collect", "lab"].indexOf(t) < 0) return;
+      const trap = this.trapIdOf(r);
+      if (!trap) return;
+      const g = map[trap] || (map[trap] = {
+        trap_id: trap, trap_type: r.trap_type || r.method || "", household_id: r.household_id || "",
+        village: r.village || "", commune: r.commune || "", district: r.district || "", province: r.province || "",
+        period_label: r.period_label || "", cluster: r.cluster || "",
+        install_id: "", install_date: "", collect_id: "", collect_date: "", trap_found: "",
+        lab_ids: [], lab_dates: [], tubes: [], eggs: 0, aegypti: 0, albopictus: 0, culex: 0, other: 0, wmel: [],
+      });
+      if (!g.household_id && r.household_id) g.household_id = r.household_id;
+      if (t === "install") { g.install_id = r.record_id || r.id; g.install_date = r.collected_date || ""; }
+      if (t === "collect") {
+        g.collect_id = r.record_id || r.id; g.collect_date = r.collected_date || "";
+        g.trap_found = r.found || r.trap_found || "";
+      }
+      if (t === "lab") {
+        g.lab_ids.push(r.record_id || r.id);
+        if (r.collected_date) g.lab_dates.push(r.collected_date);
+        if (r.tube_id) g.tubes.push(r.tube_id);
+        g.eggs += Number(r.eggs) || 0;
+        g.aegypti += (Number(r.aegypti) || 0) + (Number(r.aegypti_f) || 0) + (Number(r.aegypti_m) || 0);
+        g.albopictus += (Number(r.albopictus) || 0) + (Number(r.albopictus_f) || 0) + (Number(r.albopictus_m) || 0);
+        g.culex += Number(r.culex) || 0;
+        g.other += Number(r.other) || 0;
+        if (r.wmel) g.wmel.push(r.wmel);
+      }
+    });
+    const rows = Object.keys(map).sort().map((k) => {
+      const g = map[k];
+      return {
+        ...g,
+        lab_ids: g.lab_ids.join(" "), lab_dates: g.lab_dates.sort()[0] || "",
+        tubes: g.tubes.join(" "), lab_results: g.lab_ids.length,
+        wmel: g.wmel.join(" "),
+        status: g.lab_ids.length ? "complete" : g.collect_id ? "waiting lab" : "set",
+      };
+    });
+    if (!rows.length) return;
+    const cols = ["trap_id", "trap_type", "household_id", "village", "commune", "district", "province",
+      "cluster", "period_label", "install_id", "install_date", "collect_id", "collect_date", "trap_found",
+      "lab_results", "lab_ids", "lab_dates", "tubes", "eggs", "aegypti", "albopictus", "culex", "other", "wmel", "status"];
+    this.download("ento-trap-chain-" + new Date().toISOString().slice(0, 10) + ".csv",
+      "\uFEFF" + this.toCsv(cols, rows), "text/csv;charset=utf-8");
+  };
+
   // One row per site per epi week — the time series a dashboard charts.
   exportSiteWeek = () => {
     const map = {};
@@ -3898,9 +4447,16 @@ class Component extends DCLogic {
           if (/-IN$/.test(s2) || Number(r.pos_inside) === 1) return "IN";
           return "";
         })(r.trap_id || "");
+        // Named by the installation that set the trap; an adult or larvae collection
+        // has no install, so its own AC / LC id is the key.
+        const setId = (function (self, id) {
+          if (!id) return "";
+          const inst = self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === id);
+          return (inst && (inst.record_id || inst.id)) || "";
+        })(this, r.trap_id);
         return {
           value: r.record_id,
-          label: r.record_id + " · " + kind + (pos ? " " + pos : ""),
+          label: (setId || r.record_id) + " · " + kind + (pos ? " " + pos : ""),
         };
       });
   }
@@ -4022,6 +4578,55 @@ class Component extends DCLogic {
       out.push({ value: code, label: (r[level] || code) });
     });
     return out.sort((a, b) => String(a.label).localeCompare(String(b.label)));
+  }
+
+  // Household › trap set › trap collection › adult › larvae › lab results, and the
+  // results in the same order as the activity they came from.
+  sortHh = (key) => () => this.setState((s) => ({
+    hhRecSort: key,
+    hhRecSortDir: s.hhRecSort === key ? (s.hhRecSortDir === "asc" ? "desc" : "asc") : (key === "date" ? "desc" : "asc"),
+  }));
+  byDate(rows, dir) {
+    const k = (r) => String(r.collected_date || "") + " " + String(r.collected_time || "");
+    return (rows || []).slice().sort((a, b) => (dir === "asc" ? 1 : -1) * k(a).localeCompare(k(b)));
+  }
+  sortedHhRows(rows) {
+    const s = this.state;
+    if (s.hhRecSort === "date") return this.byDate(rows, s.hhRecSortDir || "desc");
+    const list = this.byActivity(rows);
+    return (s.hhRecSortDir === "desc") ? list.reverse() : list;
+  }
+
+  byActivity(rows) {
+    const rank = { household: 0, install: 1, collect: 2, adult: 3, larvae: 4, lab: 5 };
+    const labRank = (r) => {
+      const trap = String(this.trapIdOf(r) || "").toUpperCase();
+      if (/^(OV|VO|OVT)-/.test(trap)) return 0;
+      const src = String(r.source_id || r.tube_id || "").toUpperCase();
+      if (src.indexOf("AC-") === 0) return 1;
+      if (src.indexOf("LC-") === 0) return 2;
+      return 3;
+    };
+    return (rows || []).slice().sort((a, b) => {
+      const ta = a.form_type || a.type, tb = b.form_type || b.type;
+      const ra = rank[ta] == null ? 9 : rank[ta], rb = rank[tb] == null ? 9 : rank[tb];
+      if (ra !== rb) return ra - rb;
+      if (ta === "lab" && tb === "lab") {
+        const la = labRank(a), lb = labRank(b);
+        if (la !== lb) return la - lb;
+      }
+      return String(a.collected_date || "").localeCompare(String(b.collected_date || ""))
+        || String(a.record_id || "").localeCompare(String(b.record_id || ""));
+    });
+  }
+
+  trapIdOf(rec) {
+    if (rec.trap_id) return rec.trap_id;
+    if (rec.source_id) {
+      const src = this.state.records.find((x) => (x.record_id || x.id) === rec.source_id);
+      if (src && src.trap_id) return src.trap_id;
+    }
+    return "";
   }
 
   // Species composition for any set of records — used by the dashboard and by a
@@ -4640,10 +5245,13 @@ class Component extends DCLogic {
     const ready = !!g && (!parent || !!form[parent]) && !(level === "village" && !Object.keys((g && g.villages) || {}).length);
     // A saved value must stay selectable while editing, even if a parent list is empty.
     const hasSaved = !!form[level + "_code"];
-    const list = !ready ? [] : level === "province" ? g.provinces
+    const raw = !ready ? [] : level === "province" ? g.provinces
       : level === "district" ? (g.districts[form.province_code] || [])
       : level === "commune" ? (g.communes[form.district_code] || [])
       : (g.villages[form.commune_code] || []);
+    // An account pinned to an area can only record inside it.
+    const want = this.scopeCodes()[level];
+    const list = want ? raw.filter((x) => this.bareCode(x[0]) === want) : raw;
     return {
       labelKm, labelEn,
       value: form[level + "_code"] || "",
@@ -4797,10 +5405,10 @@ class Component extends DCLogic {
       { ...choice("position", "Trap placing", ["Inside", "Outside", "Both"]), isChoice: false, isTrapRow: true, wide: true,
         ids: [].concat(
           form.position === "Inside" || form.position === "Both"
-            ? [{ ...txt("trap_id_inside", "Inside trap ID *", { placeholder: form._hint_trap_id_inside || "OVT-KC-0142-IN" }),
+            ? [{ ...txt("trap_id_inside", "Inside trap ID *", { placeholder: form._hint_trap_id_inside || "Ov-040104-IN" }),
                 labelKm: km("Inside trap ID *"), labelEn: "Inside trap ID *" }] : [],
           form.position === "Outside" || form.position === "Both"
-            ? [{ ...txt("trap_id_outside", "Outside trap ID *", { placeholder: form._hint_trap_id_outside || "OVT-KC-0142-OUT" }),
+            ? [{ ...txt("trap_id_outside", "Outside trap ID *", { placeholder: form._hint_trap_id_outside || "Ov-040104-OUT" }),
                 labelKm: km("Outside trap ID *"), labelEn: "Outside trap ID *" }] : []) },
     ].concat(
       form.position === "Both"
@@ -4961,8 +5569,14 @@ class Component extends DCLogic {
       const larval = r.specimen_stage === "Larvae";
       const total = (larval ? LARVAL_TAXA : TAXA).reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
       // The row says which kind of specimen was read; the counts live on the record.
+      // An ovitrap result is eggs reared on to larvae — say so, so the row cannot be
+      // mistaken for a larval survey.
+      const fromOvitrap = /^(OV|VO|OVT)-/i.test(String(this.trapIdOf(r) || ""));
       return larval
-        ? "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 larvae"
+        ? (fromOvitrap
+          ? "\u1796\u1784\u1785\u1798\u17d2\u179a\u17b6\u1789\u17cb \u00b7 reared from eggs"
+          : "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 larvae")
+          + (Number(r.eggs) ? " \u00b7 " + r.eggs + " \u1796\u1784 \u00b7 eggs" : "")
         : (Number(r.eggs) && !total) ? "\u1796\u1784 \u00b7 eggs" : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799 \u00b7 adult";
     }
     if (r.type === "adult") {
@@ -5195,7 +5809,9 @@ class Component extends DCLogic {
       needsLogin: !s.auth,
       exportAsk: !!s.exportAsk,
       syncAsk: !!s.syncAsk,
-      syncAskText: (s.syncAsk || 0) + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1795\u17d2\u1791\u17c1\u179a \u00b7 " + (s.syncAsk || 0) + " records are still only on this phone. \u1794\u1793\u17d2\u1791\u17b6\u1794\u17cb\u1798\u1780 \u1791\u17b6\u1789\u1796\u17b8 Sheet \u00b7 then the sheet is read back for " + (s.pullScopeShort || "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 everything"),
+      syncAskText: (s.syncAsk || 0) < 0
+        ? "\u1782\u17d2\u1798\u17b6\u1793\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u178f\u17d2\u179a\u17bc\u179c\u1795\u17d2\u1789\u17be \u00b7 nothing to send \u2014 this will pull the latest data"
+        : (s.syncAsk || 0) + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1795\u17d2\u1791\u17c1\u179a \u00b7 " + (s.syncAsk || 0) + " records are still only on this phone. \u1794\u1793\u17d2\u1791\u17b6\u1794\u17cb\u1798\u1780 \u1791\u17b6\u1789\u1796\u17b8 Sheet \u00b7 then the sheet is read back for " + (s.pullScopeShort || "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 everything"),
       // What the pull half of the sync will cover, so the dialog can name it.
       pullScopeShort: [s.pullVill, s.pullComm, s.pullDist, s.pullProv].filter(Boolean).length
         ? this.pullScopeNames().join(" \u203a ") : "",
@@ -5231,8 +5847,9 @@ class Component extends DCLogic {
       // Sync from the header, so records can go up without walking to Settings.
       quickSync: () => {
         if (s.syncing) return;
+        // Nothing waiting is a pull, not a send: -1 opens the dialog saying so.
         const n = s.records.filter((r) => !r.synced_at && !r._draft).length;
-        this.setState({ syncAsk: n || 1 });
+        this.setState({ syncAsk: n || -1 });
       },
       quickSyncCount: String(s.records.filter((r) => !r.synced_at && !r._draft).length),
       hasQuickSync: s.records.filter((r) => !r.synced_at && !r._draft).length > 0,
@@ -5240,10 +5857,10 @@ class Component extends DCLogic {
       quickSyncOpacity: s.syncing ? ".5" : "1",
       closeSettings: () => this.setState({ showSettings: false }),
       ...(function (self, cur) {
-        const steps = [0.9, 1, 1.15, 1.3];
-        const names = ["\u178f\u17bc\u1785 \u00b7 Small", "\u1792\u1798\u17d2\u1798\u178f\u17b6 \u00b7 Normal",
-          "\u1792\u17c6 \u00b7 Large", "\u1792\u17c6\u1794\u17c6\u1795\u17bb\u178f \u00b7 Largest"];
-        let i = 1;
+        const steps = [1, 1.25, 1.5, 1.75];   // whole scales only: a fractional zoom lands glyphs on part-pixels and reads as soft
+        const names = ["\u1792\u1798\u17d2\u1798\u178f\u17b6 \u00b7 Normal", "\u1792\u17c6 \u00b7 Large",
+          "\u1792\u17c6\u1787\u17b6\u1784 \u00b7 Larger", "\u1792\u17c6\u1794\u17c6\u1795\u17bb\u178f \u00b7 Largest"];
+        let i = 0;
         steps.forEach((v, n) => { if (Math.abs(cur - v) < 0.001) i = n; });
         return {
           textStep: i,
@@ -5278,7 +5895,7 @@ class Component extends DCLogic {
           if (!g || !g.lat || !window.L || !this._formMapEl) return;
           if (!this._formMap) {
             this._formMap = window.L.map(this._formMapEl, { scrollWheelZoom: false, attributionControl: false });
-            window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(this._formMap);
+            window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, detectRetina: true }).addTo(this._formMap);
             this._formMarker = window.L.circleMarker([g.lat, g.lon], {
               radius: 8, color: "#fff", weight: 2, fillColor: "#117996", fillOpacity: 1,
             }).addTo(this._formMap);
@@ -5704,9 +6321,9 @@ class Component extends DCLogic {
                   id: r.record_id || "",
                   month: r.period_month || String(r.collected_date || "").slice(0, 7),
                   monthLabel: r.period_label || r.period_month || "",
-                  meta: [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10)),
-                    insp ? pos + " / " + insp + " ភាជន៍" : "គ្មានភាជន៍",
-                    tubes ? tubes + " កំប៉ុង" : ""].filter(Boolean).join(" · "),
+                  meta: [insp ? pos + " / " + insp + " ភាជន៍" : "គ្មានភាជន៍",
+                    tubes ? tubes + " កំប៉ុង" : "",
+                    mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10))].filter(Boolean).join(" · "),
                   tag: insp
                     ? "សន្ទស្សន៍ · index " + Math.round((pos / insp) * 1000) / 10 + "%"
                     : "គ្មានភាជន៍ · no containers",
@@ -5763,10 +6380,16 @@ class Component extends DCLogic {
                   id: r.record_id || "",
                   month: r.period_month || String(r.collected_date || "").slice(0, 7),
                   monthLabel: r.period_label || r.period_month || "",
-                  meta: [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10)),
+                  meta: [(function () {
+                      const set = r.trap_id
+                        ? self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === r.trap_id)
+                        : null;
+                      return set ? (set.record_id || set.id) : "";
+                    })(),
                     /-OUT$/i.test(String(r.trap_id || "")) ? "OUT"
                       : /-IN$/i.test(String(r.trap_id || "")) ? "IN"
-                      : (r.position === "Outside" ? "OUT" : r.position === "Inside" ? "IN" : "")]
+                      : (r.position === "Outside" ? "OUT" : r.position === "Inside" ? "IN" : ""),
+                    mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10))]
                     .filter(Boolean).join(" \u00b7 "),
                   armed: armed,
                   notArmed: !armed,
@@ -5832,9 +6455,9 @@ class Component extends DCLogic {
                   id: r.record_id || "",
                   month: r.period_month || String(r.collected_date || "").slice(0, 7),
                   monthLabel: r.period_label || r.period_month || "",
-                  meta: [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10)),
-                    r.method || "",
-                    tubes ? tubes + " កំប៉ុង" : "គ្មានកំប៉ុង"].filter(Boolean).join(" · "),
+                  meta: [r.method || "",
+                    tubes ? tubes + " កំប៉ុង" : "គ្មានកំប៉ុង",
+                    mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10))].filter(Boolean).join(" · "),
                   tag: r.total_catch !== "" && r.total_catch != null && Number(r.total_catch)
                     ? "មូស · catch " + Number(r.total_catch)
                     : "កំប៉ុង · tubes " + tubes,
@@ -5893,14 +6516,19 @@ class Component extends DCLogic {
                   monthLabel: r.period_label || r.period_month || "",
                   meta: (function () {
                     const tid = String(r.trap_id || "").toUpperCase();
-                    const ovi = tid.indexOf("OVT") === 0
+                    const ovi = /^(OV|VO|OVT)-/.test(tid)
                       ? (tid.indexOf("-OUT") >= 0 ? "Ovi-OUT" : (tid.indexOf("-IN") >= 0 ? "Ovi-IN" : "Ovi"))
                       : "";
-                    const parts = [r.tube_id || "", ovi || r.trap_id || "",
-                      eggs ? eggs + " ពង" : (String(r.trap_id || "").toUpperCase().indexOf("OVT") === 0 ? "គ្មានពង · no egg" : ""),
+                    const setId = (function () {
+                      if (!r.trap_id) return "";
+                      const inst = self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === r.trap_id);
+                      return (inst && (inst.record_id || inst.id)) || "";
+                    })();
+                    const parts = [setId || r.source_id || r.tube_id || "", ovi || (setId ? "" : r.trap_id || ""),
+                      eggs ? eggs + " ពង" : (/^(OV|VO|OVT)-/.test(String(r.trap_id || "").toUpperCase()) ? "គ្មានពង · no egg" : ""),
                       catchN ? catchN + ((String(r.tube_id || "") + " " + String(r.trap_id || "")).toUpperCase().indexOf("LC-") >= 0 ? " ដង្កូវទឹក" : " មូស") : ""].filter(Boolean);
                     if (!parts.length) parts.push("គ្មានកំប៉ុងវិជ្ជមាន · no pos tube");
-                    return [mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10))].concat(parts).join(" · ");
+                    return parts.concat([mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10))]).join(" · ");
                   })(),
                   tag: r.wmel && r.wmel !== "Not tested"
                     ? "wMel · " + r.wmel
@@ -6061,7 +6689,64 @@ class Component extends DCLogic {
         this.toast("\u1794\u17b6\u1793\u179b\u17bb\u1794 " + id + " \u00b7 " + id + " deleted", "ok");
         this.queueDelete(id);
       },
-      hhRecordsShown: current ? (s.hhAll ? current._rows : current._rows.slice(0, 3)).map((r) => ({
+      ...(function (self, rows) {
+        if (!rows) return { hasHhTraps: false, hhTraps: [] };
+        const LEG = { install: "SET", collect: "COLL", lab: "LAB" };
+        const by = {};
+        const order = [];
+        rows.forEach((r) => {
+          const t = r.form_type || r.type;
+          if (["install", "collect", "lab"].indexOf(t) < 0) return;
+          const trap = self.trapIdOf(r);
+          if (!trap) return;
+          if (!by[trap]) { by[trap] = []; order.push(trap); }
+          by[trap].push(r);
+        });
+        const traps = order.map((trap) => {
+          const list = by[trap].slice().sort((a, b) => {
+            const rank = { install: 0, collect: 1, lab: 2 };
+            const ta = rank[a.form_type || a.type], tb = rank[b.form_type || b.type];
+            return ta !== tb ? ta - tb : String(a.collected_date || "").localeCompare(String(b.collected_date || ""));
+          });
+          const kind = (t) => list.filter((r) => (r.form_type || r.type) === t);
+          const labs = kind("lab");
+          const eggs = labs.reduce((a, r) => a + (Number(r.eggs) || 0), 0);
+          const done = !!labs.length;
+          const collected = !!kind("collect").length;
+          return {
+            trapId: trap,
+            summary: [
+              kind("install").length ? "ដាក់ · set" : "",
+              collected ? "ប្រមូល · collected" : "",
+              labs.length ? labs.length + " លទ្ធផល · lab" : "",
+              eggs ? eggs + " ពង · eggs" : "",
+            ].filter(Boolean).join(" · "),
+            state: done ? "ពេញ · complete" : collected ? "រង់ចាំ · waiting lab" : "ដាក់ហើយ · set",
+            stateFg: done ? "#06492B" : collected ? "#6B4A00" : "#003E78",
+            stateBg: done ? "#E4F3EA" : collected ? "#FDF3D7" : "#D5E7EF",
+            steps: list.map((r) => ({
+              leg: LEG[r.form_type || r.type] || "",
+              id: (kind("install")[0] || {}).record_id || r.record_id || r.id,
+              detail: [(function (d) { const p = String(d || "").split("-"); return p.length === 3 ? p[1] + "-" + p[2] + "-" + p[0].slice(2) : (d || ""); })(r.collected_date),
+                r.tube_id || "", self.describe(r)].filter(Boolean).join(" · "),
+              bar: TYPES[r.form_type || r.type].bar,
+              edit: () => self.open(r.form_type || r.type, {
+                edit: r.record_id || r.id, house: r.household_id || "", returnTo: "hhdetail",
+              }),
+            })),
+          };
+        });
+        return { hasHhTraps: !!traps.length, hhTraps: traps };
+      })(this, current ? current._rows : null),
+      sortHhActivity: this.sortHh("activity"),
+      sortHhDate: this.sortHh("date"),
+      hhSortActBg: (s.hhRecSort || "activity") === "activity" ? "#D5E7EF" : "#fff",
+      hhSortActFg: "#003E78",
+      hhSortDateBg: s.hhRecSort === "date" ? "#D5E7EF" : "#fff",
+      hhSortDateFg: "#003E78",
+      hhSortActArrow: (s.hhRecSort || "activity") === "activity" ? (s.hhRecSortDir === "desc" ? " \u2193" : " \u2191") : "",
+      hhSortDateArrow: s.hhRecSort === "date" ? (s.hhRecSortDir === "asc" ? " \u2191" : " \u2193") : "",
+      hhRecordsShown: current ? (function (self, all) { return s.hhAll ? all : all.slice(0, 3); })(this, this.sortedHhRows(current._rows)).map((r) => ({
         edit: () => this.open(r.form_type || r.type, {
           edit: r.record_id || r.id, house: r.household_id || "", returnTo: "hhdetail",
         }),
@@ -6071,28 +6756,66 @@ class Component extends DCLogic {
               || (rec.trap_id && (self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === rec.trap_id) || {}).trap_type);
             return t ? " \u00b7 " + t : "";
           })(this, r)
-          + " \u00b7 " + (r.record_id || r.id),
-        meta: (function (d) { const p = String(d || "").split("-"); return p.length === 3 ? p[1] + "-" + p[2] + "-" + p[0].slice(2) : (d || ""); })(r.collected_date) + " " + (r.collected_time || "")
-          + (function (id) {
-            const s2 = String(id || "").toUpperCase();
-            return /-OUT$/.test(s2) ? " \u00b7 OUT" : /-IN$/.test(s2) ? " \u00b7 IN" : "";
-          })(r.trap_id),
+          + (function (self, rec) {
+            const own = rec.record_id || rec.id;
+            const trap = String(self.trapIdOf(rec) || "");
+            const setRec = trap
+              ? self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === trap)
+              : null;
+            const key = (setRec && (setRec.record_id || setRec.id)) || own;
+            const head = " \u00b7 " + key;
+            // A trap row shows the installation id alone; its own id adds nothing.
+            if ((rec.form_type || rec.type) !== "lab") return " \u00b7 " + key;
+            const leg = /-OUT$/i.test(trap) ? " \u00b7 OUT" : /-IN$/i.test(trap) ? " \u00b7 IN" : "";
+            if (!trap && rec.source_id) return " \u00b7 " + rec.source_id;
+            const tube = rec.tube_id && String(rec.tube_id).indexOf(String(rec.source_id || "")) !== 0
+              ? " \u00b7 " + rec.tube_id : "";
+            return head + leg + tube;
+          })(this, r),
+        meta: (function (id) {
+          const s2 = String(id || "").toUpperCase();
+          return /-OUT$/.test(s2) ? "OUT" : /-IN$/.test(s2) ? "IN" : "";
+        })(r.trap_id),
+        when: (function (d) {
+          const p = String(d || "").split("-");
+          return p.length === 3 ? Number(p[1]) + "/" + Number(p[2]) + "/" + p[0].slice(2) : (d || "");
+        })(r.collected_date),
+        whenTime: String(r.collected_time || "").slice(0, 5),
         detail: this.describe(r),
         bar: TYPES[r.form_type || r.type].bar,
       })) : [],
-      hhRecords: current ? current._rows.map((r) => ({
+      hhRecords: current ? this.sortedHhRows(current._rows).map((r) => ({
         title: km(TYPES[r.form_type || r.type].label)
           + (function (self, rec) {
             const t = rec.trap_type || rec.method
               || (rec.trap_id && (self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === rec.trap_id) || {}).trap_type);
             return t ? " \u00b7 " + t : "";
           })(this, r)
-          + " \u00b7 " + (r.record_id || r.id),
-        meta: (function (d) { const p = String(d || "").split("-"); return p.length === 3 ? p[1] + "-" + p[2] + "-" + p[0].slice(2) : (d || ""); })(r.collected_date) + " " + (r.collected_time || "")
-          + (function (id) {
-            const s2 = String(id || "").toUpperCase();
-            return /-OUT$/.test(s2) ? " \u00b7 OUT" : /-IN$/.test(s2) ? " \u00b7 IN" : "";
-          })(r.trap_id),
+          + (function (self, rec) {
+            const own = rec.record_id || rec.id;
+            const trap = String(self.trapIdOf(rec) || "");
+            const setRec = trap
+              ? self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === trap)
+              : null;
+            const key = (setRec && (setRec.record_id || setRec.id)) || own;
+            const head = " \u00b7 " + key;
+            // A trap row shows the installation id alone; its own id adds nothing.
+            if ((rec.form_type || rec.type) !== "lab") return " \u00b7 " + key;
+            const leg = /-OUT$/i.test(trap) ? " \u00b7 OUT" : /-IN$/i.test(trap) ? " \u00b7 IN" : "";
+            if (!trap && rec.source_id) return " \u00b7 " + rec.source_id;
+            const tube = rec.tube_id && String(rec.tube_id).indexOf(String(rec.source_id || "")) !== 0
+              ? " \u00b7 " + rec.tube_id : "";
+            return head + leg + tube;
+          })(this, r),
+        meta: (function (id) {
+          const s2 = String(id || "").toUpperCase();
+          return /-OUT$/.test(s2) ? "OUT" : /-IN$/.test(s2) ? "IN" : "";
+        })(r.trap_id),
+        when: (function (d) {
+          const p = String(d || "").split("-");
+          return p.length === 3 ? Number(p[1]) + "/" + Number(p[2]) + "/" + p[0].slice(2) : (d || "");
+        })(r.collected_date),
+        whenTime: String(r.collected_time || "").slice(0, 5),
         detail: this.describe(r),
         bar: TYPES[r.form_type || r.type].bar,
       })) : [],
@@ -6118,6 +6841,8 @@ class Component extends DCLogic {
         what: [h.form_type, h.household_id, h.record_id].filter(Boolean).join(" \u00b7 "),
       })),
       exportHouseholds: this.exportHouseholds, exportSiteWeek: this.exportSiteWeek,
+      exportHhGps: this.exportHhGps,
+      exportTrapChain: this.exportTrapChain,
       gaps: (openGaps = [
         // Traps waiting to be collected, with how long they have been out.
         { label: "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u179a\u1784\u17cb\u1785\u17b6\u17c6\u1794\u17d2\u179a\u1798\u17bc\u179b \u00b7 waiting trap collection",
@@ -6241,7 +6966,9 @@ class Component extends DCLogic {
             // A round this household has already been recorded in is not offered again.
             // The household round follows the selection as typed, even for a month the
             // sheet holds no data for yet — that is the point of recording into it.
-            const sel = /^\d{4}-\d{2}$/.test(String(st.matrixRound || "")) ? st.matrixRound : round;
+            // Unpicked, the household round is this calendar month, not the newest
+            // month the phone happens to hold data for.
+            const sel = /^\d{4}-\d{2}$/.test(String(st.matrixRound || "")) ? st.matrixRound : self.currentRound();
             // Rounds already recorded at this household drop out — except the one
             // currently selected, which always stays visible in the box.
             let keys = last3.filter((m) => !doneIn(m) || m === sel);
@@ -6311,7 +7038,13 @@ class Component extends DCLogic {
             : "\u2014",
           indexFg: by[m].insp && by[m].pos ? "#7C1220" : "#767676",
           // Opens this month in the record list above.
-          openMonth: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [m]: true } })),
+          openMonth: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [m]: true }, recTypeFilter: "" })),
+          // A count opens the same month with the list narrowed to that activity.
+          openInstall: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [m]: true }, recTypeFilter: "install" })),
+          openCollect: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [m]: true }, recTypeFilter: "collect" })),
+          openLarvae: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [m]: true }, recTypeFilter: "larvae" })),
+          openAdult: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [m]: true }, recTypeFilter: "adult" })),
+          openLab: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [m]: true }, recTypeFilter: "lab" })),
         }));
       })(s.records, this),
       isEmpty: s.records.length === 0,
@@ -6472,7 +7205,9 @@ class Component extends DCLogic {
             rowArmed: false, rowNotArmed: true,
           };
         });
+        const only = st.recTypeFilter || "";
         const recs = st.records.slice()
+          .filter((r) => !only || (r.form_type || r.type) === only)
           .sort((x, y) => String(y.collected_at_utc || y.saved_at || "").localeCompare(String(x.collected_at_utc || x.saved_at || "")))
           .map((r) => {
             const base = rowOf(r);
@@ -6492,13 +7227,17 @@ class Component extends DCLogic {
               confirmDel: () => { self.setState({ listDelArm: "" }); self.deleteRecordNow(r.record_id || r.id); },
             };
           });
-        const all = dels.concat(recs);
+        const all = (only ? [] : dels).concat(recs);
         const byMonth = [];
         all.forEach((r) => {
           const g = byMonth.find((x) => x.month === r.month);
           if (g) g.rows.push(r); else byMonth.push({ month: r.month, label: r.monthLabel || r.month, rows: [r] });
         });
         return {
+          hasRecTypeFilter: !!st.recTypeFilter,
+          clearRecTypeFilter: () => self.setState({ recTypeFilter: "" }),
+          recTypeFilterLabel: ({ install: "ដាក់ Set", collect: "ប្រមូល Col", larvae: "ដង្កូវទឹក Lar",
+            adult: "មូស Adu", lab: "លទ្ធផល Lab" })[st.recTypeFilter] || "",
           recordMonths: byMonth.sort((a, b) => String(b.month).localeCompare(String(a.month))).map((g) => ({
             label: (function (k, fallback) {
               if (k === "__del") return "\u179b\u17bb\u1794 \u00b7 deleted";
@@ -6528,6 +7267,7 @@ class Component extends DCLogic {
         };
       }).concat([
         { key: "_summary_household", option: "\u179f\u1784\u17d2\u1781\u17c1\u1794\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7  \u00b7  ento-household-summary.csv", label: "Household summary", n: 0, file: "ento-household-summary.csv", download: this.exportHouseholds, bar: "#117996", fg: "#003E78", bd: "#D9DEE4" },
+        { key: "_summary_trapchain", option: "\u1785\u17c6\u1793\u17bb\u1785\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb  \u00b7  ento-trap-chain.csv", label: "Trap chain", n: 0, sub: "\u178a\u17b6\u1780\u17cb \u203a \u1794\u17d2\u179a\u1798\u17bc\u179b \u203a \u179b\u1791\u17d2\u1792\u1795\u179b \u00b7 set \u203a collected \u203a lab, one row per trap" },
         { key: "_summary_siteweek", option: "\u1791\u17b8\u178f\u17b6\u17c6\u1784\u178f\u17b6\u1798\u179f\u1794\u17d2\u178f\u17b6\u17a0\u17cd  \u00b7  ento-site-week.csv", label: "Site by week", n: 0, file: "ento-site-week.csv", download: this.exportSiteWeek, bar: "#117996", fg: "#003E78", bd: "#D9DEE4" },
       ]),
       exportChoice: s.exportChoice || "household",
@@ -6535,6 +7275,7 @@ class Component extends DCLogic {
       downloadChoice: () => this.askExport(() => {
         const c = s.exportChoice || "household";
         if (c === "_summary_household") return this.exportHouseholds();
+        if (c === "_summary_trapchain") return this.exportTrapChain();
         if (c === "_summary_siteweek") return this.exportSiteWeek();
         return this.exportType(c)();
       }),
@@ -6580,8 +7321,8 @@ class Component extends DCLogic {
       cancelPull: this.cancelPull,
       pullProv: s.pullProv || "",
       setPullProv: (e) => this.setState({ pullProv: e.target.value, pullDist: "", pullComm: "", pullVill: "" }),
-      pullProvOptions: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }]
-        .concat(this.pullOptions("province") || this.adminOptions("province")),
+      pullProvOptions: this.scopeLimit("province", [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }]
+        .concat(this.pullOptions("province") || this.adminOptions("province"))),
       // Narrowing the pull below province: each level lists only what sits under the
       // level above, and changing a level clears the ones below it.
       pullDist: s.pullDist || "",
@@ -6590,10 +7331,10 @@ class Component extends DCLogic {
       setPullDist: (e) => this.setState({ pullDist: e.target.value, pullComm: "", pullVill: "" }),
       setPullComm: (e) => this.setState({ pullComm: e.target.value, pullVill: "" }),
       setPullVill: (e) => this.setState({ pullVill: e.target.value }),
-      pullDistOptions: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }]
-        .concat(s.pullProv ? (this.pullOptions("district", s.pullProv) || this.adminOptions("district", "province", s.pullProv)) : []),
-      pullCommOptions: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }]
-        .concat(s.pullDist ? (this.pullOptions("commune", s.pullDist) || this.adminOptions("commune", "district", s.pullDist)) : []),
+      pullDistOptions: this.scopeLimit("district", [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }]
+        .concat(s.pullProv ? (this.pullOptions("district", s.pullProv) || this.adminOptions("district", "province", s.pullProv)) : [])),
+      pullCommOptions: this.scopeLimit("commune", [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }]
+        .concat(s.pullDist ? (this.pullOptions("commune", s.pullDist) || this.adminOptions("commune", "district", s.pullDist)) : [])),
       pullVillOptions: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all" }]
         .concat(s.pullComm ? (this.pullOptions("village", s.pullComm) || this.adminOptions("village", "commune", s.pullComm)) : []),
       pullScopeLabel: (function (a) {
@@ -6615,7 +7356,143 @@ class Component extends DCLogic {
             + (s.autoMsg ? " \u00b7 " + s.autoMsg : " \u00b7 up to date")
           : "\u1791\u17b6\u1789\u1791\u17b7\u1793\u17d2\u1793\u1793\u17d0\u1799\u1796\u17c1\u179b\u1785\u17bb\u1785\u1794\u17ca\u17bc\u178f\u17bb\u1784 \u00b7 the sheet is read only when you press pull",
       syncing: !!s.syncing,
+      hdrMenuOpen: !!s.hdrMenu,
+      toggleHdrMenu: this.toggleHdrMenu,
+      menuSettings: this.menuSettings,
+      menuAbout: this.menuAbout,
+      menuSignOut: this.menuSignOut,
+      menuUsers: this.menuUsers,
+      menuClearCache: this.menuClearCache,
+      isAdmin: !!(s.auth && String(s.auth.role || "") === "admin"),
+      showUsers: !!s.showUsers,
+      closeUsers: () => this.setState({ showUsers: false, uForm: null, usersErr: "" }),
+      usersReload: this.loadUsers,
+      usersBusy: !!s.usersBusy,
+      usersBusyOpacity: s.usersBusy ? ".55" : "1",
+      usersErr: s.usersErr || "",
+      usersOffline: !s.online,
+      usersEmpty: !(s.users || []).length,
+      usersEmptyLabel: s.usersBusy ? "កំពុងផ្ទុក · loading…" : "គ្មានគណនី · no accounts",
+      usersCountLabel: (function (n) { return n + (n === 1 ? " account" : " accounts"); })(this.mergeUsers(s.users || []).length),
+      statTotal: this.mergeUsers(s.users || []).length,
+      statActive: this.mergeUsers(s.users || []).filter((u) => u.active).length,
+      statPending: this.mergeUsers(s.users || []).filter((u) => !u.last_login).length,
+      statOff: this.mergeUsers(s.users || []).filter((u) => !u.active).length,
+      usersQ: s.usersQ || "",
+      setUsersQ: (e) => this.setState({ usersQ: e && e.target ? e.target.value : e }),
+      usersRoleF: s.usersRoleF || "",
+      setUsersRoleF: (e) => this.setState({ usersRoleF: e && e.target ? e.target.value : e }),
+      usersProvF: s.usersProvF || "",
+      setUsersProvF: (e) => this.setState({ usersProvF: e && e.target ? e.target.value : e }),
+      usersStatusF: s.usersStatusF || "",
+      setUsersStatusF: (e) => this.setState({ usersStatusF: e && e.target ? e.target.value : e }),
+      usersRoleOptions: (function (list) {
+        const seen = {};
+        list.forEach((u) => { if (u.role) seen[u.role] = true; });
+        return Object.keys(seen).map((r) => ({ value: r, label: r }));
+      })(s.users || []),
+      usersCsv: this.usersCsv,
+      usersScrollRef: (el) => { this._usersScroll = el; },
+      usersProvOptions: (function (self, list) {
+        const seen = {};
+        list.forEach((u) => { if (u.province_code) seen[u.province_code] = true; });
+        const all = self.pullOptions("province") || [];
+        return all.filter((o) => seen[o.value]);
+      })(this, s.users || []),
+      uFormOpen: !!s.uForm,
+      uFormTitle: s.uForm && s.uForm.isNew ? "អ្នកប្រើថ្មី · New user" : "កែគណនី · Edit account",
+      uLocked: !!(s.uForm && !s.uForm.isNew),
+      uUsernameBg: s.uForm && !s.uForm.isNew ? "#F2F2F2" : "#fff",
+      uUsername: (s.uForm && s.uForm.username) || "",
+      uName: (s.uForm && s.uForm.name) || "",
+      uKind: (s.uForm && s.uForm.kind) || "field",
+      uRole: (s.uForm && s.uForm.role) || "collector",
+      uPin: (s.uForm && s.uForm.pin) || "",
+      uPinHint: s.uForm && s.uForm.isNew ? "PIN (required)" : "PIN — leave blank to keep",
+      uRoleOptions: (s.uForm && s.uForm.kind === "dash")
+        ? [{ value: "guest", label: "guest" }, { value: "analyst", label: "analyst" }, { value: "admin", label: "admin" }]
+        : [{ value: "collector", label: "collector" }, { value: "supervisor", label: "supervisor" }, { value: "admin", label: "admin" }],
+      uSetUsername: this.uField("username"),
+      uSetName: this.uField("name"),
+      uSetRole: this.uField("role"),
+      uSetPin: this.uField("pin"),
+      uSetKind: this.uSetKind,
+      uProvince: (s.uForm && s.uForm.province_code) || "",
+      uDistrict: (s.uForm && s.uForm.district_code) || "",
+      uCommune: (s.uForm && s.uForm.commune_code) || "",
+      uSetProvince: this.uSetScope("province"),
+      uSetDistrict: this.uSetScope("district"),
+      uSetCommune: this.uSetScope("commune"),
+      uProvinceOptions: this.pullOptions("province") || [],
+      uDistrictOptions: (s.uForm && this.pullOptions("district", s.uForm.province_code)) || [],
+      uCommuneOptions: (s.uForm && this.pullOptions("commune", s.uForm.district_code)) || [],
+      uDistrictOff: !(s.uForm && s.uForm.province_code),
+      uCommuneOff: !(s.uForm && s.uForm.district_code),
+      uDistrictBg: s.uForm && s.uForm.province_code ? "#fff" : "#F2F2F2",
+      uCommuneBg: s.uForm && s.uForm.district_code ? "#fff" : "#F2F2F2",
+      uNew: this.uNew,
+      uCancel: this.uCancel,
+      uSave: this.uSave,
+      usersRows: this.mergeUsers(s.users || [])
+        .filter((u) => {
+          const q = String(s.usersQ || "").trim().toLowerCase();
+          if (q && (String(u.username) + " " + String(u.name || "")).toLowerCase().indexOf(q) < 0) return false;
+          if (s.usersRoleF && String(u.role) !== s.usersRoleF) return false;
+          if (s.usersProvF && String(u.province_code || "") !== s.usersProvF) return false;
+          if (s.usersStatusF === "active" && !u.active) return false;
+          if (s.usersStatusF === "off" && u.active) return false;
+          if (s.usersStatusF === "pending" && u.last_login) return false;
+          return true;
+        })
+        .map((u) => ({
+        kind: u.kind,
+        kindLabel: u.kind === "both"
+          ? "កម្មវិធី & ផ្ទាំងបង្ហាញ · app & dashboard"
+          : u.kind === "dash" ? "ផ្ទាំងបង្ហាញ · dashboard" : "កម្មវិធី · field app",
+        username: u.username,
+        name: u.name || u.username,
+        role: u.role || (u.kind === "dash" ? "guest" : "collector"),
+        roleExtra: u.dashRole ? "dashboard: " + u.dashRole : "",
+        roleBg: u.role === "admin" ? "#003E78" : "#D5E7EF",
+        roleFg: u.role === "admin" ? "#fff" : "#003E78",
+        province_code: u.province_code || "",
+        district_code: u.district_code || "",
+        commune_code: u.commune_code || "",
+        cluster: (function (self) {
+          const names = ["commune", "district", "province"]
+            .map((lvl) => {
+              const code = u[lvl + "_code"];
+              if (!code) return "";
+              const parent = lvl === "commune" ? u.district_code : lvl === "district" ? u.province_code : "";
+              const list = self.pullOptions(lvl, parent) || [];
+              const hit = list.filter((o) => String(o.value) === String(code))[0];
+              return hit ? hit.label : code;
+            })
+            .filter(Boolean);
+          return names.length ? names[0] : "ទាំងអស់ · all areas";
+        })(this),
+        activity: (u.last_login ? "ចូលចុងក្រោយ · last sign-in " + String(u.last_login).slice(0, 10) : "មិនទាន់ចូល · never signed in")
+          + (u.kind !== "dash" ? " · " + (u.records || 0) + " records" : ""),
+        roleLabel: (u.role || "collector").charAt(0).toUpperCase() + (u.role || "collector").slice(1),
+        hasRoleExtra: !!u.dashRole,
+        statusLabel: !u.active ? "Deactivated" : (u.last_login ? "Active" : "Pending first sign-in"),
+        statusFg: !u.active ? "#7C1220" : (u.last_login ? "#117996" : "#B8860B"),
+        dotColor: !u.active ? "#7C1220" : (u.last_login ? "#117996" : "#F4B71B"),
+        edgeColor: !u.active ? "#7C1220" : (u.last_login ? "#117996" : "#F4B71B"),
+        open: s.uOpen === u.username,
+        caret: s.uOpen === u.username ? "180deg" : "0deg",
+        onOpen: this.uOpenRow(u),
+        onPin: this.uResetPin(u),
+        toggleTitle: u.active ? "បិទគណនី · Deactivate" : "បើកគណនី · Reactivate",
+        toggleFg: u.active ? "#7C1220" : "#117996",
+        active: !!u.active,
+        onEdit: this.uEdit(u),
+        onToggle: this.uToggle(u),
+        onDelete: this.uDelete(u),
+        parts: u.parts,
+      })),
       hasProgress: !!s.syncPct || !!s.syncing,
+      noProgress: !(!!s.syncPct || !!s.syncing),
       progressPct: Math.round(s.syncPct || 0) + "%",
       progressLabel: Math.round(s.syncPct || 0) + "%",
       syncBtnLabel: s.syncing ? "\u1780\u17c6\u1796\u17bb\u1784\u1795\u17d2\u1789\u17be\u2026 sending" : "\u1795\u17d2\u1789\u17be \u00b7 Sync now",
