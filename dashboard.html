@@ -45,6 +45,8 @@ canvas{max-height:320px;max-width:100%}
   [data-chartbox="1"]{height:260px}
 }
 @media (max-width:560px){
+  /* the village table only fits a phone without No / Sangkat / Cont. */
+  [data-vcol="hide"]{display:none}
   /* upright village names need more room under the plot */
   [data-chartbox="1"]{height:350px}
 }
@@ -258,14 +260,12 @@ canvas{max-height:320px;max-width:100%}
       <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">សេចក្ដីសង្ខេបតាមភូមិ <span style="font-weight:400;color:#9AA5AE">Village detail summary · dengue vector surveillance</span></div>
       <div data-scroll-x="1" style="max-height:560px;overflow:auto;border:1px solid #D9DEE4;border-radius:6px">
         <div style="display:flex;position:sticky;top:0;z-index:2;background:#003E78;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px">
-          <span style="flex:none;width:34px;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">No</span>
-          <span style="flex:1 1 80px;min-width:0;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">Sangkat</span>
+          <span data-vcol="hide" style="flex:none;width:34px;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">No</span>
+          <span data-vcol="hide" style="flex:1 1 80px;min-width:0;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">Sangkat</span>
           <span style="flex:1 1 80px;min-width:0;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">Village</span>
           <span style="flex:none;width:56px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">HH</span>
-          <span style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Cont.</span>
-          <span style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Pos.</span>
+          <span data-vcol="hide" style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Cont.</span>
           <span style="flex:none;width:56px;padding:9px 8px;text-align:right;background:#117996;border-right:1px solid rgba(255,255,255,.22)">CI %</span>
-          <span style="flex:none;width:76px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Houses +</span>
           <span style="flex:none;width:56px;padding:9px 8px;text-align:right;background:#117996;border-right:1px solid rgba(255,255,255,.22)">HI %</span>
           <span style="flex:none;width:70px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Adults</span>
           <span style="flex:none;width:68px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Larvae</span>
@@ -273,14 +273,12 @@ canvas{max-height:320px;max-width:100%}
         </div>
         <sc-for list="{{ villageRows }}" as="v" hint-placeholder-count="6">
           <div style="display:flex;font-size:12.5px;border-top:1px solid #E8EDF1;color:#1A2332">
-            <span style="flex:none;width:34px;padding:8px;color:#9AA5AE;border-right:1px solid #E8EDF1">{{ v.no }}</span>
-            <span style="flex:1 1 80px;min-width:0;padding:8px;color:#475569;border-right:1px solid #E8EDF1;white-space:normal;overflow-wrap:anywhere;line-height:1.35">{{ v.comm }}</span>
+            <span data-vcol="hide" style="flex:none;width:34px;padding:8px;color:#9AA5AE;border-right:1px solid #E8EDF1">{{ v.no }}</span>
+            <span data-vcol="hide" style="flex:1 1 80px;min-width:0;padding:8px;color:#475569;border-right:1px solid #E8EDF1;white-space:normal;overflow-wrap:anywhere;line-height:1.35">{{ v.comm }}</span>
             <button onClick="{{ v.toggle }}" style="flex:1 1 80px;min-width:0;padding:8px;display:flex;align-items:center;gap:6px;background:transparent;border:none;border-right:1px solid #E8EDF1;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;color:#003E78;text-align:left;overflow:hidden" style-hover="background:#F1F5F9"><span style="flex:none;width:14px;height:14px;border:1px solid #A8C8DC;border-radius:4px;font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;color:#117996">{{ v.caret }}</span><span style="white-space:normal;overflow-wrap:anywhere;line-height:1.35">{{ v.vill }}</span></button>
             <span style="flex:none;width:56px;padding:8px;text-align:right;border-right:1px solid #E8EDF1">{{ v.households }}</span>
-            <span style="flex:none;width:74px;padding:8px;text-align:right;border-right:1px solid #E8EDF1">{{ v.insp }}</span>
-            <span style="flex:none;width:74px;padding:8px;text-align:right;border-right:1px solid #E8EDF1">{{ v.pos }}</span>
+            <span data-vcol="hide" style="flex:none;width:74px;padding:8px;text-align:right;border-right:1px solid #E8EDF1">{{ v.insp }}</span>
             <span style="flex:none;width:56px;padding:8px;text-align:right;font-weight:700;border-right:1px solid #E8EDF1;background:{{ v.ciBg }};color:{{ v.ciFg }}">{{ v.ci }}</span>
-            <span style="flex:none;width:76px;padding:8px;text-align:right;border-right:1px solid #E8EDF1">{{ v.housesPos }}</span>
             <span style="flex:none;width:56px;padding:8px;text-align:right;font-weight:700;border-right:1px solid #E8EDF1;background:{{ v.hiBg }};color:{{ v.hiFg }}">{{ v.hi }}</span>
             <span style="flex:none;width:74px;padding:8px;text-align:right;color:#003E78;font-weight:700;border-right:1px solid #E8EDF1">{{ v.adults }}</span>
             <span style="flex:none;width:68px;padding:8px;text-align:right;color:#117996;font-weight:700;border-right:1px solid #E8EDF1">{{ v.larvae }}</span>
@@ -291,14 +289,12 @@ canvas{max-height:320px;max-width:100%}
               <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#64748B;padding:7px 8px 3px 52px">{{ v.hhCount }}</div>
               <sc-for list="{{ v.hhs }}" as="h" hint-placeholder-count="3">
                 <div style="display:flex;font-size:12px;border-top:1px solid #EDF1F4;color:#475569">
-                  <span style="flex:none;width:34px;padding:7px 8px"></span>
-                  <span style="flex:1 1 80px;min-width:0;padding:7px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="{{ h.href }}" style="font-family:ui-monospace,Menlo,monospace;font-weight:700;color:#117996;text-decoration:none;border-bottom:1px solid #A8C8DC" style-hover="color:#003E78;border-bottom-color:#003E78">{{ h.id }}</a></span>
-                  <span style="flex:1 1 80px;min-width:0;padding:7px 8px;white-space:normal;overflow-wrap:anywhere;line-height:1.35">{{ h.head }}</span>
+                  <span data-vcol="hide" style="flex:none;width:34px;padding:7px 8px"></span>
+                  <span data-vcol="hide" style="flex:1 1 80px;min-width:0;padding:7px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="{{ h.href }}" style="font-family:ui-monospace,Menlo,monospace;font-weight:700;color:#117996;text-decoration:none;border-bottom:1px solid #A8C8DC" style-hover="color:#003E78;border-bottom-color:#003E78">{{ h.id }}</a></span>
+                  <span style="flex:1 1 80px;min-width:0;padding:7px 8px;white-space:normal;overflow-wrap:anywhere;line-height:1.35"><a href="{{ h.href }}" style="color:#475569;text-decoration:none" style-hover="color:#003E78">{{ h.head }}</a></span>
                   <span style="flex:none;width:56px;padding:7px 8px"></span>
-                  <span style="flex:none;width:74px;padding:7px 8px;text-align:right">{{ h.insp }}</span>
-                  <span style="flex:none;width:74px;padding:7px 8px;text-align:right">{{ h.pos }}</span>
+                  <span data-vcol="hide" style="flex:none;width:74px;padding:7px 8px;text-align:right">{{ h.insp }}</span>
                   <span style="flex:none;width:56px;padding:7px 8px;text-align:right;font-weight:700;color:#003E78">{{ h.ci }}</span>
-                  <span style="flex:none;width:76px;padding:7px 8px;text-align:right;font-weight:700;color:{{ h.positiveFg }}">{{ h.positive }}</span>
                   <span style="flex:none;width:56px;padding:7px 8px"></span>
                   <span style="flex:none;width:74px;padding:7px 8px;text-align:right;color:#003E78">{{ h.adults }}</span>
                   <span style="flex:none;width:68px;padding:7px 8px;text-align:right;color:#117996">{{ h.larvae }}</span>
@@ -309,14 +305,12 @@ canvas{max-height:320px;max-width:100%}
           </sc-if>
         </sc-for>
         <div style="display:flex;font-size:12.5px;font-weight:700;border-top:2px solid #003E78;background:#F1F5F9;color:#1A2332">
-          <span style="flex:none;width:34px;padding:9px 8px;border-right:1px solid #E8EDF1"></span>
+          <span data-vcol="hide" style="flex:none;width:34px;padding:9px 8px;border-right:1px solid #E8EDF1"></span>
           <span style="flex:1 1 80px;min-width:0;padding:9px 8px;color:#003E78;border-right:1px solid #E8EDF1">{{ villageTotals.label }}</span>
-          <span style="flex:1 1 80px;min-width:0;padding:9px 8px;border-right:1px solid #E8EDF1"></span>
+          <span data-vcol="hide" style="flex:1 1 80px;min-width:0;padding:9px 8px;border-right:1px solid #E8EDF1"></span>
           <span style="flex:none;width:56px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1">{{ villageTotals.households }}</span>
-          <span style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1">{{ villageTotals.insp }}</span>
-          <span style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1">{{ villageTotals.pos }}</span>
+          <span data-vcol="hide" style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1">{{ villageTotals.insp }}</span>
           <span style="flex:none;width:56px;padding:9px 8px;text-align:right;color:#7C1220;border-right:1px solid #E8EDF1">{{ villageTotals.ci }}</span>
-          <span style="flex:none;width:76px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1">{{ villageTotals.housesPos }}</span>
           <span style="flex:none;width:56px;padding:9px 8px;text-align:right;color:#003E78;border-right:1px solid #E8EDF1">{{ villageTotals.hi }}</span>
           <span style="flex:none;width:74px;padding:9px 8px;text-align:right;color:#003E78;border-right:1px solid #E8EDF1">{{ villageTotals.adults }}</span>
           <span style="flex:none;width:68px;padding:9px 8px;text-align:right;color:#117996;border-right:1px solid #E8EDF1">{{ villageTotals.larvae }}</span>
@@ -431,6 +425,20 @@ const VALUE_LABEL_PLUGIN = {
           ctx.lineWidth = 2.5;
           ctx.strokeText(text, p.x, p.y);
           ctx.fillText(text, p.x, p.y);
+        } else if (chart.options && chart.options.indexAxis === "y") {
+          const right = chart.chartArea ? chart.chartArea.right : 0;
+          const outside = el.x + 6;
+          const inside = outside + 24 > right;
+          ctx.textAlign = inside ? "right" : "left";
+          ctx.textBaseline = "middle";
+          const x = inside ? el.x - 6 : outside;
+          ctx.strokeStyle = inside ? "rgba(0,0,0,.45)" : "#fff";
+          ctx.lineWidth = inside ? 2.5 : 3;
+          ctx.lineJoin = "round";
+          ctx.strokeText(text, x, el.y);
+          ctx.fillStyle = inside ? "#fff" : "#333";
+          ctx.fillText(text, x, el.y);
+          ctx.textAlign = "center";
         } else {
           const top = chart.chartArea ? chart.chartArea.top : 0;
           const above = el.y - 4;
@@ -687,12 +695,30 @@ class Component extends DCLogic {
   componentDidMount() {
     document.addEventListener("focusin", this._onFieldFocusIn, true);
     document.addEventListener("focusout", this._onFieldFocusOut, true);
-    if (this.state.auth) { this.load(); this.loadViewStats(); } else this.setState({ loading: false });
+    if (this.state.auth) { this.load(); this.loadViewStats(); this.countView(); } else this.setState({ loading: false });
     [0, 300, 900, 2000].forEach((ms) => setTimeout(this.draw, ms));
   }
   componentDidUpdate(prevProps, prevState) {
     this.draw();
   }
+
+  // A restored session never passes through dash-login, so opening the dashboard
+  // on a saved token was not counted as a view. Ping once per browser tab.
+  countView = () => {
+    if (!this.state.auth) return;
+    try {
+      if (sessionStorage.getItem("entoDashViewed") === "1") return;
+      sessionStorage.setItem("entoDashViewed", "1");
+    } catch (e) {}
+    this.post({ action: "dash-view" })
+      .then((out) => {
+        if (!out || !out.ok) return;
+        const auth = Object.assign({}, this.state.auth, { views: Number(out.login_count || 0) });
+        writeAuth(auth);
+        this.setState({ auth }, this.loadViewStats);
+      })
+      .catch(() => {});
+  };
 
   /* ─── sign in ─────────────────────────────────────────────────────── */
 
@@ -1686,9 +1712,15 @@ class Component extends DCLogic {
       const stacked = !!(s.spec.data.datasets[0] && s.spec.data.datasets[0].stack);
       // On a phone a 45° Khmer village name is clipped, so stand the names upright.
       const narrowX = window.innerWidth < 560;
+      // Safari never measures Khmer names correctly, so on a phone the long-label
+      // bar charts lie down: names read left to right, nothing to rotate or clip.
+      const longLabels = (s.spec.data.labels || []).some((l) => String(l).length > 6);
+      const flip = narrowX && s.spec.type === "bar" && longLabels;
       const dim = this.chartDim(s.key);
       const options = {
+        indexAxis: flip ? "y" : "x",
         responsive: true, maintainAspectRatio: false,
+        layout: { padding: flip ? { right: 26 } : 0 },
         devicePixelRatio: Math.max(2, window.devicePixelRatio || 1),
         // a round or two of data should not produce a bar the width of the card
         datasets: { bar: { maxBarThickness: 64 } },
@@ -1705,16 +1737,21 @@ class Component extends DCLogic {
         plugins: { legend: { display: s.spec.data.datasets.length > 1 || s.spec.type === "doughnut",
           position: "bottom", labels: { font: { size: 12, family: FONT }, color: "#333", boxWidth: 13, padding: 12 } } },
         scales: s.spec.type === "doughnut" ? {} : {
-          x: { stacked, grid: { display: false },
-            // Safari under-measures Khmer glyphs, so the upright names were cut off.
-            // Reserve the label strip explicitly instead of trusting the measurement.
-            afterFit: narrowX ? (axis) => { axis.height = Math.max(axis.height, 104); } : undefined,
-            ticks: { font: { size: narrowX ? 11 : 12.5, family: FONT, weight: 500 }, color: "#333",
-              maxRotation: narrowX ? 90 : 45, minRotation: narrowX ? 90 : 0, autoSkip: false,
-              callback(v) { const t = String(this.getLabelForValue(v));
-                return narrowX && t.length > 12 ? t.slice(0, 11) + "\u2026" : t; } } },
-          y: { stacked, beginAtZero: true, grid: { color: "#E4EBF0" },
-            ticks: { font: { size: 12, family: FONT }, color: "#333", precision: 0 } },
+          x: flip
+            ? { stacked, beginAtZero: true, grid: { color: "#E4EBF0" },
+                ticks: { font: { size: 11, family: FONT }, color: "#333", precision: 0, maxTicksLimit: 6 } }
+            : { stacked, grid: { display: false },
+                ticks: { font: { size: narrowX ? 11 : 12.5, family: FONT, weight: 500 }, color: "#333",
+                  maxRotation: narrowX ? 90 : 45, minRotation: narrowX ? 90 : 0, autoSkip: false } },
+          y: flip
+            ? { stacked, grid: { display: false },
+                // force the name gutter; Safari's own measurement comes back short
+                afterFit: (axis) => { axis.width = Math.max(axis.width, 96); },
+                ticks: { font: { size: 11, family: FONT, weight: 500 }, color: "#333", autoSkip: false,
+                  crossAlign: "far", callback(v) { const t = String(this.getLabelForValue(v));
+                    return t.length > 11 ? t.slice(0, 10) + "\u2026" : t; } } }
+            : { stacked, beginAtZero: true, grid: { color: "#E4EBF0" },
+                ticks: { font: { size: 12, family: FONT }, color: "#333", precision: 0 } },
         },
       };
       const extra = s.spec.opt || {};
