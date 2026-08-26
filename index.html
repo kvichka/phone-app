@@ -2275,9 +2275,34 @@ class Component extends DCLogic {
   setLoginUser = (e) => this.setState({ loginUser: e.target.value, loginErr: "" });
   setLoginPin = (e) => this.setState({ loginPin: e.target.value, loginErr: "" });
 
+  // A different account signing in on this phone starts from nothing: every record,
+  // deletion queue and cached list from the previous person is removed, so the new
+  // person pulls only what their own area and role allow. The app files stay.
+  wipeDeviceData() {
+    [KEY, DEL, DELLOG, SEQ, CTX, "ento.lastpull.v1", this.USERS_CACHE, "ento_about_seen"]
+      .forEach((k) => { try { localStorage.removeItem(k); } catch (e) {} });
+    this.setState({
+      records: [], pendingDel: [], lastPullAt: "", collector: "", cluster: "",
+      hhQuery: "", hhProv: "", hhComm: "", users: null, pullDone: null,
+    });
+  }
+
   applyAuth(a) {
+    const prev = loadAuth();
+    const switched = prev
+      ? String(prev.username || "").toLowerCase() !== String(a.username || "").toLowerCase()
+      : load().length > 0; // data left by an older version with no account attached
+    if (switched) {
+      const pending = load().filter((r) => !r.synced_at).length;
+      const who = (prev && (prev.name || prev.username)) || "this phone";
+      if (pending && !window.confirm("មាន " + pending + " កំណត់ត្រាមិនទាន់ផ្ញើរបស់ " + who + " · " + pending + " records from " + who + " have not been sent yet. Signing in as " + (a.name || a.username) + " removes all data on this phone. Continue?")) {
+        this.setState({ loginBusy: false, loginPin: "", loginErr: "បានបោះបង់ · Sign-in cancelled — sync the pending records first." });
+        return;
+      }
+      this.wipeDeviceData();
+    }
     saveAuth(a);
-    const c = loadCtx();
+    const c = switched ? {} : loadCtx();
     c.collector = a.name || a.username;
     if (a.cluster) c.cluster = a.cluster;
     try { localStorage.setItem(CTX, JSON.stringify(c)); } catch (e) {}
@@ -2289,7 +2314,9 @@ class Component extends DCLogic {
       // An account limited to an area pulls and sees only that area.
       pullProv: a.province_code || "", pullDist: a.district_code || "", pullComm: a.commune_code || "",
     }, () => this.setState({ records: this.inScopeList(this.link(load())) }));
-    this.toast("\u179f\u17bd\u179f\u17d2\u178f\u17b8 " + (a.name || a.username) + " \u00b7 signed in", "ok");
+    this.toast(switched
+      ? "\u179f\u17bd\u179f\u17d2\u178f\u17b8 " + (a.name || a.username) + " \u00b7 new account \u2014 phone cleared, pull to load your data"
+      : "\u179f\u17bd\u179f\u17d2\u178f\u17b8 " + (a.name || a.username) + " \u00b7 signed in", "ok");
   }
 
   doLogin = () => {
@@ -2706,6 +2733,7 @@ class Component extends DCLogic {
   }, () => this._toForm());
   uEdit = (u) => () => this.setState({
     uForm: { kind: u.kind, username: u.username, name: u.name, role: u.role, pin: "", isNew: false,
+      origUsername: u.username, origKind: u.kind,
       province_code: u.province_code || "", district_code: u.district_code || "", commune_code: u.commune_code || "" },
     usersErr: "",
   }, () => this._toForm());
@@ -2713,15 +2741,17 @@ class Component extends DCLogic {
   uOpenRow = (u) => () => this.setState((s) => ({ uOpen: s.uOpen === u.username ? "" : u.username }));
   uResetPin = (u) => () => this.setState({
     uForm: { kind: u.kind, username: u.username, name: u.name, role: u.role, pin: "", isNew: false,
+      origUsername: u.username, origKind: u.kind,
       province_code: u.province_code || "", district_code: u.district_code || "", commune_code: u.commune_code || "" },
     usersErr: "",
   }, () => this._toForm());
   usersCsv = () => {
-    const rows = [["username", "name", "account", "role", "province_code", "district_code", "commune_code", "active", "last_login", "records"]]
+    const rows = [["username", "name", "account", "role", "province_code", "district_code", "commune_code", "active", "last_login", "records", "dashboard_views"]]
       .concat(this.mergeUsers(this.state.users || []).map((u) => [
         u.username, u.name || "", (u.parts || [u.kind]).join("+"), u.role || "",
         u.province_code || "", u.district_code || "", u.commune_code || "",
         u.active ? "yes" : "no", u.last_login || "", String(u.records || 0),
+        u.dashViews == null ? "" : String(u.dashViews),
       ]));
     const csv = rows.map((r) => r.map((c) => '"' + String(c).replace(/"/g, '""') + '"').join(",")).join("\r\n");
     const url = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
@@ -2752,22 +2782,42 @@ class Component extends DCLogic {
   };
   uSave = () => {
     const f = this.state.uForm || {};
-    if (!String(f.username || "").trim()) { this.setState({ usersErr: "a username is required" }); return; }
-    if (f.isNew && !/^\d{4,8}$/.test(String(f.pin || "").trim())) {
-      this.setState({ usersErr: "a new account needs a PIN of 4 to 8 digits" }); return;
+    const name = String(f.username || "").trim();
+    if (!name) { this.setState({ usersErr: "a username is required" }); return; }
+    const orig = String(f.origUsername || "").trim();
+    const renamed = !f.isNew && !!orig && orig.toLowerCase() !== name.toLowerCase();
+    const origKinds = f.origKind === "both" ? ["field", "dash"] : (f.origKind ? [f.origKind] : []);
+    const wantKinds = f.kind === "both" ? ["field", "dash"] : [f.kind];
+    const added = wantKinds.filter((k) => origKinds.indexOf(k) < 0);
+    const dropped = renamed ? [] : origKinds.filter((k) => wantKinds.indexOf(k) < 0);
+    // A PIN is stored hashed with the username and the account type mixed in, so a
+    // rename or a new account type cannot carry the old PIN over — set a new one.
+    const needPin = f.isNew || renamed || added.length > 0;
+    if (needPin && !/^\d{4,8}$/.test(String(f.pin || "").trim())) {
+      this.setState({ usersErr: renamed || added.length
+        ? "លេខកូដថ្មី · changing the username or the account type needs a new PIN of 4 to 8 digits"
+        : "a new account needs a PIN of 4 to 8 digits" });
+      return;
     }
+    if (renamed && !window.confirm("ដូរឈ្មោះចូល " + orig + " → " + name + " · Rename " + orig + " to " + name + "? The old account is removed and records already sent keep the old name.")) return;
+    if (dropped.length && !window.confirm("លុបគណនី " + dropped.join(" + ") + " · Remove this person's " + dropped.join(" and ") + " account? Continue?")) return;
     this.setState({ usersBusy: true, usersErr: "" });
     const base = {
-      action: "admin-user-save", username: String(f.username).trim(),
+      action: "admin-user-save", username: name,
       name: f.name, pin: String(f.pin || "").trim(),
       province_code: f.province_code || "", district_code: f.district_code || "", commune_code: f.commune_code || "",
     };
     // "Both" writes the same person into both account tables. The dashboard list
     // has its own roles, so a field admin becomes a dashboard admin and anyone
     // else becomes an analyst.
-    const jobs = f.kind === "both"
-      ? [{ ...base, kind: "field", role: f.role }, { ...base, kind: "dash", role: f.role === "admin" ? "admin" : "analyst" }]
-      : [{ ...base, kind: f.kind, role: f.role }];
+    const jobs = wantKinds.map((kind) => ({
+      ...base, kind,
+      role: kind === "dash" ? (f.kind === "dash" ? f.role : (f.role === "admin" ? "admin" : "analyst")) : f.role,
+    }));
+    // The rows the person no longer has go last, so nothing is lost if a save fails.
+    (renamed ? origKinds : dropped).forEach((kind) => {
+      jobs.push({ action: "admin-user-delete", kind, username: renamed ? orig : name });
+    });
     jobs.reduce((p, job) => p.then(() => this.usersApi(job)), Promise.resolve())
       .then(() => this.setState({ uForm: null })).catch(() => {});
   };
@@ -2778,11 +2828,16 @@ class Component extends DCLogic {
     const order = [];
     list.forEach((u) => {
       const key = String(u.username).toLowerCase();
-      if (!by[key]) { by[key] = { ...u, parts: [u.kind] }; order.push(key); return; }
+      if (!by[key]) {
+        by[key] = { ...u, parts: [u.kind] };
+        if (u.kind === "dash") by[key].dashViews = u.login_count || 0;
+        order.push(key);
+        return;
+      }
       const m = by[key];
       m.parts.push(u.kind);
       m.kind = "both";
-      if (u.kind === "dash") m.dashRole = u.role;
+      if (u.kind === "dash") { m.dashRole = u.role; m.dashViews = u.login_count || 0; }
       else { m.role = u.role; m.records = u.records; m.name = u.name || m.name; }
       if (!u.active) m.active = false;
       if (String(u.last_login || "") > String(m.last_login || "")) m.last_login = u.last_login;
@@ -7426,8 +7481,18 @@ class Component extends DCLogic {
       })(this, s.users || []),
       uFormOpen: !!s.uForm,
       uFormTitle: s.uForm && s.uForm.isNew ? "អ្នកប្រើថ្មី · New user" : "កែគណនី · Edit account",
-      uLocked: !!(s.uForm && !s.uForm.isNew),
-      uUsernameBg: s.uForm && !s.uForm.isNew ? "#F2F2F2" : "#fff",
+      uLocked: false,
+      uUsernameBg: "#fff",
+      uPinHint: (function (s) {
+        if (!s.uForm) return "PIN";
+        if (s.uForm.isNew) return "PIN (required)";
+        const orig = String(s.uForm.origUsername || "").trim();
+        const renamed = !!orig && orig.toLowerCase() !== String(s.uForm.username || "").trim().toLowerCase();
+        const origKinds = s.uForm.origKind === "both" ? ["field", "dash"] : (s.uForm.origKind ? [s.uForm.origKind] : []);
+        const wantKinds = s.uForm.kind === "both" ? ["field", "dash"] : [s.uForm.kind];
+        const added = wantKinds.some((k) => origKinds.indexOf(k) < 0);
+        return renamed || added ? "PIN — required for the new username or type" : "PIN — leave blank to keep";
+      })(s),
       uUsername: (s.uForm && s.uForm.username) || "",
       uName: (s.uForm && s.uForm.name) || "",
       uKind: (s.uForm && s.uForm.kind) || "field",
@@ -7497,7 +7562,8 @@ class Component extends DCLogic {
           return names.length ? names[0] : "ទាំងអស់ · all areas";
         })(this),
         activity: (u.last_login ? "ចូលចុងក្រោយ · last sign-in " + String(u.last_login).slice(0, 10) : "មិនទាន់ចូល · never signed in")
-          + (u.kind !== "dash" ? " · " + (u.records || 0) + " records" : ""),
+          + (u.kind !== "dash" ? " · " + (u.records || 0) + " records" : "")
+          + (u.dashViews != null ? " · " + u.dashViews + " dashboard views" : ""),
         roleLabel: (u.role || "collector").charAt(0).toUpperCase() + (u.role || "collector").slice(1),
         hasRoleExtra: !!u.dashRole,
         statusLabel: !u.active ? "Deactivated" : (u.last_login ? "Active" : "Pending first sign-in"),

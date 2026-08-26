@@ -32,6 +32,9 @@ canvas{max-height:320px;max-width:100%}
 [data-cols="pair"]>*,[data-cols="kpi"]>*{min-width:0}
 .leaflet-tooltip.hh-label{background:rgba(255,255,255,.92);border:1px solid #C6D5E4;box-shadow:none;padding:2px 6px;border-radius:4px;white-space:nowrap}
 .leaflet-tooltip.hh-label:before{display:none}
+/* Chart.js needs a box with a definite height, or it resizes against its own
+   growth and shoves the card's header into the plot. */
+[data-chartbox="1"]{height:300px}
 @media (max-width:820px){
   [data-shell="1"]{width:100vw;padding:10px;gap:12px}
   [data-cols="kpi"],[data-cols="pair"]{grid-template-columns:1fr!important}
@@ -39,7 +42,11 @@ canvas{max-height:320px;max-width:100%}
   [data-scroll-x="1"]>*{min-width:640px}
   [data-tabs="1"]{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
   [data-tabs="1"]>*{flex:none;white-space:nowrap}
-  canvas{max-height:260px}
+  [data-chartbox="1"]{height:260px}
+}
+@media (max-width:560px){
+  /* upright village names need more room under the plot */
+  [data-chartbox="1"]{height:320px}
 }
 </style>
 </helmet>
@@ -87,6 +94,16 @@ canvas{max-height:320px;max-width:100%}
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <sc-if value="{{ hasViews }}" hint-placeholder-val="{{ false }}">
+        <div title="{{ viewsTitle }}" style="flex:none;display:flex;align-items:baseline;gap:6px;padding:6px 11px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12)">
+          <span style="font-size:16px;font-weight:700;line-height:1;color:#fff">{{ viewsCount }}</span>
+          <span style="font-size:10.5px;font-weight:700;color:#A9CCE3;white-space:nowrap">{{ viewsSub }}</span>
+        </div>
+      </sc-if>
+      <a href="{{ appHref }}" style="padding:8px 12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;text-decoration:none;display:inline-flex;align-items:center;gap:7px" style-hover="background:rgba(255,255,255,.22)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 18l-6-6 6-6"></path></svg>
+        <span style="white-space:nowrap;line-height:1.4">កម្មវិធី <span style="font-weight:400;color:#A9CCE3">App</span></span>
+      </a>
       <span style="font-size:12px;color:#A9CCE3;display:inline-flex;align-items:center;gap:7px">
         <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:ento-spin .9s linear infinite;flex:none"><path d="M12 3a9 9 0 1 0 9 9" opacity=".95"></path></svg>
@@ -199,7 +216,9 @@ canvas{max-height:320px;max-width:100%}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14"></path></svg>
             </button>
           </div>
-          <canvas data-chart="{{ c.key }}"></canvas>
+          <div data-chartbox="1" style="position:relative">
+            <canvas data-chart="{{ c.key }}"></canvas>
+          </div>
           <div style="background:#D5E7EF;border-left:3px solid #117996;border-radius:4px;padding:8px 10px;margin-top:10px">
             <div style="font-size:12.5px;font-weight:700;color:#003E78;line-height:1.6">{{ c.msgKm }}</div>
             <div style="font-size:11.5px;color:#767676;line-height:1.6;margin-top:2px">{{ c.msg }}</div>
@@ -231,76 +250,6 @@ canvas{max-height:320px;max-width:100%}
         </sc-for>
       </div>
       <div style="font-size:12px;color:#64748B;margin-top:10px;line-height:1.6">{{ mapNote }}</div>
-    </div>
-  </sc-if>
-
-  <sc-if value="{{ showUsers }}" hint-placeholder-val="{{ false }}">
-    <div style="background:#fff;border:1px solid #F1F5F9;border-radius:8px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,62,120,.08);margin-bottom:18px">
-      <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:4px">អ្នកប្រើផ្ទាំងព័ត៌មាន <span style="font-weight:400;color:#9AA5AE">Dashboard users and permissions</span></div>
-      <div style="font-size:12px;color:#64748B;margin-bottom:14px;line-height:1.6">ភ្ញៀវ Guest — គ្រាហ្វិក និង PNG · charts and PNG downloads. អ្នកវិភាគ Analyst — បន្ថែមតារាងភូមិ · also the village detail table. អ្នកគ្រប់គ្រង Admin — បន្ថែម CSV និងអ្នកប្រើ · also CSV, reload and this list.</div>
-
-      <form onSubmit="{{ addUser }}" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:#F8FAFB;border:1px solid #E2E8F0;border-radius:6px;padding:12px;margin-bottom:14px">
-        <label style="display:flex;flex-direction:column;gap:4px;flex:1 1 130px;min-width:0">
-          <span style="font-size:11px;font-weight:700;color:#003E78">ឈ្មោះអ្នកប្រើ <span style="color:#767676;font-weight:400">Username</span></span>
-          <input type="text" autoCapitalize="none" spellCheck="false" value="{{ newUser }}" onChange="{{ setNewUser }}" style="padding:7px 9px;font-size:13px;border:1.5px solid #D9DEE4;border-radius:6px;color:#1E293B;background:#fff;min-width:0">
-        </label>
-        <label style="display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:0">
-          <span style="font-size:11px;font-weight:700;color:#003E78">ឈ្មោះពេញ <span style="color:#767676;font-weight:400">Full name</span></span>
-          <input type="text" value="{{ newName }}" onChange="{{ setNewName }}" style="padding:7px 9px;font-size:13px;border:1.5px solid #D9DEE4;border-radius:6px;color:#1E293B;background:#fff;min-width:0">
-        </label>
-        <label style="display:flex;flex-direction:column;gap:4px;flex:0 1 110px;min-width:0">
-          <span style="font-size:11px;font-weight:700;color:#003E78">លេខសម្ងាត់ <span style="color:#767676;font-weight:400">PIN</span></span>
-          <input type="text" inputMode="numeric" value="{{ newPin }}" onChange="{{ setNewPin }}" style="padding:7px 9px;font-size:13px;letter-spacing:1px;border:1.5px solid #D9DEE4;border-radius:6px;color:#1E293B;background:#fff;min-width:0">
-        </label>
-        <label style="display:flex;flex-direction:column;gap:4px;flex:0 1 150px;min-width:0">
-          <span style="font-size:11px;font-weight:700;color:#003E78">សិទ្ធិ <span style="color:#767676;font-weight:400">Role</span></span>
-          <select value="{{ newRole }}" onChange="{{ setNewRole }}">
-            <sc-for list="{{ newRoleOptions }}" as="o" hint-placeholder-count="3">
-              <option value="{{ o.value }}">{{ o.label }}</option>
-            </sc-for>
-          </select>
-        </label>
-        <button type="submit" disabled="{{ usersBusy }}" style="padding:9px 16px;border:0;border-radius:6px;background:#003E78;color:#fff;font-weight:700;font-size:13px;cursor:pointer" style-hover="background:#002b53">បន្ថែម · Add user</button>
-        <button type="button" onClick="{{ refreshUsers }}" style="padding:9px 14px;border:1px solid #A8C8DC;border-radius:6px;background:#fff;color:#117996;font-weight:700;font-size:13px;cursor:pointer" style-hover="background:#D5E7EF">ទាញបញ្ជី · Refresh</button>
-      </form>
-
-      <sc-if value="{{ usersMsg }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:12.5px;padding:8px 10px;border-radius:4px;margin-bottom:12px;color:{{ usersMsgFg }};background:{{ usersMsgBg }}">{{ usersMsg }}</div>
-      </sc-if>
-
-      <div data-scroll-x="1" style="border:1px solid #D9DEE4;border-radius:6px;overflow:auto">
-        <div style="display:flex;background:#003E78;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px">
-          <span style="flex:1 1 120px;min-width:0;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Username</span>
-          <span style="flex:1 1 140px;min-width:0;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Name</span>
-          <span style="flex:none;width:160px;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Role</span>
-          <span style="flex:none;width:90px;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Status</span>
-          <span style="flex:none;width:110px;padding:9px 10px;border-right:1px solid rgba(255,255,255,.22)">Last sign-in</span>
-          <span style="flex:none;width:250px;padding:9px 10px">Actions</span>
-        </div>
-        <sc-if value="{{ usersEmpty }}" hint-placeholder-val="{{ false }}">
-          <div style="border-top:1px solid #E8EDF1;padding:14px 12px;font-size:12.5px;color:#64748B">{{ usersEmptyText }}</div>
-        </sc-if>
-        <sc-for list="{{ userRows }}" as="u" hint-placeholder-count="3">
-          <div style="display:flex;align-items:center;font-size:12.5px;border-top:1px solid #E8EDF1;color:#1A2332">
-            <span style="flex:1 1 120px;min-width:0;padding:8px 10px;font-weight:700;color:#003E78;overflow-wrap:anywhere;border-right:1px solid #E8EDF1">{{ u.username }}</span>
-            <span style="flex:1 1 140px;min-width:0;padding:8px 10px;color:#475569;overflow-wrap:anywhere;border-right:1px solid #E8EDF1">{{ u.name }}</span>
-            <span style="flex:none;width:160px;padding:6px 10px;border-right:1px solid #E8EDF1">
-              <select value="{{ u.role }}" onChange="{{ u.setRole }}" style="width:100%">
-                <sc-for list="{{ u.roleOptions }}" as="o" hint-placeholder-count="3">
-                  <option value="{{ o.value }}">{{ o.label }}</option>
-                </sc-for>
-              </select>
-            </span>
-            <span style="flex:none;width:90px;padding:8px 10px;border-right:1px solid #E8EDF1"><span style="font-size:11px;font-weight:700;padding:3px 7px;border-radius:999px;color:{{ u.statusFg }};background:{{ u.statusBg }}">{{ u.statusLabel }}</span></span>
-            <span style="flex:none;width:110px;padding:8px 10px;color:#64748B;border-right:1px solid #E8EDF1">{{ u.lastLogin }}</span>
-            <span style="flex:none;width:250px;padding:6px 10px;display:flex;gap:6px;flex-wrap:wrap">
-              <button onClick="{{ u.resetPin }}" style="padding:5px 9px;border:1px solid #A8C8DC;border-radius:5px;background:#fff;color:#117996;font-weight:700;font-size:11.5px;cursor:pointer" style-hover="background:#D5E7EF">PIN</button>
-              <button onClick="{{ u.toggle }}" style="padding:5px 9px;border:1px solid #D9DEE4;border-radius:5px;background:#fff;color:#475569;font-weight:700;font-size:11.5px;cursor:pointer" style-hover="background:#F1F5F9">{{ u.toggleLabel }}</button>
-              <button onClick="{{ u.remove }}" style="padding:5px 9px;border:1px solid #E8C9CE;border-radius:5px;background:#fff;color:#7C1220;font-weight:700;font-size:11.5px;cursor:pointer" style-hover="background:#F7E3E6">លុប · Delete</button>
-            </span>
-          </div>
-        </sc-for>
-      </div>
     </div>
   </sc-if>
 
@@ -483,9 +432,19 @@ const VALUE_LABEL_PLUGIN = {
           ctx.strokeText(text, p.x, p.y);
           ctx.fillText(text, p.x, p.y);
         } else {
-          ctx.fillStyle = "#333";
-          ctx.textBaseline = "bottom";
-          ctx.fillText(text, el.x, el.y - 4);
+          const top = chart.chartArea ? chart.chartArea.top : 0;
+          const above = el.y - 4;
+          const inside = above - 10 < top;   // a bar at the top of the scale has no room above it
+          const y = inside ? el.y + 15 : above;
+          ctx.textBaseline = inside ? "top" : "bottom";
+          // A halo keeps the number readable on the WHO line, on a neighbouring
+          // bar, or against the bar's own fill.
+          ctx.strokeStyle = inside ? "rgba(0,0,0,.45)" : "#fff";
+          ctx.lineWidth = inside ? 2.5 : 3;
+          ctx.lineJoin = "round";
+          ctx.strokeText(text, el.x, y);
+          ctx.fillStyle = inside ? "#fff" : "#333";
+          ctx.fillText(text, el.x, y);
         }
       });
     });
@@ -628,6 +587,22 @@ class Component extends DCLogic {
 
   loadUsers = () => this.userAction({ action: "dash-users" }, "");
 
+  // Admins see how many times the dashboard has been opened, in total and by person.
+  loadViewStats = () => {
+    if (String((this.state.auth || {}).role || "").toLowerCase() !== "admin") return;
+    this.post({ action: "dash-users" })
+      .then((out) => {
+        if (!out || !out.ok || !Array.isArray(out.users)) return;
+        const total = out.users.reduce((n, u) => n + Number(u.login_count || 0), 0);
+        const top = out.users.slice()
+          .sort((a, b) => Number(b.login_count || 0) - Number(a.login_count || 0))
+          .filter((u) => Number(u.login_count || 0) > 0)
+          .map((u) => (u.name || u.username) + " · " + Number(u.login_count || 0));
+        this.setState({ viewTotal: total, viewTop: top });
+      })
+      .catch(() => {});
+  };
+
   addUser = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     const username = String(this.state.newUser || "").trim();
@@ -712,12 +687,11 @@ class Component extends DCLogic {
   componentDidMount() {
     document.addEventListener("focusin", this._onFieldFocusIn, true);
     document.addEventListener("focusout", this._onFieldFocusOut, true);
-    if (this.state.auth) this.load(); else this.setState({ loading: false });
+    if (this.state.auth) { this.load(); this.loadViewStats(); } else this.setState({ loading: false });
     [0, 300, 900, 2000].forEach((ms) => setTimeout(this.draw, ms));
   }
   componentDidUpdate(prevProps, prevState) {
     this.draw();
-    if (this.state.tab === "users" && prevState.tab !== "users" && this.role() === "admin") this.loadUsers();
   }
 
   /* ─── sign in ─────────────────────────────────────────────────────── */
@@ -735,9 +709,10 @@ class Component extends DCLogic {
         if (!out || !out.ok) throw new Error((out && out.error) || "sign in failed");
         if (String(out.user.role || "").toLowerCase() !== "admin" && this.state.tab === "table") this.setState({ tab: "overview" });
         const auth = { token: out.token, username: out.user.username, name: out.user.name, role: out.user.role,
+          views: Number(out.user.login_count || 0),
           exp: Date.now() + SESSION_DAYS * 86400000 };
         writeAuth(auth);
-        this.setState({ auth, loginBusy: false, loginPin: "", loginError: "" }, this.load);
+        this.setState({ auth, loginBusy: false, loginPin: "", loginError: "" }, () => { this.load(); this.loadViewStats(); });
       })
       .catch((err) => this.setState({ loginBusy: false,
         loginError: err && err.message ? err.message : "no connection to the sheet" }));
@@ -1709,6 +1684,8 @@ class Component extends DCLogic {
       const el = document.querySelector('canvas[data-chart="' + s.key + '"]');
       if (!el) return;
       const stacked = !!(s.spec.data.datasets[0] && s.spec.data.datasets[0].stack);
+      // On a phone a 45° Khmer village name is clipped, so stand the names upright.
+      const narrowX = window.innerWidth < 560;
       const dim = this.chartDim(s.key);
       const options = {
         responsive: true, maintainAspectRatio: false,
@@ -1729,7 +1706,8 @@ class Component extends DCLogic {
           position: "bottom", labels: { font: { size: 12, family: FONT }, color: "#333", boxWidth: 13, padding: 12 } } },
         scales: s.spec.type === "doughnut" ? {} : {
           x: { stacked, grid: { display: false },
-            ticks: { font: { size: 12.5, family: FONT, weight: 500 }, color: "#333", maxRotation: 45, minRotation: 0, autoSkip: false } },
+            ticks: { font: { size: narrowX ? 11 : 12.5, family: FONT, weight: 500 }, color: "#333",
+              maxRotation: narrowX ? 90 : 45, minRotation: narrowX ? 90 : 0, autoSkip: false } },
           y: { stacked, beginAtZero: true, grid: { color: "#E4EBF0" },
             ticks: { font: { size: 12, family: FONT }, color: "#333", precision: 0 } },
         },
@@ -1871,7 +1849,6 @@ class Component extends DCLogic {
       ["map", "ផែនទី · Map"], ["epi", "ជំងឺរាតត្បាត · Epidemiology"]];
     // guest sees charts only; analyst also sees the village table; admin also manages users.
     if (this.role() === "analyst" || this.role() === "admin") tabs.push(["table", "តារាង · Table"]);
-    if (this.role() === "admin") tabs.push(["users", "អ្នកប្រើ · Users"]);
     const kpiSets = {
       overview: [
         { ico: "house", label: "ខ្នងផ្ទះ · Households", value: fmt(hh.length), sub: "registered in view", color: "#003E78" },
@@ -1917,6 +1894,15 @@ class Component extends DCLogic {
     return {
       needLogin: !s.auth,
       signedIn: !!s.auth,
+      hasViews: !!(s.auth && (s.viewTotal || s.auth.views)),
+      viewsCount: s.viewTotal ? String(s.viewTotal) : String((s.auth && s.auth.views) || 0),
+      viewsSub: s.viewTotal
+        ? "ការមើល · views, all accounts"
+        : "ការមើល · views, this account",
+      viewsTitle: s.viewTotal && (s.viewTop || []).length
+        ? "ចំនួនមើលតាមគណនី · views by account\n" + (s.viewTop || []).join("\n")
+        : "ចំនួនមើលផ្ទាំពាក្យ · times the dashboard has been opened",
+      appHref: /\.dc\.html$/.test(String(window.location.pathname || "")) ? "Ento Field App Dash v2.dc.html" : "index.html",
       isAdmin: this.role() === "admin",
       canSeeVillages: this.role() === "admin" || this.role() === "analyst",
       authName: s.auth ? s.auth.name || s.auth.username : "",
