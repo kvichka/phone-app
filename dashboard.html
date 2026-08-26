@@ -46,7 +46,7 @@ canvas{max-height:320px;max-width:100%}
 }
 @media (max-width:560px){
   /* upright village names need more room under the plot */
-  [data-chartbox="1"]{height:320px}
+  [data-chartbox="1"]{height:350px}
 }
 </style>
 </helmet>
@@ -1706,8 +1706,13 @@ class Component extends DCLogic {
           position: "bottom", labels: { font: { size: 12, family: FONT }, color: "#333", boxWidth: 13, padding: 12 } } },
         scales: s.spec.type === "doughnut" ? {} : {
           x: { stacked, grid: { display: false },
+            // Safari under-measures Khmer glyphs, so the upright names were cut off.
+            // Reserve the label strip explicitly instead of trusting the measurement.
+            afterFit: narrowX ? (axis) => { axis.height = Math.max(axis.height, 104); } : undefined,
             ticks: { font: { size: narrowX ? 11 : 12.5, family: FONT, weight: 500 }, color: "#333",
-              maxRotation: narrowX ? 90 : 45, minRotation: narrowX ? 90 : 0, autoSkip: false } },
+              maxRotation: narrowX ? 90 : 45, minRotation: narrowX ? 90 : 0, autoSkip: false,
+              callback(v) { const t = String(this.getLabelForValue(v));
+                return narrowX && t.length > 12 ? t.slice(0, 11) + "\u2026" : t; } } },
           y: { stacked, beginAtZero: true, grid: { color: "#E4EBF0" },
             ticks: { font: { size: 12, family: FONT }, color: "#333", precision: 0 } },
         },
