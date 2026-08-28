@@ -38,7 +38,7 @@
 <style>
 html,body{margin:0;background:#F7F9FB;font-family:"Kantumruy Pro","Trebuchet MS","Fira Sans",system-ui,sans-serif;color:#003E78;-webkit-text-size-adjust:100%}
 a{color:#117996}a:hover{color:#0D6177}
-input,select,textarea{font-family:inherit;font-size:15px;color:#003E78;background:#fff;border:1px solid #D9DEE4;border-radius:6px;padding:13px 14px;width:100%;max-width:100%;min-width:0;box-sizing:border-box;min-height:50px;-webkit-appearance:none;appearance:none}
+input,select,textarea{font-family:inherit;font-size:16px;color:#003E78;background:#fff;border:1px solid #D9DEE4;border-radius:6px;padding:13px 14px;width:100%;max-width:100%;min-width:0;box-sizing:border-box;min-height:50px;-webkit-appearance:none;appearance:none}
 input[type=date]{display:block;text-align:left}
 select{-webkit-appearance:none;appearance:none;background-image:linear-gradient(45deg,transparent 50%,#767676 50%),linear-gradient(135deg,#767676 50%,transparent 50%);background-position:calc(100% - 16px) 22px,calc(100% - 11px) 22px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:32px}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#117996;box-shadow:0 0 0 3px rgba(17,121,150,.18)}
@@ -53,10 +53,10 @@ a:hover,label:hover{transition:box-shadow 150ms ease}
 button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(17,121,150,.35)}
 input:hover:not(:focus),select:hover:not(:focus),textarea:hover:not(:focus){border-color:#117996}
 label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.25;margin-bottom:4px}
-[data-compact] input:not([type=range]),[data-compact] select{min-height:30px;height:30px;padding:5px 8px;font-size:12px;line-height:1.2}
+[data-compact] input:not([type=range]),[data-compact] select{min-height:30px;height:30px;padding:5px 8px;font-size:16px;line-height:1.2}
 [data-compact] input,[data-compact] select{min-height:30px;height:30px;padding-top:0;padding-bottom:0}
 [data-compact] select{padding-right:24px;background-position:calc(100% - 12px) 11px,calc(100% - 7px) 11px}
-[data-compact] textarea{min-height:54px;padding:6px 8px;font-size:12px;line-height:1.35}
+[data-compact] textarea{min-height:54px;padding:6px 8px;font-size:16px;line-height:1.35}
 input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;border:none;padding:0;min-height:0;height:28px;width:100%;cursor:pointer}
 input[type=range]:hover{border-color:transparent}
 input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:999px;background:#D5E7EF}
@@ -114,7 +114,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M3.5 8.5a13 13 0 0 1 17 0"></path><path d="M6.5 12a9 9 0 0 1 11 0"></path><path d="M9.5 15.5a5 5 0 0 1 5 0"></path><path d="M12 19h.01"></path></svg>
           </sc-if>
           <sc-if value="{{ isOffline }}" hint-placeholder-val="{{ false }}">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M3.5 8.5a13 13 0 0 1 17 0"></path><path d="M6.5 12a9 9 0 0 1 11 0"></path><path d="M9.5 15.5a5 5 0 0 1 5 0"></path><path d="M12 19h.01"></path><path d="M4 20 20 4"></path></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{ headerAlert }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M3.5 8.5a13 13 0 0 1 17 0"></path><path d="M6.5 12a9 9 0 0 1 11 0"></path><path d="M9.5 15.5a5 5 0 0 1 5 0"></path><path d="M12 19h.01"></path><path d="M4 20 20 4"></path></svg>
           </sc-if>
           <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ stripMeta }}</span>
         </span>
@@ -364,7 +364,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       <div>
         <div style="display:flex;align-items:center;gap:8px;background:#F7F9FB;border:1px solid #E3E9EF;border-radius:8px;padding:4px 8px">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="M15.8 15.8 21 21"></path></svg>
-          <input type="search" value="{{ findQ }}" onChange="{{ setFindQ }}" placeholder="HH-010101 · Ov-…-IN · AC-…-T1 · name" style="flex:1;min-width:0;font-size:11px;line-height:1.2;padding:4px 2px;min-height:28px;height:28px;border:none;background:transparent">
+          <input type="search" value="{{ findQ }}" onChange="{{ setFindQ }}" placeholder="HH-010101 · Ov-…-IN · AC-…-T1 · name" style="flex:1;min-width:0;font-size:16px;line-height:1.2;padding:4px 2px;min-height:28px;height:28px;border:none;background:transparent">
         </div>
         <sc-if value="{{ hasFind }}" hint-placeholder-val="{{ false }}">
           <div style="margin-top:7px;border-top:1px solid #F2F2F2">
@@ -468,7 +468,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <button onClick="{{ toggleRounds }}" title="{{ roundsToggleTitle }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F2F2F2;border:none;cursor:pointer;font-family:inherit;text-align:left">
           <span style="flex:none;width:16px;height:16px;box-sizing:content-box;border:1px solid #A8C8DC;border-radius:5px;color:#117996;font-size:11px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ roundsCaret }}</span>
           <span style="flex:none;font-weight:700;font-size:11px;line-height:1.3;color:#003E78">តាមជុំ</span>
-          <span style="flex:1;min-width:0;font-size:11px;color:#767676">By round</span>
+          <span style="flex:1;min-width:0;font-size:11px;color:#767676">By report month</span>
         </button>
         <sc-if value="{{ roundsOpen }}" hint-placeholder-val="{{ true }}">
         <sc-for list="{{ homeRounds }}" as="r" hint-placeholder-count="2">
@@ -499,14 +499,14 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <div style="display:flex;align-items:flex-end;gap:8px">
           <div style="flex:1;min-width:0">
             <label>ស្វែងរកខ្នងផ្ទះ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Find a household</span></label>
-            <input type="search" value="{{ hhQuery }}" onChange="{{ setHhQuery }}" placeholder="ID, name, village" style="font-size:11px;line-height:1.2;padding:5px 8px;min-height:30px;height:30px">
+            <input type="search" value="{{ hhQuery }}" onChange="{{ setHhQuery }}" placeholder="ID, name, village" style="font-size:16px;line-height:1.2;padding:5px 8px;min-height:30px;height:30px">
           </div>
           <button onClick="{{ clearHhQuery }}" title="សម្អាត · Clear" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #D9DEE4;background:#fff;color:#767676;border-radius:6px;height:30px;padding:0 9px;font-weight:400;font-size:11px;line-height:1;cursor:pointer;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="8.5"></circle><path d="M9 9l6 6M15 9l-6 6"></path></svg>សម្អាត Clear</button>
         </div>
         <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap">
           <div style="flex:1 1 calc(25% - 6px);min-width:0">
             <label>ខេត្ត / រាជធានី<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Province</span></label>
-            <select value="{{ hhProv }}" onChange="{{ setHhProv }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <select value="{{ hhProv }}" onChange="{{ setHhProv }}" style="font-size:16px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ hhProvOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
@@ -514,7 +514,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </div>
           <div style="flex:1 1 calc(25% - 6px);min-width:0">
             <label>ឃុំ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Commune</span></label>
-            <select value="{{ hhComm }}" onChange="{{ setHhComm }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <select value="{{ hhComm }}" onChange="{{ setHhComm }}" style="font-size:16px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ hhCommOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
@@ -522,15 +522,15 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </div>
           <div style="flex:1 1 calc(25% - 6px);min-width:0">
             <label>ភូមិ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Village</span></label>
-            <select value="{{ hhVill }}" onChange="{{ setHhVill }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <select value="{{ hhVill }}" onChange="{{ setHhVill }}" style="font-size:16px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ hhVillOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
             </select>
           </div>
           <div style="flex:1 1 calc(25% - 6px);min-width:0">
-            <label>ជុំ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Round</span></label>
-            <select value="{{ matrixRound }}" onChange="{{ setMatrixRound }}" style="font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <label>របាយការណ៍<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:6px">Report Month</span></label>
+            <select value="{{ matrixRound }}" onChange="{{ setMatrixRound }}" style="font-size:16px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ matrixRoundOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
@@ -565,6 +565,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <button onClick="{{ sortByName }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortNameFg }}">ឈ្មោះ{{ sortNameArrow }}</button>
         <button onClick="{{ sortByVillage }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortVillageFg }}">ភូមិ Village{{ sortVillageArrow }}</button>
         <button onClick="{{ sortByStatus }}" style="flex:none;background:#fff;border:1px solid #D9DEE4;border-radius:999px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ sortStatusFg }}">ស្ថានភាព {{ sortStatusCount }}{{ sortStatusArrow }}</button>
+        <button onClick="{{ toggleHhIncomplete }}" title="{{ hhIncompleteTitle }}" style="flex:none;margin-left:auto;background:{{ hhIncompleteBg }};border:1px solid {{ hhIncompleteBd }};border-radius:999px;padding:3px 10px;cursor:pointer;font-weight:700;font-size:11px;line-height:1.2;color:{{ hhIncompleteFg }}">មិនទាន់គ្រប់ · Incomplete {{ hhIncompleteCount }}</button>
       </div>
       <sc-if value="{{ hhCardOpen }}" hint-placeholder-val="{{ true }}">
       <sc-for list="{{ households }}" as="h" hint-placeholder-count="4">
@@ -619,8 +620,8 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
         <div style="flex:1;min-width:150px;font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">កត់ត្រានៅខ្នងផ្ទះនេះ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Record at this household</span></div>
         <div style="flex:none;display:flex;align-items:center;gap:7px">
-          <span style="flex:none;font-size:11px;color:#767676">ជុំ Round</span>
-          <select value="{{ hhRound }}" onChange="{{ setMatrixRound }}" style="width:104px;font-size:11px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+          <span style="flex:none;font-size:11px;color:#767676">របាយការណ៍ Report Month</span>
+          <select value="{{ hhRound }}" onChange="{{ setMatrixRound }}" style="width:104px;font-size:16px;line-height:1.2;padding:5px 22px 5px 8px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
             <sc-for list="{{ hhRoundOptions }}" as="o" hint-placeholder-count="3">
               <option value="{{ o.value }}">{{ o.label }}</option>
             </sc-for>
@@ -731,7 +732,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         </sc-for>
       </div>
 
-      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ជុំដែលបានទៅ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Rounds visited</span></div>
+      <div style="font-size:13px;font-weight:700;color:#003E78;letter-spacing:.06em;text-transform:uppercase">ជុំដែលបានទៅ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Report months visited</span></div>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:4px 12px">
         <sc-for list="{{ hhRounds }}" as="p" hint-placeholder-count="2">
           <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #F2F2F2">
@@ -797,20 +798,20 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
                 <sc-for list="{{ f.ids }}" as="t" hint-placeholder-count="2">
                   <div style="flex:1 1 200px;min-width:180px;display:flex;align-items:center;gap:6px">
                     <span style="flex:none;font-size:11px;font-weight:700;color:#003E78;line-height:1.25;white-space:nowrap">{{ t.labelKm }}</span>
-                    <input type="text" value="{{ t.value }}" onChange="{{ t.onChange }}" placeholder="{{ t.placeholder }}" style="flex:1;min-width:0;box-sizing:border-box;min-height:34px;font-size:12px;padding-left:8px;padding-right:8px">
+                    <input type="text" value="{{ t.value }}" onChange="{{ t.onChange }}" placeholder="{{ t.placeholder }}" style="flex:1;min-width:0;box-sizing:border-box;min-height:34px;font-size:16px;padding-left:8px;padding-right:8px">
                   </div>
                 </sc-for>
               </div>
             </sc-if>
             <sc-if value="{{ f.isCounter }}" hint-placeholder-val="{{ false }}">
-              <input type="number" inputmode="numeric" min="0" value="{{ f.value }}" onChange="{{ f.onChange }}" onFocus="{{ f.onFocus }}" onBlur="{{ f.onBlur }}" style="width:100%;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:38px">
+              <input type="number" inputmode="numeric" min="0" value="{{ f.value }}" onChange="{{ f.onChange }}" onFocus="{{ f.onFocus }}" onBlur="{{ f.onBlur }}" style="width:100%;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:38px">
             </sc-if>
             <sc-if value="{{ f.isGeo4 }}" hint-placeholder-val="{{ false }}">
               <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
                 <sc-for list="{{ f.cols }}" as="c" hint-placeholder-count="4">
                   <div style="min-width:0">
                     <div style="font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ c.labelKm }}<span style="display:block;font-size:11px;font-weight:400;color:#767676">{{ c.labelEn }}</span></div>
-                    <select value="{{ c.value }}" onChange="{{ c.onChange }}" disabled="{{ c.disabled }}" style="width:100%;box-sizing:border-box;margin-top:3px;padding:5px 8px;font-size:12px;min-height:30px;height:30px">
+                    <select value="{{ c.value }}" onChange="{{ c.onChange }}" disabled="{{ c.disabled }}" style="width:100%;box-sizing:border-box;margin-top:3px;padding:5px 8px;font-size:16px;min-height:30px;height:30px">
                       <sc-for list="{{ c.options }}" as="o" hint-placeholder-count="2">
                         <option value="{{ o.value }}">{{ o.label }}</option>
                       </sc-for>
@@ -828,19 +829,19 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <sc-if value="{{ f.isRow }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;align-items:center;gap:8px">
                 <span style="width:88px;flex:none;font-size:12px;font-weight:700;color:#003E78;line-height:1.3">{{ f.rowLabel }}</span>
-                <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
-                <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
+                <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
+                <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
               </div>
             </sc-if>
             <sc-if value="{{ f.isPair }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;align-items:center;gap:8px">
                 <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
                   <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ f.aCap }}</div>
-                  <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
+                  <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
                 </div>
                 <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
                   <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ f.bCap }}</div>
-                  <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:13px;color:#003E78;min-height:30px;height:30px">
+                  <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
                 </div>
               </div>
             </sc-if>
@@ -1077,10 +1078,10 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#117996" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M9 6.5 15.5 12 9 17.5"></path></svg>
       </a>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px">
-        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px">
           <div style="min-width:0">
             <label style="margin-bottom:3px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ខេត្ត<span style="font-size:11px;font-weight:400;color:#767676;margin-left:4px">Province</span></label>
-            <select value="{{ dash.prov }}" onChange="{{ setDashProv }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:12px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <select value="{{ dash.prov }}" onChange="{{ setDashProv }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:16px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ dash.provOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
@@ -1088,7 +1089,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </div>
           <div style="min-width:0">
             <label style="margin-bottom:3px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ស្រុក<span style="font-size:11px;font-weight:400;color:#767676;margin-left:4px">District</span></label>
-            <select value="{{ dash.dist }}" onChange="{{ setDashDist }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:12px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <select value="{{ dash.dist }}" onChange="{{ setDashDist }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:16px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ dash.distOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
@@ -1096,7 +1097,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </div>
           <div style="min-width:0">
             <label style="margin-bottom:3px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ឃុំ<span style="font-size:11px;font-weight:400;color:#767676;margin-left:4px">Commune</span></label>
-            <select value="{{ dash.comm }}" onChange="{{ setDashComm }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:12px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <select value="{{ dash.comm }}" onChange="{{ setDashComm }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:16px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ dash.commOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
@@ -1104,8 +1105,16 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </div>
           <div style="min-width:0">
             <label style="margin-bottom:3px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ភូមិ<span style="font-size:11px;font-weight:400;color:#767676;margin-left:4px">Village</span></label>
-            <select value="{{ dash.vill }}" onChange="{{ setDashVill }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:12px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+            <select value="{{ dash.vill }}" onChange="{{ setDashVill }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:16px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
               <sc-for list="{{ dash.villOptions }}" as="o" hint-placeholder-count="2">
+                <option value="{{ o.value }}">{{ o.label }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <div style="min-width:0">
+            <label style="margin-bottom:3px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">របាយការណ៍<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">Report Month</span></label>
+            <select value="{{ dash.month }}" onChange="{{ setDashMonth }}" style="width:100%;box-sizing:border-box;padding:5px 22px 5px 8px;font-size:16px;min-height:30px;height:30px;background-position:calc(100% - 12px) 13px,calc(100% - 7px) 13px">
+              <sc-for list="{{ dash.monthOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
             </select>
@@ -1215,12 +1224,12 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <button onClick="{{ toggleMatrix }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F2F2F2;border:none;cursor:pointer;font-family:inherit;text-align:left">
           <span style="flex:none;width:16px;height:16px;box-sizing:content-box;border:1px solid #A8C8DC;border-radius:5px;color:#117996;font-size:11px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ matrixCaret }}</span>
           <span style="flex:none;font-weight:700;font-size:11px;line-height:1.3;color:#003E78">សកម្មភាពតាមជុំ</span>
-          <span style="flex:1;min-width:0;font-size:11px;color:#767676">Activities by round</span>
+          <span style="flex:1;min-width:0;font-size:11px;color:#767676">Activities by report month</span>
         </button>
         <sc-if value="{{ matrixOpen }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #EDF1F4">
-            <span style="flex:none;font-size:11px;color:#767676">ជុំ Round</span>
-            <select value="{{ matrixRound }}" onChange="{{ setMatrixRound }}" style="flex:1;min-width:0;font-size:11px;line-height:1.2;padding:4px 22px 4px 8px;min-height:28px;height:28px;background-position:calc(100% - 12px) 11px,calc(100% - 7px) 11px">
+            <span style="flex:none;font-size:11px;color:#767676">របាយការណ៍ Report Month</span>
+            <select value="{{ matrixRound }}" onChange="{{ setMatrixRound }}" style="flex:1;min-width:0;font-size:16px;line-height:1.2;padding:4px 22px 4px 8px;min-height:28px;height:28px;background-position:calc(100% - 12px) 11px,calc(100% - 7px) 11px">
               <sc-for list="{{ matrixRoundOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
@@ -1400,7 +1409,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
     <sc-if value="{{ isData }}" hint-placeholder-val="{{ false }}">
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#003E78">ការផ្ទេរទិន្នន័យ <span style="font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Sync</span></div>
-        <div style="font-size:11px;color:#767676;line-height:1.35;text-transform:none;letter-spacing:0;margin-top:2px">ផ្ញើកំណត់ត្រាពីទូរស័ព្ទទៅ Google Sheet របស់កម្មវិធី · sends what you recorded on this phone to the programme's Google Sheet, so the team can see it</div>
+        <div style="font-size:11px;color:#767676;line-height:1.35;text-transform:none;letter-spacing:0;margin-top:2px">ផ្ញើកំណត់ត្រាពីទូរស័ព្ទទៅ Google Sheet របស់កម្មវិធី · sends what you recorded on this phone to the programme database, so the team can see it</div>
         <div style="display:flex;flex-wrap:nowrap;gap:10px;align-items:center;margin-top:8px;background:#F7FAFC;border:1px solid #E3E9EF;border-radius:8px;padding:10px">
           <div style="flex:0 0 auto"><div style="font-size:11px;font-weight:700;color:#7C1220;line-height:1.3">{{ pendingSync }}</div><div style="font-size:11px;color:#767676;white-space:nowrap">រង់ចាំផ្ញើ · waiting</div></div>
           <div style="flex:0 0 auto;border-left:1px solid #E3E9EF;padding-left:10px"><div style="font-size:11px;font-weight:700;color:#003E78;line-height:1.3">{{ syncedCount }}</div><div style="font-size:11px;color:#767676;white-space:nowrap">បានផ្ញើ · sent</div></div>
@@ -1419,7 +1428,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:end">
           <div>
             <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;font-weight:400">ខេត្ត<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">Province</span></label>
-            <select value="{{ pullProv }}" onChange="{{ setPullProv }}" style="font-size:11px;line-height:1.2;padding:7px 22px 7px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
+            <select value="{{ pullProv }}" onChange="{{ setPullProv }}" style="font-size:16px;line-height:1.2;padding:7px 22px 7px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
               <sc-for list="{{ pullProvOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}" style="font-size:11px">{{ o.label }}</option>
               </sc-for>
@@ -1427,7 +1436,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </div>
           <div>
             <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;font-weight:400">ស្រុក<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">District</span></label>
-            <select value="{{ pullDist }}" onChange="{{ setPullDist }}" style="font-size:11px;line-height:1.2;padding:7px 22px 7px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
+            <select value="{{ pullDist }}" onChange="{{ setPullDist }}" style="font-size:16px;line-height:1.2;padding:7px 22px 7px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
               <sc-for list="{{ pullDistOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}" style="font-size:11px">{{ o.label }}</option>
               </sc-for>
@@ -1435,7 +1444,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </div>
           <div>
             <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;font-weight:400">ឃំុ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">Commune</span></label>
-            <select value="{{ pullComm }}" onChange="{{ setPullComm }}" style="font-size:11px;line-height:1.2;padding:7px 22px 7px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
+            <select value="{{ pullComm }}" onChange="{{ setPullComm }}" style="font-size:16px;line-height:1.2;padding:7px 22px 7px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
               <sc-for list="{{ pullCommOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}" style="font-size:11px">{{ o.label }}</option>
               </sc-for>
@@ -1443,7 +1452,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </div>
           <div>
             <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;font-weight:400">ភូមិ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0;margin-left:5px">Village</span></label>
-            <select value="{{ pullVill }}" onChange="{{ setPullVill }}" style="font-size:11px;line-height:1.2;padding:7px 22px 7px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
+            <select value="{{ pullVill }}" onChange="{{ setPullVill }}" style="font-size:16px;line-height:1.2;padding:7px 22px 7px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
               <sc-for list="{{ pullVillOptions }}" as="o" hint-placeholder-count="2">
                 <option value="{{ o.value }}" style="font-size:11px">{{ o.label }}</option>
               </sc-for>
@@ -1483,7 +1492,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               </div>
             </sc-for>
           </div>
-          <div style="font-size:11px;color:#767676;margin-top:6px;line-height:1.5">ពីតារាង _history ក្នុង Google Sheet · straight from the sheet's _history tab, newest first.</div>
+          <div style="font-size:11px;color:#767676;margin-top:6px;line-height:1.5">ពីតារាង _history ក្នុង Google Sheet · straight from the database history log, newest first.</div>
         </sc-if>
       </div>
       <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
@@ -1495,7 +1504,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </span>
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
-          <select value="{{ exportChoice }}" onChange="{{ setExportChoice }}" style="flex:1;min-width:170px;font-size:12px;line-height:1.2;padding:5px 22px 5px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
+          <select value="{{ exportChoice }}" onChange="{{ setExportChoice }}" style="flex:1;min-width:170px;font-size:16px;line-height:1.2;padding:5px 22px 5px 8px;min-height:34px;height:34px;background-position:calc(100% - 12px) 15px,calc(100% - 7px) 15px">
             <sc-for list="{{ typeCounts }}" as="t" hint-placeholder-count="5">
               <option value="{{ t.key }}">{{ t.option }}</option>
             </sc-for>
@@ -1659,22 +1668,22 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px">
           <label style="display:flex;align-items:center;gap:8px;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;min-height:40px">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
-            <input value="{{ usersQ }}" onChange="{{ setUsersQ }}" placeholder="Search name, username, area" style="flex:1;min-width:0;border:0;outline:none;font-size:13px;color:#003E78;background:transparent">
+            <input value="{{ usersQ }}" onChange="{{ setUsersQ }}" placeholder="Search name, username, area" style="flex:1;min-width:0;border:0;outline:none;font-size:16px;color:#003E78;background:transparent">
           </label>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
-            <select value="{{ usersRoleF }}" onChange="{{ setUsersRoleF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;font-weight:700;color:#003E78;background:#fff">
+            <select value="{{ usersRoleF }}" onChange="{{ setUsersRoleF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:16px;font-weight:700;color:#003E78;background:#fff">
               <option value="">All roles</option>
               <sc-for list="{{ usersRoleOptions }}" as="r" hint-placeholder-count="3">
                 <option value="{{ r.value }}">{{ r.label }}</option>
               </sc-for>
             </select>
-            <select value="{{ usersProvF }}" onChange="{{ setUsersProvF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;font-weight:700;color:#003E78;background:#fff">
+            <select value="{{ usersProvF }}" onChange="{{ setUsersProvF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:16px;font-weight:700;color:#003E78;background:#fff">
               <option value="">All provinces</option>
               <sc-for list="{{ usersProvOptions }}" as="o" hint-placeholder-count="3">
                 <option value="{{ o.value }}">{{ o.label }}</option>
               </sc-for>
             </select>
-            <select value="{{ usersStatusF }}" onChange="{{ setUsersStatusF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;font-weight:700;color:#003E78;background:#fff">
+            <select value="{{ usersStatusF }}" onChange="{{ setUsersStatusF }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:16px;font-weight:700;color:#003E78;background:#fff">
               <option value="">All</option>
               <option value="active">Active</option>
               <option value="off">Deactivated</option>
@@ -1702,15 +1711,15 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
               <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
                 <span style="font-size:11px;font-weight:700;color:#003E78">ឈ្មោះចូល <span style="font-weight:400;color:#767676">Username</span></span>
-                <input value="{{ uUsername }}" onChange="{{ uSetUsername }}" disabled="{{ uLocked }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:13px;color:#003E78;background:{{ uUsernameBg }}">
+                <input value="{{ uUsername }}" onChange="{{ uSetUsername }}" disabled="{{ uLocked }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:16px;color:#003E78;background:{{ uUsernameBg }}">
               </label>
               <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
                 <span style="font-size:11px;font-weight:700;color:#003E78">ឈ្មោះ <span style="font-weight:400;color:#767676">Name</span></span>
-                <input value="{{ uName }}" onChange="{{ uSetName }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:13px;color:#003E78">
+                <input value="{{ uName }}" onChange="{{ uSetName }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:16px;color:#003E78">
               </label>
               <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
                 <span style="font-size:11px;font-weight:700;color:#003E78">ប្រភេទ <span style="font-weight:400;color:#767676">Account</span></span>
-                <select value="{{ uKind }}" onChange="{{ uSetKind }}" disabled="{{ uLocked }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78;background:{{ uUsernameBg }}">
+                <select value="{{ uKind }}" onChange="{{ uSetKind }}" disabled="{{ uLocked }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:16px;color:#003E78;background:{{ uUsernameBg }}">
                   <option value="field">កម្មវិធី · Field app</option>
                   <option value="dash">ផ្ទាំងបង្ហាញ · Dashboard</option>
                   <option value="both">ទាំងពីរ · Both</option>
@@ -1718,7 +1727,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               </label>
               <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
                 <span style="font-size:11px;font-weight:700;color:#003E78">តួនាទី <span style="font-weight:400;color:#767676">Role</span></span>
-                <select value="{{ uRole }}" onChange="{{ uSetRole }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78">
+                <select value="{{ uRole }}" onChange="{{ uSetRole }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:16px;color:#003E78">
                   <sc-for list="{{ uRoleOptions }}" as="r" hint-placeholder-count="2">
                     <option value="{{ r.value }}">{{ r.label }}</option>
                   </sc-for>
@@ -1726,14 +1735,14 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               </label>
               <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
                 <span style="font-size:11px;font-weight:700;color:#003E78">លេខសម្ងាត់ <span style="font-weight:400;color:#767676">{{ uPinHint }}</span></span>
-                <input value="{{ uPin }}" onChange="{{ uSetPin }}" inputmode="numeric" placeholder="4–8 digits" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:13px;color:#003E78">
+                <input value="{{ uPin }}" onChange="{{ uSetPin }}" inputmode="numeric" placeholder="4–8 digits" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 10px;font-size:16px;color:#003E78">
               </label>
               <div style="grid-column:1 / -1;border-top:1px solid #E3E9EF;padding-top:10px">
                 <div style="font-size:11px;font-weight:700;color:#003E78;margin-bottom:8px">តំបន់អនុញ្ញាត <span style="font-weight:400;color:#767676">Area this account may access — leave blank for everywhere</span></div>
                 <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
                   <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
                     <span style="font-size:11px;font-weight:700;color:#003E78">ខេត្ត <span style="font-weight:400;color:#767676">Province</span></span>
-                    <select value="{{ uProvince }}" onChange="{{ uSetProvince }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78">
+                    <select value="{{ uProvince }}" onChange="{{ uSetProvince }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:16px;color:#003E78">
                       <option value="">ទាំងអស់ · all</option>
                       <sc-for list="{{ uProvinceOptions }}" as="o" hint-placeholder-count="3">
                         <option value="{{ o.value }}">{{ o.label }}</option>
@@ -1742,7 +1751,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
                   </label>
                   <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
                     <span style="font-size:11px;font-weight:700;color:#003E78">ស្រុក <span style="font-weight:400;color:#767676">District</span></span>
-                    <select value="{{ uDistrict }}" onChange="{{ uSetDistrict }}" disabled="{{ uDistrictOff }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78;background:{{ uDistrictBg }}">
+                    <select value="{{ uDistrict }}" onChange="{{ uSetDistrict }}" disabled="{{ uDistrictOff }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:16px;color:#003E78;background:{{ uDistrictBg }}">
                       <option value="">ទាំងអស់ · all</option>
                       <sc-for list="{{ uDistrictOptions }}" as="o" hint-placeholder-count="0">
                         <option value="{{ o.value }}">{{ o.label }}</option>
@@ -1751,7 +1760,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
                   </label>
                   <label style="display:flex;flex-direction:column;gap:4px;min-width:0">
                     <span style="font-size:11px;font-weight:700;color:#003E78">ឃុំ <span style="font-weight:400;color:#767676">Commune</span></span>
-                    <select value="{{ uCommune }}" onChange="{{ uSetCommune }}" disabled="{{ uCommuneOff }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:13px;color:#003E78;background:{{ uCommuneBg }}">
+                    <select value="{{ uCommune }}" onChange="{{ uSetCommune }}" disabled="{{ uCommuneOff }}" style="min-height:40px;box-sizing:border-box;border:1px solid #D9DEE4;border-radius:8px;padding:0 8px;font-size:16px;color:#003E78;background:{{ uCommuneBg }}">
                       <option value="">ទាំងអស់ · all</option>
                       <sc-for list="{{ uCommuneOptions }}" as="o" hint-placeholder-count="0">
                         <option value="{{ o.value }}">{{ o.label }}</option>
@@ -1897,6 +1906,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
 <script type="text/x-dc" data-dc-script>
 const KEY = "ento.records.v1";
 const SHEET_URL = "https://kfmgacwxudhslustwmvm.supabase.co/functions/v1/swift-processor";
+const LANE = "ento.lane.v1";
 const SEQ = "ento.seq.v1";
 
 const TYPES = {
@@ -2161,8 +2171,27 @@ function normalize(rec) {
     collected_time: dt.toTimeString().slice(0, 5),
     epi_week: wk.week,
     iso_year: wk.year,
-    period_month: period(ts).month,
-    period_label: period(ts).label,
+    // The stored round is kept, not recomputed. Deriving it from collected_at_utc threw
+    // away the whole point of stamping a lab result with its source collection's round:
+    // every pull quietly moved such a result back to the month the lab happened to read
+    // it. Only a missing or unreadable value falls back to the date.
+    ...(function (raw, fallback) {
+      const plain = /^\d{4}-\d{2}$/.test(String(raw)) ? String(raw) : null;
+      const iso = !plain && /^\d{4}-\d{2}-\d{2}T/.test(String(raw)) ? String(raw) : null;
+      let month = plain;
+      if (!month && iso) {
+        const d = new Date(iso);
+        if (!isNaN(d)) {
+          // legacy rows hold midnight Phnom Penh as a UTC instant
+          const l = new Date(d.getTime() + 7 * 3600 * 1000);
+          month = l.getUTCFullYear() + "-" + String(l.getUTCMonth() + 1).padStart(2, "0");
+        }
+      }
+      if (!month) month = fallback.month;
+      const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      return { period_month: month,
+        period_label: month ? (MON[Number(month.slice(5, 7)) - 1] || "") + "-" + month.slice(2, 4) : fallback.label };
+    })(rec.period_month, period(ts)),
     collector: rec.collector || "",
     cluster: rec.cluster || "",
     site_id: household || rec.trap_id || "",
@@ -2257,6 +2286,8 @@ class Component extends DCLogic {
     collector: "",
     cluster: "",
     hhQuery: "",
+    hhIncomplete: false,
+    dashMonth: "",
     hhProv: "",
     hhComm: "",
     hhView: "list",
@@ -2264,6 +2295,7 @@ class Component extends DCLogic {
     editId: "",
     returnTo: "home",
     online: typeof navigator === "undefined" ? true : navigator.onLine,
+    reachable: true,
     pendingDel: [],
     auth: null,
     loginUser: "",
@@ -2440,10 +2472,11 @@ class Component extends DCLogic {
       }[s.type];
       if (tile) {
         return { head: tile, strip: tile, page: "#FDFCF9", fg: "#003E78",
-          line: "rgba(0,62,120,.28)", chip: "rgba(0,62,120,.10)" };
+          line: "rgba(0,62,120,.28)", chip: "rgba(0,62,120,.10)", alert: "#B3161F" };
       }
     }
-    const pastel = { fg: "#003E78", line: "rgba(0,62,120,.28)", chip: "rgba(0,62,120,.10)" };
+    // alert is the no-connection colour: dark enough to read on every pastel header.
+    const pastel = { fg: "#003E78", line: "rgba(0,62,120,.28)", chip: "rgba(0,62,120,.10)", alert: "#B3161F" };
     if (screen === "hh" || screen === "hhdetail") {
       return { ...pastel, head: "#D8E8D2", strip: "#EAF2E6", page: "#F7FAF6" };
     }
@@ -2451,7 +2484,8 @@ class Component extends DCLogic {
     if (screen === "data") return { ...pastel, head: "#F8DDCB", strip: "#FBEDE3", page: "#FEF9F6" };
     // Record is the app's home: CHAI dark blue with white type.
     return { head: "#003E78", strip: "#D5E7EF", page: "#F7F9FB", fg: "#fff",
-      line: "rgba(255,255,255,.35)", chip: "rgba(255,255,255,.14)" };
+      // a dark red would vanish on the navy home header, so it lifts to a bright one
+      line: "rgba(255,255,255,.35)", chip: "rgba(255,255,255,.14)", alert: "#FF8A8F" };
   }
 
   // Text size sits on top of the display choice: the ramp never changes, the whole
@@ -2631,7 +2665,8 @@ class Component extends DCLogic {
     // A deletion made offline reaches the sheet as soon as the app is opened online.
 
     if (!this.seenAbout()) this.setState({ screen: "about" });
-    this._on = () => this.setState({ online: navigator.onLine });
+    // Coming back onto a network clears the unreachable flag; the next call re-tests it.
+    this._on = () => this.setState({ online: navigator.onLine, reachable: navigator.onLine ? true : false });
     this.startPolling();
     window.addEventListener("online", this._on);
     window.addEventListener("offline", this._on);
@@ -2975,7 +3010,7 @@ class Component extends DCLogic {
 
   syncNow = () => {
     const url = String(this.state.sheetUrl || "").trim();
-    if (!url) { this.setState({ syncMsg: "\u1794\u1789\u17d2\u1785\u17bc\u179b URL \u1787\u17b6\u1798\u17bb\u1793 \u00b7 paste the Google Sheet web app URL first" }); return; }
+    if (!url) { this.setState({ syncMsg: "\u1794\u1789\u17d2\u1785\u17bc\u179b URL \u1787\u17b6\u1798\u17bb\u1793 \u00b7 paste the sync URL first" }); return; }
     const pending = this.state.records.filter((r) => !r.synced_at && !r._draft);
     if (!pending.length) {
       if (loadDel().length) return this.flushDeletes();
@@ -3001,11 +3036,13 @@ class Component extends DCLogic {
         this.toast("\u1794\u17b6\u1793\u1795\u17d2\u1789\u17be " + (out.count || pending.length) + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 " + (out.count || pending.length) + " records sent to the sheet", "ok");
         this.stopProgress();
         this.setState({ syncing: false, lastSync: at, syncMsg: "\u1794\u17b6\u1793\u1795\u17d2\u1789\u17be " + (out.count || pending.length) + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 sent to the sheet" });
+        // Tell the caller it worked, so a replacing pull knows it is safe to proceed.
+        return { ok: true };
       })
       .catch((err) => (this.stopProgress(), this.setState({
         syncing: false,
         syncMsg: "\u1798\u17b7\u1793\u1787\u17c4\u1782\u1787\u17d0\u1799 \u00b7 failed: " + (err && err.message ? err.message : "no connection"),
-      })));
+      }), { ok: false, error: (err && err.message) || "no connection" }));
   };
 
   // ---- Sheet log ----
@@ -3079,12 +3116,23 @@ class Component extends DCLogic {
   syncThenPull = () => {
     this.setState({ pullAsk: false });
     const p = this.syncNow();
-    if (p && p.then) p.then(() => this.pullReplace()).catch(() => this.pullReplace());
-    else this.pullReplace();
+    // A replacing pull after a FAILED send would erase the very records that never
+    // reached the sheet. It now runs only once the send is known to have worked.
+    const after = (res) => {
+      if (res && res.ok === false) {
+        this.toast("មិនបានផ្ញើ · send failed, so nothing was replaced — your records are still on the phone", "warn");
+        return;
+      }
+      this.pullReplace();
+    };
+    if (p && p.then) p.then(after).catch(() => after({ ok: false }));
+    else after({ ok: true });
   };
   pullReplace = () => {
     this.setState({ pullAsk: false });
-    this.persist([]);
+    // Storage is NOT cleared here. It used to be, which meant a pull that then failed
+    // (no signal, server error) left the phone empty with nothing to restore from.
+    // pullNow(replace) rebuilds the list from the sheet, and persists on success only.
     this.pullNow(false, true);
   };
 
@@ -3107,7 +3155,12 @@ class Component extends DCLogic {
         const gone = {};
         loadDel().forEach((id) => { gone[id] = 1; });
         const incoming = (out.records || []).map(normalize).filter((r) => !gone[r.household_id]);
-        const base = replace ? [] : this.state.records;
+        // Even a replacing pull keeps records that were never sent: the sheet cannot
+        // return them, so dropping them here would destroy them outright. This is what
+        // the comment above pullNow always promised - unsent local records win.
+        const base = replace
+          ? this.state.records.filter((r) => !r.synced_at && !r._draft)
+          : this.state.records;
         const mine = {};
         base.forEach((r) => { mine[r.record_id] = r; });
         let added = 0, updated = 0;
@@ -3366,23 +3419,45 @@ class Component extends DCLogic {
   // The counter alone is not enough: imported and backfilled rows carry numbers the
   // device never minted, so a fresh install can hand out an id that already exists.
   // Start from the highest number in the store, then skip anything already taken.
+  // A number this phone is allowed to mint. Every device draws from its own residue
+  // class mod 100 (phone 37 mints ...37, ...137, ...237), so two phones recording
+  // offline can never land on the same id. The format is unchanged - still digits -
+  // so tube ids, source_id references and exports all keep working.
+  deviceLane() {
+    let lane = null;
+    try { lane = parseInt(localStorage.getItem(LANE) || "", 10); } catch (e) {}
+    if (!(lane >= 0 && lane <= 99)) {
+      lane = Math.floor(Math.random() * 100);
+      try { localStorage.setItem(LANE, String(lane)); } catch (e) {}
+    }
+    return lane;
+  }
+
   nextId(prefix) {
     let n = 1;
     try { n = parseInt(localStorage.getItem(SEQ) || "1", 10) || 1; } catch (e) {}
-    // Scoped to this prefix only: household ids are village-coded 6-digit numbers and
-    // must not drag the collection sequences up with them.
-    const re = new RegExp("^" + prefix + "-(\\d+)$");
+    // The high-water mark is taken across every collection prefix, not just this one.
+    // Scoping it per prefix was how two phones minted the same number for different
+    // kinds - TC-50325 on one, LC-50325 on the other - because each phone's own SEQ
+    // counter was the only thing keeping the prefixes apart. One shared mark means a
+    // phone that has pulled always mints above everything it has seen.
+    // Household ids stay out of it: they are village-coded 6-digit numbers and would
+    // drag every other sequence up with them.
+    const re = /^([A-Za-z]+)-(\d+)$/;
     let high = 0;
     (this.state.records || []).forEach((r) => {
       const m = re.exec(String(r.record_id || ""));
-      if (m) high = Math.max(high, parseInt(m[1], 10) || 0);
+      if (m && m[1].toUpperCase() !== "HH") high = Math.max(high, parseInt(m[2], 10) || 0);
     });
     if (!this._mintedIds) this._mintedIds = new Set();
     const taken = new Set((this.state.records || []).map((r) => r.record_id));
-    n = Math.max(n, high + 1);
+    const lane = this.deviceLane();
+    // step up to the next number in this phone's lane
+    const inLane = (v) => v + (((lane - (v % 100)) + 100) % 100);
+    n = inLane(Math.max(n, high + 1));
     let id = prefix + "-" + String(n).padStart(4, "0");
     while (taken.has(id) || this._mintedIds.has(id)) {
-      n += 1;
+      n = inLane(n + 1);
       id = prefix + "-" + String(n).padStart(4, "0");
     }
     this._mintedIds.add(id);
@@ -3551,7 +3626,14 @@ class Component extends DCLogic {
     }
   });
   apiFetch = (url, opts) => {
-    const once = () => fetch(url, opts).then(this.asJson);
+    // Every backend call doubles as a reachability probe. navigator.onLine only reports
+    // that the device has a network, so a phone on wifi with no route to the server still
+    // showed as connected and staff believed a sync would go through. A response of any
+    // kind means the server was reached; a rejected fetch means it was not.
+    const mark = (ok) => { if (this.state.reachable !== ok) this.setState({ reachable: ok }); };
+    const once = () => fetch(url, opts)
+      .then((res) => { mark(true); return res; }, (err) => { mark(false); throw err; })
+      .then(this.asJson);
     return once().catch((e) => {
       if (!e || !e.retryable) throw e;
       return new Promise((r) => setTimeout(r, 1500)).then(once);
@@ -3663,14 +3745,14 @@ class Component extends DCLogic {
         const dates = recs.filter((r) => (r.form_type || r.type) === "install" && r.trap_id === id)
           .map((r) => r.collected_date).filter(Boolean).sort();
         if (dates.length && date < dates[0]) e.push("ថ្ងៃប្រមូលមុនថ្ងៃដាក់អន្ទាក់ · " + id + " was installed on " + dates[0] + ", so it cannot be collected earlier.");
-        // One collection per trap per round. The tick list hides collected traps, but a
+        // One collection per trap per report month. The tick list hides collected traps, but a
         // pick can also arrive from a saved form or a typed trap_id, so block it here too.
         const month = period(date).month;
         const dup = recs.find((r) => (r.form_type || r.type) === "collect"
           && r.record_id !== editing
           && r.trap_id === id
           && (r.period_month || "") === month);
-        if (dup) e.push("អន្ទាក់នេះបានប្រមូលរួចហើយក្នុងជុំនេះ · " + id + " was already collected this round on "
+        if (dup) e.push("អន្ទាក់នេះបានប្រមូលរួចហើយក្នុងជុំនេះ · " + id + " was already collected this report month on "
           + (dup.collected_date || "") + " (" + (dup.record_id || "") + "). Edit that record instead.");
       });
     }
@@ -4042,7 +4124,15 @@ class Component extends DCLogic {
       period_month: period(stamp.toISOString()).month,
       period_label: period(stamp.toISOString()).label,
       collector: this.state.collector || "",
-      cluster: this.state.cluster || "",
+      // Cluster falls back to the household's own. Requiring it in Settings used to
+      // block saving outright; dropping that block left it blank, and a record with no
+      // cluster cannot be rolled up by area on the dashboard. The household already
+      // carries the right one, so inherit rather than store nothing.
+      cluster: this.state.cluster || (function (self, id) {
+        if (!id) return "";
+        const hh = (self.households() || []).find((h) => h.household_id === id);
+        return (hh && hh.cluster) || "";
+      })(this, householdId),
       site_id: householdId || form.trap_id || "",
       household_id: householdId,
       trap_id: form.trap_id || "",
@@ -4072,6 +4162,15 @@ class Component extends DCLogic {
     delete rec.trap_ids;
     // A lab record only carries the taxa keys for its own specimen stage.
     if (type === "lab") {
+      // A result belongs to the round its specimens were collected in, not the day it
+      // was typed. The collection list is not filtered by report month, so a July collection
+      // is routinely resulted in August; stamping today would split one trap cycle
+      // across two rounds in every round-based report.
+      const src = this.state.records.find((x) => (x.record_id || x.id) === rec.source_id);
+      if (src && /^\d{4}-\d{2}$/.test(String(src.period_month || ""))) {
+        rec.period_month = src.period_month;
+        if (src.period_label) rec.period_label = src.period_label;
+      }
       (rec.specimen_stage === "Larvae" ? TAXA : LARVAL_TAXA).forEach(([k]) => {
         if (k !== "culex" && k !== "other") delete rec[k];
       });
@@ -4492,10 +4591,54 @@ class Component extends DCLogic {
   }
 
   // Collections that can carry specimens to the lab: Procopack catches and trap collections.
+  // How complete each round is for one household's rows: units of work set against what
+  // is still missing. The Activity history badge and the round picker both read this, so
+  // the percentage in the picker can never disagree with the one in the table.
+  roundStats(rows) {
+    // A trap set in one month and collected in the next is not a gap.
+    const collectedEver = {}, resultedEver = {};
+    rows.forEach((r) => {
+      const t = r.form_type || r.type;
+      if (t === "collect" && r.trap_id) collectedEver[r.trap_id] = 1;
+      if (t === "lab" && r.source_id) resultedEver[r.source_id] = 1;
+    });
+    const map = {};
+    rows.forEach((r) => {
+      const t = r.form_type || r.type;
+      if (t === "household") return;
+      const m = r.period_month || String(r.collected_date || "").slice(0, 7);
+      if (!m) return;
+      const e = map[m] || (map[m] = { setTraps: [], gotTraps: [], sources: [], other: [], results: [] });
+      if (t === "install") { if (r.trap_id) e.setTraps.push(r.trap_id); }
+      else if (t === "collect") {
+        if (r.trap_id) e.gotTraps.push(r.trap_id);
+        // needsLab was missing here, so a collection still waiting on the lab never
+        // counted as a gap and the round read 100% while the summary said "result due".
+        e.sources.push({ id: r.record_id, trap: r.trap_id || "", needsLab: this.needsLab(r),
+          kind: String(r.trap_type || "").indexOf("BG") === 0 ? "BG" : "Ovi" });
+      } else if (t === "larvae") e.other.push({ id: r.record_id, kind: "Lar", needsLab: this.needsLab(r) });
+      else if (t === "adult") e.other.push({ id: r.record_id, kind: "Pro", needsLab: this.needsLab(r) });
+      else if (t === "lab") { if (r.source_id) e.results.push(r.source_id); }
+    });
+    const out = {};
+    Object.keys(map).forEach((m) => {
+      const e = map[m];
+      const uncollected = e.setTraps.filter((id) => e.gotTraps.indexOf(id) < 0 && !collectedEver[id]);
+      const noResult = e.sources.concat(e.other)
+        .filter((s) => s.needsLab && e.results.indexOf(s.id) < 0 && !resultedEver[s.id]);
+      const units = e.setTraps.length + e.sources.length + e.other.length;
+      const done = Math.max(0, units - (uncollected.length + noResult.length));
+      out[m] = { units, done, pct: units ? Math.round((done / units) * 100) : 0, uncollected, noResult };
+    });
+    return out;
+  }
+
   specimenSources(house, type) {
     return this.state.records
       .filter((r) => ["adult", "collect", "larvae"].indexOf(r.form_type || r.type) >= 0)
-      .filter((r) => !house || r.household_id === house)
+      // No "!house" escape here: with no household passed, this used to offer every
+      // household s collections, which is how results got linked across households.
+      .filter((r) => r.household_id === house)
       .filter((r) => {
         if (!type) return true;
         const parts = String(type).split(":");
@@ -4530,16 +4673,28 @@ class Component extends DCLogic {
           if (/-IN$/.test(s2) || Number(r.pos_inside) === 1) return "IN";
           return "";
         })(r.trap_id || "");
-        // Named by the installation that set the trap; an adult or larvae collection
-        // has no install, so its own AC / LC id is the key.
+        // Led by the collection's own id — this field asks for a collection record, so
+        // naming it after the installation that set the trap read as the wrong record.
+        // The install id still follows in brackets, since that is how the trap is known
+        // in the field.
         const setId = (function (self, id) {
           if (!id) return "";
           const inst = self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === id);
           return (inst && (inst.record_id || inst.id)) || "";
         })(this, r.trap_id);
+        // The round is part of the label because this list is not filtered by report month: a
+        // collection still awaiting a result shows up months later, and picking one
+        // blind is how a result ends up filed against the wrong round.
+        const round = (function (m) {
+          if (!/^\d{4}-\d{2}$/.test(String(m || ""))) return "";
+          const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          return (MON[Number(String(m).slice(5, 7)) - 1] || "") + "-" + String(m).slice(2, 4);
+        })(r.period_month);
         return {
           value: r.record_id,
-          label: (setId || r.record_id) + " · " + kind + (pos ? " " + pos : ""),
+          label: (r.record_id || "") + " · " + kind + (pos ? " " + pos : "")
+            + (setId && setId !== r.record_id ? " · " + setId : "")
+            + (round ? " · " + round : ""),
         };
       });
   }
@@ -4645,7 +4800,7 @@ class Component extends DCLogic {
     return list.map((x) => ({ value: x[0], label: x[1] }));
   }
 
-  // ---- Dashboard: everything on this device, summarised by round ----
+  // ---- Dashboard: everything on this device, summarised by report month ----
   // Options for one admin level, taken from the records themselves and narrowed by the level above.
   adminOptions(level, parentLevel, parentCode) {
     const seen = [], out = [];
@@ -4740,8 +4895,13 @@ class Component extends DCLogic {
     const s = this.state;
     const at = (r, level, code) => !code
       || String(r[level + "_code"] || r[level] || "") === String(code);
+    // The report month narrows the whole dashboard the same way the area filters do,
+    // so every figure below reads for one round rather than for all of them at once.
+    const inMonth = (r) => !s.dashMonth
+      || (r.period_month || String(r.collected_date || "").slice(0, 7)) === s.dashMonth;
     const recs = this.state.records.filter((r) => at(r, "province", s.dashProv)
-      && at(r, "district", s.dashDist) && at(r, "commune", s.dashComm) && at(r, "village", s.dashVill));
+      && at(r, "district", s.dashDist) && at(r, "commune", s.dashComm) && at(r, "village", s.dashVill)
+      && inMonth(r));
     const hhIds = {};
     recs.forEach((r) => { if (r.household_id) hhIds[r.household_id] = 1; });
     const hh = this.households().filter((h) => hhIds[h.household_id]);
@@ -5045,6 +5205,21 @@ class Component extends DCLogic {
       distOptions: [{ value: "", label: "ទាំងអស់ · all" }].concat(this.adminOptions("district", "province", s.dashProv)),
       commOptions: [{ value: "", label: "ទាំងអស់ · all" }].concat(this.adminOptions("commune", "district", s.dashDist)),
       villOptions: [{ value: "", label: "ទាំងអស់ · all" }].concat(this.adminOptions("village", "commune", s.dashComm)),
+      // Only report months that actually hold records are offered, newest first.
+      month: s.dashMonth || "",
+      monthOptions: [{ value: "", label: "ទាំងអស់ · all" }].concat((function (recs) {
+        const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        const seen = {};
+        recs.forEach((r) => {
+          if ((r.form_type || r.type) === "household") return;
+          const m = r.period_month || String(r.collected_date || "").slice(0, 7);
+          if (/^\d{4}-\d{2}$/.test(m)) seen[m] = 1;
+        });
+        return Object.keys(seen).sort().reverse().map((m) => ({
+          value: m,
+          label: (MON[Number(m.slice(5, 7)) - 1] || m.slice(5, 7)) + "-" + m.slice(2, 4),
+        }));
+      })(this.state.records || [])),
       prov: s.dashProv || "", dist: s.dashDist || "", comm: s.dashComm || "", vill: s.dashVill || "",
       target,
       installedN, collectedN,
@@ -5194,7 +5369,7 @@ class Component extends DCLogic {
     return p.label;
   }
 
-  // What is already registered and already done at this household this round,
+  // What is already registered and already done at this household this report month,
   // so the same trap is not entered twice on the same visit.
   trapListField(householdId, form, only) {
     const recs = this.state.records;
@@ -5568,13 +5743,18 @@ class Component extends DCLogic {
               .map(([k, label]) => ({ value: k, label: label + " (" + n(k) + ")" }))) };
       })(this, ctx || form._srcHouse)] : [],
       [
-      (function (sources) {
+      (function (sources, house) {
         return sources.length
           ? { label: "Collection record *", isSelect: true, value: form.source_id || "", onChange: this.setSource,
               options: [{ value: "", label: "\u2014 select \u2014" }].concat(sources) }
-          : { label: "Collection record", isNote: true, noSources: true,
-              value: "\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1794\u17d2\u179a\u1798\u17bc\u179b\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb\u1798\u17b6\u1793\u179b\u1791\u17d2\u1792\u1795\u179b\u179a\u17bd\u1785 \u00b7 every collection here already has a result" };
-      }).call(this, this.specimenSources(ctx || form._srcHouse, form._srcType)),
+          // With no household chosen yet the list is empty by design - saying every
+          // collection is already resulted would be plainly wrong at that point.
+          : !house
+            ? { label: "Collection record", isNote: true, noSources: true,
+                value: "ជ្រើសរើសខ្នងផ្ទះជាមុន · pick the household first" }
+            : { label: "Collection record", isNote: true, noSources: true,
+                value: "កំណត់ត្រាប្រមូលទាំងអស់មានលទ្ធផលរួច · every collection here already has a result" };
+      }).call(this, this.specimenSources(ctx || form._srcHouse, form._srcType), ctx || form._srcHouse),
       this.tubeField(form),
       ].concat(
       form.source_id && this.sourceIsOvitrap(form.source_id)
@@ -5719,10 +5899,28 @@ class Component extends DCLogic {
     const villList = [];
     villPool.forEach((h) => { if (h.village && villList.indexOf(h.village) < 0) villList.push(h.village); });
     const activeVill = s.hhVill && villList.indexOf(s.hhVill) >= 0 ? s.hhVill : "";
+    // "Not yet complete" means this report month is missing at least one of the five
+    // activities. The round is the one the Report Month filter is showing, so the list
+    // and that selector always agree about which month is being judged.
+    const ACTS_ALL = ["install", "collect", "adult", "larvae", "lab"];
+    const effRound = (function (self, st) {
+      if (/^\d{4}-\d{2}$/.test(String(st.matrixRound || ""))) return st.matrixRound;
+      const months = {};
+      (self.state.records || []).forEach((r) => {
+        const m = r.period_month || String(r.collected_date || "").slice(0, 7);
+        if (m && (r.form_type || r.type) !== "household") months[m] = 1;
+      });
+      return Object.keys(months).sort().reverse()[0] || self.currentRound();
+    })(this, s);
+    const hhComplete = (h) => {
+      const rows = (h._rows || []).filter((r) => r.period_month === effRound);
+      return ACTS_ALL.every((t) => rows.some((r) => (r.form_type || r.type) === t));
+    };
     const hhFiltered = hhList.filter((h) => {
       if (activeProv && (provKey(h.province_code) || h.province) !== activeProv) return false;
       if (activeComm && h.commune !== activeComm) return false;
       if (activeVill && h.village !== activeVill) return false;
+      if (s.hhIncomplete && hhComplete(h)) return false;
       if (!q) return true;
       return [h.household_id, h.head, h.village, h.commune, h.district, h.province, h.cluster,
         h.address, h.trap_ids].join(" ").toLowerCase().indexOf(q) >= 0;
@@ -5861,6 +6059,7 @@ class Component extends DCLogic {
       headerBg: this.sectionTone(s).head,
       headerFg: this.sectionTone(s).fg,
       headerLine: this.sectionTone(s).line,
+      headerAlert: this.sectionTone(s).alert,
       headerChip: this.sectionTone(s).chip,
       pageBg: this.sectionTone(s).page,
       // One box over every id on the phone: household, trap, record, tube, or a name.
@@ -5918,7 +6117,7 @@ class Component extends DCLogic {
         ? "\u1780\u17c6\u1796\u17bb\u1784\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799 \u00b7 Checking\u2026"
         : "\u1785\u17bc\u179b\u1794\u17d2\u179a\u17be \u00b7 Sign in",
       loginNote: s.online
-        ? "\u1782\u178e\u1793\u17b8\u1798\u17b6\u1793\u1793\u17c5\u1780\u17d2\u1793\u17bb\u1784 Google Sheet \u00b7 Accounts live in the Google Sheet. Ask your supervisor for a username and PIN."
+        ? "\u1782\u178e\u1793\u17b8\u1798\u17b6\u1793\u1793\u17c5\u1780\u17d2\u1793\u17bb\u1784 Google Sheet \u00b7 Accounts live in the programme database. Ask your supervisor for a username and PIN."
         : "\u1782\u17d2\u1798\u17b6\u1793\u17a2\u17ca\u17b8\u1793\u1792\u17ba\u178e\u17b7\u178f \u00b7 Offline \u2014 the last person signed in on this phone can unlock it with their PIN.",
       authName: s.auth ? (s.auth.name || s.auth.username) : "",
       authMeta: s.auth
@@ -6003,7 +6202,8 @@ class Component extends DCLogic {
       setDashDist: (e) => this.setState({ dashDist: e.target.value, dashComm: "", dashVill: "" }),
       setDashComm: (e) => this.setState({ dashComm: e.target.value, dashVill: "" }),
       setDashVill: (e) => this.setState({ dashVill: e.target.value }),
-      clearDash: () => this.setState({ dashProv: "", dashDist: "", dashComm: "", dashVill: "" }),
+      setDashMonth: (e) => this.setState({ dashMonth: e.target.value }),
+      clearDash: () => this.setState({ dashProv: "", dashDist: "", dashComm: "", dashVill: "", dashMonth: "" }),
       isHh: s.screen === "hh", isHhDetail: s.screen === "hhdetail" && !!current,
       openHh: () => this.setState({ screen: "hh" }),
       hhQuery: s.hhQuery,
@@ -6084,6 +6284,24 @@ class Component extends DCLogic {
           sortCommuneFg: fg("commune"), sortStatusFg: fg("status"),
         };
       })(this, s.hhSort || "status", s.hhSortDir || 1),
+      // Toggle for the households list: show only the ones still owing an activity
+      // this report month. The count is of all households in scope, not just the
+      // page shown, so it does not change as the list is narrowed by the toggle.
+      ...(function (self, st, list, complete) {
+        const on = st.hhIncomplete === true;
+        const pending = list.filter((h) => !complete(h)).length;
+        return {
+          hhIncompleteOn: on,
+          toggleHhIncomplete: () => self.setState((p) => ({ hhIncomplete: !p.hhIncomplete })),
+          hhIncompleteCount: String(pending),
+          hhIncompleteBg: on ? "#003E78" : "#fff",
+          hhIncompleteBd: on ? "#003E78" : "#D9DEE4",
+          hhIncompleteFg: on ? "#fff" : "#767676",
+          hhIncompleteTitle: on
+            ? "បង្ហាញទាំងអស់ · showing only households not yet complete - tap to show all"
+            : "តម្រងមិនទាន់គ្រប់ · show only households not yet complete this report month",
+        };
+      })(this, s, hhList, hhComplete),
       households: (function (list, all, self, key, dir) {
         const val = (h) => key === "id" ? String(h.household_id || "")
           : key === "name" ? String(h.head || "")
@@ -6147,7 +6365,7 @@ class Component extends DCLogic {
             ["act" + type + "Op"]: on ? 1 : 0.4,
             ["act" + type]: go(type.toLowerCase()),
           });
-          // Lit means still to do this round: not conducted yet, or conducted with
+          // Lit means still to do this report month: not conducted yet, or conducted with
           // results outstanding. An activity that is finished goes dim.
           const p = /^\d{4}-\d{2}$/.test(String(self.state.matrixRound || "")) ? self.state.matrixRound : self.currentRound();
           const rows = (hh._rows || []).filter((r) => r.period_month === p);
@@ -6303,9 +6521,9 @@ class Component extends DCLogic {
         out.push({ dot: st.rank === 3 ? "#1ED47F" : "#F4B71B",
           km: st.tag,
           en: st.rank === 0 ? "This round still needs a trap installed."
-            : st.rank === 1 ? "A trap is in place but has not been collected this round."
+            : st.rank === 1 ? "A trap is in place but has not been collected this report month."
             : st.rank === 2 ? "Specimens are with the lab; results are outstanding."
-            : "Install, collection and results are all in for this round." });
+            : "Install, collection and results are all in for this report month." });
         return out;
       })(current._rows, this) : [],
       // Species composition for this household alone.
@@ -6321,7 +6539,7 @@ class Component extends DCLogic {
           run += pct;
           return row;
         });
-        // Mosquitoes at this household by round, split by how they were caught.
+        // Mosquitoes at this household by report month, split by how they were caught.
         const by = {};
         hhRows.forEach((r) => {
           const t = r.form_type || r.type;
@@ -6342,7 +6560,7 @@ class Component extends DCLogic {
           label: by[m].label, bgs: by[m].bgs, proko: by[m].proko, ovt: by[m].ovt,
           total: by[m].bgs + by[m].proko + by[m].ovt,
         }));
-        // Adult mosquitoes only, by species, one column per round.
+        // Adult mosquitoes only, by species, one column per report month.
         const ADULT = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
           ["albopictus_f", "Ae. albopictus \u2640"], ["albopictus_m", "Ae. albopictus \u2642"],
           ["culex", "Culex spp."], ["other", "Other / damaged"]];
@@ -6447,7 +6665,7 @@ class Component extends DCLogic {
           prevLarvaeLabel: "\u1780\u17b6\u179a\u1780\u17c6\u178e\u178f\u17cb\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780\u1798\u17bb\u1793 \u00b7 larvae surveys already at this household",
         };
       })(this, s),
-      // Trap installations and collections already recorded at this household, by round.
+      // Trap installations and collections already recorded at this household, by report month.
       ...(function (self, st) {
         const house = st.ctxHouse || (st.form || {}).house || "";
         const kind = st.type === "install" ? "install" : st.type === "collect" ? "collect" : "";
@@ -6563,7 +6781,7 @@ class Component extends DCLogic {
                 };
               })
           : [];
-        // Grouped by round, so a household with many visits reads month by month.
+        // Grouped by report month, so a household with many visits reads month by month.
         const byMonth = [];
         rows.forEach((r) => {
           const g = byMonth.find((x) => x.month === r.month);
@@ -6581,7 +6799,7 @@ class Component extends DCLogic {
           hasPrevAdult: rows.length > 0,
         };
       })(this, s),
-      // Lab results already entered for this household, by round, with edit and delete.
+      // Lab results already entered for this household, by report month, with edit and delete.
       ...(function (self, st) {
         const house = st.ctxHouse || (st.form || {}).house || "";
         const on = st.screen === "form" && st.type === "lab" && house;
@@ -6611,6 +6829,26 @@ class Component extends DCLogic {
                       eggs ? eggs + " ពង" : (/^(OV|VO|OVT)-/.test(String(r.trap_id || "").toUpperCase()) ? "គ្មានពង · no egg" : ""),
                       catchN ? catchN + ((String(r.tube_id || "") + " " + String(r.trap_id || "")).toUpperCase().indexOf("LC-") >= 0 ? " ដង្កូវទឹក" : " មូស") : ""].filter(Boolean);
                     if (!parts.length) parts.push("គ្មានកំប៉ុងវិជ្ជមាន · no pos tube");
+                    // A result whose source sits at another household (or is missing
+                    // altogether) otherwise reads as this household's own work: the
+                    // foreign collection's counts are printed verbatim on this row.
+                    if ((r.form_type || r.type) === "lab" && r.source_id) {
+                      const src0 = self.state.records.find((x) => (x.record_id || x.id) === r.source_id);
+                      if (!src0) parts.push("⚠ រកប្រភពមិនឃើញ · source not found");
+                      else if (src0.household_id && r.household_id && src0.household_id !== r.household_id) {
+                        parts.push("⚠ ប្រភពនៅ " + src0.household_id + " · source is another household");
+                      }
+                      // A tube read twice carries two different counts and nothing used
+                      // to object: LC-50610-T1 held readings of 30 and 10 at once, and it
+                      // only came to light because those rows were also on wrong households.
+                      if (r.tube_id) {
+                        const sharing = self.state.records.filter((x) => (x.form_type || x.type) === "lab"
+                          && x.tube_id === r.tube_id && (x.record_id || x.id) !== (r.record_id || r.id));
+                        if (sharing.length) {
+                          parts.push("⚠ កំប៉ុងស្ទួន · tube also read by " + sharing.map((x) => x.record_id || x.id).join(", "));
+                        }
+                      }
+                    }
                     return parts.concat([mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10))]).join(" · ");
                   })(),
                   tag: r.wmel && r.wmel !== "Not tested"
@@ -6678,6 +6916,7 @@ class Component extends DCLogic {
           else if (t === "lab") { e.lab += 1; if (r.source_id) (e.results = e.results || []).push(r.source_id); }
         });
         const split = (n, i, o) => (n ? n + (i && o ? " (" + i + "/" + o + ")" : o ? " (O)" : i ? " (I)" : "") : "\u2014");
+        const stats = self0.roundStats(rows);
         return Object.keys(map).sort().reverse().map((m) => {
           const e = map[m];
           const cells = [
@@ -6687,18 +6926,12 @@ class Component extends DCLogic {
             { v: e.adult ? String(e.adult) : "\u2014", on: !!e.adult },
             { v: e.lab ? String(e.lab) : "\u2014", on: !!e.lab },
           ].map((c) => ({ v: c.v, fg: c.on ? "#003E78" : "#B9C2CC" }));
-          // One pass: list what is missing, then read the percentage off that list, so the
-          // badge and the line under it can never disagree.
-          const setT = e.setTraps || [], gotT = e.gotTraps || [], srcs = e.sources || [], oth = e.other || [];
-          const res = e.results || [];
-          const uncollected = setT.filter((id) => gotT.indexOf(id) < 0 && !collectedEver[id]);
-          const noResult = srcs.concat(oth)
-            .filter((s2) => s2.needsLab && res.indexOf(s2.id) < 0 && !resultedEver[s2.id]);
-          const units = setT.length + srcs.length + oth.length;
-          const missing = uncollected.length + noResult.length;
-          const need = units;
-          const done = Math.max(0, units - missing);
-          const pct = need ? Math.round((done / need) * 100) : 0;
+          // Both the badge and the gap line under it read the shared roundStats pass, which
+          // the round picker also uses, so none of the three can disagree.
+          const st = stats[m] || { units: 0, pct: 0, uncollected: [], noResult: [] };
+          const uncollected = st.uncollected, noResult = st.noResult;
+          const need = st.units;
+          const pct = st.pct;
           const gaps = [];
           const shortId = (id) => {
             const s2 = String(id || "").toUpperCase();
@@ -7045,23 +7278,26 @@ class Component extends DCLogic {
             }
             const cur = (self.households() || []).find((h) => h.household_id === st.hhId);
             const rows = (cur && cur._rows) || [];
-            const doneIn = (m) => rows.some((r) => r.period_month === m
-              && (r.form_type || r.type) !== "household");
-            // A round this household has already been recorded in is not offered again.
+            const stats = self.roundStats(rows);
             // The household round follows the selection as typed, even for a month the
             // sheet holds no data for yet — that is the point of recording into it.
             // Unpicked, the household round is this calendar month, not the newest
             // month the phone happens to hold data for.
             const sel = /^\d{4}-\d{2}$/.test(String(st.matrixRound || "")) ? st.matrixRound : self.currentRound();
-            // Rounds already recorded at this household drop out — except the one
-            // currently selected, which always stays visible in the box.
-            let keys = yearMonths.filter((m) => !doneIn(m) || m === sel);
+            // Every round stays selectable. Hiding the ones already recorded in also hid
+            // the half-finished ones, so a round missing its trap install could never be
+            // gone back to; the completion suffix shows the state instead of removing it.
+            let keys = yearMonths.slice();
             if (keys.indexOf(sel) < 0) keys = [sel].concat(keys);
             const n = rows.filter((r) => r.period_month === sel
               && (r.form_type || r.type) !== "household").length;
             return {
               hhRound: sel,
-              hhRoundOptions: keys.map((m) => ({ value: m, label: label(m) })),
+              hhRoundOptions: keys.map((m) => {
+                const s2 = stats[m];
+                return { value: m,
+                  label: label(m) + (s2 && s2.units ? " · " + s2.pct + "%" : "") };
+              }),
               hhRoundNote: !cur ? ""
                 : n
                   ? n + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 record" + (n === 1 ? "" : "s") + " in " + label(sel)
@@ -7069,7 +7305,7 @@ class Component extends DCLogic {
             };
           })(),
           matrixCols: KINDS.map(([, label]) => label),
-          // How many activity slots this round still owes against how many are finished.
+          // How many activity slots this report month still owes against how many are finished.
           sortStatusCount: (function (a) {
             return a[0] + "/" + (a[0] + a[1]);
           })((function () {
@@ -7188,8 +7424,8 @@ class Component extends DCLogic {
       stripText: s.online
         ? "\u1798\u17b6\u1793\u17a2\u17ca\u17b8\u1793\u1792\u17ba\u178e\u17b7\u178f \u00b7 Online \u2014 saved on the device first"
         : "\u1798\u17b7\u1793\u17a2\u17ca\u17b8\u1793\u1792\u17ba\u178e\u17b7\u178f \u00b7 Offline \u2014 saving here",
-      isOnline: !!s.online,
-      isOffline: !s.online,
+      isOnline: !!s.online && s.reachable !== false,
+      isOffline: !s.online || s.reachable === false,
       stripMeta: s.screen === "form"
         ? this.roundText(s.form, s.type)
         // Storage, plus how many records are still only on this phone.
@@ -7266,7 +7502,7 @@ class Component extends DCLogic {
       latestToggleTitle: (s.latestShown || 5) >= s.records.length
         ? "\u1794\u1784\u17d2\u179a\u17bd\u1798 \u00b7 show fewer"
         : "\u1798\u17be\u179b\u1794\u1793\u17d2\u1790\u17c2\u1798 \u00b7 show more",
-      // Every record on the phone, and every deletion, grouped by round like the other
+      // Every record on the phone, and every deletion, grouped by report month like the other
       // tables: one line each, opened a month at a time.
       ...(function (self, st, rowOf) {
         const p2 = (n) => ("0" + n).slice(-2);
