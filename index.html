@@ -145,7 +145,10 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <div style="position:fixed;top:0;right:0;z-index:4000;width:33.33%;min-width:230px;max-width:380px;height:calc(var(--ento-vh, 100vh) - 61px);box-sizing:border-box;background:#fff;border-left:1px solid #D9DEE4;box-shadow:-8px 0 24px rgba(0,62,120,.22);padding:10px;display:flex;flex-direction:column;gap:2px;overflow:auto">
           <div style="display:flex;align-items:center;gap:8px;padding:2px 5px 8px">
             <div style="flex:1;min-width:0;font-size:15px;font-weight:700;color:#003E78;line-height:1.25">ការគ្រប់គ្រង <span style="font-weight:400;color:#767676">Manage</span></div>
-            <span style="flex:none;max-width:40%;font-size:13px;font-weight:700;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ authName }}</span>
+            <span style="flex:none;max-width:40%;min-width:0;display:inline-flex;align-items:center;gap:5px;color:#003E78">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="8" r="3.4"></circle><path d="M5.5 20c0-3.4 2.9-5.4 6.5-5.4s6.5 2 6.5 5.4"></path></svg>
+              <span style="min-width:0;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ authName }}</span>
+            </span>
             <button onClick="{{ toggleHdrMenu }}" title="បិទ · Close" style="flex:none;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:6px;width:26px;height:26px;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5 18.5 18.5"></path><path d="M18.5 5.5 5.5 18.5"></path></svg>
             </button>
@@ -1509,22 +1512,22 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
   </div>
 
   <div style="display:flex;background:#fff;border-top:1px solid #D9DEE4;position:sticky;bottom:0;margin-top:auto;z-index:5;padding-bottom:env(safe-area-inset-bottom)">
-    <button onClick="{{ goRecord }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabRecordInd }};background:{{ tabRecordBg }};color:{{ tabRecordFg }};font-size:12px;line-height:1.2;font-weight:{{ tabRecordW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+    <button onClick="{{ goRecord }}" style="flex:1 1 0;min-width:0;padding:6px 2px;min-height:60px;border:none;border-top:3px solid {{ tabRecordInd }};background:{{ tabRecordBg }};color:{{ tabRecordFg }};font-size:12px;line-height:1.2;font-weight:{{ tabRecordW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15L12 17l-6.5 3V5A1.5 1.5 0 0 1 7 3.5Z"></path><path d="M9 8.5h6"></path></svg>
       <span>កត់ត្រា</span>
       <span style="font-size:11px;font-weight:400;color:#767676">Record</span>
     </button>
-    <button onClick="{{ goHh }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabHhInd }};background:{{ tabHhBg }};color:{{ tabHhFg }};font-size:12px;line-height:1.2;font-weight:{{ tabHhW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+    <button onClick="{{ goHh }}" style="flex:1 1 0;min-width:0;padding:6px 2px;min-height:60px;border:none;border-top:3px solid {{ tabHhInd }};background:{{ tabHhBg }};color:{{ tabHhFg }};font-size:12px;line-height:1.2;font-weight:{{ tabHhW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3.5l9 7"></path><path d="M5.5 9.6V20h13V9.6"></path><path d="M9.8 20v-5.5h4.4V20"></path></svg>
       <span>ខ្នងផ្ទះ {{ hhCount }}</span>
       <span style="font-size:11px;font-weight:400;color:#767676">Households</span>
     </button>
-    <button onClick="{{ goDash }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabDashInd }};background:{{ tabDashBg }};color:{{ tabDashFg }};font-size:12px;line-height:1.2;font-weight:{{ tabDashW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+    <button onClick="{{ goDash }}" style="flex:1 1 0;min-width:0;padding:6px 2px;min-height:60px;border:none;border-top:3px solid {{ tabDashInd }};background:{{ tabDashBg }};color:{{ tabDashFg }};font-size:12px;line-height:1.2;font-weight:{{ tabDashW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="4.2" width="17.6" height="15.6" rx="2.4"></rect><path d="M3.2 9.2h17.6"></path><path d="M7.8 16.4V13"></path><path d="M12 16.4v-4.8"></path><path d="M16.2 16.4v-2.4"></path></svg>
       <span>ផ្ទាំងបង្ហាញ</span>
       <span style="font-size:11px;font-weight:400;color:#767676">Dashboard</span>
     </button>
-    <button onClick="{{ goData }}" style="flex:1;min-height:60px;border:none;border-top:3px solid {{ tabDataInd }};background:{{ tabDataBg }};color:{{ tabDataFg }};font-size:12px;line-height:1.2;font-weight:{{ tabDataW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+    <button onClick="{{ goData }}" style="flex:1 1 0;min-width:0;padding:6px 2px;min-height:60px;border:none;border-top:3px solid {{ tabDataInd }};background:{{ tabDataBg }};color:{{ tabDataFg }};font-size:12px;line-height:1.2;font-weight:{{ tabDataW }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v10"></path><path d="M8.2 9.8 12 13.6l3.8-3.8"></path><path d="M4.5 15.5V19a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3.5"></path></svg>
       <span>ទាញទិន្នន័យ {{ pendingSync }}</span>
       <span style="font-size:11px;font-weight:400;color:#767676">Export</span>
@@ -7029,16 +7032,17 @@ class Component extends DCLogic {
             value: m,
             label: (["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(m.slice(5, 7)) - 1] || m.slice(5, 7)) + "-" + m.slice(2, 4),
           })),
-          // On a household you record into the current round or the two before it,
-          // whether or not the sheet already holds data for them.
+          // On a household you record into any round from January of this year up to
+          // the current one, whether or not the sheet already holds data for them.
           ...(function () {
             const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
             const now = new Date();
             const label = (m) => (MON[Number(m.slice(5, 7)) - 1] || m.slice(5, 7)) + "-" + m.slice(2, 4);
-            const last3 = [0, 1, 2].map((k) => {
-              const d = new Date(now.getFullYear(), now.getMonth() - k, 1);
-              return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
-            });
+            // Jan .. this month, newest first, so the current round stays the default pick
+            const yearMonths = [];
+            for (let k = now.getMonth(); k >= 0; k--) {
+              yearMonths.push(now.getFullYear() + "-" + String(k + 1).padStart(2, "0"));
+            }
             const cur = (self.households() || []).find((h) => h.household_id === st.hhId);
             const rows = (cur && cur._rows) || [];
             const doneIn = (m) => rows.some((r) => r.period_month === m
@@ -7051,7 +7055,7 @@ class Component extends DCLogic {
             const sel = /^\d{4}-\d{2}$/.test(String(st.matrixRound || "")) ? st.matrixRound : self.currentRound();
             // Rounds already recorded at this household drop out — except the one
             // currently selected, which always stays visible in the box.
-            let keys = last3.filter((m) => !doneIn(m) || m === sel);
+            let keys = yearMonths.filter((m) => !doneIn(m) || m === sel);
             if (keys.indexOf(sel) < 0) keys = [sel].concat(keys);
             const n = rows.filter((r) => r.period_month === sel
               && (r.form_type || r.type) !== "household").length;
