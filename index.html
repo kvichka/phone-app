@@ -3621,9 +3621,9 @@ class Component extends DCLogic {
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) e.push("ជ្រើសរើសថ្ងៃប្រមូល · Pick the date collected.");
     else if (date > today) e.push("ថ្ងៃប្រមូលនៅអនាគត · The date collected is in the future.");
-    if (!String(this.state.collector || "").trim() || !String(this.state.cluster || "").trim()) {
-      e.push("បំពេញឈ្មោះ និងចង្កោមក្នុងការកំណត់ · Set your name and cluster in Settings — the gear in the top bar.");
-    }
+    // Name and cluster are no longer asked for here: signing in already stamps
+    // collector from the account (name or username), and the user's role carries
+    // the rest of what tracking needs, so an unset cluster must not block a save.
 
     if (type === "household") {
       if (String(f.head || "").trim().length < 2) e.push("បំពេញឈ្មោះមេគ្រួសារ · Enter the head of household's name.");
