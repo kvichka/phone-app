@@ -834,14 +834,14 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               </div>
             </sc-if>
             <sc-if value="{{ f.isPair }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;align-items:center;gap:8px">
-                <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">
+                <div style="flex:1 1 240px;min-width:0;display:flex;align-items:center;gap:8px">
                   <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ f.aCap }}</div>
-                  <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
+                  <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="flex:1 1 92px;min-width:60px;max-width:150px;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
                 </div>
-                <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
+                <div style="flex:1 1 240px;min-width:0;display:flex;align-items:center;gap:8px">
                   <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ f.bCap }}</div>
-                  <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="width:64px;flex:none;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
+                  <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="flex:1 1 92px;min-width:60px;max-width:150px;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
                 </div>
               </div>
             </sc-if>
@@ -4059,7 +4059,18 @@ class Component extends DCLogic {
               _srcType: form._srcType || "",
             }, p.records),
         error: "", forceSave: false,
-      }));
+      }), () => {
+        // The Activity filter is only worth carrying to the next entry while it still
+        // has collections behind it. Kept blindly, the box read "Pro (0)" over an empty
+        // list saying every collection already has a result - true of that one activity,
+        // but misleading when other activities here were still waiting. Checked after the
+        // save has landed, so the record just entered is counted.
+        const f = this.state.form || {};
+        const t = String(f._srcType || "");
+        if (t && !this.specimenSources(f._srcHouse || f.house || "", t).length) {
+          this.setState((p) => ({ form: { ...p.form, _srcType: "" } }));
+        }
+      });
       this.toast("\u1794\u1793\u17d2\u1790\u17c2\u1798\u1780\u17d2\u1793\u17bb\u1784\u1794\u1789\u17d2\u1787\u17b8 \u00b7 added to the list \u00b7 " + savedIds, "ok");
       return true;
     } else {
@@ -4200,9 +4211,27 @@ class Component extends DCLogic {
     return period(m + "-15").label;
   }
 
+  // The report month the households screen judges everything against: row icons, the
+  // status column and the Incomplete filter. It has to match what the Report Month
+  // selector actually shows, and that selector falls back to the newest month holding
+  // data - not to the calendar month. Judging against today instead lit every activity
+  // after a fresh pull, because the current month has no records yet, and it only came
+  // right once you picked a month and came back.
+  effectiveRound() {
+    const picked = String(this.state.matrixRound || "");
+    if (/^\d{4}-\d{2}$/.test(picked)) return picked;
+    const months = {};
+    (this.state.records || []).forEach((r) => {
+      if ((r.form_type || r.type) === "household") return;
+      const m = r.period_month || String(r.collected_date || "").slice(0, 7);
+      if (/^\d{4}-\d{2}$/.test(m)) months[m] = 1;
+    });
+    return Object.keys(months).sort().reverse()[0] || this.currentRound();
+  }
+
   // Where a household stands in the current round, and how urgent that is.
   roundStatus(rows) {
-    const p = /^\d{4}-\d{2}$/.test(String(this.state.matrixRound || "")) ? this.state.matrixRound : this.currentRound();
+    const p = this.effectiveRound();
     const inRound = (t) => (rows || []).filter((r) => (r.form_type || r.type) === t && r.period_month === p);
     const installs = inRound("install"), collects = inRound("collect");
     // A collection is outstanding until a lab record names it as its source.
@@ -5903,15 +5932,7 @@ class Component extends DCLogic {
     // activities. The round is the one the Report Month filter is showing, so the list
     // and that selector always agree about which month is being judged.
     const ACTS_ALL = ["install", "collect", "adult", "larvae", "lab"];
-    const effRound = (function (self, st) {
-      if (/^\d{4}-\d{2}$/.test(String(st.matrixRound || ""))) return st.matrixRound;
-      const months = {};
-      (self.state.records || []).forEach((r) => {
-        const m = r.period_month || String(r.collected_date || "").slice(0, 7);
-        if (m && (r.form_type || r.type) !== "household") months[m] = 1;
-      });
-      return Object.keys(months).sort().reverse()[0] || self.currentRound();
-    })(this, s);
+    const effRound = this.effectiveRound();
     const hhComplete = (h) => {
       const rows = (h._rows || []).filter((r) => r.period_month === effRound);
       return ACTS_ALL.every((t) => rows.some((r) => (r.form_type || r.type) === t));
@@ -5927,7 +5948,7 @@ class Component extends DCLogic {
     });
     const current = s.hhId ? hhList.find((h) => h.household_id === s.hhId) : null;
     const titles = {
-      home: ["ការប្រមូលទិន្នន័យបាណកសាស្រ្ត", "Entomology field \u00b7 Wolbachia \u00b7 v2"],
+      home: ["ការប្រមូលទិន្នន័យបាណកសាស្រ្ត", "Entomology field \u00b7 Wolbachia \u00b7 v1"],
       form: s.editId
         ? [s.type === "household"
             ? "\u1780\u17c2\u1794\u17d2\u179a\u17c2\u1796\u17d0\u178f\u17cc\u1798\u17b6\u1793\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7"
@@ -6367,7 +6388,7 @@ class Component extends DCLogic {
           });
           // Lit means still to do this report month: not conducted yet, or conducted with
           // results outstanding. An activity that is finished goes dim.
-          const p = /^\d{4}-\d{2}$/.test(String(self.state.matrixRound || "")) ? self.state.matrixRound : self.currentRound();
+          const p = self.effectiveRound();
           const rows = (hh._rows || []).filter((r) => r.period_month === p);
           const of = (t) => rows.filter((r) => (r.form_type || r.type) === t);
           const labs = of("lab");
