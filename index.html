@@ -608,6 +608,9 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <span style="display:flex;align-items:baseline;gap:8px;min-width:0">
               <span style="font:700 11px ui-monospace,Menlo,monospace;color:#003E78;white-space:nowrap">{{ h.id }}</span>
               <span style="flex:1;min-width:0;font-size:12px;font-weight:700;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ h.head }}</span>
+              <sc-if value="{{ h.stopped }}" hint-placeholder-val="{{ false }}">
+                <span title="{{ h.stoppedNote }}" style="flex:none;font-size:9px;font-weight:700;color:#7C1220;background:#FBEDEF;border:1px solid #F0D3D8;border-radius:999px;padding:1px 6px;white-space:nowrap">ឈប់ · stopped</span>
+              </sc-if>
             </span>
             <span style="display:block;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px">{{ h.village }} · {{ h.commune }}</span>
           </button>
@@ -3309,9 +3312,14 @@ class Component extends DCLogic {
     pts.forEach((p) => {
       const m = window.L.circleMarker([p.lat, p.lon], {
         // White ring throughout, so a pin reads against the basemap; the fill carries
-        // whichever dimension the legend is showing.
-        radius: 9, color: "#fff", weight: 2,
-        fillColor: p.dotColor || p.vcolor || "#117996", fillOpacity: 1,
+        // whichever dimension the legend is showing. A stopped house keeps its colour
+        // as an outline only — present, clearly not to be visited.
+        radius: 9,
+        color: p.stopped ? (p.dotColor || "#767676") : "#fff",
+        weight: p.stopped ? 3 : 2,
+        dashArray: p.stopped ? "3 3" : null,
+        fillColor: p.stopped ? "#fff" : (p.dotColor || p.vcolor || "#117996"),
+        fillOpacity: p.stopped ? 0.65 : 1,
       // Permanent label beside each pin, so every household reads at a glance.
       }).bindTooltip(
         '<span style="font:700 11px \'Kantumruy Pro\',\'Trebuchet MS\',system-ui,sans-serif;color:#003E78">' + p.head + '</span>',
@@ -3850,6 +3858,26 @@ class Component extends DCLogic {
     return lane;
   }
 
+  // Was this household still in the study in this report month? active_to holds the
+  // LAST month it was expected, so everything up to and including that month is
+  // unchanged — which is the whole point of storing a month rather than an on/off flag.
+  // A flag would read as stopped in every period, hiding the history and silently
+  // rewriting past completion figures.
+  hhExpected(h, month) {
+    const to = String((h && h.active_to) || "").slice(0, 7);
+    if (!/^\d{4}-\d{2}$/.test(to)) return true;
+    const m = String(month || "").slice(0, 7);
+    if (!/^\d{4}-\d{2}$/.test(m)) return true;
+    return m <= to;
+  }
+
+  // Has it stopped at all, regardless of which month is on screen? Used for the badge
+  // in the list, so a stopped house is recognisable even while looking at a round it
+  // was active in.
+  hhStopped(h) {
+    return !!(h && (h.exit_reason || /^\d{4}-\d{2}$/.test(String(h.active_to || "").slice(0, 7))));
+  }
+
   // A household id says where the house is: two digits for the house, then the four
   // digits the programme uses for the village, e.g. HH-060102 is the sixth house in
   // village 0102. That tail is the programme's own numbering and is not derivable from
@@ -3939,7 +3967,7 @@ class Component extends DCLogic {
   blankForm(type) {
     const today = new Date().toISOString().slice(0, 10);
     const blank = {
-      household: { head: "", phone: "", residents: "", hh_id: "", province_code: "", province: "", district_code: "", district: "", commune_code: "", commune: "", village_code: "", village: "", address: "", structure: "House", consent: "Given" },
+      household: { head: "", phone: "", residents: "", hh_id: "", province_code: "", province: "", district_code: "", district: "", commune_code: "", commune: "", village_code: "", village: "", address: "", structure: "House", consent: "Given", exit_reason: "", active_to: "" },
       install: { trap_id_inside: "", trap_id_outside: "", trap_type: "Ovitrap", house: "", position: "Both", substrate: "Hay infusion", notes: "" },
       collect: { trap_ids: [], trap_id: "", position: "Both", found: "Yes", condition: "Intact", paddle: 0, notes: "" },
       adult: { method: "Procopack", trap_id: "", house: "", specimens: 0, notes: "" },
@@ -4183,6 +4211,10 @@ class Component extends DCLogic {
       }
       if (!f.province_code) e.push("ជ្រើសរើសខេត្ត · Select the province.");
       if (!f.district_code) e.push("ជ្រើសរើសស្រុក · Select the district.");
+      // A reason with no month would stop nothing: hhExpected keys off the month alone.
+      if (filled("exit_reason") && !/^\d{4}-(0[1-9]|1[0-2])$/.test(String(f.active_to || "").trim())) {
+        e.push("បំពេញខែចុងក្រោយជា YYYY-MM · Enter the last active report month as YYYY-MM, e.g. 2026-08.");
+      }
       if (filled("phone")) {
         const digits = String(f.phone).replace(/[^0-9]/g, "");
         if (digits.length < 8 || digits.length > 10) e.push("លេខទូរស័ព្ទត្រូវមាន ៨ ដល់ ១០ តួ · A phone number has 8 to 10 digits.");
@@ -4778,6 +4810,11 @@ class Component extends DCLogic {
         address: reg.address || "",
         consent: reg.consent || "",
         consent_given: reg.consent_given == null ? "" : reg.consent_given,
+        // Carried explicitly, like every other registration field — this object is
+        // built from a fixed list, so anything not named here never reaches the list,
+        // the map, the completion rule or the exports.
+        exit_reason: reg.exit_reason || "",
+        active_to: reg.active_to || "",
         registered_date: reg.collected_date || "",
         lat: reg.lat || (rows.find((r) => r.lat) || {}).lat || "",
         lon: reg.lon || (rows.find((r) => r.lon) || {}).lon || "",
@@ -4813,7 +4850,7 @@ class Component extends DCLogic {
     if (!rows.length) return;
     const cols = ["household_id", "head", "province_code", "province", "district_code", "district",
       "commune_code", "commune", "village_code", "village", "address",
-      "consent", "consent_given", "registered_date",
+      "consent", "consent_given", "registered_date", "exit_reason", "active_to",
       "lat", "lon", "traps_installed", "traps_ovitrap", "traps_procopack", "trap_ids", "collections", "adult_records", "eggs_total", "total_catch",
       "aegypti_total", "aegypti_pct", "lab_results", "larvae_records", "containers_inspected", "containers_positive",
       "container_index_pct", "house_positive", "larvae_count", "pupae_count", "records",
@@ -4850,7 +4887,7 @@ class Component extends DCLogic {
     if (!rows.length) return;
     const cols = ["household_id", "head", "lat", "lon", "village", "commune", "district", "province",
       "village_code", "commune_code", "district_code", "province_code", "address", "consent",
-      "registered_date", "traps_installed", "trap_ids", "collections", "lab_results", "eggs_total",
+      "exit_reason", "active_to", "registered_date", "traps_installed", "trap_ids", "collections", "lab_results", "eggs_total",
       "total_catch", "aegypti_total", "container_index_pct", "house_positive", "last_activity_date"];
     this.download("ento-household-gps-" + new Date().toISOString().slice(0, 10) + ".csv",
       "\uFEFF" + this.toCsv(cols, rows), "text/csv;charset=utf-8");
@@ -5315,6 +5352,9 @@ class Component extends DCLogic {
         left: (8 + ((Number(h.lon) - minLo) / spanLo) * 84) + "%",
         top: (92 - ((Number(h.lat) - minLa) / spanLa) * 84) + "%",
         color: vColor(h.village || "\u2014"),
+        // A stopped house is drawn hollow rather than removed: taken off the map it
+        // looks unregistered, and someone eventually registers it again under a new id.
+        stopped: this.hhStopped(h),
         // What the pin is actually filled with, decided here rather than in the drawing
         // code, so the legend and the map cannot disagree.
         dotColor: (this.state.mapColorBy === "village" && villages.length > 1)
@@ -6236,7 +6276,25 @@ class Component extends DCLogic {
       })(this.state.gps, this.captureGps),
       choice("structure", "Structure", ["House", "Shophouse", "Other"]),
       choice("consent", "Consent", ["Given", "Refused"]),
-    ]);
+      // Leaving the study. Blank reason means still active, so an untouched household
+      // behaves exactly as before. Picking a reason reveals the month, which is the
+      // field that actually does the work — see hhExpected.
+      { ...choice("exit_reason", "Stopped — reason", ["Moved away", "Too closed", "Refused"]),
+        isChoice: false, isNarrowChoice: true, narrow: true, clearable: true,
+        clear: () => this.setState((p) => ({ form: { ...p.form, exit_reason: "", active_to: "" }, error: "" })) },
+    ].concat(form.exit_reason ? [
+      { ...txt("active_to", "Active until (report month)", { placeholder: "2026-08", inputmode: "numeric" }),
+        inline: true,
+        value: String(form.active_to || ""),
+        onChange: (e) => {
+          // YYYY-MM as it is typed, so the dash never has to be found on a Khmer keypad.
+          const d = String((e && e.target ? e.target.value : e) || "").replace(/[^0-9]/g, "").slice(0, 6);
+          const v = d.length > 4 ? d.slice(0, 4) + "-" + d.slice(4) : d;
+          this.setState((p) => ({ form: { ...p.form, active_to: v }, error: "" }));
+        } },
+      { label: "", isNote: true, value: "ចាប់ពីខែបន្ទាប់ ខ្នងផ្ទះនេះនឹងមិនរាប់ថាខ្វះទេ · From the month after this,"
+        + " the household stops counting as incomplete. Its records stay, and earlier report months are unchanged." },
+    ] : []));
     if (type === "install") return [
       dateField, timeField,
       { ...choice("trap_type", "Trap type", ["Ovitrap", "BG-Sentinel"]), isChoice: false, isNarrowChoice: true, narrow: true },
@@ -6488,7 +6546,12 @@ class Component extends DCLogic {
     // and that selector always agree about which month is being judged.
     const ACTS_ALL = ["install", "collect", "adult", "larvae", "lab"];
     const effRound = this.effectiveRound();
+    // A household that has stopped is not expected to have work after the last month it
+    // was in the study, so it is neither complete nor incomplete for those months — it
+    // is simply out of scope. Judged per month rather than by a flag, so selecting an
+    // earlier round still shows it as it was, with its records and its real gaps.
     const hhComplete = (h) => {
+      if (!this.hhExpected(h, effRound)) return true;
       const rows = (h._rows || []).filter((r) => r.period_month === effRound);
       return ACTS_ALL.every((t) => rows.some((r) => (r.form_type || r.type) === t));
     };
@@ -6919,6 +6982,13 @@ class Component extends DCLogic {
           + " \u00b7 " + h.records + " records \u00b7 " + (mdy(h.last_activity_date) || "\u2014"),
         village: h.village || h.address || "\u2014",
         commune: h.commune || "\u2014",
+        // Shown whatever month is selected, so a stopped house stays recognisable even
+        // while looking at a round it was still active in.
+        stopped: this.hhStopped(h),
+        stoppedNote: this.hhStopped(h)
+          ? "\u1788\u1794\u17cb \u00b7 stopped" + (h.exit_reason ? " \u00b7 " + h.exit_reason : "")
+            + (h.active_to ? " \u00b7 to " + h.active_to : "")
+          : "",
         traps: (function (o, p) {
           const bits = [];
           if (o) bits.push("Ovitrap " + o);
