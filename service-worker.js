@@ -8,7 +8,7 @@
  * BUMP CACHE_NAME ON EVERY PUSH. Skipping it leaves phones on stale files.
  */
 
-const CACHE_NAME = "ento-shell-v21";
+const CACHE_NAME = "ento-shell-v22";
 
 const SHELL = [
   "./",
@@ -17,6 +17,7 @@ const SHELL = [
   "./manifest.json",
   "./locations-core.json",
   "./locations-villages.json",
+  "./communes.json",
   "./icon-180.png",
   "./icon-512.png",
   "./dashboard.html",

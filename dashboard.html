@@ -808,6 +808,43 @@ class Component extends DCLogic {
           + ". Check the Apps Script deployment is set to \"Anyone\" and redeployed as a new version." }));
   };
 
+  // The four study commune outlines, from the programme's boundary file. Same local
+  // file the field app uses, fetched once. Failure is silent: a missing outline costs
+  // nothing but the outline.
+  communeRings() {
+    if (this._communes) return this._communes;
+    if (this._communesReq) return null;
+    this._communesReq = fetch("communes.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        this._communes = (d && d.communes) || [];
+        if (this._communes.length) this.forceUpdate();
+      })
+      .catch(() => { this._communes = []; });
+    return null;
+  }
+
+  // Unfilled and in their own pane below the pins, so no household is hidden behind a
+  // boundary however often the pin layer is cleared and rebuilt.
+  drawCommunes(map, layerKey) {
+    const L = window.L;
+    const rings = this.communeRings();
+    if (!L || !map || !rings || !rings.length || map._communeDrawn) return;
+    if (!map.getPane("communes")) {
+      map.createPane("communes");
+      map.getPane("communes").style.zIndex = 350;
+    }
+    const layer = this[layerKey] || (this[layerKey] = L.layerGroup().addTo(map));
+    rings.forEach((c) => {
+      L.polygon(c.ring, {
+        pane: "communes",
+        color: "#7C1220", weight: 1.6, opacity: 0.85, fill: false, interactive: true,
+      }).bindTooltip((c.km ? c.km + " · " : "") + c.en,
+        { sticky: true, direction: "top", className: "hh-label" }).addTo(layer);
+    });
+    map._communeDrawn = true;
+  }
+
   type(r) { return r.form_type || r.type || ""; }
 
   // Admin code widths: province 2, district 4, commune 6, village 8.
@@ -1117,7 +1154,7 @@ class Component extends DCLogic {
       const key = vname + "|" + m;
       const c = cell[key] || (cell[key] = { insp: 0, pos: 0, seen: {}, posH: {}, eggs: 0,
         adults: 0, oviTraps: 0, adultTraps: 0, aeg: 0, spec: 0,
-        oviRead: 0, oviPos: 0, femAeg: 0 });
+        oviRead: 0, oviPos: 0, femAeg: 0, maleAeg: 0, alb: 0 });
       const t = this.type(r);
       if (t === "larvae") {
         c.insp += num(r.containers_inspected);
@@ -1139,9 +1176,13 @@ class Component extends DCLogic {
         const rest = num(r.culex) + num(r.other);
         c.aeg += aeg;
         c.spec += aeg + alb + rest;
+        // kept apart for release readiness: albopictus is unaffected by a wMel release,
+        // and the sex split shows how much of the aegypti catch is actually transmitting
+        c.alb += alb;
         if (!isLarval(r)) {
           c.adults += num(r.total_catch);
           c.femAeg += num(r.aegypti_f);
+          c.maleAeg += num(r.aegypti_m);
         }
         // Ovitrap positivity: each read trap counts once, positive if it held any egg.
         if (this.methodOf(r) === "Ovitrap") {
@@ -1264,6 +1305,24 @@ class Component extends DCLogic {
         spec: { type: "line", opt: opt("%"), chartPlugins: wet, data: { labels, datasets: line(
           (c) => (c && c.spec ? one((c.aeg / c.spec) * 100) : null),
           (c) => (c ? c.spec : null)) } } },
+      // ---- Release readiness ----
+      // A wMel release acts on Ae. aegypti only, so before choosing a site you want to
+      // know how much of the catch is actually aegypti, how much is albopictus that the
+      // release will not touch, and how much of the aegypti is female - the half that
+      // transmits. All three come from the lab counts already being recorded.
+      { key: "epiAlbRound", title: "សមាមាត្រ Ae. albopictus តាមជុំ",
+        titleEn: "Ae. albopictus share of specimens % by report month, per village — a release does not act on this species",
+        spec: { type: "line", opt: opt("%"), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => (c && c.spec ? one((c.alb / c.spec) * 100) : null),
+          (c) => (c ? c.spec : null)) } } },
+      { key: "epiSexRound", title: "សមាមាត្រ Ae. aegypti ញី តាមជុំ",
+        titleEn: "Female share of Ae. aegypti % by report month, per village — the half that transmits",
+        spec: { type: "line", opt: opt("%"), chartPlugins: wet, data: { labels, datasets: line(
+          (c) => {
+            const both = c ? c.femAeg + c.maleAeg : 0;
+            return both ? one((c.femAeg / both) * 100) : null;
+          },
+          (c) => (c ? c.femAeg + c.maleAeg : null)) } } },
       { key: "epiContRound", title: "ភាជន៍មានដង្កូវតាមប្រភេទ និងតាមជុំ",
         titleEn: "Positive containers by type, by report month",
         spec: { type: "line", chartPlugins: wet, data: { labels, datasets: contPosByRound } } },
@@ -1850,6 +1909,7 @@ class Component extends DCLogic {
           { maxZoom: 19, attribution: "\u00a9 OpenStreetMap" }).addTo(this._map);
         this._layer = window.L.layerGroup().addTo(this._map);
       }
+      this.drawCommunes(this._map, "_communeLayer");
       this._layer.clearLayers();
       const mode = this.state.mapMode;
       const value = (h) => (mode === "ci" ? h.ci : mode === "adults" ? h.adults : mode === "eggs" ? h.eggs : h.traps);
@@ -2219,7 +2279,12 @@ class Component extends DCLogic {
           : "M4 20V10m5 10V4m5 16v-7m5 7V7" })),
       showMap: s.tab === "map",
       mapRef: (el) => {
-        if (this._mapEl !== el && this._map) { this._map.remove(); this._map = null; this._layer = null; }
+        // The commune layer belongs to the map being torn down, so it goes with it —
+        // a kept reference would point at a removed map and never draw again.
+        if (this._mapEl !== el && this._map) {
+          this._map.remove();
+          this._map = null; this._layer = null; this._communeLayer = null;
+        }
         this._mapEl = el;
         if (el) setTimeout(() => this.draw(), 0);
       },

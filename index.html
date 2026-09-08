@@ -50,6 +50,10 @@ button:active:not(:disabled){box-shadow:inset 0 0 0 999px rgba(213,231,239,.55)}
 a:hover,label:hover{transition:box-shadow 150ms ease}
 [role="button"]:hover,summary:hover,option:hover{box-shadow:inset 0 0 0 999px rgba(213,231,239,.55)}
 .leaflet-container a.leaflet-popup-close-button:hover{box-shadow:none}
+.leaflet-control.locate-btn{display:flex;align-items:center;justify-content:center;
+  width:30px;height:30px;background:#fff;color:#003E78;cursor:pointer}
+.leaflet-control.locate-btn:hover{background:#F2F6F9}
+.commune-line{pointer-events:stroke}
 button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(17,121,150,.35)}
 input:hover:not(:focus),select:hover:not(:focus),textarea:hover:not(:focus){border-color:#117996}
 label{display:block;font-size:11px;font-weight:700;color:#003E78;line-height:1.25;margin-bottom:4px}
@@ -549,12 +553,23 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
       <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
           <div ref="{{ hhMapRef }}" style="position:relative;z-index:0;height:300px;border-radius:6px;border:1px solid #D9DEE4;background:#F8FAFB"></div>
-          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px">
-            <sc-for list="{{ villageLegend }}" as="v" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <span style="flex:none;font-size:11px;color:#767676">ដាក់ពណ៌តាម · colour by</span>
+            <sc-if value="{{ canColorByVillage }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex:none;border:1px solid #D9DEE4;border-radius:999px;overflow:hidden;height:24px">
+              <button onClick="{{ colorByRisk }}" style="border:none;padding:0 10px;background:{{ byRiskBg }};color:{{ byRiskFg }};font-weight:700;font-size:11px;line-height:1;cursor:pointer">ស្ថានភាព Status</button>
+              <button onClick="{{ colorByVillage }}" style="border:none;border-left:1px solid #D9DEE4;padding:0 10px;background:{{ byVillageBg }};color:{{ byVillageFg }};font-weight:700;font-size:11px;line-height:1;cursor:pointer">ភូមិ Village</button>
+            </div>
+            </sc-if>
+            <span style="flex:1;min-width:120px"></span>
+            <span style="flex:none;font-size:11px;color:#767676">{{ mapScale }}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:7px;padding-top:7px;border-top:1px solid #EDF1F4">
+            <sc-for list="{{ mapLegend }}" as="v" hint-placeholder-count="3">
               <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#003E78"><span style="width:11px;height:11px;flex:none;border-radius:50%;background:{{ v.color }};border:2px solid #fff;box-shadow:0 0 0 1px #D9DEE4"></span>{{ v.name }} · {{ v.n }}</span>
             </sc-for>
-            <span style="flex:1;min-width:150px;font-size:11px;color:#767676;line-height:1.5">{{ mapScale }} · ចុចលើចំណុចដើម្បីបើកខ្នងផ្ទះ · tap a pin to open, scroll to zoom</span>
           </div>
+          <div style="font-size:11px;color:#767676;line-height:1.5;margin-top:7px">ចុចលើចំណុចដើម្បីបើកខ្នងផ្ទះ · tap a pin to open, scroll to zoom</div>
         </div>
       </sc-if>
 
@@ -614,7 +629,6 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
         <div style="display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:7px;border-top:1px solid #F2F2F2;padding-top:6px">
           <span style="display:flex;gap:5px;align-items:baseline;min-width:0"><span style="flex:none;font-size:11px;color:#767676">GPS</span><span style="min-width:0;font-size:11px;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hh.gps }}</span></span>
           <span style="display:flex;gap:5px;align-items:baseline;min-width:0"><span style="flex:none;font-size:11px;color:#767676">ចុះឈ្មោះ Registered</span><span style="min-width:0;font-size:11px;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hh.registered }}</span></span>
-          <span style="display:flex;gap:5px;align-items:baseline;min-width:0"><span style="flex:none;font-size:11px;color:#767676">ក្រុម Cluster</span><span style="min-width:0;font-size:11px;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hh.cluster }}</span></span>
         </div>
       </div>
       <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
@@ -828,7 +842,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             </sc-if>
             <sc-if value="{{ f.isRow }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;align-items:center;gap:8px">
-                <span style="width:88px;flex:none;font-size:12px;font-weight:700;color:#003E78;line-height:1.3">{{ f.rowLabel }}</span>
+                <span style="width:92px;flex:none;font-size:12px;font-weight:700;color:#003E78;line-height:1.25">{{ f.rowLabel }}<span style="display:block;font-size:10.5px;font-weight:400;color:#767676;line-height:1.2">{{ f.rowLabelEn }}</span></span>
                 <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
                 <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="flex:1;min-width:0;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
               </div>
@@ -836,11 +850,11 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <sc-if value="{{ f.isPair }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">
                 <div style="flex:1 1 240px;min-width:0;display:flex;align-items:center;gap:8px">
-                  <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ f.aCap }}</div>
+                  <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25"><i>{{ f.aCapSci }}</i>{{ f.aCapRest }}</div>
                   <input type="number" inputmode="numeric" min="0" value="{{ f.aValue }}" onChange="{{ f.aChange }}" onFocus="{{ f.aFocus }}" onBlur="{{ f.aBlur }}" style="flex:1 1 92px;min-width:60px;max-width:150px;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
                 </div>
                 <div style="flex:1 1 240px;min-width:0;display:flex;align-items:center;gap:8px">
-                  <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25">{{ f.bCap }}</div>
+                  <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:#003E78;line-height:1.25"><i>{{ f.bCapSci }}</i>{{ f.bCapRest }}</div>
                   <input type="number" inputmode="numeric" min="0" value="{{ f.bValue }}" onChange="{{ f.bChange }}" onFocus="{{ f.bFocus }}" onBlur="{{ f.bBlur }}" style="flex:1 1 92px;min-width:60px;max-width:150px;box-sizing:border-box;text-align:center;font-weight:400;font-size:16px;color:#003E78;min-height:30px;height:30px">
                 </div>
               </div>
@@ -1925,18 +1939,33 @@ const TYPES = {
 const LARVAL_TAXA = [
   ["aegypti", "Ae. aegypti"],
   ["albopictus", "Ae. albopictus"],
+  ["aedes_other", "Other Aedes spp."],
   ["culex", "Culex spp."],
-  ["other", "Other / damaged"],
+  ["other", "Culex / Other"],
 ];
+// As with the adult list: Culex has no box of its own any more, but the key stays so
+// older records keep counting.
+const LARVAL_FIELDS = LARVAL_TAXA.filter(([k]) => k !== "culex");
 
+// Every adult key that counts toward a catch total. `culex` stays in this list even
+// though the form no longer offers it on its own — Culex is now folded into
+// "Culex / Other" — because records entered before that change still hold values under
+// the key, and dropping it would quietly shrink their total_catch the next time they
+// were normalised. TAXA_FIELDS below is what the form actually shows.
 const TAXA = [
   ["aegypti_f", "Ae. aegypti female"],
   ["aegypti_m", "Ae. aegypti male"],
   ["albopictus_f", "Ae. albopictus female"],
   ["albopictus_m", "Ae. albopictus male"],
+  ["aedes_other", "Other Aedes spp."],
   ["culex", "Culex spp."],
-  ["other", "Other / damaged"],
+  ["other", "Culex / Other"],
 ];
+// The tallies the lab form draws: Culex has no box of its own any more.
+const TAXA_FIELDS = TAXA.filter(([k]) => k !== "culex");
+// Keys carrying the same meaning on the adult and the larval tally. A lab record is
+// stripped of the other stage's keys when saved, and these must survive that.
+const SHARED_TAXA_KEYS = ["aedes_other", "culex", "other"];
 
 const CTX = "ento.context.v1";
 const FORM_VERSION = "1.1";
@@ -1945,13 +1974,23 @@ const FORM_VERSION = "1.1";
 const CORE_COLS = [
   "record_id", "form_type", "form_version", "collected_at_utc", "collected_date", "collected_time",
   "epi_week", "iso_year", "period_month", "period_label", "visit_no", "collector", "province_code", "province", "district_code", "district",
-  "commune_code", "commune", "village_code", "village", "cluster",
+  "commune_code", "commune", "village_code", "village",
   "site_id", "household_id", "trap_id", "trap_type",
   "lat", "lon", "gps_accuracy_m",
 ];
 
 // Container types counted per household: inspected and positive (larvae present).
-const CONTAINERS = [["jar", "Water jar"], ["tank", "Water tank"],
+// A scientific name is set in italic, the rest of the caption is not: "Ae. aegypti"
+// italic but the Khmer sex that follows roman, and "Culex" italic with "spp." roman,
+// which is the convention - spp. is an abbreviation, not part of the name.
+function sciSplit(s) {
+  const m = /^((?:Ae\.|Aedes|Culex|Anopheles)(?:\s+(?!spp\b)[a-z]+)?)([\s\S]*)$/.exec(String(s || ""));
+  return m ? { sci: m[1], rest: m[2] } : { sci: "", rest: String(s || "") };
+}
+// Every per-container field, export column, validation rule and chart derives from this
+// list, so a new type only has to be added here and to the Khmer dictionary. Order is
+// the order the collector sees, so water-holding types stay together.
+const CONTAINERS = [["jar", "Water jar"], ["tank", "Water tank"], ["drum", "Water drum"],
   ["tyre", "Tyre"], ["pot", "Plant pot"], ["other", "Other"]];
 
 // Numeric measures per form, used for the long (tidy) export — one row per observation.
@@ -1961,7 +2000,7 @@ const MEASURES = {
   collect: [["trap_found", "0/1"], ["water_level_code", "0-3"], ["paddle_intact", "0/1"],
     ["pos_inside", "0/1"], ["pos_outside", "0/1"]],
   adult: [["aegypti_f", "mosquitoes"], ["aegypti_m", "mosquitoes"], ["albopictus_f", "mosquitoes"],
-    ["albopictus_m", "mosquitoes"], ["culex", "mosquitoes"], ["other", "mosquitoes"],
+    ["albopictus_m", "mosquitoes"], ["aedes_other", "mosquitoes"], ["culex", "mosquitoes"], ["other", "mosquitoes"],
     ["total_catch", "mosquitoes"], ["aegypti_total", "mosquitoes"], ["aegypti_pct", "percent"]],
   larvae: [["containers_inspected", "containers"], ["containers_positive", "containers"],
     ["container_index_pct", "percent"], ["container_positive", "0/1"]].concat(
@@ -1969,7 +2008,7 @@ const MEASURES = {
     CONTAINERS.map(([k]) => ["positive_" + k, "containers"])),
   lab: [["eggs", "eggs"], ["aegypti", "mosquitoes"], ["albopictus", "mosquitoes"],
     ["aegypti_f", "mosquitoes"], ["aegypti_m", "mosquitoes"], ["albopictus_f", "mosquitoes"],
-    ["albopictus_m", "mosquitoes"], ["culex", "mosquitoes"], ["other", "mosquitoes"],
+    ["albopictus_m", "mosquitoes"], ["aedes_other", "mosquitoes"], ["culex", "mosquitoes"], ["other", "mosquitoes"],
     ["total_catch", "mosquitoes"], ["aegypti_total", "mosquitoes"], ["aegypti_pct", "percent"]],
 };
 
@@ -1978,7 +2017,7 @@ const DICTIONARY = [
   ["form_type", "household, install, collect, adult, larvae"],
   ["collected_at_utc", "ISO 8601 timestamp \u2014 sorts correctly everywhere"],
   ["epi_week / iso_year", "ISO week and year, ready to join to dengue case data"],
-  ["collector / cluster", "Stamped from the device settings on every record"],
+  ["collector", "Stamped from the signed-in account on every record"],
   ["site_id", "Household or trap ID \u2014 the key you group by"],
   ["lat / lon / gps_accuracy_m", "Decimal degrees, WGS84, accuracy in metres"],
   ["Coded fields", "Every choice also exports a numeric code (consent_given, trap_found, water_level_code)"],
@@ -2027,7 +2066,7 @@ const KM = {
   "Identification": "\u1780\u17b6\u179a\u1785\u17c6\u178e\u17b6\u178f\u17cb\u1794\u17d2\u179a\u1797\u17c1\u1791",
   "Containers by type": "\u1797\u17b6\u1787\u1793\u17cd\u178f\u17b6\u1798\u1794\u17d2\u179a\u1797\u17c1\u1791",
   "House total": "\u179f\u179a\u17bb\u1794\u1797\u17b6\u1787\u1793\u17cd",
-  "Lar tube": "\u1780\u17c6\u1794\u17c9\u17bb\u1784\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
+  "Immatures tube": "\u1780\u17c6\u1794\u17c9\u17bb\u1784\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
   "Collection record *": "\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Tube *": "\u1780\u17c6\u1794\u17c9\u17bb\u1784",
   "Tube ID": "\u179b\u17c1\u1781 \u1780\u17c6\u1794\u17c9\u17bb\u1784",
@@ -2038,6 +2077,7 @@ const KM = {
   "Tyre": "\u179f\u17c6\u1794\u1780\u1780\u1784\u17cb\u1785\u17b6\u179f\u17cb\u17d7",
   "Plant pot": "\u1790\u17bc\u1795\u17d2\u1780\u17b6",
   "Water tank": "\u17a2\u17b6\u1784\u1791\u17b9\u1780",
+  "Water drum": "\u1792\u17bb\u1784\u1791\u17b9\u1780",
   "Other": "\u1795\u17d2\u179f\u17c1\u1784\u17d7",
   "Inspected": "\u1794\u17b6\u1793\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799",
   "Positive": "\u1798\u17b6\u1793\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
@@ -2045,6 +2085,7 @@ const KM = {
   "Ae. albopictus": "Ae. albopictus",
   "Culex spp.": "Culex spp.",
   "Other / damaged": "\u1795\u17d2\u179f\u17c1\u1784\u17d7 / \u1781\u17bc\u1785",
+  "Culex / Other": "Culex / \u1795\u17d2\u179f\u17c1\u1784\u17d7",
   "Ae. aegypti female": "Ae. aegypti \u1789\u17b8",
   "Ae. aegypti male": "Ae. aegypti \u1788\u17d2\u1798\u17c4\u179b",
   "Ae. albopictus female": "Ae. albopictus \u1789\u17b8",
@@ -2193,7 +2234,6 @@ function normalize(rec) {
         period_label: month ? (MON[Number(month.slice(5, 7)) - 1] || "") + "-" + month.slice(2, 4) : fallback.label };
     })(rec.period_month, period(ts)),
     collector: rec.collector || "",
-    cluster: rec.cluster || "",
     site_id: household || rec.trap_id || "",
     household_id: household,
     trap_id: rec.trap_id || "",
@@ -2291,6 +2331,9 @@ class Component extends DCLogic {
     hhProv: "",
     hhComm: "",
     hhView: "list",
+    // What the map pins are coloured by: "risk" or "village". One at a time, because
+    // encoding both on a pin needed two legends and neither read cleanly.
+    mapColorBy: "risk",
     ctxHouse: "",
     editId: "",
     returnTo: "home",
@@ -3227,16 +3270,26 @@ class Component extends DCLogic {
     const pts = this._hhPts || [];
     if (!this._hhMap) {
       this._hhMap = window.L.map(el, { scrollWheelZoom: true });
+      // A fresh map has no centre or zoom, and Leaflet draws nothing at all until it
+      // does \u2014 so the fit signature is cleared here to guarantee the fit below runs.
+      this._hhFitSig = null;
       window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19, attribution: "\u00a9 OpenStreetMap",
       }).addTo(this._hhMap);
       this._hhMarkers = window.L.layerGroup().addTo(this._hhMap);
+      // Own layer: the pin layer is cleared on every render, so a shared one would drop
+      // the blue dot as soon as a filter changed.
+      this._hhMeLayer = window.L.layerGroup().addTo(this._hhMap);
+      this.addLocateControl(this._hhMap, "_hhMeLayer");
     }
+    this.drawCommunes(this._hhMap, "_hhCommuneLayer");
     this._hhMarkers.clearLayers();
     pts.forEach((p) => {
       const m = window.L.circleMarker([p.lat, p.lon], {
+        // White ring throughout, so a pin reads against the basemap; the fill carries
+        // whichever dimension the legend is showing.
         radius: 9, color: "#fff", weight: 2,
-        fillColor: p.vcolor || p.color || "#117996", fillOpacity: 1,
+        fillColor: p.dotColor || p.vcolor || "#117996", fillOpacity: 1,
       // Permanent label beside each pin, so every household reads at a glance.
       }).bindTooltip(
         '<span style="font:700 11px \'Kantumruy Pro\',\'Trebuchet MS\',system-ui,sans-serif;color:#003E78">' + p.head + '</span>',
@@ -3244,8 +3297,16 @@ class Component extends DCLogic {
       ).addTo(this._hhMarkers);
       if (p.open) m.on("click", p.open);
     });
-    if (pts.length) this._hhMap.fitBounds(pts.map((p) => [p.lat, p.lon]), { padding: [26, 26], maxZoom: 17 });
-    else this._hhMap.setView([12.5657, 104.991], 7);
+    // Only refit when the pins themselves change. Refitting on every render undid the
+    // collector's own pan and zoom — including when all that changed was the colouring.
+    const sig = pts.map((p) => p.lat + "," + p.lon).join("|");
+    // _loaded is false until a view is set. Fitting regardless in that state means a
+    // stale signature can never leave the map blank.
+    if (this._hhFitSig !== sig || !this._hhMap._loaded) {
+      this._hhFitSig = sig;
+      if (pts.length) this._hhMap.fitBounds(pts.map((p) => [p.lat, p.lon]), { padding: [26, 26], maxZoom: 17 });
+      else this._hhMap.setView([12.5657, 104.991], 7);
+    }
     setTimeout(() => this._hhMap && this._hhMap.invalidateSize(), 60);
   }
 
@@ -3294,7 +3355,12 @@ class Component extends DCLogic {
           maxZoom: 19, attribution: "\u00a9 OpenStreetMap", detectRetina: true,
         }).addTo(this._map);
         this._markers = window.L.layerGroup().addTo(this._map);
+        // Own layer: the household layer is cleared on every render, so a shared one
+        // would drop the blue dot the moment anything else on the screen changed.
+        this._meLayer = window.L.layerGroup().addTo(this._map);
+        this.addLocateControl(this._map, "_meLayer");
       }
+      this.drawCommunes(this._map, "_dashCommuneLayer");
       this._markers.clearLayers();
       pts.forEach((p) => {
         window.L.circleMarker([p.lat, p.lon], {
@@ -3312,6 +3378,114 @@ class Component extends DCLogic {
       }
       setTimeout(() => this._map && this._map.invalidateSize(), 60);
     }
+  }
+
+  // "Where am I" on the household map. A button rather than an automatic fix, so
+  // opening the map never triggers a permission prompt on its own, and so a collector
+  // standing in a village is not waiting on GPS before the pins draw.
+  // The four study commune outlines, from the programme's own boundary file. Fetched
+  // once and reused by both maps; a local file, so it works from the cache offline the
+  // same way the village lists do. Failure is silent — a missing outline is a cosmetic
+  // loss, not a reason to hold up the pins.
+  communeRings() {
+    if (this._communes) return this._communes;
+    if (this._communesReq) return null;
+    this._communesReq = fetch("communes.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        this._communes = (d && d.communes) || [];
+        if (this._communes.length) this.forceUpdate();
+      })
+      .catch(() => { this._communes = []; });
+    return null;
+  }
+
+  // Switching the colouring only changes the pins — repainting them in place keeps the
+  // pan and zoom the collector had set, which a full remount would throw away.
+  redrawHhPins() {
+    if (this._hhMap) this.drawHhMap();
+  }
+
+  // Drawn under the pins, unfilled, so a household never disappears behind a boundary.
+  drawCommunes(map, layerKey) {
+    const L = window.L;
+    const rings = this.communeRings();
+    if (!L || !map || !rings || !rings.length) return;
+    if (map._communeDrawn) return;
+    // Own pane above the tiles but below the pin pane (400), so the outlines sit under
+    // every household however many times the pin layer is cleared and redrawn.
+    if (!map.getPane("communes")) {
+      map.createPane("communes");
+      map.getPane("communes").style.zIndex = 350;
+    }
+    const layer = this[layerKey] || (this[layerKey] = L.layerGroup().addTo(map));
+    rings.forEach((c) => {
+      L.polygon(c.ring, {
+        pane: "communes",
+        color: "#7C1220", weight: 1.6, opacity: 0.85, fill: false,
+        interactive: true, className: "commune-line",
+      }).bindTooltip((c.km ? c.km + " · " : "") + c.en,
+        { sticky: true, direction: "top", className: "hh-label" }).addTo(layer);
+    });
+    map._communeDrawn = true;
+  }
+
+  addLocateControl(map, layerKey) {
+    const L = window.L;
+    if (!L || !map || map._locateCtl) return;
+    const self = this;
+    const Ctl = L.Control.extend({
+      options: { position: "topleft" },
+      onAdd() {
+        const a = L.DomUtil.create("a", "leaflet-bar leaflet-control locate-btn");
+        a.href = "#";
+        a.title = "ទីតាំងខ្ញុំ · My location";
+        a.setAttribute("role", "button");
+        a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+          + ' stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="7"></circle>'
+          + '<circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"></circle>'
+          + '<path d="M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6"></path></svg>';
+        L.DomEvent.on(a, "click", (e) => {
+          L.DomEvent.stop(e);
+          self.locateMe(map, self[layerKey]);
+        });
+        return a;
+      },
+    });
+    map._locateCtl = new Ctl();
+    map._locateCtl.addTo(map);
+  }
+
+  locateMe(map, layer) {
+    const L = window.L;
+    if (!map || !layer || !L) return;
+    if (!navigator.geolocation) {
+      this.toast("ឧបករណ៍នេះមិនអានទីតាំងបានទេ · this device cannot read a location", "warn");
+      return;
+    }
+    this.toast("កំពុងរកទីតាំង · finding your location…", "ok");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude, lon = pos.coords.longitude;
+        const acc = Math.round(pos.coords.accuracy || 0);
+        layer.clearLayers();
+        // The circle is the accuracy, drawn to scale — a 40 m fix looks like 40 m, so
+        // nobody reads a vague position as an exact one.
+        if (acc > 0) {
+          L.circle([lat, lon], { radius: acc, color: "#117996", weight: 1, fillColor: "#117996", fillOpacity: 0.12 })
+            .addTo(layer);
+        }
+        L.circleMarker([lat, lon], {
+          radius: 6, color: "#fff", weight: 3, fillColor: "#0B63C4", fillOpacity: 1,
+        }).bindTooltip("ទីតាំងខ្ញុំ · me · ±" + acc + " m",
+          { permanent: false, direction: "top", offset: [0, -6], className: "hh-label" })
+          .addTo(layer);
+        map.setView([lat, lon], Math.max(map.getZoom(), 16));
+        this.toast("ទីតាំងខ្ញុំ · ±" + acc + " m", "ok");
+      },
+      (err) => this.toast("រកទីតាំងមិនបាន · " + (err && err.message ? err.message : "location unavailable"), "warn"),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
+    );
   }
 
   componentWillUnmount() {
@@ -3433,6 +3607,49 @@ class Component extends DCLogic {
     return lane;
   }
 
+  // A household id says where the house is: two digits for the house, then the four
+  // digits the programme uses for the village, e.g. HH-060102 is the sixth house in
+  // village 0102. That tail is the programme's own numbering and is not derivable from
+  // the official geo code, so it is read off the houses already registered in the same
+  // village rather than invented. Returns null when the village has no houses yet —
+  // there is nothing to copy the tail from, and the caller asks for it to be typed.
+  nextHouseId(form) {
+    const vcode = String((form && form.village_code) || "");
+    const vname = String((form && form.village) || "");
+    if (!vcode && !vname) return null;
+    const houses = {};
+    const tails = {};
+    (this.state.records || []).forEach((r) => {
+      if ((r.form_type || r.type) !== "household") return;
+      const m = /^HH-(\d{2})(\d{4})$/.exec(String(r.record_id || r.id || ""));
+      if (!m) return;
+      const sameVillage = vcode
+        ? String(r.village_code || "") === vcode
+        : String(r.village || "") === vname;
+      if (!sameVillage) return;
+      tails[m[2]] = (tails[m[2]] || 0) + 1;
+      houses[m[1]] = 1;
+    });
+    // One village, one tail. If the pulled data disagrees, guessing would file the
+    // house under the wrong village, so leave it to the collector.
+    const found = Object.keys(tails);
+    if (found.length !== 1) return null;
+    const tail = found[0];
+    if (!this._mintedIds) this._mintedIds = new Set();
+    this._mintedIds.forEach((id) => {
+      const m = /^HH-(\d{2})(\d{4})$/.exec(id);
+      if (m && m[2] === tail) houses[m[1]] = 1;
+    });
+    for (let i = 1; i <= 99; i += 1) {
+      const nn = String(i).padStart(2, "0");
+      if (houses[nn]) continue;
+      const id = "HH-" + nn + tail;
+      this._mintedIds.add(id);
+      return id;
+    }
+    return null;
+  }
+
   nextId(prefix) {
     let n = 1;
     try { n = parseInt(localStorage.getItem(SEQ) || "1", 10) || 1; } catch (e) {}
@@ -3505,6 +3722,10 @@ class Component extends DCLogic {
       const r = this.state.records.find((x) => x.record_id === ctx.edit) || {};
       form = { ...blank };
       Object.keys(blank).forEach((k) => { if (r[k] != null && r[k] !== "") form[k] = r[k]; });
+      // A household's id lives in record_id, not in a saved hh_id field. Showing it in
+      // the box is what makes the id correctable: typing a different one renames the
+      // house on save.
+      if (type === "household" && r.record_id) form.hh_id = r.record_id;
       form.collected_date = r.collected_date || today;
       if (r.lat && r.lon) {
         keptGps = { lat: Number(r.lat), lon: Number(r.lon), acc: Number(r.gps_accuracy_m) || 0, saved: true };
@@ -3712,7 +3933,10 @@ class Component extends DCLogic {
       if (filled("hh_id")) {
         const id = String(f.hh_id).trim().toUpperCase();
         if (!/^HH-\d{6}$/.test(id)) e.push("លេខខ្នងផ្ទះត្រូវជា HH- និងលេខ ៦ តួ · A household ID must be HH- followed by six digits, e.g. HH-010101.");
-        else if (!this.state.editId && recs.some((r) => (r.record_id || r.id) === id)) e.push("លេខខ្នងផ្ទះនេះមានរួចហើយ · " + id + " already exists on this phone.");
+        // On an edit the box holds this house's own id, which is not a clash — but a
+        // rename onto some other house's id is, so the check runs on both paths and
+        // only excuses the record being edited.
+        else if (recs.some((r) => (r.record_id || r.id) === id && (r.record_id || r.id) !== this.state.editId)) e.push("លេខខ្នងផ្ទះនេះមានរួចហើយ · " + id + " already exists on this phone.");
       }
       if (!f.province_code) e.push("ជ្រើសរើសខេត្ត · Select the province.");
       if (!f.district_code) e.push("ជ្រើសរើសស្រុក · Select the district.");
@@ -4031,8 +4255,26 @@ class Component extends DCLogic {
         edit_count: (Number(prev.edit_count) || 0) + 1,
         synced_at: "",
       };
-      this.persist(this.state.records.map((r) => (r.record_id === id ? edited : r)));
-      this.toast("\u1794\u17b6\u1793\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780\u1780\u17b6\u179a\u1780\u17c2 \u00b7 changes saved", "ok");
+      // Renaming a household: household_id is the link every install, collection,
+      // survey and result carries, so they are re-pointed. The backend keys rows on
+      // record_id, so the row under the old id is deleted too \u2014 left in place the sheet
+      // would hold the house twice, with the history still filed under the old id.
+      const renamed = type === "household" && edited.record_id !== id;
+      let nextRecords = this.state.records.map((r) => (r.record_id === id ? edited : r));
+      let moved = 0;
+      if (renamed) {
+        nextRecords = nextRecords.map((r) => {
+          if (r.record_id === edited.record_id || r.household_id !== id) return r;
+          moved += 1;
+          return { ...r, household_id: edited.record_id, synced_at: "" };
+        });
+        this.queueDeleteRecord(id);
+      }
+      this.persist(nextRecords);
+      this.toast(renamed
+        ? id + " \u2192 " + edited.record_id + " \u00b7 " + moved + " linked record"
+          + (moved === 1 ? "" : "s") + " moved \u2014 press Sync now to send it"
+        : "\u1794\u17b6\u1793\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780\u1780\u17b6\u179a\u1780\u17c2 \u00b7 changes saved", "ok");
       this.setState({ screen: this.state.returnTo === "hhdetail" ? "hhdetail" : "home", error: "", forceSave: false, editId: "" });
       return;
     }
@@ -4119,8 +4361,18 @@ class Component extends DCLogic {
   buildRecord(type, form, gps, stamp, now, wk) {
     const derived = derive(type, form);
     const manualId = String(form.hh_id || "").trim().toUpperCase();
-    const recordId = this.state.editId
-      || (type === "household" && /^HH-\d{6}$/.test(manualId) ? manualId : this.nextId(TYPES[type].prefix));
+    // Household ids are village-coded, so a blank one is filled from the village rather
+    // than from the shared sequence — that fallback produced ids like HH-65476, which
+    // carry no village and sort nowhere near their neighbours.
+    // Editing a household with a different valid id in the box is a rename, so the new
+    // id wins over editId. Every other form keeps the id it was opened with.
+    const renaming = type === "household" && this.state.editId
+      && /^HH-\d{6}$/.test(manualId) && manualId !== this.state.editId;
+    const recordId = renaming ? manualId
+      : this.state.editId
+      || (type === "household"
+        ? (/^HH-\d{6}$/.test(manualId) ? manualId : (this.nextHouseId(form) || this.nextId("HH")))
+        : this.nextId(TYPES[type].prefix));
     const householdId = type === "household" ? recordId : (form.house || "");
     const rec = {
       record_id: recordId,
@@ -4135,15 +4387,9 @@ class Component extends DCLogic {
       period_month: period(stamp.toISOString()).month,
       period_label: period(stamp.toISOString()).label,
       collector: this.state.collector || "",
-      // Cluster falls back to the household's own. Requiring it in Settings used to
-      // block saving outright; dropping that block left it blank, and a record with no
-      // cluster cannot be rolled up by area on the dashboard. The household already
-      // carries the right one, so inherit rather than store nothing.
-      cluster: this.state.cluster || (function (self, id) {
-        if (!id) return "";
-        const hh = (self.households() || []).find((h) => h.household_id === id);
-        return (hh && hh.cluster) || "";
-      })(this, householdId),
+      // Cluster is no longer recorded. It held a single constant ("Phd"/"PHD") on every
+      // record, so it grouped nothing; collector already carries identity from the login,
+      // and area rollups belong to the province/district/commune/village codes.
       site_id: householdId || form.trap_id || "",
       household_id: householdId,
       trap_id: form.trap_id || "",
@@ -4182,8 +4428,10 @@ class Component extends DCLogic {
         rec.period_month = src.period_month;
         if (src.period_label) rec.period_label = src.period_label;
       }
+      // culex, other and aedes_other mean the same thing on both tallies, so they are
+      // not "the other stage's field" — stripping them here would wipe a real count.
       (rec.specimen_stage === "Larvae" ? TAXA : LARVAL_TAXA).forEach(([k]) => {
-        if (k !== "culex" && k !== "other") delete rec[k];
+        if (SHARED_TAXA_KEYS.indexOf(k) < 0) delete rec[k];
       });
     }
     delete rec.house;
@@ -4285,7 +4533,6 @@ class Component extends DCLogic {
         commune_code: reg.commune_code || "", commune: reg.commune || "",
         village_code: reg.village_code || "", village: reg.village || "",
         address: reg.address || "",
-        cluster: reg.cluster || rows[0].cluster || "",
         consent: reg.consent || "",
         consent_given: reg.consent_given == null ? "" : reg.consent_given,
         registered_date: reg.collected_date || "",
@@ -4323,7 +4570,7 @@ class Component extends DCLogic {
     if (!rows.length) return;
     const cols = ["household_id", "head", "province_code", "province", "district_code", "district",
       "commune_code", "commune", "village_code", "village", "address",
-      "cluster", "consent", "consent_given", "registered_date",
+      "consent", "consent_given", "registered_date",
       "lat", "lon", "traps_installed", "traps_ovitrap", "traps_procopack", "trap_ids", "collections", "adult_records", "eggs_total", "total_catch",
       "aegypti_total", "aegypti_pct", "lab_results", "larvae_records", "containers_inspected", "containers_positive",
       "container_index_pct", "house_positive", "larvae_count", "pupae_count", "records",
@@ -4349,7 +4596,7 @@ class Component extends DCLogic {
         village: hh.village || "", commune: hh.commune || "", district: hh.district || "", province: hh.province || "",
         village_code: hh.village_code || "", commune_code: hh.commune_code || "",
         district_code: hh.district_code || "", province_code: hh.province_code || "",
-        address: hh.address || "", cluster: hh.cluster || "", consent: hh.consent || "",
+        address: hh.address || "", consent: hh.consent || "",
         registered_date: hh.registered_date || "",
         traps_installed: hh.traps_installed || 0, trap_ids: hh.trap_ids || "",
         collections: hh.collections || 0, lab_results: hh.lab_results || 0,
@@ -4359,7 +4606,7 @@ class Component extends DCLogic {
       }));
     if (!rows.length) return;
     const cols = ["household_id", "head", "lat", "lon", "village", "commune", "district", "province",
-      "village_code", "commune_code", "district_code", "province_code", "address", "cluster", "consent",
+      "village_code", "commune_code", "district_code", "province_code", "address", "consent",
       "registered_date", "traps_installed", "trap_ids", "collections", "lab_results", "eggs_total",
       "total_catch", "aegypti_total", "container_index_pct", "house_positive", "last_activity_date"];
     this.download("ento-household-gps-" + new Date().toISOString().slice(0, 10) + ".csv",
@@ -4378,7 +4625,7 @@ class Component extends DCLogic {
       const g = map[trap] || (map[trap] = {
         trap_id: trap, trap_type: r.trap_type || r.method || "", household_id: r.household_id || "",
         village: r.village || "", commune: r.commune || "", district: r.district || "", province: r.province || "",
-        period_label: r.period_label || "", cluster: r.cluster || "",
+        period_label: r.period_label || "",
         install_id: "", install_date: "", collect_id: "", collect_date: "", trap_found: "",
         lab_ids: [], lab_dates: [], tubes: [], eggs: 0, aegypti: 0, albopictus: 0, culex: 0, other: 0, wmel: [],
       });
@@ -4412,8 +4659,8 @@ class Component extends DCLogic {
     });
     if (!rows.length) return;
     const cols = ["trap_id", "trap_type", "household_id", "village", "commune", "district", "province",
-      "cluster", "period_label", "install_id", "install_date", "collect_id", "collect_date", "trap_found",
-      "lab_results", "lab_ids", "lab_dates", "tubes", "eggs", "aegypti", "albopictus", "culex", "other", "wmel", "status"];
+      "period_label", "install_id", "install_date", "collect_id", "collect_date", "trap_found",
+      "lab_results", "lab_ids", "lab_dates", "tubes", "eggs", "aegypti", "albopictus", "aedes_other", "culex", "other", "wmel", "status"];
     this.download("ento-trap-chain-" + new Date().toISOString().slice(0, 10) + ".csv",
       "\uFEFF" + this.toCsv(cols, rows), "text/csv;charset=utf-8");
   };
@@ -4426,7 +4673,7 @@ class Component extends DCLogic {
       if (!site) return;
       const key = site + "|" + r.iso_year + "|" + r.epi_week;
       const g = map[key] || (map[key] = {
-        site_id: site, household_id: r.household_id || "", cluster: r.cluster || "",
+        site_id: site, household_id: r.household_id || "",
         iso_year: r.iso_year, epi_week: r.epi_week, period_month: r.period_month || "", collections: 0, traps_found: 0,
         adult_records: 0, total_catch: 0, aegypti_total: 0, containers_inspected: 0, containers_positive: 0,
       });
@@ -4441,7 +4688,7 @@ class Component extends DCLogic {
       return g;
     }).sort((a, b) => (a.iso_year - b.iso_year) || (a.epi_week - b.epi_week) || String(a.site_id).localeCompare(String(b.site_id)));
     if (!rows.length) return;
-    const cols = ["site_id", "household_id", "cluster", "period_month", "iso_year", "epi_week", "collections", "traps_found",
+    const cols = ["site_id", "household_id", "period_month", "iso_year", "epi_week", "collections", "traps_found",
       "adult_records", "total_catch", "aegypti_total", "containers_inspected", "containers_positive", "container_index_pct"];
     this.download("ento-site-week-" + new Date().toISOString().slice(0, 10) + ".csv",
       "\uFEFF" + this.toCsv(cols, rows), "text/csv;charset=utf-8");
@@ -4505,7 +4752,6 @@ class Component extends DCLogic {
           epi_week: r.epi_week == null ? "" : r.epi_week,
           iso_year: r.iso_year == null ? "" : r.iso_year,
           collector: r.collector || "",
-          cluster: r.cluster || "",
           site_id: r.site_id || r.trap_id || r.household_id || "",
           trap_id: r.trap_id || "",
           variable: k,
@@ -4517,7 +4763,7 @@ class Component extends DCLogic {
     });
     if (!out.length) return;
     const cols = ["record_id", "form_type", "collected_date", "epi_week", "iso_year", "collector",
-      "cluster", "site_id", "trap_id", "variable", "value", "unit", "lat", "lon"];
+      "site_id", "trap_id", "variable", "value", "unit", "lat", "lon"];
     this.download("ento-observations-long-" + new Date().toISOString().slice(0, 10) + ".csv",
       "\uFEFF" + this.toCsv(cols, out), "text/csv;charset=utf-8");
   };
@@ -4645,7 +4891,7 @@ class Component extends DCLogic {
         // counted as a gap and the round read 100% while the summary said "result due".
         e.sources.push({ id: r.record_id, trap: r.trap_id || "", needsLab: this.needsLab(r),
           kind: String(r.trap_type || "").indexOf("BG") === 0 ? "BG" : "Ovi" });
-      } else if (t === "larvae") e.other.push({ id: r.record_id, kind: "Lar", needsLab: this.needsLab(r) });
+      } else if (t === "larvae") e.other.push({ id: r.record_id, kind: "Larvae/Pupae", needsLab: this.needsLab(r) });
       else if (t === "adult") e.other.push({ id: r.record_id, kind: "Pro", needsLab: this.needsLab(r) });
       else if (t === "lab") { if (r.source_id) e.results.push(r.source_id); }
     });
@@ -4694,7 +4940,7 @@ class Component extends DCLogic {
           const inst = self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === id);
           return (inst && inst.trap_type) || "";
         })(this, r.trap_id);
-        const kind = t === "adult" ? "Pro" : t === "larvae" ? "Lar"
+        const kind = t === "adult" ? "Pro" : t === "larvae" ? "Larvae/Pupae"
           : String(trapType).indexOf("BG") === 0 ? "BG" : "Ovi";
         const pos = (function (raw) {
           const s2 = String(raw).toUpperCase();
@@ -4741,8 +4987,25 @@ class Component extends DCLogic {
     const minLo = Math.min.apply(null, lons), maxLo = Math.max.apply(null, lons);
     const spanLa = Math.max(maxLa - minLa, 0.0004), spanLo = Math.max(maxLo - minLo, 0.0004);
     const km = Math.round(Math.max(spanLa * 111, spanLo * 111 * Math.cos((minLa * Math.PI) / 180)) * 100) / 100;
-    // One colour per village, so the map reads as villages rather than results.
-    const palette = ["#003E78", "#117996", "#1ED47F", "#F4B71B", "#7C1220", "#6EDBCD", "#0D6177", "#002B53"];
+    // One colour per village. Village and status are never shown at once, so these are
+    // free to be whatever reads best rather than having to dodge the status colours.
+    // Drawn from the Okabe-Ito and Tol qualitative sets, which are built for telling
+    // categories apart and stay distinguishable to the common colour blindnesses.
+    // Ordered so neighbours in the legend never sit close in hue, and dark enough to
+    // hold their own against a pale basemap. Ten of them: the study has nine villages,
+    // and a tenth means the list can grow once before any colour repeats.
+    // Picked by farthest-point search over the Lab colour solid, maximising the
+    // SMALLEST gap any viewer would see — scored across normal, protanopic and
+    // deuteranopic vision at once, not just normal. Worst pair is 28 ΔE apart on all
+    // three; the hand-picked set before it managed 37 for normal vision but collapsed
+    // to 6 under deuteranopia, where its greens and teals merged. Restricted to
+    // lightness 30-62 and high chroma so a 18px pin still reads on a pale basemap, and
+    // ordered so legend neighbours are the furthest apart of all. Nine villages, ten
+    // slots, so the list can grow once before a colour repeats.
+    const palette = [
+      "#672E79", "#B29308", "#5358F2", "#900F04", "#6296ED",
+      "#C26940", "#770398", "#E86F89", "#8A153B", "#E05BA3",
+    ];
     const villages = [];
     pts.forEach((h) => { const v = h.village || "\u2014"; if (villages.indexOf(v) < 0) villages.push(v); });
     const vColor = (v) => palette[Math.max(0, villages.indexOf(v || "\u2014")) % palette.length];
@@ -4766,6 +5029,36 @@ class Component extends DCLogic {
         ].filter((x) => x.n > 0);
       })(),
       hasVillageLegend: pts.length > 0,
+      // Villages on the map, in palette order, with how many houses each has.
+      villageDots: villages.map((v) => ({
+        name: v,
+        color: vColor(v),
+        n: pts.filter((h) => (h.village || "—") === v).length,
+      })),
+      // Only worth offering the village colouring when there is more than one village
+      // in view; filtered to one, it would be a legend with a single entry.
+      canColorByVillage: villages.length > 1,
+      byVillage: this.state.mapColorBy === "village" && villages.length > 1,
+      // The one legend on show, matching whichever colouring is active.
+      mapLegend: (this.state.mapColorBy === "village" && villages.length > 1)
+        ? villages.map((v) => ({
+            name: v, color: vColor(v),
+            n: pts.filter((h) => (h.village || "—") === v).length,
+          }))
+        : (function (of) {
+            return [
+              { name: "ងាយរងគ្រោះ · high risk", color: "#7C1220", n: of("high") },
+              { name: "ត្រូវតាមដាន · watch", color: "#F4B71B", n: of("watch") },
+              { name: "គ្រោះថ្នាក់ទាប · low risk", color: "#117996", n: of("low") },
+              { name: "មិនទាន់ស្រាវជ្រាវ · not surveyed", color: "#A8C8DC", n: of("none") },
+            ].filter((x) => x.n > 0);
+          })((risk) => pts.filter((h) => {
+            const surveyed = (Number(h.larvae_records) || 0) > 0 || (Number(h.total_catch) || 0) > 0;
+            const breeding = !!h.house_positive;
+            const aegypti = (Number(h.aegypti_total) || 0) > 0;
+            const r = !surveyed ? "none" : (breeding && aegypti) ? "high" : (breeding || aegypti) ? "watch" : "low";
+            return r === risk;
+          }).length),
       hhPins: (this._hhPts = pts.map((h) => ({
         lat: Number(h.lat), lon: Number(h.lon),
         positive: !!h.house_positive,
@@ -4779,6 +5072,17 @@ class Component extends DCLogic {
         left: (8 + ((Number(h.lon) - minLo) / spanLo) * 84) + "%",
         top: (92 - ((Number(h.lat) - minLa) / spanLa) * 84) + "%",
         color: vColor(h.village || "\u2014"),
+        // What the pin is actually filled with, decided here rather than in the drawing
+        // code, so the legend and the map cannot disagree.
+        dotColor: (this.state.mapColorBy === "village" && villages.length > 1)
+          ? vColor(h.village || "\u2014")
+          : (function (hh) {
+              const surveyed = (Number(hh.larvae_records) || 0) > 0 || (Number(hh.total_catch) || 0) > 0;
+              const breeding = !!hh.house_positive;
+              const aegypti = (Number(hh.aegypti_total) || 0) > 0;
+              const r = !surveyed ? "none" : (breeding && aegypti) ? "high" : (breeding || aegypti) ? "watch" : "low";
+              return { high: "#7C1220", watch: "#F4B71B", low: "#117996", none: "#A8C8DC" }[r];
+            })(h),
         label: h.household_id.replace(/^HH-/, ""),
         title: h.household_id + (h.head ? " \u00b7 " + h.head : "") + (h.village ? " \u00b7 " + h.village : ""),
         head: h.household_id + (h.head ? "  \u00b7  " + h.head : ""),
@@ -4902,9 +5206,10 @@ class Component extends DCLogic {
     const SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
       ["aegypti", "Ae. aegypti"], ["albopictus_f", "Ae. albopictus \u2640"],
       ["albopictus_m", "Ae. albopictus \u2642"], ["albopictus", "Ae. albopictus"],
-      ["culex", "Culex spp."], ["other", "Other / damaged"]];
+      ["aedes_other", "Other Aedes spp."], ["culex", "Culex spp."], ["other", "Culex / Other"]];
     const COLORS = { aegypti_f: "#003E78", aegypti_m: "#117996", aegypti: "#0D6177",
-      albopictus_f: "#A8C8DC", albopictus_m: "#1ED47F", albopictus: "#D5E7EF", culex: "#F4B71B", other: "#767676" };
+      albopictus_f: "#A8C8DC", albopictus_m: "#1ED47F", albopictus: "#D5E7EF",
+      aedes_other: "#7A4FA3", culex: "#F4B71B", other: "#767676" };
     const labs = (rows || []).filter((r) => (r.form_type || r.type) === "lab");
     const list = SPECIES.map(([k, label]) => ({
       key: k, label, n: labs.reduce((a, r) => a + (Number(r[k]) || 0), 0),
@@ -5148,7 +5453,7 @@ class Component extends DCLogic {
     const SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
       ["aegypti", "Ae. aegypti"], ["albopictus_f", "Ae. albopictus \u2640"],
       ["albopictus_m", "Ae. albopictus \u2642"], ["albopictus", "Ae. albopictus"],
-      ["culex", "Culex spp."], ["other", "Other / damaged"]];
+      ["aedes_other", "Other Aedes spp."], ["culex", "Culex spp."], ["other", "Culex / Other"]];
     const speciesRows = SPECIES.map(([k, label]) => ({ key: k, label, n: sum(labs, k) })).filter((r) => r.n > 0);
     const speciesTotal = speciesRows.reduce((a, r) => a + r.n, 0) || 1;
     // Every swatch has to read at 10px, so the palest tints are out.
@@ -5652,7 +5957,11 @@ class Component extends DCLogic {
       txt("residents", "Residents", { type: "number", inputmode: "numeric", placeholder: "0" }),
       // Left blank the phone mints the next id; typed in it must be HH- plus six digits.
       // Six digits are enough: the HH- prefix is added as it is typed.
-      { ...txt("hh_id", "HH_ID", { placeholder: "XXXXXX", inputmode: "numeric" }), inline: true,
+      // The placeholder shows the id the village would give this house, so the collector
+      // can see it is right before saving instead of discovering it in the list after.
+      { ...txt("hh_id", "HH_ID", {
+          placeholder: (this.nextHouseId(form) || "HH-XXXXXX").replace(/^HH-/, ""),
+          inputmode: "numeric" }), inline: true,
         value: String(form.hh_id || "").replace(/^HH-/, ""),
         onChange: (e) => {
           const digits = String((e && e.target ? e.target.value : e) || "").replace(/[^0-9]/g, "").slice(0, 6);
@@ -5765,7 +6074,7 @@ class Component extends DCLogic {
         // Activities with nothing waiting on a result are left out of the list.
         return { label: "Activity", isSelect: true, value: form._srcType || "", onChange: self.setSrcFilter("_srcType"),
           options: [{ value: "", label: "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 all (" + n("") + ")" }]
-            .concat([["adult", "\u1798\u17bc\u179f \u00b7 Pro"], ["larvae", "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 Lar"],
+            .concat([["adult", "\u1798\u17bc\u179f \u00b7 Pro"], ["larvae", "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 Larvae/Pupae"],
               ["collect:Ovitrap", "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u1796\u1784 \u00b7 Ovi"],
               ["collect:BG-Sentinel", "BG"]]
               .filter(([k]) => n(k) > 0 || form._srcType === k)
@@ -5801,14 +6110,17 @@ class Component extends DCLogic {
             const a = list[i], b = list[i + 1];
             rows.push({
               label: "", isPair: true,
-              aCap: km(a[1]), aValue: form[a[0]] === "" ? "" : String(form[a[0]] || 0), aChange: self.setNum(a[0]),
+              aCap: km(a[1]), aCapSci: sciSplit(km(a[1])).sci, aCapRest: sciSplit(km(a[1])).rest, aValue: form[a[0]] === "" ? "" : String(form[a[0]] || 0), aChange: self.setNum(a[0]),
               aFocus: self.numFocus(a[0]), aBlur: self.numBlur(a[0]),
-              bCap: b ? km(b[1]) : "", bValue: b ? (form[b[0]] === "" ? "" : String(form[b[0]] || 0)) : "", bChange: b ? self.setNum(b[0]) : null,
+              bCap: b ? km(b[1]) : "",
+              bCapSci: b ? sciSplit(km(b[1])).sci : "",
+              bCapRest: b ? sciSplit(km(b[1])).rest : "",
+              bValue: b ? (form[b[0]] === "" ? "" : String(form[b[0]] || 0)) : "", bChange: b ? self.setNum(b[0]) : null,
               bFocus: b ? self.numFocus(b[0]) : null, bBlur: b ? self.numBlur(b[0]) : null,
             });
           }
           return rows;
-        })(this.stageForForm(form) === "Larvae" ? LARVAL_TAXA : TAXA, this)).map((fd) => (
+        })(this.stageForForm(form) === "Larvae" ? LARVAL_FIELDS : TAXA_FIELDS, this)).map((fd) => (
           // Date and time stay side by side; everything else in the lab form is full width.
           fd.isPair || fd.k === "collected_date" || fd.k === "collected_time" ? fd : { ...fd, wide: true }));
     return [
@@ -5819,7 +6131,7 @@ class Component extends DCLogic {
         bLabel: "\u1798\u17b6\u1793\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 positive" },
     ].concat(
       CONTAINERS.map(([k, label]) => ({
-        label: "", isRow: true, rowLabel: km(label),
+        label: "", isRow: true, rowLabel: km(label), rowLabelEn: label,
         aLabel: "Inspected", bLabel: "Positive",
         aValue: numStr(form["inspected_" + k]), bValue: numStr(form["positive_" + k]),
         aChange: this.setNum("inspected_" + k), bChange: this.setNum("positive_" + k),
@@ -5833,7 +6145,7 @@ class Component extends DCLogic {
             return i ? p + " / " + i + " containers positive \u00b7 CI " + (Math.round((p / i) * 1000) / 10) + "%"
               : "No containers counted yet.";
           })(form) },
-        txt("specimens", "Lar tube", { type: "number", inputmode: "numeric", placeholder: "0" }),
+        txt("specimens", "Immatures tube", { type: "number", inputmode: "numeric", placeholder: "0" }),
         { label: "Tube IDs", isNote: true, narrow: true,
           noteId: (Number(form.specimens) || 0) > 0
             ? (function (base, n) {
@@ -5943,7 +6255,7 @@ class Component extends DCLogic {
       if (activeVill && h.village !== activeVill) return false;
       if (s.hhIncomplete && hhComplete(h)) return false;
       if (!q) return true;
-      return [h.household_id, h.head, h.village, h.commune, h.district, h.province, h.cluster,
+      return [h.household_id, h.head, h.village, h.commune, h.district, h.province,
         h.address, h.trap_ids].join(" ").toLowerCase().indexOf(q) >= 0;
     });
     const current = s.hhId ? hhList.find((h) => h.household_id === s.hhId) : null;
@@ -6272,9 +6584,17 @@ class Component extends DCLogic {
       mapBtnBg: s.hhView === "map" ? "#003E78" : "#fff", mapBtnFg: s.hhView === "map" ? "#fff" : "#003E78",
       setList: () => this.setState({ hhView: "list" }),
       setMap: () => this.setState({ hhView: "map" }),
+      byRiskBg: s.mapColorBy === "risk" ? "#003E78" : "#fff", byRiskFg: s.mapColorBy === "risk" ? "#fff" : "#003E78",
+      byVillageBg: s.mapColorBy === "village" ? "#003E78" : "#fff", byVillageFg: s.mapColorBy === "village" ? "#fff" : "#003E78",
+      colorByRisk: () => this.setState({ mapColorBy: "risk" }, () => this.redrawHhPins()),
+      colorByVillage: () => this.setState({ mapColorBy: "village" }, () => this.redrawHhPins()),
       ...this.pins(hhFiltered),
       hhMapRef: (el) => {
-        if (this._hhMapEl !== el && this._hhMap) { this._hhMap.remove(); this._hhMap = null; this._hhMarkers = null; }
+        if (this._hhMapEl !== el && this._hhMap) {
+          this._hhMap.remove();
+          this._hhMap = null; this._hhMarkers = null; this._hhMeLayer = null;
+          this._hhCommuneLayer = null; this._hhFitSig = null;
+        }
         this._hhMapEl = el;
         if (el) setTimeout(() => this.drawHhMap(), 0);
       },
@@ -6409,7 +6729,6 @@ class Component extends DCLogic {
         address: current.address || "",
         addressSuffix: current.address ? " \u00b7 " + current.address : "",
         location: [current.village, current.commune, current.district, current.province].filter(Boolean).join(", ") || "\u1798\u17b7\u1793\u1798\u17b6\u1793\u1791\u17b8\u178f\u17b6\u17c6\u1784 \u00b7 no location",
-        cluster: current.cluster || "\u2014",
         consent: km(current.consent) || "\u2014",
         // First entry and last edit are separate facts, so they read as separate fields.
         registered: (function (rows) {
@@ -6584,7 +6903,7 @@ class Component extends DCLogic {
         // Adult mosquitoes only, by species, one column per report month.
         const ADULT = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
           ["albopictus_f", "Ae. albopictus \u2640"], ["albopictus_m", "Ae. albopictus \u2642"],
-          ["culex", "Culex spp."], ["other", "Other / damaged"]];
+          ["aedes_other", "Other Aedes spp."], ["culex", "Culex spp."], ["other", "Culex / Other"]];
         const adultLabs = hhRows.filter((r) => (r.form_type || r.type) === "lab"
           && String(r.specimen_stage || "") !== "Larvae");
         const months = [];
@@ -6711,6 +7030,21 @@ class Component extends DCLogic {
                     /-OUT$/i.test(String(r.trap_id || "")) ? "OUT"
                       : /-IN$/i.test(String(r.trap_id || "")) ? "IN"
                       : (r.position === "Outside" ? "OUT" : r.position === "Inside" ? "IN" : ""),
+                    (function () {
+                      // A trap is collected once per report month, so two collections on the
+                      // same trap in the same round is a re-entry, not a second visit. The lab
+                      // result lands on one of them and the other waits for a result that never
+                      // comes, leaving the household looking permanently unfinished.
+                      if (!r.trap_id || kind !== "collect") return "";
+                      const twin = self.state.records.filter((x) => (x.form_type || x.type) === "collect"
+                        && x.trap_id === r.trap_id
+                        && String(x.period_month || "") === String(r.period_month || "")
+                        && (x.record_id || x.id) !== (r.record_id || r.id));
+                      return twin.length
+                        ? "⚠ ការប្រមូលស្ទួន · trap also collected by "
+                          + twin.map((x) => x.record_id || x.id).join(", ")
+                        : "";
+                    })(),
                     mdy(r.collected_date || String(r.collected_at_utc || "").slice(0, 10))]
                     .filter(Boolean).join(" \u00b7 "),
                   armed: armed,
@@ -6932,7 +7266,7 @@ class Component extends DCLogic {
             if (r.trap_id) (e.gotTraps = e.gotTraps || []).push(r.trap_id);
             (e.sources = e.sources || []).push({ id: r.record_id, trap: r.trap_id || "", kind: String(r.trap_type || "").indexOf("BG") === 0 ? "BG" : "Ovi" });
           }
-          else if (t === "larvae") { e.larvae += 1; (e.other = e.other || []).push({ id: r.record_id, kind: "Lar", needsLab: self0.needsLab(r) }); }
+          else if (t === "larvae") { e.larvae += 1; (e.other = e.other || []).push({ id: r.record_id, kind: "Larvae/Pupae", needsLab: self0.needsLab(r) }); }
           else if (t === "adult") { e.adult += 1; (e.other = e.other || []).push({ id: r.record_id, kind: "Pro", needsLab: self0.needsLab(r) }); }
           else if (t === "lab") { e.lab += 1; if (r.source_id) (e.results = e.results || []).push(r.source_id); }
         });
@@ -7213,7 +7547,6 @@ class Component extends DCLogic {
         { label: "Households with no GPS", n: s.records.filter((r) => (r.form_type || r.type) === "household" && !r.lat).length, note: "Cannot be mapped",
           items: hhList.filter((h) => !h.lat).map((h) => ({ id: h.household_id, name: h.head || "\u2014", go: () => this.setState({ screen: "hhdetail", hhId: h.household_id }) })) },
         { label: "Records with no collector", n: s.records.filter((r) => !r.collector).length, note: "Cannot be traced to a person" },
-        { label: "Records with no cluster", n: s.records.filter((r) => !r.cluster).length, note: "Cannot be aggregated by area" },
         { label: "Trap records not linked to a household", n: s.records.filter((r) => r.trap_id && !r.household_id).length, note: "Install the trap against a household" },
 
         { label: "Collection days recorded", n: (function () {
@@ -7864,7 +8197,7 @@ class Component extends DCLogic {
         return p(d.getMonth() + 1) + "-" + p(d.getDate()) + "-" + p(d.getFullYear() % 100)
           + ", " + d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
       })(new Date(s.lastSync)) : "\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1795\u17d2\u1789\u17be \u00b7 never",
-      ctxLabel: (s.collector || "No collector set") + (s.cluster ? " \u00b7 " + s.cluster : ""),
+      ctxLabel: s.collector || "No collector set",
 
       // With a household in context its name sits in the app bar, so the in-form line is dropped.
       fields: s.type ? this.fieldsFor(s.type, s.form)
