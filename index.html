@@ -53,6 +53,14 @@ a:hover,label:hover{transition:box-shadow 150ms ease}
 .leaflet-control.locate-btn{display:flex;align-items:center;justify-content:center;
   width:30px;height:30px;background:#fff;color:#003E78;cursor:pointer}
 .leaflet-control.locate-btn:hover{background:#F2F6F9}
+.leaflet-control.locate-btn.on{background:#0B63C4;color:#fff}
+.leaflet-control.locate-btn.on:hover{background:#0A57AC}
+.leaflet-control.base-btn{display:flex;align-items:center;justify-content:center;
+  width:30px;height:30px;background:#fff;color:#003E78;cursor:pointer}
+.leaflet-control.base-btn:hover{background:#F2F6F9}
+/* Boundary outlines are dark red on the road map; over imagery they need to be light
+   to read at all. */
+.sat-map .commune-line{stroke:#FFD24A;stroke-width:2.2}
 .commune-line{pointer-events:stroke}
 button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(17,121,150,.35)}
 input:hover:not(:focus),select:hover:not(:focus),textarea:hover:not(:focus){border-color:#117996}
@@ -569,6 +577,12 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#003E78"><span style="width:11px;height:11px;flex:none;border-radius:50%;background:{{ v.color }};border:2px solid #fff;box-shadow:0 0 0 1px #D9DEE4"></span>{{ v.name }} · {{ v.n }}</span>
             </sc-for>
           </div>
+          <sc-if value="{{ hasImagery }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#767676;line-height:1.5;margin-top:7px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5V12l3 2"></path></svg>
+            <span>{{ imageryNote }}</span>
+          </div>
+          </sc-if>
           <div style="font-size:11px;color:#767676;line-height:1.5;margin-top:7px">ចុចលើចំណុចដើម្បីបើកខ្នងផ្ទះ · tap a pin to open, scroll to zoom</div>
         </div>
       </sc-if>
@@ -2334,6 +2348,9 @@ class Component extends DCLogic {
     // What the map pins are coloured by: "risk" or "village". One at a time, because
     // encoding both on a pin needed two legends and neither read cleanly.
     mapColorBy: "risk",
+    // Capture date of the satellite imagery under the current view, or null on the road
+    // map and whenever it cannot be read.
+    imagery: null,
     ctxHouse: "",
     editId: "",
     returnTo: "home",
@@ -3273,9 +3290,9 @@ class Component extends DCLogic {
       // A fresh map has no centre or zoom, and Leaflet draws nothing at all until it
       // does \u2014 so the fit signature is cleared here to guarantee the fit below runs.
       this._hhFitSig = null;
-      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19, attribution: "\u00a9 OpenStreetMap",
-      }).addTo(this._hhMap);
+      this._hhMap._baseKind = "road";
+      this.basemaps(this._hhMap).road.addTo(this._hhMap);
+      this.addBasemapControl(this._hhMap);
       this._hhMarkers = window.L.layerGroup().addTo(this._hhMap);
       // Own layer: the pin layer is cleared on every render, so a shared one would drop
       // the blue dot as soon as a filter changed.
@@ -3351,9 +3368,9 @@ class Component extends DCLogic {
       const pts = d.points;
       if (!this._map) {
         this._map = window.L.map(mapEl, { scrollWheelZoom: true });
-        window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19, attribution: "\u00a9 OpenStreetMap", detectRetina: true,
-        }).addTo(this._map);
+        this._map._baseKind = "road";
+        this.basemaps(this._map).road.addTo(this._map);
+        this.addBasemapControl(this._map);
         this._markers = window.L.layerGroup().addTo(this._map);
         // Own layer: the household layer is cleared on every render, so a shared one
         // would drop the blue dot the moment anything else on the screen changed.
@@ -3430,6 +3447,143 @@ class Component extends DCLogic {
     map._communeDrawn = true;
   }
 
+  // Road and satellite basemaps with a one-tap switch. Imagery is Esri World Imagery —
+  // OpenStreetMap publishes no imagery of its own, and the alternatives (Google, Bing,
+  // Mapbox) all need a key or forbid direct tile use. Both layers carry their own
+  // attribution, which the licences require.
+  basemaps(map) {
+    const L = window.L;
+    if (map._bases) return map._bases;
+    map._bases = {
+      road: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19, attribution: "© OpenStreetMap", detectRetina: true,
+      }),
+      sat: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          // Imagery over Battambang exists to zoom 18 only — z19 returns a blank
+          // placeholder tile, not an error, so without maxNativeZoom the satellite
+          // simply goes grey at full zoom. Capping it makes Leaflet upscale z18
+          // instead, which is blurrier but still shows the ground.
+          maxZoom: 19, maxNativeZoom: 18,
+          attribution: "Imagery © Esri, Vantor, Earthstar Geographics",
+        }
+      ),
+    };
+    return map._bases;
+  }
+
+  // When was this imagery taken? Esri publishes a capture date per footprint, and it
+  // matters here: the Battambang imagery is years old, so a house built since then is
+  // simply absent. Asked only while satellite is showing, debounced, and silent on
+  // failure — offline this is unanswerable and that is fine.
+  probeImagery(map) {
+    if (!map || map._baseKind !== "sat") return;
+    clearTimeout(this._imgProbe);
+    this._imgProbe = setTimeout(() => {
+      const b = map.getBounds(), s = map.getSize(), z = map.getZoom();
+      const c = map.getCenter();
+      const q = new URLSearchParams({
+        geometry: c.lng + "," + c.lat,
+        geometryType: "esriGeometryPoint",
+        sr: "4326", layers: "all", tolerance: "2",
+        mapExtent: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].join(","),
+        imageDisplay: s.x + "," + s.y + ",96",
+        returnGeometry: "false", f: "json",
+      });
+      fetch("https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/identify?" + q)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => {
+          const rows = (j && j.results) || [];
+          // Several footprints overlap at any point — the one that applies is the one
+          // whose zoom band covers the current view and that actually carries a date.
+          const hit = rows.map((r) => r.attributes || {}).filter((a) => {
+            const d = String(a.SRC_DATE2 || a["DATE"] || "");
+            if (!d || d === "Null") return false;
+            const lo = Number(a.MinMapLevel), hi = Number(a.MaxMapLevel);
+            return !(lo >= 0 && hi > 0) || (z >= lo && z <= hi);
+          }).sort((a, b2) => Number(a.SRC_RES || 99) - Number(b2.SRC_RES || 99))[0];
+          if (!hit) { this.setState({ imagery: null }); return; }
+          const raw = String(hit.SRC_DATE2 || hit["DATE"] || "");
+          const dt = new Date(raw);
+          const nice = isNaN(dt) ? raw : dt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+          this.setState({ imagery: {
+            date: nice,
+            res: hit.SRC_RES ? Number(hit.SRC_RES) + " m" : "",
+            source: String(hit.NICE_DESC || hit.SOURCE || ""),
+          } });
+        })
+        .catch(() => this.setState({ imagery: null }));
+    }, 700);
+  }
+
+  addBasemapControl(map) {
+    const L = window.L;
+    if (!L || !map || map._baseCtl) return;
+    const self = this;
+    const Ctl = L.Control.extend({
+      options: { position: "topleft" },
+      onAdd() {
+        const a = L.DomUtil.create("a", "leaflet-bar leaflet-control base-btn");
+        a.href = "#";
+        a.setAttribute("role", "button");
+        self.paintBaseBtn(map, a);
+        L.DomEvent.on(a, "click", (e) => {
+          L.DomEvent.stop(e);
+          self.toggleBasemap(map, a);
+        });
+        return a;
+      },
+    });
+    map._baseCtl = new Ctl();
+    map._baseCtl.addTo(map);
+  }
+
+  // The button shows where you are going, not where you are — a satellite icon means
+  // "switch to satellite", which is what a one-button switch has to say.
+  paintBaseBtn(map, a) {
+    const sat = map._baseKind === "sat";
+    a.title = sat ? "ផែនទីផ្លូវ · Road map" : "ផែនទីរូបភាព · Satellite";
+    a.innerHTML = sat
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"'
+        + ' stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h18M3 12h18M3 17.5h18"></path>'
+        + '<path d="M8 6.5V17.5M16 6.5V17.5"></path></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"'
+        + ' stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle>'
+        + '<path d="M12 3.2v2M12 18.8v2M3.2 12h2M18.8 12h2"></path>'
+        + '<path d="M6.2 6.2 7.6 7.6M16.4 16.4l1.4 1.4M17.8 6.2 16.4 7.6M7.6 16.4 6.2 17.8"></path></svg>';
+  }
+
+  toggleBasemap(map, a) {
+    const bases = this.basemaps(map);
+    const next = map._baseKind === "sat" ? "road" : "sat";
+    if (map.hasLayer(bases[map._baseKind === "sat" ? "sat" : "road"])) {
+      map.removeLayer(bases[map._baseKind === "sat" ? "sat" : "road"]);
+    }
+    bases[next].addTo(map);
+    // Basemaps go to the very back: added last they would otherwise cover the commune
+    // outlines and the pins.
+    bases[next].bringToBack();
+    map._baseKind = next;
+    // Lets the stylesheet lighten the commune outlines over imagery, where dark red on
+    // dark ground is invisible.
+    const c = map.getContainer();
+    if (c) { if (next === "sat") c.classList.add("sat-map"); else c.classList.remove("sat-map"); }
+    this.paintBaseBtn(map, a || map._baseBtn);
+    if (next === "sat") {
+      this.probeImagery(map);
+      // Panning to another village can land on a different capture, so the date is
+      // re-read as the view moves. Bound once per map.
+      if (!map._imgHooked) {
+        map._imgHooked = true;
+        map.on("moveend zoomend", () => this.probeImagery(map));
+      }
+    } else {
+      clearTimeout(this._imgProbe);
+      this.setState({ imagery: null });
+    }
+  }
+
   addLocateControl(map, layerKey) {
     const L = window.L;
     if (!L || !map || map._locateCtl) return;
@@ -3447,13 +3601,78 @@ class Component extends DCLogic {
           + '<path d="M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6"></path></svg>';
         L.DomEvent.on(a, "click", (e) => {
           L.DomEvent.stop(e);
-          self.locateMe(map, self[layerKey]);
+          self.toggleFollow(map, layerKey, a);
         });
+        map._locateBtn = a;
         return a;
       },
     });
     map._locateCtl = new Ctl();
     map._locateCtl.addTo(map);
+  }
+
+  // Tap once to start following, tap again to stop. A watch rather than a single fix,
+  // so the dot keeps up while the collector walks between houses — but it is opt-in
+  // and stoppable, because a high-accuracy watch is the most expensive thing a phone
+  // can be asked to do all day.
+  toggleFollow(map, layerKey, btn) {
+    if (this._watchId != null) { this.stopFollow(); return; }
+    if (!navigator.geolocation) {
+      this.toast("ឧបករណ៍នេះមិនអានទីតាំងបានទេ · this device cannot read a location", "warn");
+      return;
+    }
+    this._followMap = map;
+    this._followLayerKey = layerKey;
+    this._followBtn = btn || (map && map._locateBtn) || null;
+    if (this._followBtn) this._followBtn.classList.add("on");
+    this.toast("កំពុងរកទីតាំង · finding your location…", "ok");
+    this._followFirst = true;
+    this._watchId = navigator.geolocation.watchPosition(
+      (pos) => this.onFollowFix(pos),
+      (err) => {
+        this.stopFollow();
+        this.toast("រកទីតាំងមិនបាន · " + (err && err.message ? err.message : "location unavailable"), "warn");
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 2000 }
+    );
+  }
+
+  onFollowFix(pos) {
+    const L = window.L;
+    const map = this._followMap;
+    const layer = this[this._followLayerKey];
+    if (!L || !map || !layer) return;
+    const lat = pos.coords.latitude, lon = pos.coords.longitude;
+    const acc = Math.round(pos.coords.accuracy || 0);
+    layer.clearLayers();
+    // Accuracy drawn to scale, so a loose fix under tree cover never reads as exact.
+    if (acc > 0) {
+      L.circle([lat, lon], { radius: acc, color: "#0B63C4", weight: 1, fillColor: "#0B63C4", fillOpacity: 0.12 })
+        .addTo(layer);
+    }
+    L.circleMarker([lat, lon], {
+      radius: 6, color: "#fff", weight: 3, fillColor: "#0B63C4", fillOpacity: 1,
+    }).bindTooltip("ទីតាំងខ្ញុំ · me · ±" + acc + " m",
+      { direction: "top", offset: [0, -6], className: "hh-label" }).addTo(layer);
+    // Centre on the first fix only. Recentring on every one would fight the collector
+    // for control of the map while they are trying to look at something else.
+    if (this._followFirst) {
+      this._followFirst = false;
+      map.setView([lat, lon], Math.max(map.getZoom(), 16));
+      this.toast("ទីតាំងខ្ញុំ · ±" + acc + " m · តាមដាន · following", "ok");
+    }
+  }
+
+  stopFollow() {
+    if (this._watchId != null) {
+      try { navigator.geolocation.clearWatch(this._watchId); } catch (e) {}
+      this._watchId = null;
+    }
+    if (this._followBtn) { this._followBtn.classList.remove("on"); this._followBtn = null; }
+    const layer = this._followLayerKey ? this[this._followLayerKey] : null;
+    if (layer) layer.clearLayers();
+    this._followMap = null;
+    this._followLayerKey = null;
   }
 
   locateMe(map, layer) {
@@ -3489,6 +3708,9 @@ class Component extends DCLogic {
   }
 
   componentWillUnmount() {
+    // A GPS watch outlives the component unless it is cleared, and a forgotten one is
+    // the fastest way to flatten a field phone's battery.
+    this.stopFollow();
     if (this._poll) { clearInterval(this._poll); this._poll = null; }
     window.removeEventListener("online", this._on);
     window.removeEventListener("offline", this._on);
@@ -6586,11 +6808,20 @@ class Component extends DCLogic {
       setMap: () => this.setState({ hhView: "map" }),
       byRiskBg: s.mapColorBy === "risk" ? "#003E78" : "#fff", byRiskFg: s.mapColorBy === "risk" ? "#fff" : "#003E78",
       byVillageBg: s.mapColorBy === "village" ? "#003E78" : "#fff", byVillageFg: s.mapColorBy === "village" ? "#fff" : "#003E78",
+      hasImagery: !!s.imagery,
+      imageryNote: s.imagery
+        ? "រូបភាពផ្កាយរណប · imagery " + s.imagery.date
+          + (s.imagery.res ? " · " + s.imagery.res : "")
+          + (s.imagery.source ? " · " + s.imagery.source : "")
+        : "",
       colorByRisk: () => this.setState({ mapColorBy: "risk" }, () => this.redrawHhPins()),
       colorByVillage: () => this.setState({ mapColorBy: "village" }, () => this.redrawHhPins()),
       ...this.pins(hhFiltered),
       hhMapRef: (el) => {
         if (this._hhMapEl !== el && this._hhMap) {
+          // Leaving the map tears down the layer the dot lives in, so the watch has to
+          // go with it rather than keep firing at a layer that is no longer on a map.
+          if (this._followMap === this._hhMap) this.stopFollow();
           this._hhMap.remove();
           this._hhMap = null; this._hhMarkers = null; this._hhMeLayer = null;
           this._hhCommuneLayer = null; this._hhFitSig = null;
