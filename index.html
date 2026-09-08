@@ -50,14 +50,19 @@ button:active:not(:disabled){box-shadow:inset 0 0 0 999px rgba(213,231,239,.55)}
 a:hover,label:hover{transition:box-shadow 150ms ease}
 [role="button"]:hover,summary:hover,option:hover{box-shadow:inset 0 0 0 999px rgba(213,231,239,.55)}
 .leaflet-container a.leaflet-popup-close-button:hover{box-shadow:none}
-.leaflet-control.locate-btn{display:flex;align-items:center;justify-content:center;
-  width:30px;height:30px;background:#fff;color:#003E78;cursor:pointer}
-.leaflet-control.locate-btn:hover{background:#F2F6F9}
+/* 44px, not Leaflet's 30: these are used with a thumb in the field. touch-action
+   stops the browser waiting to see if a tap was a double-tap-to-zoom, which is what
+   made them feel dead on a phone. */
+.leaflet-control.locate-btn,.leaflet-control.base-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:44px;height:44px;background:#fff;color:#003E78;cursor:pointer;line-height:1;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+.leaflet-control.locate-btn:hover,.leaflet-control.base-btn:hover{background:#F2F6F9}
+.leaflet-control.locate-btn:active,.leaflet-control.base-btn:active{background:#E3EAF0}
 .leaflet-control.locate-btn.on{background:#0B63C4;color:#fff}
 .leaflet-control.locate-btn.on:hover{background:#0A57AC}
-.leaflet-control.base-btn{display:flex;align-items:center;justify-content:center;
-  width:30px;height:30px;background:#fff;color:#003E78;cursor:pointer}
-.leaflet-control.base-btn:hover{background:#F2F6F9}
+/* A title attribute never appears on touch, so the button carries its own caption. */
+.leaflet-control .cap{font-size:8px;font-weight:700;letter-spacing:.02em;margin-top:2px}
 /* Boundary outlines are dark red on the road map; over imagery they need to be light
    to read at all. */
 .sat-map .commune-line{stroke:#FFD24A;stroke-width:2.2}
@@ -3423,6 +3428,17 @@ class Component extends DCLogic {
     if (this._hhMap) this.drawHhMap();
   }
 
+  // Name over the area. Areas are precomputed into communes.json from the ring geometry,
+  // so nothing is measured at run time; km² leads because a bare seven-digit m² is hard
+  // to read at a glance, with the exact m² beneath it since that is the unit asked for.
+  communeLabel(c) {
+    const name = (c.km ? c.km + " · " : "") + c.en;
+    if (!c.m2) return name;
+    const m2 = String(c.m2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return '<span style="font-weight:700">' + name + "</span><br>"
+      + (c.km2 ? Number(c.km2).toFixed(2) + " km² · " : "") + m2 + " m²";
+  }
+
   // Drawn under the pins, unfilled, so a household never disappears behind a boundary.
   drawCommunes(map, layerKey) {
     const L = window.L;
@@ -3441,7 +3457,7 @@ class Component extends DCLogic {
         pane: "communes",
         color: "#7C1220", weight: 1.6, opacity: 0.85, fill: false,
         interactive: true, className: "commune-line",
-      }).bindTooltip((c.km ? c.km + " · " : "") + c.en,
+      }).bindTooltip(this.communeLabel(c),
         { sticky: true, direction: "top", className: "hh-label" }).addTo(layer);
     });
     map._communeDrawn = true;
@@ -3524,9 +3540,11 @@ class Component extends DCLogic {
     const Ctl = L.Control.extend({
       options: { position: "topleft" },
       onAdd() {
+        // No href: on a phone a missed preventDefault sends the page to "#", which
+        // adds a history entry so Back undoes the tap instead of leaving the screen.
         const a = L.DomUtil.create("a", "leaflet-bar leaflet-control base-btn");
-        a.href = "#";
         a.setAttribute("role", "button");
+        a.tabIndex = 0;
         self.paintBaseBtn(map, a);
         L.DomEvent.on(a, "click", (e) => {
           L.DomEvent.stop(e);
@@ -3544,14 +3562,16 @@ class Component extends DCLogic {
   paintBaseBtn(map, a) {
     const sat = map._baseKind === "sat";
     a.title = sat ? "ផែនទីផ្លូវ · Road map" : "ផែនទីរូបភាព · Satellite";
-    a.innerHTML = sat
-      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"'
+    a.setAttribute("aria-label", a.title);
+    const icon = sat
+      ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"'
         + ' stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h18M3 12h18M3 17.5h18"></path>'
         + '<path d="M8 6.5V17.5M16 6.5V17.5"></path></svg>'
-      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"'
-        + ' stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle>'
-        + '<path d="M12 3.2v2M12 18.8v2M3.2 12h2M18.8 12h2"></path>'
-        + '<path d="M6.2 6.2 7.6 7.6M16.4 16.4l1.4 1.4M17.8 6.2 16.4 7.6M7.6 16.4 6.2 17.8"></path></svg>';
+      : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"'
+        + ' stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 12 4l9.5 4.5L12 13 2.5 8.5Z"></path>'
+        + '<path d="M2.5 15.5 12 20l9.5-4.5"></path></svg>';
+    // The caption says where the tap goes, which the icon alone never managed to.
+    a.innerHTML = icon + '<span class="cap">' + (sat ? "MAP" : "SAT") + "</span>";
   }
 
   toggleBasemap(map, a) {
@@ -3592,9 +3612,10 @@ class Component extends DCLogic {
       options: { position: "topleft" },
       onAdd() {
         const a = L.DomUtil.create("a", "leaflet-bar leaflet-control locate-btn");
-        a.href = "#";
         a.title = "ទីតាំងខ្ញុំ · My location";
+        a.setAttribute("aria-label", a.title);
         a.setAttribute("role", "button");
+        a.tabIndex = 0;
         a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
           + ' stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="7"></circle>'
           + '<circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"></circle>'

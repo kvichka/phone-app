@@ -824,6 +824,15 @@ class Component extends DCLogic {
     return null;
   }
 
+  // Name over the area; areas are precomputed into communes.json from the geometry.
+  communeLabel(c) {
+    const name = (c.km ? c.km + " · " : "") + c.en;
+    if (!c.m2) return name;
+    const m2 = String(c.m2).replace(/B(?=(d{3})+(?!d))/g, ",");
+    return '<span style="font-weight:700">' + name + "</span><br>"
+      + (c.km2 ? Number(c.km2).toFixed(2) + " km² · " : "") + m2 + " m²";
+  }
+
   // Unfilled and in their own pane below the pins, so no household is hidden behind a
   // boundary however often the pin layer is cleared and rebuilt.
   drawCommunes(map, layerKey) {
@@ -839,7 +848,7 @@ class Component extends DCLogic {
       L.polygon(c.ring, {
         pane: "communes",
         color: "#7C1220", weight: 1.6, opacity: 0.85, fill: false, interactive: true,
-      }).bindTooltip((c.km ? c.km + " · " : "") + c.en,
+      }).bindTooltip(this.communeLabel(c),
         { sticky: true, direction: "top", className: "hh-label" }).addTo(layer);
     });
     map._communeDrawn = true;
