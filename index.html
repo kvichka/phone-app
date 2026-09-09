@@ -822,6 +822,13 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
                 </sc-for>
               </div>
             </sc-if>
+            <sc-if value="{{ f.isTicks }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center">
+                <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="7">
+                  <button onClick="{{ o.pick }}" title="{{ o.labelEn }}" style="display:inline-flex;align-items:center;gap:5px;flex:none;padding:2px 0;border:none;background:transparent;color:{{ o.fg }};font-family:inherit;font-weight:700;font-size:12px;line-height:1.2;cursor:pointer;white-space:nowrap"><span style="flex:none;width:15px;height:15px;border:1.5px solid {{ o.bd }};border-radius:3px;background:{{ o.bg }};color:#fff;font-size:10px;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ o.mark }}</span>{{ o.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
             <sc-if value="{{ f.isTrapRow }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
                 <div style="flex:1 1 100%;min-width:240px">
@@ -2026,6 +2033,10 @@ function sciSplit(s) {
 // the order the collector sees, so water-holding types stay together.
 const CONTAINERS = [["jar", "Water jar"], ["tank", "Water tank"], ["drum", "Water drum"],
   ["tyre", "Tyre"], ["pot", "Plant pot"], ["discard", "Discard"], ["other", "Other"]];
+// Records store the key, so a relabelled list never orphans saved data; this is the way
+// back to the words for a list row or an export.
+const CONT_LABEL = {};
+CONTAINERS.forEach(([k, label]) => { CONT_LABEL[k] = label; });
 
 // Numeric measures per form, used for the long (tidy) export — one row per observation.
 const MEASURES = {
@@ -2107,6 +2118,7 @@ const KM = {
   "Tube IDs": "\u179b\u17c1\u1781 \u1780\u17c6\u1794\u17c9\u17bb\u1784",
   "Tube": "\u1780\u17c6\u1794\u17c9\u17bb\u1784",
   "Specimen stage": "\u178a\u17c6\u178e\u17b6\u1780\u17cb\u1780\u17b6\u179b\u179f\u17c6\u178e\u17b6\u1780",
+  Container: "\u1797\u17b6\u1787\u1793\u17cd",
   "Water jar": "\u1796\u17b6\u1784\u1791\u17b9\u1780",
   "Tyre": "\u179f\u17c6\u1794\u1780\u1780\u1784\u17cb\u1785\u17b6\u179f\u17cb\u17d7",
   "Plant pot": "\u1790\u17bc\u1795\u17d2\u1780\u17b6",
@@ -4023,7 +4035,7 @@ class Component extends DCLogic {
       install: { trap_id_inside: "", trap_id_outside: "", trap_type: "Ovitrap", house: "", position: "Both", substrate: "Hay infusion", notes: "" },
       collect: { trap_ids: [], trap_id: "", position: "Both", found: "Yes", condition: "Intact", paddle: 0, notes: "" },
       adult: { method: "Procopack", trap_id: "", house: "", specimens: 0, notes: "" },
-      lab: { source_id: "", tube_id: "", house: "", trap_id: "", specimen_stage: "Larvae", eggs: 0, aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
+      lab: { source_id: "", tube_id: "", house: "", trap_id: "", specimen_stage: "Larvae", container: "", eggs: 0, aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
       // The per-container cells are part of the blank form, so editing a saved survey
       // loads them back instead of reopening it as 0 / 0.
       larvae: CONTAINERS.reduce((a, [k]) => {
@@ -4228,6 +4240,7 @@ class Component extends DCLogic {
         const src = recs.find((r) => r.record_id === f.source_id);
         const tubes = String((src && src.tube_ids) || "").split(" ").filter(Boolean);
         if (tubes.length && !f.tube_id) out.push("tube_id");
+        if ((src && (src.form_type || src.type)) === "larvae" && !f.container) out.push("container");
       }
     }
     return out;
@@ -4342,6 +4355,12 @@ class Component extends DCLogic {
         if (tubes.length && !f.tube_id) e.push("ជ្រើសរើសកំប៉ុងសម្រាប់មើលលទ្ធផលនេះ · Select which tube this result is for.");
         if (f.tube_id && recs.some((r) => (r.form_type || r.type) === "lab" && r.tube_id === f.tube_id && r.record_id !== editing)) {
           e.push("កំប៉ុងមានលទ្ធផលរួចហើយ · Tube " + f.tube_id + " already has a result.");
+        }
+        // Blocked rather than warned: a species count with no container answers nothing
+        // about which container type is producing the mosquitoes, and it cannot be
+        // recovered afterwards from the tube alone.
+        if ((src && (src.form_type || src.type)) === "larvae" && !f.container) {
+          e.push("\u1787\u17d2\u179a\u17be\u179f\u179a\u17be\u179f\u1794\u17d2\u179a\u1797\u17c1\u1791\u1797\u17b6\u1787\u1793\u17cd \u00b7 Pick the container this tube came from.");
         }
       }
     }
@@ -4482,6 +4501,7 @@ class Component extends DCLogic {
         : "\u1782\u17d2\u1798\u17b6\u1793\u1798\u17bc\u179f\u1785\u17b6\u1794\u17cb \u00b7 no mosquitoes caught");
     } else if (type === "lab") {
       bits.push(r.specimen_stage || "");
+      if (r.container) bits.push(km(CONT_LABEL[r.container] || r.container));
       if (Number(r.eggs)) bits.push(r.eggs + " eggs");
       const set = String(r.specimen_stage) === "Larvae" ? LARVAL_TAXA : TAXA;
       const named = set.filter(([k]) => Number(r[k]))
@@ -5087,6 +5107,7 @@ class Component extends DCLogic {
           collector: r.collector || "",
           site_id: r.site_id || r.trap_id || r.household_id || "",
           trap_id: r.trap_id || "",
+          container: r.container || "",
           variable: k,
           value: r[k],
           unit: unit,
@@ -5096,7 +5117,7 @@ class Component extends DCLogic {
     });
     if (!out.length) return;
     const cols = ["record_id", "form_type", "collected_date", "epi_week", "iso_year", "collector",
-      "site_id", "trap_id", "variable", "value", "unit", "lat", "lon"];
+      "site_id", "trap_id", "container", "variable", "value", "unit", "lat", "lon"];
     this.download("ento-observations-long-" + new Date().toISOString().slice(0, 10) + ".csv",
       "\uFEFF" + this.toCsv(cols, out), "text/csv;charset=utf-8");
   };
@@ -6477,6 +6498,28 @@ class Component extends DCLogic {
       { label: "Specimen stage", isNote: true, value: this.stageForForm(form) === "Larvae"
         ? "\u1794\u1784\u17d2\u1780\u17be\u178f\u1796\u17b8\u1796\u1784/\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 reared \u2014 species only, no sex"
         : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799 \u00b7 adult \u2014 species and sex" },
+      ] : [],
+      // Which container this tube was dipped from. The paper immatures sheet ticks it per
+      // tube row, and it is the only link between a species count and a container type:
+      // the larval collection records how many containers of each type held larvae, never
+      // which tube came out of which. Asked on any tube reared from a larval collection,
+      // at either stage, because the container belongs to the tube and not to the reading.
+      // Options are keyed, so the stored value survives a relabelled list.
+      this.showsTallies(form) && this.canEmerge(form) ? [
+      // Ticks rather than chips: seven full-height buttons wrapped onto two rows and
+      // pushed the species tallies off the first screen. One tick per tube, like the
+      // paper sheet. Khmer only on the tick, with the English on the tooltip - the
+      // English words are what made the chips wide.
+      { label: "Container", isTicks: true, k: "container", wide: true,
+        options: CONTAINERS.map(([key, label]) => ({
+          label: km(label), labelEn: label === km(label) ? "" : label,
+          pick: this.pick("container", key),
+          on: form.container === key, off: form.container !== key,
+          mark: form.container === key ? "\u2713" : "",
+          ...(form.container === key
+            ? { bg: "#003E78", bd: "#003E78", fg: "#003E78" }
+            : { bg: "#fff", bd: "#A8B4BE", fg: "#475569" }),
+        })) },
       ] : [])
     ).concat(!this.showsTallies(form) || this.specimenSources(ctx || form._srcHouse, form._srcType).length === 0 ? []
       // Two tallies per row, so a six-species count fits one screen.
