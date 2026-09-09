@@ -562,6 +562,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               <button onClick="{{ setList }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;padding:0 12px;background:{{ listBtnBg }};color:{{ listBtnFg }};font-weight:700;font-size:11px;line-height:1;cursor:pointer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M8 6.5h12M8 12h12M8 17.5h12"></path><path d="M4 6.5h.01M4 12h.01M4 17.5h.01"></path></svg>បញ្ជី List</button>
               <button onClick="{{ setMap }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-left:1px solid #003E78;padding:0 12px;background:{{ mapBtnBg }};color:{{ mapBtnFg }};font-weight:700;font-size:11px;line-height:1;cursor:pointer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.4"></circle></svg>ផែនទី Map</button>
             </div>
+            <button onClick="{{ toggleHhStopped }}" title="{{ hhStoppedTitle }}" style="display:inline-flex;align-items:center;gap:5px;flex:none;border:none;background:transparent;padding:2px 2px;color:{{ hhStoppedFg }};font-family:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer"><span style="flex:none;width:13px;height:13px;border:1.5px solid {{ hhStoppedBoxBd }};border-radius:3px;background:{{ hhStoppedBoxBg }};color:#fff;font-size:9px;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ hhStoppedMark }}</span>ឈប់​ប៉ុណ្ណោះ Stopped only {{ hhStoppedCount }}</button>
       </div>
       <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #D9DEE4;border-radius:8px;padding:14px">
@@ -609,7 +610,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
               <span style="font:700 11px ui-monospace,Menlo,monospace;color:#003E78;white-space:nowrap">{{ h.id }}</span>
               <span style="flex:1;min-width:0;font-size:12px;font-weight:700;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ h.head }}</span>
               <sc-if value="{{ h.stopped }}" hint-placeholder-val="{{ false }}">
-                <span title="{{ h.stoppedNote }}" style="flex:none;font-size:9px;font-weight:700;color:#7C1220;background:#FBEDEF;border:1px solid #F0D3D8;border-radius:999px;padding:1px 6px;white-space:nowrap">ឈប់ · stopped</span>
+                <span title="{{ h.stoppedNote }}" style="flex:none;display:inline-flex;color:#7C1220" aria-label="{{ h.stoppedNote }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" style="flex:none"><circle cx="12" cy="12" r="8.5"></circle><path d="M6.5 6.5 17.5 17.5"></path></svg></span>
               </sc-if>
             </span>
             <span style="display:block;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px">{{ h.village }} · {{ h.commune }}</span>
@@ -1989,6 +1990,17 @@ const TAXA_FIELDS = TAXA.filter(([k]) => k !== "culex");
 // stripped of the other stage's keys when saved, and these must survive that.
 const SHARED_TAXA_KEYS = ["aedes_other", "culex", "other"];
 
+// Adults reared out of a larval collection. They are sexed like a trapped catch, but
+// they are not a trapped catch: these were never host-seeking, so they are stamped with
+// their own stage and reported apart from what the traps caught.
+const EMERGED = "Emerged";
+const LAB_STAGES = [["Larvae", "Larvae / Pupae"], [EMERGED, "Emerged adults"]];
+// An emerged tube reports the same insects the larval result already counted, read again
+// after rearing. It is a real lab result, so it still counts as one; it must never be
+// added to a "how many mosquitoes" total, or one mosquito is counted twice. The dashboard
+// applies the same rule.
+const isEmergedRec = (r) => String((r && r.specimen_stage) || "") === EMERGED;
+
 const CTX = "ento.context.v1";
 const FORM_VERSION = "1.1";
 
@@ -2013,7 +2025,7 @@ function sciSplit(s) {
 // list, so a new type only has to be added here and to the Khmer dictionary. Order is
 // the order the collector sees, so water-holding types stay together.
 const CONTAINERS = [["jar", "Water jar"], ["tank", "Water tank"], ["drum", "Water drum"],
-  ["tyre", "Tyre"], ["pot", "Plant pot"], ["other", "Other"]];
+  ["tyre", "Tyre"], ["pot", "Plant pot"], ["discard", "Discard"], ["other", "Other"]];
 
 // Numeric measures per form, used for the long (tidy) export — one row per observation.
 const MEASURES = {
@@ -2100,6 +2112,15 @@ const KM = {
   "Plant pot": "\u1790\u17bc\u1795\u17d2\u1780\u17b6",
   "Water tank": "\u17a2\u17b6\u1784\u1791\u17b9\u1780",
   "Water drum": "\u1792\u17bb\u1784\u1791\u17b9\u1780",
+  Discard: "\u179f\u17c6\u1794\u1780\u1780\u17c6\u1794\u17c9\u17bb\u1784\u1785\u17b6\u179f\u17cb\u17d7",
+  // The two ways a reared tube can be read. These are the stored specimen_stage values,
+  // so the choice buttons look them up by the value itself.
+  Larvae: "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
+  Emerged: "\u1798\u17bc\u179f\u1785\u17c1\u1789\u1796\u17b8\u178a\u1784\u17d2\u1780\u17bc\u179c",
+  Stopped: "\u1788\u1794\u17cb\u1794\u17d2\u179a\u1798\u17bc\u179b",
+  "Active until": "\u179f\u1780\u1798\u17d2\u1798\u178a\u179b\u17cb\u1781\u17c2",
+  "Moved away": "\u1795\u17d2\u179b\u17b6\u179f\u17cb\u1791\u17b8\u179b\u17c6\u1793\u17c5",
+  "Too closed": "\u1795\u17d2\u1791\u17c7\u1794\u17b7\u1791\u1787\u17b6\u1794\u17cb",
   "Other": "\u1795\u17d2\u179f\u17c1\u1784\u17d7",
   "Inspected": "\u1794\u17b6\u1793\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799",
   "Positive": "\u1798\u17b6\u1793\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
@@ -2159,6 +2180,28 @@ function period(dateStr) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return { month: "", label: "" };
   const m = Number(d.slice(5, 7));
   return { month: d.slice(0, 7), label: MONTHS[m - 1] + "-" + d.slice(2, 4) };
+}
+
+// The round a record belongs to, from whatever the stored value happens to be. A stated
+// YYYY-MM is authoritative and kept; a legacy timestamp holds midnight Phnom Penh as a
+// UTC instant, so it is shifted before the month is read; only an unusable value falls
+// back to the record's own date. Used everywhere so a round is read the same way twice.
+function roundOf(raw, dateStr) {
+  const s = String(raw == null ? "" : raw);
+  let month = /^\d{4}-\d{2}$/.test(s) ? s : "";
+  if (!month && /^\d{4}-\d{2}-\d{2}T/.test(s)) {
+    const d = new Date(s);
+    if (!isNaN(d)) {
+      const l = new Date(d.getTime() + 7 * 3600 * 1000);
+      month = l.getUTCFullYear() + "-" + String(l.getUTCMonth() + 1).padStart(2, "0");
+    }
+  }
+  if (!month) {
+    const loose = s.match(/^(\d{4}-\d{2})/);
+    if (loose) month = loose[1];
+  }
+  if (!month) return period(dateStr);
+  return { month: month, label: MONTHS[Number(month.slice(5, 7)) - 1] + "-" + month.slice(2, 4) };
 }
 
 function isoWeek(d) {
@@ -2238,23 +2281,8 @@ function normalize(rec) {
     // away the whole point of stamping a lab result with its source collection's round:
     // every pull quietly moved such a result back to the month the lab happened to read
     // it. Only a missing or unreadable value falls back to the date.
-    ...(function (raw, fallback) {
-      const plain = /^\d{4}-\d{2}$/.test(String(raw)) ? String(raw) : null;
-      const iso = !plain && /^\d{4}-\d{2}-\d{2}T/.test(String(raw)) ? String(raw) : null;
-      let month = plain;
-      if (!month && iso) {
-        const d = new Date(iso);
-        if (!isNaN(d)) {
-          // legacy rows hold midnight Phnom Penh as a UTC instant
-          const l = new Date(d.getTime() + 7 * 3600 * 1000);
-          month = l.getUTCFullYear() + "-" + String(l.getUTCMonth() + 1).padStart(2, "0");
-        }
-      }
-      if (!month) month = fallback.month;
-      const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-      return { period_month: month,
-        period_label: month ? (MON[Number(month.slice(5, 7)) - 1] || "") + "-" + month.slice(2, 4) : fallback.label };
-    })(rec.period_month, period(ts)),
+    ...(function (r) { return { period_month: r.month, period_label: r.label }; })(
+      roundOf(rec.period_month, ts)),
     collector: rec.collector || "",
     site_id: household || rec.trap_id || "",
     household_id: household,
@@ -2268,7 +2296,13 @@ function normalize(rec) {
   out.household_id = household; out.form_version = FORM_VERSION;
   out.collected_at_utc = dt.toISOString(); out.collected_date = out.collected_at_utc.slice(0, 10);
   out.collected_time = dt.toTimeString().slice(0, 5); out.epi_week = wk.week; out.iso_year = wk.year;
-  out.period_month = period(out.collected_date).month; out.period_label = period(out.collected_date).label;
+  // ...rec above puts the record's own raw round back over the computed one, so it is
+  // read once more here — but through roundOf, which keeps a stated YYYY-MM. This line
+  // used to be period(out.collected_date), which re-broke exactly what the comment on
+  // the round field describes: a lab result read in August was dragged out of the July
+  // round it was collected in, and every load did it again.
+  const rnd = roundOf(out.period_month, out.collected_date);
+  out.period_month = rnd.month; out.period_label = rnd.label;
   LEGACY_KEYS.forEach((k) => { delete out[k]; });
   return out;
 }
@@ -2349,6 +2383,11 @@ class Component extends DCLogic {
     cluster: "",
     hhQuery: "",
     hhIncomplete: false,
+    // Off by default: the list and the map hold the households still in the study, and
+    // a house that has stopped is out of the way rather than sitting in the round's work
+    // with nothing owing. On swaps to those stopped houses alone, for chasing up exits.
+    // A view filter only — a stopped house keeps its records and every round it was in.
+    hhStoppedOnly: false,
     dashMonth: "",
     hhProv: "",
     hhComm: "",
@@ -3764,12 +3803,25 @@ class Component extends DCLogic {
     const byRecord = {};
     records.forEach((r) => { if (r.record_id) byRecord[r.record_id] = r; });
     return records.map((r) => {
-      // A lab result takes its trap and household from the collection it was made on.
+      // A lab result takes its trap, household and round from the collection it was
+      // made on.
       if ((r.form_type || r.type) === "lab" && r.source_id && byRecord[r.source_id]) {
         const src = byRecord[r.source_id];
         const p = {};
         if (!r.trap_id && src.trap_id) p.trap_id = src.trap_id;
         if (!r.household_id && src.household_id) p.household_id = src.household_id;
+        // The round is the source's, always — a result read weeks later belongs to the
+        // round its specimens were collected in. Rows stamped before that rule existed
+        // still hold the month they were typed in, which put a July catch in the August
+        // round on the dashboard. Correcting it here is not enough on its own: without
+        // dropping synced_at the fix stays on this phone and the sheet keeps the wrong
+        // month for good, so the record is queued to go up again.
+        const round = roundOf(src.period_month, src.collected_date);
+        if (round.month && round.month !== r.period_month) {
+          p.period_month = round.month;
+          p.period_label = round.label;
+          if (r.synced_at) p.synced_at = "";
+        }
         if (Object.keys(p).length) r = { ...r, ...p };
       }
       const hid = r.household_id || (r.trap_id ? byTrap[r.trap_id] : "") || "";
@@ -3971,7 +4023,7 @@ class Component extends DCLogic {
       install: { trap_id_inside: "", trap_id_outside: "", trap_type: "Ovitrap", house: "", position: "Both", substrate: "Hay infusion", notes: "" },
       collect: { trap_ids: [], trap_id: "", position: "Both", found: "Yes", condition: "Intact", paddle: 0, notes: "" },
       adult: { method: "Procopack", trap_id: "", house: "", specimens: 0, notes: "" },
-      lab: { source_id: "", tube_id: "", house: "", trap_id: "", eggs: 0, aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
+      lab: { source_id: "", tube_id: "", house: "", trap_id: "", specimen_stage: "Larvae", eggs: 0, aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
       // The per-container cells are part of the blank form, so editing a saved survey
       // loads them back instead of reopening it as 0 / 0.
       larvae: CONTAINERS.reduce((a, [k]) => {
@@ -4791,7 +4843,8 @@ class Component extends DCLogic {
       const reg = of("household")[0] || {};
       const installs = of("install"), collects = of("collect"), adults = of("adult"), larvae = of("larvae");
       const labs = of("lab");
-      const counted = labs.concat(adults.filter((r) => r.total_catch != null && r.total_catch !== ""));
+      const counted = labs.filter((r) => !isEmergedRec(r))
+        .concat(adults.filter((r) => r.total_catch != null && r.total_catch !== ""));
       const inspected = sum(larvae, "containers_inspected");
       const positive = sum(larvae, "containers_positive");
       const catchTotal = sum(counted, "total_catch");
@@ -5098,11 +5151,23 @@ class Component extends DCLogic {
 
   // Stage for the open form: the picked record if there is one, otherwise the activity filter.
   stageForForm(form) {
+    // Reared material can be read either way, so the collector's choice wins over the
+    // stage the source implies: a tube of larvae kept until the mosquitoes came out is
+    // identified as those adults, with sex, not as immatures.
+    if (this.canEmerge(form) && form.specimen_stage === EMERGED) return EMERGED;
     if (form.source_id) return this.stageOf(form.source_id);
     const t = String(form._srcType || "");
     if (t === "larvae" || t === "collect:Ovitrap") return "Larvae";
     if (t === "adult" || t === "collect:BG-Sentinel") return "Adult";
     return "Larvae";
+  }
+
+  // Only reared material emerges. A Procopack catch is already adult, and an ovitrap
+  // result records eggs, so neither offers the choice.
+  canEmerge(form) {
+    if (this.isOvitrapLab(form)) return false;
+    if (form.source_id) return this.stageOf(form.source_id) === "Larvae";
+    return String(form._srcType || "") === "larvae";
   }
 
   stageOf(sourceId) {
@@ -5530,8 +5595,9 @@ class Component extends DCLogic {
     const larvae = of("larvae"), labs = of("lab"), collects = of("collect"), installs = of("install");
     const inspected = sum(larvae, "containers_inspected");
     const positive = sum(larvae, "containers_positive");
-    const catchTotal = sum(labs, "total_catch");
-    const aegypti = sum(labs, "aegypti_total");
+    const caught = labs.filter((r) => !isEmergedRec(r));
+    const catchTotal = sum(caught, "total_catch");
+    const aegypti = sum(caught, "aegypti_total");
 
     // Months present in the data, newest last, capped at six.
     const monthKeys = [];
@@ -5547,7 +5613,7 @@ class Component extends DCLogic {
         visits: inRound(recs, m).length,
         collections: c.length,
         index: insp ? Math.round((pos / insp) * 1000) / 10 : 0,
-        catch: sum(b, "total_catch"),
+        catch: sum(b.filter((r) => !isEmergedRec(r)), "total_catch"),
       };
     });
     const maxVisits = Math.max(1, Math.max.apply(null, perMonth.map((m) => m.visits).concat([1])));
@@ -5596,7 +5662,7 @@ class Component extends DCLogic {
       if (t === "install") e.installs += 1;
       if (t === "collect") e.collects += 1;
       if (t === "larvae") { e.insp += Number(r.containers_inspected) || 0; e.pos += Number(r.containers_positive) || 0; }
-      if (t === "lab" || t === "adult") e.catch += Number(r.total_catch) || 0;
+      if ((t === "lab" || t === "adult") && !isEmergedRec(r)) e.catch += Number(r.total_catch) || 0;
     });
     const villageTable = Object.keys(vt).map((k) => {
       const e = vt[k];
@@ -6279,12 +6345,14 @@ class Component extends DCLogic {
       // Leaving the study. Blank reason means still active, so an untouched household
       // behaves exactly as before. Picking a reason reveals the month, which is the
       // field that actually does the work — see hhExpected.
-      { ...choice("exit_reason", "Stopped — reason", ["Moved away", "Too closed", "Refused"]),
-        isChoice: false, isNarrowChoice: true, narrow: true, clearable: true,
+      // Full width, not narrow: on a phone a half-width choice row put the three reason
+      // buttons and the month box in the same grid cell, overlapping each other.
+      { ...choice("exit_reason", "Stopped", ["Moved away", "Too closed", "Refused"]),
+        clearable: true,
         clear: () => this.setState((p) => ({ form: { ...p.form, exit_reason: "", active_to: "" }, error: "" })) },
     ].concat(form.exit_reason ? [
-      { ...txt("active_to", "Active until (report month)", { placeholder: "2026-08", inputmode: "numeric" }),
-        inline: true,
+      { ...txt("active_to", "Active until", { placeholder: "2026-08", inputmode: "numeric" }),
+        wide: true,
         value: String(form.active_to || ""),
         onChange: (e) => {
           // YYYY-MM as it is typed, so the dash never has to be found on a Khmer keypad.
@@ -6292,8 +6360,8 @@ class Component extends DCLogic {
           const v = d.length > 4 ? d.slice(0, 4) + "-" + d.slice(4) : d;
           this.setState((p) => ({ form: { ...p.form, active_to: v }, error: "" }));
         } },
-      { label: "", isNote: true, value: "ចាប់ពីខែបន្ទាប់ ខ្នងផ្ទះនេះនឹងមិនរាប់ថាខ្វះទេ · From the month after this,"
-        + " the household stops counting as incomplete. Its records stay, and earlier report months are unchanged." },
+      { label: "", isNote: true, narrow: true,
+        value: "ខែចុងក្រោយដែលរាប់ · last month still counted" },
     ] : []));
     if (type === "install") return [
       dateField, timeField,
@@ -6398,7 +6466,14 @@ class Component extends DCLogic {
       ].concat(
       form.source_id && this.sourceIsOvitrap(form.source_id)
         ? [txt("eggs", "Eggs counted", { type: "number", inputmode: "numeric", placeholder: "0" })] : [],
-      this.showsTallies(form) ? [
+      // Reared material is a choice, because the tube may have been read as immatures
+      // or kept until the adults came out; anything else states the stage it must be.
+      this.showsTallies(form) && this.canEmerge(form) ? [
+      { ...choice("specimen_stage", "Specimen stage", LAB_STAGES.map(([v]) => v)), wide: true },
+      { label: "", isNote: true, value: form.specimen_stage === EMERGED
+        ? "\u1798\u17bc\u179f\u1785\u17c1\u1789\u1796\u17b8\u178a\u1784\u17d2\u1780\u17bc\u179c \u00b7 emerged \u2014 species and sex, not a trap catch"
+        : "\u1794\u1784\u17d2\u1780\u17be\u178f\u1796\u17b8\u1796\u1784/\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 reared \u2014 species only, no sex" },
+      ] : this.showsTallies(form) ? [
       { label: "Specimen stage", isNote: true, value: this.stageForForm(form) === "Larvae"
         ? "\u1794\u1784\u17d2\u1780\u17be\u178f\u1796\u17b8\u1796\u1784/\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 reared \u2014 species only, no sex"
         : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799 \u00b7 adult \u2014 species and sex" },
@@ -6555,7 +6630,7 @@ class Component extends DCLogic {
       const rows = (h._rows || []).filter((r) => r.period_month === effRound);
       return ACTS_ALL.every((t) => rows.some((r) => (r.form_type || r.type) === t));
     };
-    const hhFiltered = hhList.filter((h) => {
+    const hhScope = hhList.filter((h) => {
       if (activeProv && (provKey(h.province_code) || h.province) !== activeProv) return false;
       if (activeComm && h.commune !== activeComm) return false;
       if (activeVill && h.village !== activeVill) return false;
@@ -6564,6 +6639,13 @@ class Component extends DCLogic {
       return [h.household_id, h.head, h.village, h.commune, h.district, h.province,
         h.address, h.trap_ids].join(" ").toLowerCase().indexOf(q) >= 0;
     });
+    // The stopped tick comes last so its count describes exactly the rows the other
+    // filters left. It is one side or the other, never both: the default list is the
+    // houses still in the study, and ticking it swaps to the stopped ones. hhStopped is
+    // judged on the house, not on the month on screen, so a house that has stopped reads
+    // as stopped even while looking at a round it was still active in.
+    const hhFiltered = hhScope.filter((h) =>
+      this.hhStopped(h) === !!s.hhStoppedOnly);
     const current = s.hhId ? hhList.find((h) => h.household_id === s.hhId) : null;
     const titles = {
       home: ["ការប្រមូលទិន្នន័យបាណកសាស្រ្ត", "Entomology field \u00b7 Wolbachia \u00b7 v1"],
@@ -6958,6 +7040,24 @@ class Component extends DCLogic {
             : "តម្រងមិនទាន់គ្រប់ · show only households not yet complete this report month",
         };
       })(this, s, hhList, hhComplete),
+      // One small tick beside the List / Map switch: off, the list and the map hold the
+      // houses still in the study; on, the stopped ones instead. The count is of the
+      // stopped houses the other filters left in scope, so it says what ticking is worth
+      // — and, while ticked, how many are on screen.
+      ...(function (self, st, scope, isStopped) {
+        const only = st.hhStoppedOnly === true;
+        return {
+          toggleHhStopped: () => self.setState((p) => ({ hhStoppedOnly: !p.hhStoppedOnly })),
+          hhStoppedMark: only ? "✓" : "",
+          hhStoppedCount: String(scope.filter(isStopped).length),
+          hhStoppedFg: only ? "#7C1220" : "#767676",
+          hhStoppedBoxBg: only ? "#7C1220" : "#fff",
+          hhStoppedBoxBd: only ? "#7C1220" : "#A8B4BE",
+          hhStoppedTitle: only
+            ? "ត្រឡប់វិញ · showing the households that have stopped - tap for the active ones"
+            : "បង្ហាញតែខ្នងផ្ទះឈប់ · show the households that have stopped instead of the active ones",
+        };
+      })(this, s, hhScope, (h) => this.hhStopped(h)),
       households: (function (list, all, self, key, dir) {
         const val = (h) => key === "id" ? String(h.household_id || "")
           : key === "name" ? String(h.head || "")
@@ -7112,7 +7212,7 @@ class Component extends DCLogic {
           if (!m) return;
           const e = map[m] || (map[m] = { month: m, label: r.period_label || m, catch: 0, insp: 0, pos: 0 });
           const t = r.form_type || r.type;
-          if (t === "lab" || t === "adult") e.catch += Number(r.total_catch) || 0;
+          if ((t === "lab" || t === "adult") && !isEmergedRec(r)) e.catch += Number(r.total_catch) || 0;
           if (t === "larvae") {
             e.insp += Number(r.containers_inspected) || 0;
             e.pos += Number(r.containers_positive) || 0;
@@ -7141,7 +7241,7 @@ class Component extends DCLogic {
           if (!m) return;
           const e = byRound[m] || (byRound[m] = { m, label: r.period_label || m, catch: 0, insp: 0, pos: 0, aeg: 0, eggs: 0 });
           const t = r.form_type || r.type;
-          if (t === "lab" || t === "adult") {
+          if ((t === "lab" || t === "adult") && !isEmergedRec(r)) {
             e.catch += Number(r.total_catch) || 0;
             e.aeg += Number(r.aegypti_total) || 0;
             e.eggs += Number(r.eggs) || 0;
@@ -7226,8 +7326,11 @@ class Component extends DCLogic {
         const ADULT = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
           ["albopictus_f", "Ae. albopictus \u2640"], ["albopictus_m", "Ae. albopictus \u2642"],
           ["aedes_other", "Other Aedes spp."], ["culex", "Culex spp."], ["other", "Culex / Other"]];
+        // Trapped adults only. An emerged adult is sexed the same way but was reared
+        // from a container, so it does not belong in a trap-catch table.
         const adultLabs = hhRows.filter((r) => (r.form_type || r.type) === "lab"
-          && String(r.specimen_stage || "") !== "Larvae");
+          && String(r.specimen_stage || "") !== "Larvae"
+          && String(r.specimen_stage || "") !== EMERGED);
         const months = [];
         adultLabs.forEach((r) => {
           const m = r.period_month || String(r.collected_date || "").slice(0, 7);
