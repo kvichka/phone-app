@@ -2216,6 +2216,23 @@ function roundOf(raw, dateStr) {
   return { month: month, label: MONTHS[Number(month.slice(5, 7)) - 1] + "-" + month.slice(2, 4) };
 }
 
+// Why a location request failed, in terms a collector can act on. The browser's own
+// message is not enough on two counts: an insecure origin is reported as a permission
+// denial, and a denial says nothing about where the permission lives. isSecureContext
+// is checked first because on a page served over plain http:// - a laptop's LAN
+// address, say - there is no location to grant, whatever the phone itself allows.
+function gpsProblem(err) {
+  if (!navigator.geolocation) return "ឧបករណ៍នេះមិនអានទីតាំងបានទេ · this device cannot read a location";
+  if (!window.isSecureContext) {
+    return "រកទីតាំងមិនបាន \u00b7 open the app over https, or from localhost \u2014 a plain http:// address gives a phone no location";
+  }
+  const code = err && err.code;
+  if (code === 1) return "រកទីតាំងមិនបាន \u00b7 allow location for this site in the browser, then press Capture again";
+  if (code === 2) return "រកទីតាំងមិនបាន \u00b7 no signal here \u2014 step outside and try again";
+  if (code === 3) return "រកទីតាំងមិនបាន \u00b7 timed out \u2014 try Capture again";
+  return (err && err.message) || "រកទីតាំងមិនបាន";
+}
+
 function isoWeek(d) {
   const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   const day = t.getUTCDay() || 7;
@@ -3697,8 +3714,8 @@ class Component extends DCLogic {
   // can be asked to do all day.
   toggleFollow(map, layerKey, btn) {
     if (this._watchId != null) { this.stopFollow(); return; }
-    if (!navigator.geolocation) {
-      this.toast("ឧបករណ៍នេះមិនអានទីតាំងបានទេ · this device cannot read a location", "warn");
+    if (!navigator.geolocation || !window.isSecureContext) {
+      this.toast(gpsProblem(null), "warn");
       return;
     }
     this._followMap = map;
@@ -3711,7 +3728,7 @@ class Component extends DCLogic {
       (pos) => this.onFollowFix(pos),
       (err) => {
         this.stopFollow();
-        this.toast("រកទីតាំងមិនបាន · " + (err && err.message ? err.message : "location unavailable"), "warn");
+        this.toast(gpsProblem(err), "warn");
       },
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 2000 }
     );
@@ -3758,8 +3775,8 @@ class Component extends DCLogic {
   locateMe(map, layer) {
     const L = window.L;
     if (!map || !layer || !L) return;
-    if (!navigator.geolocation) {
-      this.toast("ឧបករណ៍នេះមិនអានទីតាំងបានទេ · this device cannot read a location", "warn");
+    if (!navigator.geolocation || !window.isSecureContext) {
+      this.toast(gpsProblem(null), "warn");
       return;
     }
     this.toast("កំពុងរកទីតាំង · finding your location…", "ok");
@@ -3782,7 +3799,7 @@ class Component extends DCLogic {
         map.setView([lat, lon], Math.max(map.getZoom(), 16));
         this.toast("ទីតាំងខ្ញុំ · ±" + acc + " m", "ok");
       },
-      (err) => this.toast("រកទីតាំងមិនបាន · " + (err && err.message ? err.message : "location unavailable"), "warn"),
+      (err) => this.toast(gpsProblem(err), "warn"),
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
     );
   }
@@ -4204,11 +4221,16 @@ class Component extends DCLogic {
   bump = (k, d) => () => this.setState((p) => ({ form: { ...p.form, [k]: Math.max(0, (Number(p.form[k]) || 0) + d) } }));
 
   captureGps = () => {
-    if (!navigator.geolocation) { this.setState({ gps: { err: "No GPS on this device" } }); return; }
+    // Checked before the call, not after it: an insecure page fails with a message that
+    // blames the collector's permissions, and they would then look in the wrong place.
+    if (!navigator.geolocation || !window.isSecureContext) {
+      this.setState({ gps: { err: gpsProblem(null) } });
+      return;
+    }
     this.setState({ gps: { pending: true } });
     navigator.geolocation.getCurrentPosition(
       (pos) => this.setState({ gps: { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy, t: Date.now() } }),
-      (err) => this.setState({ gps: { err: err.message || "Location unavailable" } }),
+      (err) => this.setState({ gps: { err: gpsProblem(err) } }),
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
     );
   };
