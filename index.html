@@ -2824,8 +2824,20 @@ class Component extends DCLogic {
     this._nav = (this._nav || []).concat([prev]).slice(-5);
   }
 
+  // Every way out of a form has to pass the same guard. The bottom tabs used to set the
+  // screen directly, which stranded "Add more" entries as drafts: a draft stays in local
+  // storage, is skipped by every sync path and by the waiting-to-sync count, and so never
+  // reaches the sheet — while the collector can see it listed under the form and has good
+  // reason to think it is saved. pendingNav remembers where they were heading, so the
+  // Leave dialog still takes them there once the queue is settled.
+  goScreen = (name) => {
+    if (this.state.screen === name) return;
+    if (this.hasDrafts()) return this.setState({ showLeave: true, pendingNav: name });
+    this.setState({ screen: name, error: "" });
+  };
+
   goBack = () => {
-    if (this.hasDrafts()) return this.setState({ showLeave: true });
+    if (this.hasDrafts()) return this.setState({ showLeave: true, pendingNav: "" });
     const stack = this._nav || [];
     const prev = stack.pop();
     this._nav = stack;
@@ -4665,6 +4677,10 @@ class Component extends DCLogic {
               ...this.blankForm(p.type),
               house: form.house || "",
               collected_date: form.collected_date,
+              // blankForm carries a date but no time — only open() stamps that — so the
+              // next entry came up with an empty Time box. Each one is stamped as it is
+              // started, which is what the box is meant to show.
+              collected_time: new Date().toTimeString().slice(0, 5),
               _village: form._village || "",
               _srcHouse: form._srcHouse || "",
               _srcType: form._srcType || "",
@@ -4958,7 +4974,10 @@ class Component extends DCLogic {
   // dashboard apply, so what downloads is what is plotted.
   exportHhGps = () => {
     const s = this.state;
-    const at = (r, level, code) => !code || String(r[level + "_code"] || r[level] || "") === String(code);
+    // Compared bare on both sides: the same place arrives as "02" from a phone and as 2
+    // from the sheet, and a raw comparison drops whichever half the option did not carry.
+    const at = (r, level, code) => !code
+      || this.bareCode(r[level + "_code"] || r[level] || "") === this.bareCode(code);
     const keep = {};
     this.state.records.forEach((r) => {
       if (at(r, "province", s.dashProv) && at(r, "district", s.dashDist)
@@ -5528,13 +5547,17 @@ class Component extends DCLogic {
   // Options for one admin level, taken from the records themselves and narrowed by the level above.
   adminOptions(level, parentLevel, parentCode) {
     const seen = [], out = [];
-    // Google Sheets returns codes as numbers, dropping the leading zero ("02" -> 2),
-    // so every comparison here is made on strings.
+    // Google Sheets returns codes as numbers, dropping the leading zero ("02" -> 2), so
+    // one village reaches this list both ways: "0203030500" typed on a phone and
+    // 203030500 read back from the sheet. Keyed on the raw value they became two options
+    // with the same name, each filtering to its own half — រំចេក ៥ showed 8 records under
+    // one and 107 under the other, and neither was the village. Codes are compared,
+    // de-duplicated and emitted bare, which is the form the filters already match on.
     this.state.records.forEach((r) => {
-      const code = String(r[level + "_code"] || r[level] || "");
+      const code = this.bareCode(r[level + "_code"] || r[level] || "");
       if (!code) return;
       if (parentLevel && parentCode
-        && String(r[parentLevel + "_code"] || r[parentLevel] || "") !== String(parentCode)) return;
+        && this.bareCode(r[parentLevel + "_code"] || r[parentLevel] || "") !== this.bareCode(parentCode)) return;
       if (seen.indexOf(code) >= 0) return;
       seen.push(code);
       out.push({ value: code, label: (r[level] || code) });
@@ -5618,8 +5641,10 @@ class Component extends DCLogic {
 
   dashboard() {
     const s = this.state;
+    // Bare on both sides — see adminOptions: one village reaches the records both as
+    // "0203030500" and as 203030500, and a raw match shows only one of the two halves.
     const at = (r, level, code) => !code
-      || String(r[level + "_code"] || r[level] || "") === String(code);
+      || this.bareCode(r[level + "_code"] || r[level] || "") === this.bareCode(code);
     // The report month narrows the whole dashboard the same way the area filters do,
     // so every figure below reads for one round rather than for all of them at once.
     const inMonth = (r) => !s.dashMonth
@@ -6991,7 +7016,7 @@ class Component extends DCLogic {
       setDashMonth: (e) => this.setState({ dashMonth: e.target.value }),
       clearDash: () => this.setState({ dashProv: "", dashDist: "", dashComm: "", dashVill: "", dashMonth: "" }),
       isHh: s.screen === "hh", isHhDetail: s.screen === "hhdetail" && !!current,
-      openHh: () => this.setState({ screen: "hh" }),
+      openHh: () => this.goScreen("hh"),
       hhQuery: s.hhQuery,
       setHhQuery: (e) => this.setState({ hhQuery: e.target.value }),
       clearHhQuery: () => this.setState({ hhQuery: "", hhProv: "", hhComm: "", hhVill: "" }),
@@ -8229,7 +8254,8 @@ class Component extends DCLogic {
         this.commitDrafts();
         this.setState({
           showLeave: false, savedTraps: [], savedCount: 0, savedInSession: false,
-          screen: s.returnTo === "hhdetail" ? "hhdetail" : "home", error: "", editId: "",
+          screen: s.pendingNav || (s.returnTo === "hhdetail" ? "hhdetail" : "home"),
+          pendingNav: "", error: "", editId: "",
         });
         this.toast("\u1794\u17b6\u1793\u179a\u1780\u17d2\u179f\u17b6\u1791\u17bb\u1780 \u00b7 saved", "ok");
       },
@@ -8237,12 +8263,13 @@ class Component extends DCLogic {
         this.discardDrafts();
         this.setState({
           showLeave: false,
-          screen: s.returnTo === "hhdetail" ? "hhdetail" : "home", error: "", editId: "",
+          screen: s.pendingNav || (s.returnTo === "hhdetail" ? "hhdetail" : "home"),
+          pendingNav: "", error: "", editId: "",
         });
         this.toast("\u1794\u17b6\u1793\u1794\u17c4\u17c7\u1794\u1784\u17cb \u00b7 discarded", "warn");
       },
-      leaveStay: () => this.setState({ showLeave: false }),
-      openData: () => this.setState({ screen: "data" }),
+      leaveStay: () => this.setState({ showLeave: false, pendingNav: "" }),
+      openData: () => this.goScreen("data"),
       openHousehold: () => this.open("household"),
       openInstall: () => this.open("install"),
       openCollect: () => this.open("collect"),
@@ -8876,8 +8903,8 @@ class Component extends DCLogic {
       tabDataInd: s.screen === "data" ? "#117996" : "transparent",
       tabDataBg: s.screen === "data" ? "#EAF3F7" : "#fff",
       goRecord: () => this.setState({ screen: "home" }),
-      goHh: () => this.setState({ screen: "hh" }),
-      goDash: () => this.setState({ screen: "dash" }),
+      goHh: () => this.goScreen("hh"),
+      goDash: () => this.goScreen("dash"),
       goData: () => this.setState({ screen: "data" }),
       ...(function (list, records, self) {
         const byVillage = {};
@@ -8922,10 +8949,10 @@ class Component extends DCLogic {
       recCount: s.records.length,
       waitingResults: waitingResults,
       tabs: [
-        { label: "\u1780\u178f\u17cb\u178f\u17d2\u179a\u17b6", sub: "Record", go: () => this.setState({ screen: "home" }), ind: s.screen === "home" ? "#117996" : "transparent", fg: s.screen === "home" ? "#003E78" : "#767676" },
-        { label: "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7 " + hhList.length, sub: "Households", go: () => this.setState({ screen: "hh" }), ind: s.screen === "hh" || s.screen === "hhdetail" ? "#117996" : "transparent", fg: s.screen === "hh" || s.screen === "hhdetail" ? "#003E78" : "#767676" },
-        { label: "\u1795\u17d2\u1791\u17b6\u17c6\u1784", sub: "Dashboard", go: () => this.setState({ screen: "dash" }), ind: s.screen === "dash" ? "#117996" : "transparent", fg: s.screen === "dash" ? "#003E78" : "#767676" },
-        { label: "\u179b\u1791\u17d2\u1792\u1795\u179b " + waitingResults, sub: "Results", go: () => this.setState({ screen: "data" }), ind: s.screen === "data" ? "#117996" : "transparent", fg: s.screen === "data" ? "#003E78" : "#767676" },
+        { label: "\u1780\u178f\u17cb\u178f\u17d2\u179a\u17b6", sub: "Record", go: () => this.goScreen("home"), ind: s.screen === "home" ? "#117996" : "transparent", fg: s.screen === "home" ? "#003E78" : "#767676" },
+        { label: "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7 " + hhList.length, sub: "Households", go: () => this.goScreen("hh"), ind: s.screen === "hh" || s.screen === "hhdetail" ? "#117996" : "transparent", fg: s.screen === "hh" || s.screen === "hhdetail" ? "#003E78" : "#767676" },
+        { label: "\u1795\u17d2\u1791\u17b6\u17c6\u1784", sub: "Dashboard", go: () => this.goScreen("dash"), ind: s.screen === "dash" ? "#117996" : "transparent", fg: s.screen === "dash" ? "#003E78" : "#767676" },
+        { label: "\u179b\u1791\u17d2\u1792\u1795\u179b " + waitingResults, sub: "Results", go: () => this.goScreen("data"), ind: s.screen === "data" ? "#117996" : "transparent", fg: s.screen === "data" ? "#003E78" : "#767676" },
       ],
     };
   }
