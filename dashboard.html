@@ -586,6 +586,33 @@ const PLACE_ALIAS = {
     "Numkiem": ["0203020600", "នំក្រៀប"], "Ocheay": ["0203020400", "អូរខ្ជាយ"] },
 };
 const LEVELS = ["province", "district", "commune", "village"];
+
+// The filters name a place in Khmer only, because that is what the records carry.
+// PLACE_ALIAS is keyed the other way - English name to [code, Khmer] - so it is inverted
+// once here. The key is the bare code: the same place reaches the records both as
+// "0203030500" and as 203030500, and the code is the only part that is stable across
+// spellings. A place the alias table does not cover keeps its Khmer name alone rather
+// than being given an invented English one.
+const PLACE_EN = (function () {
+  const bare = (v) => String(v == null ? "" : v).trim().replace(/^0+/, "");
+  const out = { province: {}, district: {}, commune: {}, village: {} };
+  LEVELS.forEach((lvl) => {
+    const tbl = PLACE_ALIAS[lvl] || {};
+    Object.keys(tbl).forEach((en) => {
+      const code = bare(tbl[en][0]);
+      // several English spellings share one code; the first listed is the one shown
+      if (code && !out[lvl][code]) out[lvl][code] = en;
+    });
+  });
+  return out;
+})();
+
+function placeLabel(level, code, km) {
+  const bare = String(code == null ? "" : code).trim().replace(/^0+/, "");
+  const name = String(km || code || "");
+  const en = (PLACE_EN[level] || {})[bare];
+  return en && en !== name ? name + " · " + en : name;
+}
 const padTo = { province: 2, district: 4, commune: 6, village: 10 };
 
 function isLarval(r) {
@@ -1072,7 +1099,7 @@ class Component extends DCLogic {
       if (parent && parent[1] && this.code(parent[0], r) !== parent[1]) return;
       if (seen[code]) return;
       seen[code] = 1;
-      out.push({ value: code, label: r[level] || code });
+      out.push({ value: code, label: placeLabel(level, code, r[level]) });
     });
     return out.sort((a, b) => String(a.label).localeCompare(String(b.label)));
   }
