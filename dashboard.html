@@ -240,7 +240,7 @@ canvas{max-height:320px;max-width:100%}
         <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">សូចនាករមូសពេញវ័យ <span style="font-weight:400;color:#9AA5AE">Adult survey indicators</span></div>
         <sc-for list="{{ adultIndicators }}" as="r" hint-placeholder-count="4">
           <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:13px">
-            <span><sc-for list="{{ r.labelParts }}" as="p" hint-placeholder-count="1"><span style="font-style:{{ p.sty }}">{{ p.t }}</span></sc-for></span><span style="font-weight:700;color:#003E78">{{ r.value }}</span>
+            <span><sc-for list="{{ r.labelParts }}" as="p" hint-placeholder-count="1"><span style="font-style:{{ p.sty }}">{{ p.t }}</span></sc-for></span><span style="flex:none;text-align:right;white-space:nowrap"><span style="font-weight:700;color:#003E78">{{ r.value }}</span><span style="display:block;font-weight:400;font-size:11px;color:#767676;line-height:1.2">{{ r.of }}</span></span>
           </div>
         </sc-for>
       </div>
@@ -248,7 +248,7 @@ canvas{max-height:320px;max-width:100%}
         <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">សូចនាករដង្កូវទឹក <span style="font-weight:400;color:#9AA5AE">Larval survey indicators</span></div>
         <sc-for list="{{ larvalIndicators }}" as="r" hint-placeholder-count="4">
           <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:13px">
-            <span><sc-for list="{{ r.labelParts }}" as="p" hint-placeholder-count="1"><span style="font-style:{{ p.sty }}">{{ p.t }}</span></sc-for></span><span style="font-weight:700;color:#003E78">{{ r.value }}</span>
+            <span><sc-for list="{{ r.labelParts }}" as="p" hint-placeholder-count="1"><span style="font-style:{{ p.sty }}">{{ p.t }}</span></sc-for></span><span style="flex:none;text-align:right;white-space:nowrap"><span style="font-weight:700;color:#003E78">{{ r.value }}</span><span style="display:block;font-weight:400;font-size:11px;color:#767676;line-height:1.2">{{ r.of }}</span></span>
           </div>
         </sc-for>
       </div>
@@ -1254,33 +1254,6 @@ class Component extends DCLogic {
     }).sort((a, b) => b.ci - a.ci || b.adults - a.adults);
   }
 
-  // Which container each reared tube was dipped from. Only the immatures carry this: the
-  // app asks for it on a tube from a larval collection, so a tube resulted before that
-  // question existed has nothing to say. Those go to a "not recorded" bucket rather than
-  // being dropped, because a chart that quietly omitted them would read as though the
-  // containers on it accounted for every larva identified. Every container stays on the
-  // axis even at zero, so the shape does not shift under the reader as entries arrive.
-  byContainer(rows) {
-    const keys = CONTAINERS.map(([k]) => k).concat(["\u2014"]);
-    const map = {};
-    keys.forEach((k) => {
-      map[k] = { key: k, aeg: 0, alb: 0, aedesOther: 0, culexOther: 0, tubes: 0 };
-    });
-    rows.forEach((r) => {
-      if (this.type(r) !== "lab" || !isLarval(r)) return;
-      const c = map[String(r.container || "").trim()] || map["\u2014"];
-      c.tubes += 1;
-      c.aeg += num(r.aegypti);
-      c.alb += num(r.albopictus);
-      c.aedesOther += num(r.aedes_other);
-      c.culexOther += num(r.culex) + num(r.other);
-    });
-    return keys.map((k) => {
-      const c = map[k];
-      c.total = c.aeg + c.alb + c.aedesOther + c.culexOther;
-      return c;
-    });
-  }
 
   // A lab result belongs to the trap that produced it: follow source_id back to the
   // collection, then to that trap's installation.
@@ -1545,9 +1518,6 @@ class Component extends DCLogic {
 
     if (t === "epi") return this.epiSpecs(rows);
     if (t === "larval") {
-      const contSp = this.byContainer(rows);
-      // "not recorded" last, after the seven types in the order the form asks them
-      const contSpLabels = contLabels().concat(["\u1798\u17b7\u1793\u1794\u17b6\u1793\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 n/a"]);
       const contInsp = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["inspected_" + k]), 0));
       const contPos = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["positive_" + k]), 0));
       return [
@@ -1571,6 +1541,14 @@ class Component extends DCLogic {
         // What actually came out of the reared tubes, by species and sex. Kept on the
         // larval tab because that is where the material came from, and out of the adult
         // charts because these were never host-seeking.
+        // What the immatures themselves were. The overview's composition doughnut adds
+        // both stages together, so nothing on this tab said what the larvae were; the
+        // larval keys are unsexed, which is why this is species alone.
+        { key: "larvSp", title: "ប្រភេទដង្កូវទឹក", titleEn: "Immatures identified by species",
+          spec: { type: "bar", data: { labels: SPECIES_LABELS,
+            datasets: [{ label: "ដង្កូវទឹក · Immatures",
+              data: [sp.larvAeg, sp.larvAlb, sp.larvAedesOther, sp.larvCulexOther],
+              backgroundColor: SPECIES_COLORS, borderRadius: 3 }] } } },
         { key: "emerged", title: "មូសចេញពីដង្កូវ", titleEn: "Emerged adults — species and sex, reared from immatures",
           // Only the two Aedes are sexed; Other Aedes spp. and Culex / Other are single
           // counts in the app, so they get their own series rather than being drawn as
@@ -1590,21 +1568,6 @@ class Component extends DCLogic {
             { label: SPECIES_LABELS[1], data: take((v) => v.emgAlb), backgroundColor: SPECIES_COLORS[1], borderRadius: 3, stack: "s" },
             { label: SPECIES_LABELS[2], data: take((v) => v.emgAedesOther), backgroundColor: SPECIES_COLORS[2], borderRadius: 3, stack: "s" },
             { label: SPECIES_LABELS[3], data: take((v) => v.emgCulexOther), backgroundColor: SPECIES_COLORS[3], borderRadius: 3, stack: "s" }] } } },
-        { key: "emergedRound", title: "មូសចេញពីដង្កូវតាមជុំ", titleEn: "Emerged adults by report month",
-          textLabels: monLabels,
-          spec: { type: "bar", data: { labels: monLabelsShort, datasets: [
-            { label: "មូសចេញពីដង្កូវ · Emerged", data: mon.map((m) => m.emerged),
-              backgroundColor: "#6B4C7A", borderRadius: 3 }] } } },
-        // The point of the container tick on the lab form: which species came out of
-        // which kind of container. Same species stack and colours as the other species
-        // charts, so all three read alike.
-        { key: "spByCont", title: "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780\u178f\u17b6\u1798\u1797\u17b6\u1787\u1793\u17cd",
-          titleEn: "Immatures identified by container type",
-          spec: { type: "bar", data: { labels: contSpLabels, datasets: [
-            { label: SPECIES_LABELS[0], data: contSp.map((c) => c.aeg), backgroundColor: SPECIES_COLORS[0], borderRadius: 3, stack: "s" },
-            { label: SPECIES_LABELS[1], data: contSp.map((c) => c.alb), backgroundColor: SPECIES_COLORS[1], borderRadius: 3, stack: "s" },
-            { label: SPECIES_LABELS[2], data: contSp.map((c) => c.aedesOther), backgroundColor: SPECIES_COLORS[2], borderRadius: 3, stack: "s" },
-            { label: SPECIES_LABELS[3], data: contSp.map((c) => c.culexOther), backgroundColor: SPECIES_COLORS[3], borderRadius: 3, stack: "s" }] } } },
       ];
     }
     if (t === "adult") {
@@ -1759,6 +1722,13 @@ class Component extends DCLogic {
       const i = top(tot);
       return labels[i] + " yielded the most adult mosquitoes, " + tot[i] + " of " + sum(tot) + " identified.";
     }
+    if (k === "larvSp") {
+      const v = set(0), t = sum(v);
+      if (!t) return "No immatures identified in the lab in view.";
+      const i = top(v);
+      return labels[i] + " is " + one((v[i] / t) * 100) + " percent of the " + fmt(t)
+        + " immatures identified.";
+    }
     if (k === "emerged") {
       const t = ds.reduce((x, _d, j) => x + sum(set(j)), 0);
       if (!t) return "No immatures were reared through to adult in view.";
@@ -1772,28 +1742,6 @@ class Component extends DCLogic {
       const i = top(tot);
       return labels[i] + " reared the most adults, " + tot[i] + " of " + sum(tot)
         + " emerged — these are not trap catches.";
-    }
-    if (k === "spByCont") {
-      const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
-      if (!sum(tot)) return "No immatures identified in view.";
-      // the last bar is the tubes resulted before the container was asked for
-      const unk = tot[tot.length - 1];
-      const named = tot.slice(0, -1);
-      if (!sum(named)) {
-        return "None of the " + fmt(sum(tot)) + " immatures identified in view has a container "
-          + "recorded \u2014 the lab form has only just started asking. New results fill this in.";
-      }
-      const i = top(named);
-      return labels[i] + " produced the most immatures, " + fmt(named[i]) + " of " + fmt(sum(named))
-        + " with a container recorded"
-        + (unk ? ", and " + fmt(unk) + " were identified before the container was asked for." : ".");
-    }
-    if (k === "emergedRound") {
-      const v = set(0);
-      if (!sum(v)) return "No immatures were reared through to adult in view.";
-      const i = v.length - 1;
-      return labels[i] + " reared " + v[i] + " adults out of the immatures collected, "
-        + sum(v) + " across all rounds in view.";
     }
     if (k === "sexSplit") {
       const f = set(0), m = set(1), t = f[0] + m[0];
@@ -1911,6 +1859,13 @@ class Component extends DCLogic {
       const i = top(tot);
       return labels[i] + " ចាប់បានមូសពេញវ័យច្រើនជាងគេ " + fmt(tot[i]) + " ក្នុងចំណោម " + fmt(sum(tot)) + "។";
     }
+    if (k === "larvSp") {
+      const v = set(0), t = sum(v);
+      if (!t) return "គ្មានដង្កូវទឹកកំណត់ដោយមន្ទីរពិសោធន៍ទេ។";
+      const i = top(v);
+      return labels[i] + " មាន " + one((v[i] / t) * 100) + "% នៃដង្កូវទឹក " + fmt(t)
+        + " ដែលបានកំណត់។";
+    }
     if (k === "emerged") {
       const t = ds.reduce((x, _d, j) => x + sum(set(j)), 0);
       if (!t) return "គ្មានដង្កូវទឹកចេញជាមូសពេញវ័យក្នុងទិដ្ឋភាពនេះទេ។";
@@ -1924,25 +1879,6 @@ class Component extends DCLogic {
       const i = top(tot);
       return labels[i] + " មានមូសចេញពីដង្កូវច្រើនជាងគេ " + fmt(tot[i])
         + " ក្នុងចំណោម " + fmt(sum(tot)) + " ដែលមិនមែនជាមូសចាប់បានពីអន្ទាក់។";
-    }
-    if (k === "spByCont") {
-      const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
-      if (!sum(tot)) return "\u1782\u17d2\u1798\u17b6\u1793\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780\u1780\u17d2\u1793\u17bb\u1784\u1791\u17b7\u178a\u17d2\u178b\u1797\u17b6\u1796\u1793\u17c1\u17c7\u17d4";
-      const unk = tot[tot.length - 1];
-      const named = tot.slice(0, -1);
-      if (!sum(named)) return "\u1798\u17b7\u1793\u1794\u17b6\u1793\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1797\u17b6\u1787\u1793\u17cd " + fmt(sum(tot)) + "\u17d4";
-      const i = top(named);
-      return "\u1797\u17b6\u1787\u1793\u17cd\u1794\u17d2\u179a\u1797\u17c1\u1791 " + labels[i] + " \u1798\u17b6\u1793\u178a\u1784\u17d2\u1780\u17bc\u179c\u1785\u17d2\u179a\u17be\u1793\u1787\u17b6\u1784\u1782\u17c1\u17d6 " + fmt(named[i])
-        + " \u1780\u17d2\u1793\u17bb\u1784\u1785\u17c6\u178e\u17c4\u1798 " + fmt(sum(named))
-        + (unk ? " \u00b7 \u1798\u17b7\u1793\u1794\u17b6\u1793\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 " + fmt(unk) : "")
-        + "\u17d4";
-    }
-    if (k === "emergedRound") {
-      const v = set(0);
-      if (!sum(v)) return "គ្មានដង្កូវទឹកចេញជាមូសពេញវ័យក្នុងទិដ្ឋភាពនេះទេ។";
-      const i = v.length - 1;
-      return "ជុំ " + labels[i] + " មានមូសចេញពីដង្កូវ " + fmt(v[i]) + " ក្បាល សរុប "
-        + fmt(sum(v)) + " ក្បាលក្នុងគ្រប់ជុំ។";
     }
     if (k === "sexSplit") {
       const f = set(0), m = set(1), t = f[0] + m[0];
@@ -2096,7 +2032,7 @@ class Component extends DCLogic {
       const k = this.monthKey(r);
       if (!k) return;
       const m = map[k] || (map[k] = { key: k, insp: 0, pos: 0, installs: 0, collects: 0, labs: 0,
-        eggs: 0, adults: 0, emerged: 0, emergedTubes: 0, houses: {} });
+        eggs: 0, adults: 0, houses: {} });
       const t = this.type(r);
       if (r.household_id) m.houses[r.household_id] = 1;
       if (t === "install") m.installs += 1;
@@ -2104,9 +2040,9 @@ class Component extends DCLogic {
       if (t === "lab") {
         m.labs += 1;
         m.eggs += num(r.eggs);
-        // reared adults kept out of m.adults so the round's catch is not counted twice
-        if (isEmerged(r)) { m.emerged += num(r.total_catch); m.emergedTubes += 1; }
-        else m.adults += num(r.total_catch);
+        // A reared tube re-counts larvae already counted, so it is skipped rather than
+        // added: the round's catch would otherwise hold the same insects twice.
+        if (!isEmerged(r)) m.adults += num(r.total_catch);
       }
       if (t === "larvae") { m.insp += num(r.containers_inspected); m.pos += num(r.containers_positive); }
     });
@@ -2336,6 +2272,11 @@ class Component extends DCLogic {
     const insp = hh.reduce((a, h) => a + h.insp, 0);
     const pos = hh.reduce((a, h) => a + h.pos, 0);
     const inspected = hh.filter((h) => h.larvaeRecords > 0);
+    // A percentage alone invites the question it cannot answer - 92.3% of what? - and
+    // these indices do not share a denominator: CI is over containers, HI only over the
+    // houses that actually had a survey, and the species shares are over the catch. Each
+    // one carries its own fraction so the reader never has to assume which.
+    const over = (a, b, unit) => (b ? fmt(a) + " / " + fmt(b) + (unit ? " " + unit : "") : "");
     const tabs = [["overview", "ទូទៅ · Overview"], ["larval", "ដង្កូវទឹក · Larvae"],
       ["adult", "មូសពេញវ័យ · Adults"], ["ovitrap", "អន្ទាក់ពង · Ovitrap"],
       ["map", "ផែនទី · Map"], ["epi", "ជំងឺរាតត្បាត · Epidemiology"]];
@@ -2467,30 +2408,31 @@ class Component extends DCLogic {
       }),
       showTables: s.tab === "overview",
       adultIndicators: [
-        { ico: "mosquito", label: "Ae. aegypti", value: sp.adultTotal ? Math.round((sp.adultAeg / sp.adultTotal) * 1000) / 10 + "%" : "—" },
-        { ico: "mosquito", label: "Ae. albopictus", value: sp.adultTotal ? Math.round((sp.adultAlb / sp.adultTotal) * 1000) / 10 + "%" : "—" },
-        { ico: "mosquito", label: "Other Aedes spp.", value: sp.adultTotal ? Math.round((sp.aedesOther / sp.adultTotal) * 1000) / 10 + "%" : "—" },
-        { ico: "mosquito", label: "Culex / Other", value: sp.adultTotal ? Math.round((sp.culexOther / sp.adultTotal) * 1000) / 10 + "%" : "—" },
-        { label: "Female Ae. aegypti", value: sp.adultAeg ? Math.round((sp.femaleAeg / sp.adultAeg) * 1000) / 10 + "%" : "—" },
-        { label: "Female Ae. albopictus", value: sp.adultAlb ? Math.round((sp.femaleAlb / sp.adultAlb) * 1000) / 10 + "%" : "—" },
+        { ico: "mosquito", label: "Ae. aegypti", value: sp.adultTotal ? Math.round((sp.adultAeg / sp.adultTotal) * 1000) / 10 + "%" : "—",
+          of: over(sp.adultAeg, sp.adultTotal) },
+        { ico: "mosquito", label: "Ae. albopictus", value: sp.adultTotal ? Math.round((sp.adultAlb / sp.adultTotal) * 1000) / 10 + "%" : "—",
+          of: over(sp.adultAlb, sp.adultTotal) },
+        { ico: "mosquito", label: "Other Aedes spp.", value: sp.adultTotal ? Math.round((sp.aedesOther / sp.adultTotal) * 1000) / 10 + "%" : "—",
+          of: over(sp.aedesOther, sp.adultTotal) },
+        { ico: "mosquito", label: "Culex / Other", value: sp.adultTotal ? Math.round((sp.culexOther / sp.adultTotal) * 1000) / 10 + "%" : "—",
+          of: over(sp.culexOther, sp.adultTotal) },
+        { label: "Female Ae. aegypti", value: sp.adultAeg ? Math.round((sp.femaleAeg / sp.adultAeg) * 1000) / 10 + "%" : "—",
+          of: over(sp.femaleAeg, sp.adultAeg) },
+        { label: "Female Ae. albopictus", value: sp.adultAlb ? Math.round((sp.femaleAlb / sp.adultAlb) * 1000) / 10 + "%" : "—",
+          of: over(sp.femaleAlb, sp.adultAlb) },
       ].map((r) => ({ ...r, labelParts: sciParts(r.label) })),
       larvalIndicators: [
-        { label: "Container index (CI)", value: insp ? Math.round((pos / insp) * 1000) / 10 + "%" : "—" },
-        { label: "House index (HI)", value: inspected.length ? Math.round((inspected.filter((h) => h.positiveHouse).length / inspected.length) * 1000) / 10 + "%" : "—" },
+        { label: "Container index (CI)", value: insp ? Math.round((pos / insp) * 1000) / 10 + "%" : "—",
+          of: over(pos, insp, "containers") },
+        { label: "House index (HI)", value: inspected.length ? Math.round((inspected.filter((h) => h.positiveHouse).length / inspected.length) * 1000) / 10 + "%" : "—",
+          of: over(inspected.filter((h) => h.positiveHouse).length, inspected.length, "houses surveyed") },
         { label: "Containers inspected", value: fmt(insp) },
         { label: "Containers positive", value: fmt(pos) },
         { label: "Reared Ae. aegypti", value: fmt(sp.larvAeg) },
-        // How far the container column has filled in, so a thin chart is read as a thin
-        // column rather than as a real absence of larvae in those containers.
-        ...(function (cont) {
-          const tubes = cont.reduce((a, c) => a + c.tubes, 0);
-          const known = tubes - cont[cont.length - 1].tubes;
-          return [{ label: "Immatures with a container recorded",
-            value: tubes ? fmt(known) + " of " + fmt(tubes) + " tubes" : "\u2014" }];
-        })(this.byContainer(rows)),
         { label: "Emerged adults", value: fmt(sp.emergedTotal) },
         { label: "Female of emerged Ae. aegypti", value: sp.emgAeg
-          ? Math.round((sp.emgFemaleAeg / sp.emgAeg) * 1000) / 10 + "%" : "—" },
+          ? Math.round((sp.emgFemaleAeg / sp.emgAeg) * 1000) / 10 + "%" : "—",
+          of: over(sp.emgFemaleAeg, sp.emgAeg) },
       ].map((r) => ({ ...r, labelParts: sciParts(r.label) })),
       showEpi: s.tab === "epi",
       ...(function (self) {

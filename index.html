@@ -5620,14 +5620,16 @@ class Component extends DCLogic {
     const SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
       ["aegypti", "Ae. aegypti"], ["albopictus_f", "Ae. albopictus \u2640"],
       ["albopictus_m", "Ae. albopictus \u2642"], ["albopictus", "Ae. albopictus"],
-      ["aedes_other", "Other Aedes spp."], ["culex", "Culex spp."], ["other", "Culex / Other"]];
+      ["aedes_other", "Other Aedes spp."], [["culex", "other"], "Culex / Other"]];
     const COLORS = { aegypti_f: "#003E78", aegypti_m: "#117996", aegypti: "#0D6177",
       albopictus_f: "#A8C8DC", albopictus_m: "#1ED47F", albopictus: "#D5E7EF",
       aedes_other: "#7A4FA3", culex: "#F4B71B", other: "#767676" };
     const labs = (rows || []).filter((r) => (r.form_type || r.type) === "lab");
-    const list = SPECIES.map(([k, label]) => ({
-      key: k, label, n: labs.reduce((a, r) => a + (Number(r[k]) || 0), 0),
-    })).filter((r) => r.n > 0);
+    const list = SPECIES.map(([k, label]) => {
+      const keys = Array.isArray(k) ? k : [k];
+      return { key: keys[0], label,
+        n: labs.reduce((a, r) => a + keys.reduce((b, kk) => b + (Number(r[kk]) || 0), 0), 0) };
+    }).filter((r) => r.n > 0);
     const total = list.reduce((a, r) => a + r.n, 0) || 1;
     return {
       rows: list.map((r) => ({ ...r,
@@ -5866,16 +5868,28 @@ class Component extends DCLogic {
       })),
     };
 
-    // Species composition across all identified specimens (adult and larval keys).
-    const SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
-      ["aegypti", "Ae. aegypti"], ["albopictus_f", "Ae. albopictus \u2640"],
-      ["albopictus_m", "Ae. albopictus \u2642"], ["albopictus", "Ae. albopictus"],
-      ["aedes_other", "Other Aedes spp."], ["culex", "Culex spp."], ["other", "Culex / Other"]];
-    const speciesRows = SPECIES.map(([k, label]) => ({ key: k, label, n: sum(labs, k) })).filter((r) => r.n > 0);
-    const speciesTotal = speciesRows.reduce((a, r) => a + r.n, 0) || 1;
+    // Species composition, split by the stage the lab read rather than by the name of the
+    // key. aedes_other, culex and other are shared by both tallies, so partitioning on the
+    // key put every larval Other Aedes into the Adults ring - and it left the larvae ring
+    // unable to show those three at all. Emerged tubes are in neither: they re-count
+    // larvae already counted here.
+    const larvalRec = (x) => String(x.specimen_stage || "") === "Larvae";
+    const idLabs = labs.filter((x) => !isEmergedRec(x));
+    const ADULT_SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
+      ["albopictus_f", "Ae. albopictus \u2640"], ["albopictus_m", "Ae. albopictus \u2642"],
+      ["aedes_other", "Other Aedes spp."], [["culex", "other"], "Culex / Other"]];
+    const LARVAL_SPECIES = [["aegypti", "Ae. aegypti"], ["albopictus", "Ae. albopictus"],
+      ["aedes_other", "Other Aedes spp."], [["culex", "other"], "Culex / Other"]];
+    // A row may stand for one key or for a group of them - see the note on the lists.
+    const speciesRowsFor = (list, spec) => spec.map(([k, label]) => {
+      const keys = Array.isArray(k) ? k : [k];
+      return { key: keys[0], label, n: keys.reduce((a, kk) => a + sum(list, kk), 0) };
+    }).filter((r) => r.n > 0);
+    const adultSpeciesRows = speciesRowsFor(idLabs.filter((x) => !larvalRec(x)), ADULT_SPECIES);
+    const larvalSpeciesRows = speciesRowsFor(idLabs.filter(larvalRec), LARVAL_SPECIES);
     // Every swatch has to read at 10px, so the palest tints are out.
     const speciesColors = { aegypti_f: "#003E78", aegypti_m: "#117996", aegypti: "#6EDBCD",
-      albopictus_f: "#7C1220", albopictus_m: "#F4B71B", albopictus: "#A8C8DC", culex: "#1ED47F", other: "#767676" };
+      albopictus_f: "#7C1220", albopictus_m: "#F4B71B", albopictus: "#A8C8DC", aedes_other: "#117996", culex: "#1ED47F", other: "#767676" };
 
     // Indoor / outdoor split, from installs and their collections.
     const posCount = (rows, key) => rows.filter((r) => Number(r[key]) === 1).length;
@@ -5905,10 +5919,9 @@ class Component extends DCLogic {
       hasNoResult: chain.noResultList.length > 0,
       records: recs.length,
       species: (function (rows, colors) {
-        const adults = rows.filter((r) => r.key !== "aegypti" && r.key !== "albopictus");
-        const tot = adults.reduce((a, r) => a + r.n, 0) || 1;
+        const tot = rows.reduce((a, r) => a + r.n, 0) || 1;
         let run = 0;
-        return adults.map((r) => {
+        return rows.map((r) => {
           const pct = Math.round((r.n / tot) * 1000) / 10;
           const out = { ...r, pct, w: Math.round((r.n / tot) * 100) + "%",
             dash: pct + " " + (100 - pct), offset: 100 - run,
@@ -5916,24 +5929,23 @@ class Component extends DCLogic {
           run += pct;
           return out;
         });
-      })(speciesRows, speciesColors),
+      })(adultSpeciesRows, speciesColors),
       // Reared larvae are identified to species only — their own small donut.
       larval: (function (rows, colors) {
-        const only = rows.filter((r) => r.key === "aegypti" || r.key === "albopictus");
-        const tot = only.reduce((a, r) => a + r.n, 0) || 1;
+        const tot = rows.reduce((a, r) => a + r.n, 0) || 1;
         let run = 0;
-        return only.map((r) => {
+        return rows.map((r) => {
           const pct = Math.round((r.n / tot) * 1000) / 10;
           const out = { ...r, pct, dash: pct + " " + (100 - pct), offset: 100 - run,
             color: colors[r.key] || "#0D6177" };
           run += pct;
           return out;
         });
-      })(speciesRows, speciesColors),
-      hasLarval: speciesRows.filter((r) => r.key === "aegypti" || r.key === "albopictus").length > 0,
-      larvalTotal: speciesRows.filter((r) => r.key === "aegypti" || r.key === "albopictus").reduce((a, r) => a + r.n, 0),
-      hasSpecies: speciesRows.filter((r) => r.key !== "aegypti" && r.key !== "albopictus").length > 0,
-      speciesTotal: speciesRows.filter((r) => r.key !== "aegypti" && r.key !== "albopictus").reduce((a, r) => a + r.n, 0),
+      })(larvalSpeciesRows, speciesColors),
+      hasLarval: larvalSpeciesRows.length > 0,
+      larvalTotal: larvalSpeciesRows.reduce((a, r) => a + r.n, 0),
+      hasSpecies: adultSpeciesRows.length > 0,
+      speciesTotal: adultSpeciesRows.reduce((a, r) => a + r.n, 0),
       trapsIn: inOut.trapsIn, trapsOut: inOut.trapsOut,
       collectIn: inOut.collectIn, collectOut: inOut.collectOut,
       trapsInW: (inOut.trapsIn + inOut.trapsOut) ? Math.round((inOut.trapsIn / (inOut.trapsIn + inOut.trapsOut)) * 100) + "%" : "0%",
@@ -6631,23 +6643,34 @@ class Component extends DCLogic {
   describe(rec) {
     const r = { ...rec, type: rec.form_type || rec.type, house: rec.household_id || rec.house || "" };
     if (r.type === "household") return r.head + " \u00b7 " + km(r.structure) + " \u00b7 " + km(r.consent) + (r.residents ? " \u00b7 " + r.residents + " \u1793\u17b6\u1780\u17cb" : "");
-    if (r.type === "install") return /-OUT$/i.test(r.trap_id || "") ? "OUT" : /-IN$/i.test(r.trap_id || "") ? "IN" : "";
-    if (r.type === "collect") {
-      return /-OUT$/i.test(r.trap_id || "") ? "OUT" : /-IN$/i.test(r.trap_id || "") ? "IN" : "";
+    // The trap itself, not only which side of the house it stands on. The row's title
+    // already names the kind - Ovitrap, BG-Sentinel - so the ID is what was missing, and
+    // it is the only thing separating the two ovitraps a household can hold.
+    if (r.type === "install" || r.type === "collect") {
+      const side = /-OUT$/i.test(r.trap_id || "") ? "OUT"
+        : /-IN$/i.test(r.trap_id || "") ? "IN"
+        : (r.position === "Outside" ? "OUT" : r.position === "Inside" ? "IN" : "");
+      return [r.trap_id || "", side].filter(Boolean).join(" · ");
     }
     if (r.type === "lab") {
       const larval = r.specimen_stage === "Larvae";
       const total = (larval ? LARVAL_TAXA : TAXA).reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
-      // The row says which kind of specimen was read; the counts live on the record.
-      // An ovitrap result is eggs reared on to larvae — say so, so the row cannot be
-      // mistaken for a larval survey.
+      const eggs = Number(r.eggs) || 0;
       const fromOvitrap = /^(OV|VO|OVT)-/i.test(String(this.trapIdOf(r) || ""));
+      // An ovitrap tube is an egg count until something is reared out of it and named to
+      // species. specimen_stage is "Larvae" either way - the blank form defaults to it and
+      // an ovitrap result is never asked to change it - so reading the stage alone called
+      // every egg count "reared from eggs" when nothing had been reared at all. Species
+      // counted is the thing that actually distinguishes them.
+      if (fromOvitrap && !total) {
+        return eggs ? eggs + " \u1796\u1784 \u00b7 eggs" : "\u1782\u17d2\u1798\u17b6\u1793\u1796\u1784 \u00b7 no egg";
+      }
       return larval
         ? (fromOvitrap
           ? "\u1796\u1784\u1785\u1798\u17d2\u179a\u17b6\u1789\u17cb \u00b7 reared from eggs"
           : "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 larvae")
-          + (Number(r.eggs) ? " \u00b7 " + r.eggs + " \u1796\u1784 \u00b7 eggs" : "")
-        : (Number(r.eggs) && !total) ? "\u1796\u1784 \u00b7 eggs" : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799 \u00b7 adult";
+          + (eggs ? " \u00b7 " + eggs + " \u1796\u1784 \u00b7 eggs" : "")
+        : (eggs && !total) ? "\u1796\u1784 \u00b7 eggs" : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799 \u00b7 adult";
     }
     if (r.type === "adult") {
       const total = TAXA.reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
@@ -7415,7 +7438,7 @@ class Component extends DCLogic {
         // Adult mosquitoes only, by species, one column per report month.
         const ADULT = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
           ["albopictus_f", "Ae. albopictus \u2640"], ["albopictus_m", "Ae. albopictus \u2642"],
-          ["aedes_other", "Other Aedes spp."], ["culex", "Culex spp."], ["other", "Culex / Other"]];
+          ["aedes_other", "Other Aedes spp."], [["culex", "other"], "Culex / Other"]];
         // Trapped adults only. An emerged adult is sexed the same way but was reared
         // from a container, so it does not belong in a trap-catch table.
         const adultLabs = hhRows.filter((r) => (r.form_type || r.type) === "lab"
@@ -7431,14 +7454,19 @@ class Component extends DCLogic {
           const hit = adultLabs.find((r) => (r.period_month || String(r.collected_date || "").slice(0, 7)) === m);
           return (hit && hit.period_label) || m;
         };
-        const matrixRows = ADULT.map(([k, label]) => ({
-          label,
-          cells: months.map((m) => ({
-            n: adultLabs.filter((r) => (r.period_month || String(r.collected_date || "").slice(0, 7)) === m)
-              .reduce((a, r) => a + (Number(r[k]) || 0), 0),
-          })),
-          total: adultLabs.reduce((a, r) => a + (Number(r[k]) || 0), 0),
-        })).filter((r) => r.total > 0);
+        const matrixRows = ADULT.map(([k, label]) => {
+          const keys = Array.isArray(k) ? k : [k];
+          const sumOf = (list) => list.reduce((a, r) =>
+            a + keys.reduce((b, kk) => b + (Number(r[kk]) || 0), 0), 0);
+          return {
+            label,
+            cells: months.map((m) => ({
+              n: sumOf(adultLabs.filter((r) =>
+                (r.period_month || String(r.collected_date || "").slice(0, 7)) === m)),
+            })),
+            total: sumOf(adultLabs),
+          };
+        }).filter((r) => r.total > 0);
         return { hhSpecies: rows, hhSpeciesTotal: rows.reduce((a, r) => a + r.n, 0), hhHasSpecies: rows.length > 0,
           hhCatchRounds: catchRounds, hhHasCatchRounds: catchRounds.length > 0,
           hhAdultCols: months.map((m) => ({ label: labelFor(m) })),
@@ -7532,19 +7560,29 @@ class Component extends DCLogic {
               .map((r) => {
                 const armed = st.prevDelArm === r.record_id;
                 const tubes = Number(r.specimens) || 0;
+                // The installation this row belongs to: its own record when installing,
+                // the trap's set when collecting. Looked up once and used for both the
+                // set ID and the kind of trap.
+                const set = r.trap_id
+                  ? self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === r.trap_id)
+                  : null;
                 return {
                   id: r.record_id || "",
                   month: r.period_month || String(r.collected_date || "").slice(0, 7),
                   monthLabel: r.period_label || r.period_month || "",
-                  meta: [(function () {
-                      const set = r.trap_id
-                        ? self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === r.trap_id)
-                        : null;
-                      return set ? (set.record_id || set.id) : "";
-                    })(),
+                  // The trap, not the record: the record ID is already the first column,
+                  // so repeating it said nothing while the thing the row is about - which
+                  // trap, of which kind - was missing. The set reference is kept only on a
+                  // collection, where it points at a different record than this row.
+                  meta: [r.trap_id || "",
+                    (function (t) {
+                      return /bg/i.test(t) ? "BG" : t ? "Ovi" : "";
+                    })(String(r.trap_type || (set && set.trap_type) || "")),
                     /-OUT$/i.test(String(r.trap_id || "")) ? "OUT"
                       : /-IN$/i.test(String(r.trap_id || "")) ? "IN"
                       : (r.position === "Outside" ? "OUT" : r.position === "Inside" ? "IN" : ""),
+                    set && (set.record_id || set.id) !== (r.record_id || r.id)
+                      ? (set.record_id || set.id) : "",
                     (function () {
                       // A trap is collected once per report month, so two collections on the
                       // same trap in the same round is a re-entry, not a second visit. The lab
@@ -7687,14 +7725,17 @@ class Component extends DCLogic {
                   monthLabel: r.period_label || r.period_month || "",
                   meta: (function () {
                     const tid = String(r.trap_id || "").toUpperCase();
-                    const ovi = /^(OV|VO|OVT)-/.test(tid)
-                      ? (tid.indexOf("-OUT") >= 0 ? "Ovi-OUT" : (tid.indexOf("-IN") >= 0 ? "Ovi-IN" : "Ovi"))
-                      : "";
-                    const setId = (function () {
-                      if (!r.trap_id) return "";
-                      const inst = self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === r.trap_id);
-                      return (inst && (inst.record_id || inst.id)) || "";
-                    })();
+                    // The kind of trap is read off the installation, not guessed from the
+                    // ID: a BG trap's ID does not begin with OV-, so matching the prefix
+                    // alone named every ovitrap result and left every BG one unlabelled.
+                    const inst = r.trap_id
+                      ? self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === r.trap_id)
+                      : null;
+                    const side = tid.indexOf("-OUT") >= 0 ? "-OUT" : (tid.indexOf("-IN") >= 0 ? "-IN" : "");
+                    const kind = /bg/i.test(String((inst && inst.trap_type) || "")) ? "BG"
+                      : (inst || /^(OV|VO|OVT)-/.test(tid)) ? "Ovi" : "";
+                    const ovi = kind ? kind + side : "";
+                    const setId = (inst && (inst.record_id || inst.id)) || "";
                     const parts = [setId || r.source_id || r.tube_id || "", ovi || (setId ? "" : r.trap_id || ""),
                       eggs ? eggs + " ពង" : (/^(OV|VO|OVT)-/.test(String(r.trap_id || "").toUpperCase()) ? "គ្មានពង · no egg" : ""),
                       catchN ? catchN + ((String(r.tube_id || "") + " " + String(r.trap_id || "")).toUpperCase().indexOf("LC-") >= 0 ? " ដង្កូវទឹក" : " មូស") : ""].filter(Boolean);
