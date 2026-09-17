@@ -168,7 +168,8 @@ canvas{max-height:320px;max-width:100%}
       <button onClick="{{ reload }}" title="{{ reloadLabel }}" aria-label="Reload" style="padding:8px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;gap:7px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.5h-4.5"></path></svg>
       </button>
-      <button onClick="{{ downloadCsv }}" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer">CSV</button>
+      <button onClick="{{ downloadCsv }}" title="ទាញយក CSV · all records, one row each" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer">CSV</button>
+      <button onClick="{{ downloadHhXlsx }}" title="ទាញយក Excel · HH Detail, one row per household" style="padding:8px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:12.5px;line-height:1;cursor:pointer">XLSX</button>
       </sc-if>
       <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;align-items:center;gap:8px;padding-left:10px;margin-left:2px;border-left:1px solid rgba(255,255,255,.25)">
@@ -471,6 +472,183 @@ function sciParts(v) {
   if (last < str.length) out.push({ t: str.slice(last), sty: "normal" });
   return out.length ? out : [{ t: str, sty: "normal" }];
 }
+// ---------------------------------------------------------------------------------
+// A minimal .xlsx writer, used by the HH Detail export.
+//
+// The export has to carry merged colour-banded group headers, a percent format, frozen
+// panes, an autofilter and conditional formatting - that formatting is the whole point of
+// the request. Nothing available does it for free: SheetJS's community build writes no
+// cell styles, and an HTML table saved under an .xls name makes Excel warn about the
+// format on every open. A .xlsx is a zip of XML parts, so the writer is the three pieces
+// below and nothing else. The parts are a few kilobytes, so the zip stores them
+// uncompressed and needs no deflate.
+const CRC_TABLE = (function () {
+  const t = new Int32Array(256);
+  for (let n = 0; n < 256; n += 1) {
+    let c = n;
+    for (let k = 0; k < 8; k += 1) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c;
+  }
+  return t;
+})();
+function crc32(bytes) {
+  let c = -1;
+  for (let i = 0; i < bytes.length; i += 1) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ -1) >>> 0;
+}
+function zipStore(files) {
+  const enc = new TextEncoder();
+  const out = [];
+  const dir = [];
+  const put = (arr, bytes) => { for (let i = 0; i < bytes.length; i += 1) arr.push(bytes[i]); };
+  const u16 = (n) => [n & 255, (n >>> 8) & 255];
+  const u32 = (n) => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+  const DOS_DATE = 33;   // 1 Jan 1980 - a fixed valid stamp, so tools do not read 0 as a date
+  files.forEach((f) => {
+    const name = enc.encode(f.name);
+    const body = enc.encode(f.body);
+    const crc = crc32(body);
+    const at = out.length;
+    put(out, u32(0x04034b50)); put(out, u16(20)); put(out, u16(0)); put(out, u16(0));
+    put(out, u16(0)); put(out, u16(DOS_DATE)); put(out, u32(crc));
+    put(out, u32(body.length)); put(out, u32(body.length));
+    put(out, u16(name.length)); put(out, u16(0));
+    put(out, name); put(out, body);
+    put(dir, u32(0x02014b50)); put(dir, u16(20)); put(dir, u16(20));
+    put(dir, u16(0)); put(dir, u16(0)); put(dir, u16(0)); put(dir, u16(DOS_DATE));
+    put(dir, u32(crc)); put(dir, u32(body.length)); put(dir, u32(body.length));
+    put(dir, u16(name.length)); put(dir, u16(0)); put(dir, u16(0));
+    put(dir, u16(0)); put(dir, u16(0)); put(dir, u32(0)); put(dir, u32(at));
+    put(dir, name);
+  });
+  const dirAt = out.length;
+  put(out, dir);
+  put(out, u32(0x06054b50)); put(out, u16(0)); put(out, u16(0));
+  put(out, u16(files.length)); put(out, u16(files.length));
+  put(out, u32(dir.length)); put(out, u32(dirAt)); put(out, u16(0));
+  return new Uint8Array(out);
+}
+const xmlEsc = (v) => String(v == null ? "" : v)
+  .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "")
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+// A1-style column name, for the 37 columns this sheet runs to and beyond.
+function colName(n) {
+  let s = "";
+  let i = n;
+  while (i > 0) {
+    const r = (i - 1) % 26;
+    s = String.fromCharCode(65 + r) + s;
+    i = Math.floor((i - 1) / 26);
+  }
+  return s;
+}
+
+// The style table. Indices are named because the cells refer to them by name; the order
+// here is the order Excel reads them in, so an insertion has to go at the end.
+const XF = { base: 0, title: 1, sub: 2,
+  grpNavy: 3, grpBlue: 4, grpGreen: 5, grpRed: 6, grpGold: 7, grpPurple: 8, grpDark: 9,
+  hdr: 10, hdrThick: 11,
+  cell: 12, cellThick: 13, cellLeft: 14, cellPct: 15,
+  tot: 16, totThick: 17, totPct: 18, totLeft: 19,
+  grpTeal: 20, grpRust: 21 };
+
+const XLSX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+  + '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+  + '<numFmts count="1"><numFmt numFmtId="164" formatCode="0.0%"/></numFmts>'
+  + '<fonts count="5">'
+  + '<font><sz val="11"/><name val="Calibri"/></font>'
+  + '<font><b/><sz val="14"/><name val="Calibri"/></font>'
+  + '<font><sz val="11"/><color rgb="FF595959"/><name val="Calibri"/></font>'
+  + '<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font>'
+  + '<font><b/><sz val="11"/><name val="Calibri"/></font>'
+  + '</fonts>'
+  + '<fills count="12">'
+  + '<fill><patternFill patternType="none"/></fill>'
+  + '<fill><patternFill patternType="gray125"/></fill>'
+  + ['FF1F3864', 'FF2E75B6', 'FF548235', 'FFC00000', 'FFBF8F00', 'FF7030A0', 'FF404040',
+     'FFD9E2F3', 'FF0D6177', 'FF843C0C']
+    .map((c) => '<fill><patternFill patternType="solid"><fgColor rgb="' + c + '"/>'
+      + '<bgColor indexed="64"/></patternFill></fill>').join('')
+  + '</fills>'
+  + '<borders count="3">'
+  + '<border><left/><right/><top/><bottom/><diagonal/></border>'
+  + '<border><left style="thin"><color indexed="64"/></left><right style="thin"><color indexed="64"/></right>'
+  + '<top style="thin"><color indexed="64"/></top><bottom style="thin"><color indexed="64"/></bottom><diagonal/></border>'
+  + '<border><left style="medium"><color indexed="64"/></left><right style="thin"><color indexed="64"/></right>'
+  + '<top style="thin"><color indexed="64"/></top><bottom style="thin"><color indexed="64"/></bottom><diagonal/></border>'
+  + '</borders>'
+  + '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
+  + '<cellXfs count="22">'
+  + '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
+  + '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
+  + '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
+  // the six group bands, then the dark one over the status column
+  + [2, 3, 4, 5, 6, 7, 8].map((fill, i) => '<xf numFmtId="0" fontId="3" fillId="' + fill
+      + '" borderId="' + (i === 0 ? 1 : 2) + '" xfId="0" applyFont="1" applyFill="1"'
+      + ' applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>').join('')
+  // the column header row, plain and group-opening
+  + [1, 2].map((b) => '<xf numFmtId="0" fontId="3" fillId="8" borderId="' + b + '" xfId="0"'
+      + ' applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1">'
+      + '<alignment horizontal="center" vertical="center" wrapText="1"/></xf>').join('')
+  + '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
+  + '<xf numFmtId="0" fontId="0" fillId="0" borderId="2" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
+  + '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="left"/></xf>'
+  + '<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
+  + '<xf numFmtId="0" fontId="4" fillId="9" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
+  + '<xf numFmtId="0" fontId="4" fillId="9" borderId="2" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
+  + '<xf numFmtId="164" fontId="4" fillId="9" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
+  + '<xf numFmtId="0" fontId="4" fillId="9" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left"/></xf>'
+  // the emerged and BG bands, added after the rest so the indices above keep their meaning
+  + [10, 11].map((fill) => '<xf numFmtId="0" fontId="3" fillId="' + fill + '" borderId="2"'
+      + ' xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1">'
+      + '<alignment horizontal="center" vertical="center"/></xf>').join('')
+  + '</cellXfs>'
+  // the three conditional formats: a positive-container count, and the YES / NO verdict
+  + '<dxfs count="3">'
+  + '<dxf><font><color rgb="FFC00000"/></font></dxf>'
+  + '<dxf><font><color rgb="FF9C0006"/></font><fill><patternFill><bgColor rgb="FFFFC7CE"/></patternFill></fill></dxf>'
+  + '<dxf><font><color rgb="FF006100"/></font><fill><patternFill><bgColor rgb="FFC6EFCE"/></patternFill></fill></dxf>'
+  + '</dxfs>'
+  + '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'
+  + '</styleSheet>';
+
+// Assembles the package around one sheet's XML.
+function xlsxBlob(sheetName, sheetXml) {
+  const rel = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+  const main = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+  const files = [
+    { name: "[Content_Types].xml",
+      body: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+        + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+        + '<Default Extension="xml" ContentType="application/xml"/>'
+        + '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
+        + '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'
+        + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'
+        + '</Types>' },
+    { name: "_rels/.rels",
+      body: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        + '<Relationship Id="rId1" Type="' + rel + '/officeDocument" Target="xl/workbook.xml"/>'
+        + '</Relationships>' },
+    { name: "xl/workbook.xml",
+      body: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<workbook xmlns="' + main + '" xmlns:r="' + rel + '">'
+        + '<sheets><sheet name="' + xmlEsc(sheetName) + '" sheetId="1" r:id="rId1"/></sheets>'
+        + '</workbook>' },
+    { name: "xl/_rels/workbook.xml.rels",
+      body: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        + '<Relationship Id="rId1" Type="' + rel + '/worksheet" Target="worksheets/sheet1.xml"/>'
+        + '<Relationship Id="rId2" Type="' + rel + '/styles" Target="styles.xml"/>'
+        + '</Relationships>' },
+    { name: "xl/styles.xml", body: XLSX_STYLES },
+    { name: "xl/worksheets/sheet1.xml", body: sheetXml },
+  ];
+  return new Blob([zipStore(files)],
+    { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+
 const SPECIES_LABELS = ["Ae. aegypti", "Ae. albopictus", "Other Aedes spp.", "Culex / Other"];
 const SPECIES_COLORS = ["#003E78", "#6EDBCD", "#117996", "#F4B71B"];
 const contLabels = () => CONTAINERS.map((c) => c[1] + " · " + CONT_SHORT[c[0]]);
@@ -533,16 +711,22 @@ const VALUE_LABEL_PLUGIN = {
         } else {
           const top = chart.chartArea ? chart.chartArea.top : 0;
           const above = el.y - 4;
-          const inside = above - 10 < top;   // a bar at the top of the scale has no room above it
+          // A second line series runs under the first and close to it, so its number goes
+          // below its point: drawn above, the two labels sat on each other.
+          const under = meta.type === "line" && di > 0;
+          const inside = under || above - 10 < top;   // nor has a bar at the top of the scale room above it
           const y = inside ? el.y + 15 : above;
           ctx.textBaseline = inside ? "top" : "bottom";
           // A halo keeps the number readable on the WHO line, on a neighbouring
           // bar, or against the bar's own fill.
-          ctx.strokeStyle = inside ? "rgba(0,0,0,.45)" : "#fff";
-          ctx.lineWidth = inside ? 2.5 : 3;
+          // White on a bar's own solid fill; dark everywhere else, a line's pale
+          // wash included.
+          const dark = inside && !under && meta.type !== "line";
+          ctx.strokeStyle = dark ? "rgba(0,0,0,.45)" : "#fff";
+          ctx.lineWidth = dark ? 2.5 : 3;
           ctx.lineJoin = "round";
           ctx.strokeText(text, el.x, y);
-          ctx.fillStyle = inside ? "#fff" : "#333";
+          ctx.fillStyle = dark ? "#fff" : "#333";
           ctx.fillText(text, el.x, y);
         }
       });
@@ -1516,8 +1700,21 @@ class Component extends DCLogic {
       this._monKeyByLabel[String(this.monthLabelShort(m.key))] = m.key;
     });
 
+    // Rounds that actually reported a given stage, with their own labels. A round with
+    // no identifications was not surveyed for that stage, and a chart of counts has
+    // nothing to say about it - keeping it as a zero drew a dive to the axis and a
+    // recovery out of it, neither of which happened. A round that WAS surveyed and found
+    // nothing is counted here and keeps its honest zero.
+    const roundsWith = (field) => {
+      const keep = mon.filter((m) => m[field]);
+      return { mon: keep,
+        labels: keep.map((m) => this.monthLabelShort(m.key)),
+        textLabels: keep.map((m) => this.monthLabel(m.key)) };
+    };
+
     if (t === "epi") return this.epiSpecs(rows);
     if (t === "larval") {
+      const larvRounds = roundsWith("larvLabs");
       const contInsp = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["inspected_" + k]), 0));
       const contPos = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["positive_" + k]), 0));
       return [
@@ -1535,6 +1732,15 @@ class Component extends DCLogic {
             { label: "CI %", data: mon.map((m) => m.ci), borderRadius: 3,
               backgroundColor: mon.map((m) => (m.insp >= 20 ? "#F4B71B" : "#FDF1D1")) },
             whoLine(mon.length)] } } },
+        // How many immatures each round actually turned up. The container index says how
+        // much was found against how much was looked at; this says the count.
+        { key: "larvRound", title: "ដង្កូវទឹកតាមជុំ", titleEn: "Immatures identified by report month",
+          textLabels: larvRounds.textLabels,
+          spec: { type: "line", data: { labels: larvRounds.labels, datasets: [
+            { label: "ដង្កូវទឹក · Immatures",
+              data: larvRounds.mon.map((m) => m.larvAeg + m.larvAlb + m.larvAedesOther + m.larvCulexOther),
+              borderColor: "#117996", backgroundColor: "rgba(17,121,150,.16)", fill: true, tension: .3,
+              borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#117996" }] } } },
         { key: "typePie", title: "សមាមាត្រភាជន៍មានដង្កូវ", titleEn: "Positive containers by type",
           spec: { type: "doughnut", data: { labels: contLabels(),
             datasets: [{ data: contPos, backgroundColor: COLORS }] } } },
@@ -1571,7 +1777,17 @@ class Component extends DCLogic {
       ];
     }
     if (t === "adult") {
+      const aduRounds = roundsWith("aduLabs");
       return [
+        // First on the tab: whether the catch is rising or falling comes before
+        // which village it came from.
+        { key: "aduRound", title: "មូសពេញវ័យតាមជុំ", titleEn: "Adults identified by report month",
+          textLabels: aduRounds.textLabels,
+          spec: { type: "line", data: { labels: aduRounds.labels, datasets: [
+            { label: "មូសពេញវ័យ · Adults",
+              data: aduRounds.mon.map((m) => m.aduAeg + m.aduAlb + m.aduAedesOther + m.aduCulexOther),
+              borderColor: "#F4B71B", backgroundColor: "rgba(244,183,27,.18)", fill: true, tension: .3,
+              borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#F4B71B" }] } } },
         { key: "adultVil", title: "មូសពេញវ័យតាមភូមិ", titleEn: "Adults identified by village",
           spec: { type: "bar", data: { labels, datasets: [
             { label: SPECIES_LABELS[0], data: take((v) => v.aeg), backgroundColor: SPECIES_COLORS[0], borderRadius: 3, stack: "s" },
@@ -1586,13 +1802,17 @@ class Component extends DCLogic {
           spec: { type: "doughnut", data: { labels: SPECIES_LABELS,
             datasets: [{ data: [sp.adultAeg, sp.adultAlb, sp.aedesOther, sp.culexOther],
               backgroundColor: SPECIES_COLORS }] } } },
+        // How many adults each round caught, so a trend is readable rather than having to
+        // be inferred from the village bars.
+        // A doughnut, not a stacked bar: there are only two methods and one of them
+        // catches almost everything, so the BG column was a sliver against a full-height
+        // Procopack one. A ring states the split directly. The species mix for the catch
+        // as a whole is the composition ring beside it.
         { key: "byMethod", title: "តាមប្រភេទអន្ទាក់", titleEn: "By trap: Procopack vs BG-Sentinel",
           spec: (function (m) {
-            return { type: "bar", data: { labels: m.map((x) => x.name), datasets: [
-              { label: SPECIES_LABELS[0], data: m.map((x) => x.aeg), backgroundColor: SPECIES_COLORS[0], borderRadius: 3, stack: "s" },
-              { label: SPECIES_LABELS[1], data: m.map((x) => x.alb), backgroundColor: SPECIES_COLORS[1], borderRadius: 3, stack: "s" },
-              { label: SPECIES_LABELS[2], data: m.map((x) => x.aedesOther), backgroundColor: SPECIES_COLORS[2], borderRadius: 3, stack: "s" },
-              { label: SPECIES_LABELS[3], data: m.map((x) => x.culexOther), backgroundColor: SPECIES_COLORS[3], borderRadius: 3, stack: "s" }] } };
+            return { type: "doughnut", data: { labels: m.map((x) => x.name),
+              datasets: [{ data: m.map((x) => x.aeg + x.alb + x.aedesOther + x.culexOther),
+                backgroundColor: COLORS }] } };
           })(this.byMethod(rows)) },
       ];
     }
@@ -1623,6 +1843,12 @@ class Component extends DCLogic {
     }
     // overview — read top to bottom: is risk rising, is the cycle complete,
     // where is it worst, and what are we finding.
+    // Eggs are gated on the trap collections rather than on the egg count itself: a round
+    // that collected traps and found no eggs is a real zero and belongs on the line, while
+    // a round that collected nothing has no figure to plot.
+    const aduTrendRounds = roundsWith("aduLabs");
+    const larvTrendRounds = roundsWith("larvLabs");
+    const eggTrendRounds = roundsWith("collects");
     return [
       { key: "ciTrend", title: "សន្ទស្សន៍ភាជន៍តាមជុំ", titleEn: "Container index % by report month",
         insp: mon.map((m) => m.insp), textLabels: monLabels,
@@ -1630,15 +1856,44 @@ class Component extends DCLogic {
           { label: "CI %", data: mon.map((m) => m.ci), borderRadius: 3,
             backgroundColor: mon.map((m) => (m.insp >= 20 ? "#F4B71B" : "#FDF1D1")) },
           whoLine(mon.length)] } } },
-      { key: "eggsHot", title: "ពងតាមភូមិ", titleEn: "Ovitrap eggs by village",
-        spec: { type: "bar", data: { labels, datasets: [
-          // the top village is the one the key message names, so give that bar
-          // the accent colour and leave the rest of the series flat
-          (function (d) {
-            const mx = Math.max.apply(null, d.map(num).concat([0]));
-            return { label: "Eggs", data: d, borderRadius: 3,
-              backgroundColor: d.map((n) => (mx > 0 && num(n) === mx ? "#F4B71B" : "#0d6177")) };
-          })(take((v) => v.eggs))] } } },
+      // The three counts the programme lives on, each over the rounds that reported
+      // it. A round with nothing identified was not surveyed, so it leaves the axis
+      // rather than drawing a dive to zero and a recovery out of it.
+      { key: "aduTrend", title: "មូសពេញវ័យតាមជុំ", titleEn: "Adult mosquitoes identified by report month",
+        textLabels: aduTrendRounds.textLabels,
+        spec: { type: "line", data: { labels: aduTrendRounds.labels, datasets: [
+          { label: "មូសពេញវ័យ · Adults",
+            data: aduTrendRounds.mon.map((m) => m.aduAeg + m.aduAlb + m.aduAedesOther + m.aduCulexOther),
+            borderColor: "#F4B71B", backgroundColor: "rgba(244,183,27,.18)", fill: true, tension: .3,
+            borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#F4B71B" },
+          // Inside the line above, not added to it: the whole catch is mostly Culex, and
+          // this is the part of it that carries dengue. Drawn unfilled so it reads as a
+          // share of the area rather than as a second quantity stacked on top.
+          { label: "Ae. aegypti ញី \u00b7 female",
+            data: aduTrendRounds.mon.map((m) => m.aduAegF),
+            borderColor: "#003E78", backgroundColor: "transparent", fill: false, tension: .3,
+            borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#003E78" }] } } },
+      { key: "larvTrend", title: "ដង្កូវទឹកតាមជុំ", titleEn: "Immatures identified by report month",
+        textLabels: larvTrendRounds.textLabels,
+        spec: { type: "line", data: { labels: larvTrendRounds.labels, datasets: [
+          { label: "ដង្កូវទឹក · Immatures",
+            data: larvTrendRounds.mon.map((m) => m.larvAeg + m.larvAlb + m.larvAedesOther + m.larvCulexOther),
+            borderColor: "#117996", backgroundColor: "rgba(17,121,150,.16)", fill: true, tension: .3,
+            borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#117996" },
+          // Inside the line above, not added to it - Culex breeds in the same containers,
+          // so the total says less about dengue than this part of it does. Unfilled, so it
+          // reads as a share of the area rather than a second quantity on top of it.
+          { label: "Ae. aegypti",
+            data: larvTrendRounds.mon.map((m) => m.larvAeg),
+            borderColor: "#003E78", backgroundColor: "transparent", fill: false, tension: .3,
+            borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#003E78" }] } } },
+      { key: "eggTrend", title: "ពងតាមជុំ", titleEn: "Ovitrap eggs counted by report month",
+        textLabels: eggTrendRounds.textLabels,
+        spec: { type: "line", data: { labels: eggTrendRounds.labels, datasets: [
+          { label: "ពង · Eggs",
+            data: eggTrendRounds.mon.map((m) => m.eggs),
+            borderColor: "#0d6177", backgroundColor: "rgba(13,97,119,.16)", fill: true, tension: .3,
+            borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#0d6177" }] } } },
       { key: "ciVil", title: "សន្ទស្សន៍ភាជន៍ និងផ្ទះតាមភូមិ", titleEn: "Container index % and house index % by village",
         spec: { type: "bar", data: { labels, datasets: [
           { label: "CI %", data: take((v) => v.ci), backgroundColor: "#117996", borderRadius: 3 },
@@ -1722,6 +1977,31 @@ class Component extends DCLogic {
       const i = top(tot);
       return labels[i] + " yielded the most adult mosquitoes, " + tot[i] + " of " + sum(tot) + " identified.";
     }
+    if (k === "aduTrend" || k === "larvTrend") {
+      // Series 0 is the whole catch; series 1 is a part already inside it, so the two are
+      // never added together - which is what the shared branch below would do.
+      const isAdu = k === "aduTrend";
+      const all = set(0), part = set(1);
+      const what = isAdu ? "adults" : "immatures";
+      const which = isAdu ? "female Ae. aegypti" : "Ae. aegypti";
+      if (!sum(all)) return "No " + what + " identified in view.";
+      const i = all.length - 1;
+      return labels[i] + " identified " + fmt(all[i]) + " " + what + ", " + fmt(part[i])
+        + " of them " + which + ". Across all rounds in view: " + fmt(sum(all)) + " "
+        + what + ", " + fmt(sum(part)) + " " + which + ".";
+    }
+    // Every series summed: right for the stacked-species charts, which is why the two
+    // whole-and-part trends above are handled before this.
+    if (/^(larvRound|aduRound|eggTrend)$/.test(k)) {
+      const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
+      const what = /larv/i.test(k) ? "immatures" : /egg/i.test(k) ? "eggs" : "adults";
+      const verb = /egg/i.test(k) ? " counted " : " identified ";
+      if (!sum(tot)) return "No " + what + (/egg/i.test(k) ? " counted" : " identified") + " in view.";
+      // Every column is a round that reported - the chart drops the ones that did not.
+      const i = tot.length - 1;
+      return labels[i] + verb + fmt(tot[i]) + " " + what + ", "
+        + fmt(sum(tot)) + " across all rounds in view.";
+    }
     if (k === "larvSp") {
       const v = set(0), t = sum(v);
       if (!t) return "No immatures identified in the lab in view.";
@@ -1773,7 +2053,7 @@ class Component extends DCLogic {
       return big.name + " " + (d0 > 0 ? "rose" : d0 < 0 ? "fell" : "held") + " from " + one(big.prev.x)
         + " to " + one(big.last.x) + " between " + labels[big.prev.i] + " and " + labels[big.last.i] + ".";
     }
-    if (k === "eggsVil" || k === "eggsHot") {
+    if (k === "eggsVil") {
       const v = set(0);
       if (!sum(v)) return "No ovitrap eggs counted in view.";
       const i = top(v);
@@ -1859,6 +2139,30 @@ class Component extends DCLogic {
       const i = top(tot);
       return labels[i] + " ចាប់បានមូសពេញវ័យច្រើនជាងគេ " + fmt(tot[i]) + " ក្នុងចំណោម " + fmt(sum(tot)) + "។";
     }
+    if (k === "aduTrend" || k === "larvTrend") {
+      const isAdu = k === "aduTrend";
+      const all = set(0), part = set(1);
+      const what = isAdu ? "មូសពេញវ័យ" : "ដង្កូវទឹក";
+      const which = isAdu ? "Ae. aegypti ញី" : "Ae. aegypti";
+      if (!sum(all)) return "គ្មាន" + what + "ក្នុងទិដ្ឋភាពនេះ។";
+      const i = all.length - 1;
+      return "ក្នុងជុំ " + labels[i] + " មាន" + what + " " + fmt(all[i])
+        + " ក្បាល · " + which + " " + fmt(part[i]) + " ក្បាល · សរុប "
+        + fmt(sum(all)) + " ក្បាល · " + which + " " + fmt(sum(part)) + " ក្បាល។";
+    }
+    if (/^(larvRound|aduRound|eggTrend)$/.test(k)) {
+      const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
+      const isEgg = /egg/i.test(k);
+      const what = isEgg ? "ពង"
+        : /larv/i.test(k) ? "ដង្កូវទឹក" : "មូសពេញវ័យ";
+      // "ក្បាល" counts animals, not eggs
+      const unit = isEgg ? "" : " ក្បាល";
+      if (!sum(tot)) return "គ្មាន" + what + "ក្នុងទិដ្ឋភាពនេះ។";
+      // Every column is a round that reported - the chart drops the ones that did not.
+      const i = tot.length - 1;
+      return "ក្នុងជុំ " + labels[i] + " មាន" + what + " " + fmt(tot[i])
+        + unit + " សរុប " + fmt(sum(tot)) + unit + "។";
+    }
     if (k === "larvSp") {
       const v = set(0), t = sum(v);
       if (!t) return "គ្មានដង្កូវទឹកកំណត់ដោយមន្ទីរពិសោធន៍ទេ។";
@@ -1891,7 +2195,7 @@ class Component extends DCLogic {
       const i = top(tot);
       return labels[i] + " ចាប់បាន " + tot[i] + " ក្នុងចំណោមមូសពេញវ័យ " + sum(tot) + "។";
     }
-    if (k === "eggsVil" || k === "eggsHot") {
+    if (k === "eggsVil") {
       const v = set(0);
       if (!sum(v)) return "គ្មានពងអន្ទាក់ក្នុងទិដ្ឋភាពនេះ។";
       const i = top(v);
@@ -2032,7 +2336,10 @@ class Component extends DCLogic {
       const k = this.monthKey(r);
       if (!k) return;
       const m = map[k] || (map[k] = { key: k, insp: 0, pos: 0, installs: 0, collects: 0, labs: 0,
-        eggs: 0, adults: 0, houses: {} });
+        eggs: 0, adults: 0,
+        larvAeg: 0, larvAlb: 0, larvAedesOther: 0, larvCulexOther: 0, larvLabs: 0,
+        aduAeg: 0, aduAlb: 0, aduAedesOther: 0, aduCulexOther: 0, aduAegF: 0, aduLabs: 0,
+        houses: {} });
       const t = this.type(r);
       if (r.household_id) m.houses[r.household_id] = 1;
       if (t === "install") m.installs += 1;
@@ -2043,6 +2350,24 @@ class Component extends DCLogic {
         // A reared tube re-counts larvae already counted, so it is skipped rather than
         // added: the round's catch would otherwise hold the same insects twice.
         if (!isEmerged(r)) m.adults += num(r.total_catch);
+        // The same four species buckets the other charts use, kept per round and per
+        // stage. Larval keys are unsexed and adult keys are sexed, so each stage is
+        // summed from its own set rather than from whichever key happens to be filled.
+        if (isLarval(r)) {
+          m.larvLabs += 1;
+          m.larvAeg += num(r.aegypti);
+          m.larvAlb += num(r.albopictus);
+          m.larvAedesOther += num(r.aedes_other);
+          m.larvCulexOther += num(r.culex) + num(r.other);
+        } else if (!isEmerged(r)) {
+          m.aduLabs += 1;
+          m.aduAeg += num(r.aegypti_f) + num(r.aegypti_m);
+          // the females on their own: the part of the catch that transmits
+          m.aduAegF += num(r.aegypti_f);
+          m.aduAlb += num(r.albopictus_f) + num(r.albopictus_m);
+          m.aduAedesOther += num(r.aedes_other);
+          m.aduCulexOther += num(r.culex) + num(r.other);
+        }
       }
       if (t === "larvae") { m.insp += num(r.containers_inspected); m.pos += num(r.containers_positive); }
     });
@@ -2056,7 +2381,7 @@ class Component extends DCLogic {
   // Which global filter a chart's labels correspond to.
   chartDim(key) {
     if (/month|round|trend|cycle/i.test(key)) return "month";
-    if (/vil|^ci$|visits|adults|eggsVil|eggsHot/i.test(key)) return "village";
+    if (/vil|^ci$|visits|adults|eggsVil/i.test(key)) return "village";
     return "";
   }
 
@@ -2123,6 +2448,11 @@ class Component extends DCLogic {
         // height; along a y axis they read left to right at full size and the bars get
         // that height back.
         indexAxis: sideways ? "y" : "x",
+        // A line's marker is a few pixels across, so nearest-and-intersect meant a round
+        // filtered only when the tap hit the dot. Indexing on the column hands back the
+        // round for a tap anywhere above it, and hovers the same way.
+        interaction: s.spec.type === "line"
+          ? { mode: "index", intersect: false } : undefined,
         scales: s.spec.type === "doughnut" ? {} : (sideways ? {
           x: { stacked, beginAtZero: true, grid: { color: "#E4EBF0" },
             ticks: { font: { size: 11, family: FONT }, color: "#333", precision: 0 } },
@@ -2184,6 +2514,295 @@ class Component extends DCLogic {
       setTimeout(() => this._map && this._map.invalidateSize(), 60);
     }
   }
+
+  // One row per household in the shape of the programme's HH Detail sheet. households()
+  // keeps each house's totals but not the per-container-type or per-sex breakdown the
+  // sheet reports, so that detail is gathered here from the records themselves - with the
+  // same stage guards used everywhere else, so an emerged tube does not count its
+  // mosquitoes a second time and a larval identification does not land among the adults.
+  hhDetail(rows) {
+    const bucket = () => ({ aegF: 0, aegM: 0, albF: 0, albM: 0, other: 0, culex: 0, tot: 0 });
+    const blank = () => ({ contInsp: {}, contPos: {}, commCode: "", villCode: "",
+      aduTot: 0, aduUnk: 0,
+      // one bucket per trap type: the same six taxa, read separately for each
+      pk: bucket(), bg: bucket(),
+      larvTot: 0, larvAeg: 0, larvAlb: 0, larvOther: 0, larvCulex: 0,
+      emgTubes: 0, emgTot: 0, emgAegF: 0, emgAegM: 0, emgAlbF: 0, emgAlbM: 0,
+      emgOther: 0, emgCulex: 0 });
+    const by = {};
+    rows.forEach((r) => {
+      const id = r.household_id || (this.type(r) === "household" ? r.record_id : "");
+      if (!id) return;
+      const d = by[id] || (by[id] = blank());
+      const t = this.type(r);
+      // the codes, so the place can be named in both languages the way the filters are
+      d.commCode = d.commCode || this.code("commune", r) || "";
+      d.villCode = d.villCode || this.code("village", r) || "";
+      if (t === "larvae") {
+        CONTAINERS.forEach(([k]) => {
+          d.contInsp[k] = (d.contInsp[k] || 0) + num(r["inspected_" + k]);
+          d.contPos[k] = (d.contPos[k] || 0) + num(r["positive_" + k]);
+        });
+      }
+      if (t === "lab" && isEmerged(r)) {
+        d.emgTubes += 1;
+        d.emgTot += num(r.total_catch);
+        d.emgAegF += num(r.aegypti_f);
+        d.emgAegM += num(r.aegypti_m);
+        d.emgAlbF += num(r.albopictus_f);
+        d.emgAlbM += num(r.albopictus_m);
+        d.emgOther += num(r.aedes_other);
+        d.emgCulex += num(r.culex) + num(r.other);
+      }
+      if (t === "lab" && !isEmerged(r)) {
+        if (isLarval(r)) {
+          d.larvTot += num(r.total_catch);
+          d.larvAeg += num(r.aegypti);
+          d.larvAlb += num(r.albopictus);
+          d.larvOther += num(r.aedes_other);
+          d.larvCulex += num(r.culex) + num(r.other);
+        } else {
+          d.aduTot += num(r.total_catch);
+          // Matched by name, not by elimination: methodOf returns "" for a result whose
+          // collection record is missing, and "Ovitrap" for one that came from a tube.
+          // Treating anything-but-BG as Procopack would have filed both as Procopack.
+          const meth = String(this.methodOf(r) || "");
+          const isBg = /^bg/i.test(meth);
+          if (!isBg && !/procopack/i.test(meth)) {
+            // Counted, but not broken out: with no collection record there is no trap to
+            // attribute the species to, and inventing one would be worse than the gap.
+            d.aduUnk += num(r.total_catch);
+          } else {
+            const m = isBg ? d.bg : d.pk;
+            m.aegF += num(r.aegypti_f);
+            m.aegM += num(r.aegypti_m);
+            m.albF += num(r.albopictus_f);
+            m.albM += num(r.albopictus_m);
+            m.other += num(r.aedes_other);
+            m.culex += num(r.culex) + num(r.other);
+            m.tot += num(r.total_catch);
+          }
+        }
+      }
+    });
+    // Grouped the way the sheet reads: by commune, then village, then household.
+    return this.households(rows)
+      .map((h) => Object.assign({ h: h }, by[h.id] || blank()))
+      .sort((a, b) => (((a.h.comm || "") + "|" + (a.h.vill || "") + "|" + a.h.id))
+        .localeCompare(((b.h.comm || "") + "|" + (b.h.vill || "") + "|" + b.h.id), "km"));
+  }
+
+  // The column plan, banded into the sheet's six groups plus the verdict. Each column
+  // knows how to read a household and how the total row should treat it, so the header,
+  // the body and the total can never drift apart.
+  hhDetailPlan() {
+    const n = (get) => ({ kind: "num", get: get, sum: true });
+    const cont = [];
+    CONTAINERS.forEach(([k, km, en]) => {
+      cont.push(Object.assign({ head: en + " Tot", w: 11 }, n((d) => d.contInsp[k] || 0)));
+      cont.push(Object.assign({ head: en + " Pos", w: 11 }, n((d) => d.contPos[k] || 0)));
+    });
+    return [
+      { title: "IDENTIFICATION", xf: "grpNavy", cols: [
+        { head: "No", w: 6, kind: "no" },
+        { head: "HH ID", w: 12, kind: "text", get: (d) => d.h.id },
+        { head: "Sangkat", w: 22, kind: "text",
+          get: (d) => (d.h.comm ? placeLabel("commune", d.commCode, d.h.comm) : "—") },
+        { head: "Village", w: 22, kind: "text", total: "TOTAL",
+          get: (d) => (d.h.vill ? placeLabel("village", d.villCode, d.h.vill) : "—") }] },
+      { title: "CONTAINERS BY TYPE", xf: "grpBlue", cols: cont },
+      { title: "CONTAINER SUMMARY", xf: "grpGreen", cols: [
+        Object.assign({ head: "Total Cont.", w: 11 }, n((d) => d.h.insp)),
+        Object.assign({ head: "Positive Cont.", w: 13, cf: "pos" }, n((d) => d.h.pos)),
+        // The round's own index, not the mean of the per-household ones: a house with
+        // one positive container out of one is not 100 percent of anything.
+        { head: "CI (%)", w: 10, kind: "pct", cf: "ci",
+          get: (d) => (d.h.insp ? d.h.pos / d.h.insp : 0),
+          totalOf: (all) => {
+            const insp = all.reduce((a, x) => a + x.h.insp, 0);
+            return insp ? all.reduce((a, x) => a + x.h.pos, 0) / insp : 0;
+          } }] },
+      // A band per trap type, each carrying the same six taxa, because the mix a
+      // Procopack sweep brings in says little about what a BG-Sentinel draws.
+      { title: "ADULTS \u00b7 PROCOPACK", xf: "grpRed", cols: [
+        Object.assign({ head: "Pk Aeg F", w: 10 }, n((d) => d.pk.aegF)),
+        Object.assign({ head: "Pk Aeg M", w: 10 }, n((d) => d.pk.aegM)),
+        Object.assign({ head: "Pk Albo F", w: 10 }, n((d) => d.pk.albF)),
+        Object.assign({ head: "Pk Albo M", w: 10 }, n((d) => d.pk.albM)),
+        Object.assign({ head: "Pk Other Aedes", w: 13 }, n((d) => d.pk.other)),
+        Object.assign({ head: "Pk Culex / Other", w: 13 }, n((d) => d.pk.culex)),
+        Object.assign({ head: "Procopack Tot", w: 12, cf: "bar" }, n((d) => d.pk.tot))] },
+      { title: "ADULTS \u00b7 BG-SENTINEL", xf: "grpRust", cols: [
+        Object.assign({ head: "BG Aeg F", w: 10 }, n((d) => d.bg.aegF)),
+        Object.assign({ head: "BG Aeg M", w: 10 }, n((d) => d.bg.aegM)),
+        Object.assign({ head: "BG Albo F", w: 10 }, n((d) => d.bg.albF)),
+        Object.assign({ head: "BG Albo M", w: 10 }, n((d) => d.bg.albM)),
+        Object.assign({ head: "BG Other Aedes", w: 13 }, n((d) => d.bg.other)),
+        Object.assign({ head: "BG Culex / Other", w: 13 }, n((d) => d.bg.culex)),
+        Object.assign({ head: "BG Tot", w: 10, cf: "bar" }, n((d) => d.bg.tot))] },
+      // Procopack Tot + BG Tot + Trap n/k = Adults Tot. The species columns sum to the
+      // first two: the unresolved catch has no trap to file its species under.
+      { title: "ADULTS \u00b7 ALL TRAPS", xf: "grpDark", cols: [
+        Object.assign({ head: "Trap n/k", w: 10 }, n((d) => d.aduUnk)),
+        Object.assign({ head: "Adults Tot", w: 11 }, n((d) => d.aduTot))] },
+      { title: "LARVAE BY SPECIES", xf: "grpGold", cols: [
+        Object.assign({ head: "Larvae Tot", w: 11, cf: "bar" }, n((d) => d.larvTot)),
+        Object.assign({ head: "Ae. aegypti", w: 12 }, n((d) => d.larvAeg)),
+        Object.assign({ head: "Ae. albopictus", w: 13 }, n((d) => d.larvAlb)),
+        Object.assign({ head: "Other Aedes", w: 12 }, n((d) => d.larvOther)),
+        Object.assign({ head: "Culex / Other", w: 12 }, n((d) => d.larvCulex))] },
+      // Adults reared out of the immatures counted two bands to the left, so they sit
+      // beside them - and in their own band, because they are never added to the trapped
+      // catch: that would count one mosquito twice.
+      { title: "EMERGED FROM IMMATURES", xf: "grpTeal", cols: [
+        Object.assign({ head: "Tubes", w: 8 }, n((d) => d.emgTubes)),
+        Object.assign({ head: "Em. Aeg F", w: 10 }, n((d) => d.emgAegF)),
+        Object.assign({ head: "Em. Aeg M", w: 10 }, n((d) => d.emgAegM)),
+        Object.assign({ head: "Em. Albo F", w: 10 }, n((d) => d.emgAlbF)),
+        Object.assign({ head: "Em. Albo M", w: 10 }, n((d) => d.emgAlbM)),
+        Object.assign({ head: "Em. Other Aedes", w: 13 }, n((d) => d.emgOther)),
+        Object.assign({ head: "Em. Culex / Other", w: 13 }, n((d) => d.emgCulex)),
+        Object.assign({ head: "Emerged Tot", w: 12, cf: "bar" }, n((d) => d.emgTot))] },
+      { title: "OVITRAP EGGS", xf: "grpPurple", cols: [
+        Object.assign({ head: "Eggs IN", w: 10 }, n((d) => d.h.eggsIn)),
+        Object.assign({ head: "Eggs Out", w: 10 }, n((d) => d.h.eggsOut)),
+        Object.assign({ head: "Eggs Tot", w: 10, cf: "bar" }, n((d) => d.h.eggs))] },
+      // The trip sheet runs its ovitrap band over this column too; it is a verdict on the
+      // household, not an egg count, so it gets a band of its own.
+      { title: "STATUS", xf: "grpDark", cols: [
+        { head: "HH Positive?", w: 13, kind: "text", cf: "yesno",
+          get: (d) => (d.h.pos > 0 ? "YES" : "NO") }] },
+    ];
+  }
+
+  downloadHhXlsx = () => {
+    const rows = this.rows();
+    const data = this.hhDetail(rows);
+    if (!data.length) return;
+    const plan = this.hhDetailPlan();
+    const cols = [];
+    plan.forEach((g, gi) => g.cols.forEach((c, i) =>
+      cols.push(Object.assign({ grp: g, opens: i === 0 && gi > 0 }, c))));
+
+    const HEAD_ROW = 5;
+    const first = HEAD_ROW + 1;
+    const last = first + data.length - 1;
+    const totalRow = last + 1;
+    const ref = (i, r) => colName(i + 1) + r;
+
+    // ---- the cells -------------------------------------------------------------
+    const cell = (i, r, v, xf) => {
+      const a = ref(i, r);
+      if (v === "" || v == null) return '<c r="' + a + '" s="' + xf + '"/>';
+      return typeof v === "number"
+        ? '<c r="' + a + '" s="' + xf + '"><v>' + (Math.round(v * 1e6) / 1e6) + '</v></c>'
+        : '<c r="' + a + '" s="' + xf + '" t="inlineStr"><is><t xml:space="preserve">'
+          + xmlEsc(v) + '</t></is></c>';
+    };
+    const st = this.state;
+    const communes = [];
+    data.forEach((d) => { const c = d.h.comm; if (c && communes.indexOf(c) < 0) communes.push(c); });
+    const sub = "Round: " + (st.month ? this.monthLabel(st.month) : "all rounds in view")
+      + " · " + data.length + " households"
+      + (communes.length ? " · " + communes.slice(0, 4).join(", ")
+        + (communes.length > 4 ? " +" + (communes.length - 4) : "") : "")
+      + " · exported " + new Date().toISOString().slice(0, 16).replace("T", " ");
+
+    const body = [];
+    body.push('<row r="1" ht="18" customHeight="1">'
+      + cell(0, 1, "Dengue Vector Surveillance in Battambang — Household Detail", XF.title) + '</row>');
+    body.push('<row r="2">' + cell(0, 2, sub, XF.sub) + '</row>');
+    // Every cell of a band carries the band's style so the colour runs the full width;
+    // only the first carries the title. A merged range takes its outer edges from its
+    // outermost cells, so the band's heavy left rule still lands on the left edge alone.
+    body.push('<row r="4">' + cols.map((c, i) => cell(i, 4,
+      (i === 0 || cols[i - 1].grp !== c.grp) ? c.grp.title : "", XF[c.grp.xf])).join('') + '</row>');
+    body.push('<row r="' + HEAD_ROW + '" ht="30" customHeight="1">'
+      + cols.map((c, i) => cell(i, HEAD_ROW, c.head, c.opens ? XF.hdrThick : XF.hdr)).join('') + '</row>');
+
+    const totals = [];
+    data.forEach((d, n) => {
+      body.push('<row r="' + (first + n) + '">' + cols.map((c, i) => {
+        const r = first + n;
+        if (c.kind === "no") return cell(i, r, n + 1, c.opens ? XF.cellThick : XF.cell);
+        const v = c.get(d);
+        if (c.sum) totals[i] = (totals[i] || 0) + v;
+        const xf = c.kind === "pct" ? XF.cellPct
+          : c.kind === "text" ? (c.opens ? XF.cellThick : (c.head === "Sangkat" || c.head === "Village" ? XF.cellLeft : XF.cell))
+          : (c.opens ? XF.cellThick : XF.cell);
+        return cell(i, r, v, xf);
+      }).join('') + '</row>');
+    });
+
+    const yes = data.filter((d) => d.h.pos > 0).length;
+    body.push('<row r="' + totalRow + '">' + cols.map((c, i) => {
+      const xf = c.kind === "pct" ? XF.totPct
+        : c.opens ? XF.totThick : (c.head === "Village" ? XF.totLeft : XF.tot);
+      if (c.head === "HH Positive?") return cell(i, totalRow, yes + " / " + data.length, xf);
+      if (c.total) return cell(i, totalRow, c.total, xf);
+      if (c.totalOf) return cell(i, totalRow, c.totalOf(data), xf);
+      if (c.sum) return cell(i, totalRow, totals[i] || 0, xf);
+      return cell(i, totalRow, "", xf);
+    }).join('') + '</row>');
+
+    // ---- merges, widths and the conditional formats ----------------------------
+    const merges = [];
+    let at = 0;
+    plan.forEach((g) => {
+      if (g.cols.length > 1) merges.push(colName(at + 1) + '4:' + colName(at + g.cols.length) + '4');
+      at += g.cols.length;
+    });
+    const range = (i) => ref(i, first) + ':' + ref(i, last);
+    const cf = [];
+    let prio = 1;
+    cols.forEach((c, i) => {
+      if (c.cf === "pos") {
+        cf.push('<conditionalFormatting sqref="' + range(i) + '"><cfRule type="cellIs" dxfId="0"'
+          + ' priority="' + (prio += 1) + '" operator="greaterThan"><formula>0</formula></cfRule></conditionalFormatting>');
+      } else if (c.cf === "ci") {
+        cf.push('<conditionalFormatting sqref="' + range(i) + '"><cfRule type="colorScale"'
+          + ' priority="' + (prio += 1) + '"><colorScale><cfvo type="min"/><cfvo type="max"/>'
+          + '<color rgb="FFFCFCFF"/><color rgb="FFF8696B"/></colorScale></cfRule></conditionalFormatting>');
+      } else if (c.cf === "bar") {
+        cf.push('<conditionalFormatting sqref="' + range(i) + '"><cfRule type="dataBar"'
+          + ' priority="' + (prio += 1) + '"><dataBar><cfvo type="min"/><cfvo type="max"/>'
+          + '<color rgb="FF638EC6"/></dataBar></cfRule></conditionalFormatting>');
+      } else if (c.cf === "yesno") {
+        const a = ref(i, first);
+        cf.push('<conditionalFormatting sqref="' + range(i) + '">'
+          + '<cfRule type="containsText" dxfId="1" priority="' + (prio += 1) + '" operator="containsText" text="YES">'
+          + '<formula>NOT(ISERROR(SEARCH("YES",' + a + ')))</formula></cfRule>'
+          + '<cfRule type="containsText" dxfId="2" priority="' + (prio += 1) + '" operator="containsText" text="NO">'
+          + '<formula>NOT(ISERROR(SEARCH("NO",' + a + ')))</formula></cfRule></conditionalFormatting>');
+      }
+    });
+
+    const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      + '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+      + '<dimension ref="A1:' + colName(cols.length) + totalRow + '"/>'
+      // The four identification columns and the header block stay put, so a row can be
+      // read at the far right of a 37-column sheet.
+      + '<sheetViews><sheetView workbookViewId="0"><pane xSplit="4" ySplit="' + HEAD_ROW
+      + '" topLeftCell="E' + first + '" activePane="bottomRight" state="frozen"/>'
+      + '<selection pane="bottomRight" activeCell="E' + first + '" sqref="E' + first
+      + '"/></sheetView></sheetViews>'
+      + '<cols>' + cols.map((c, i) => '<col min="' + (i + 1) + '" max="' + (i + 1)
+        + '" width="' + c.w + '" customWidth="1"/>').join('') + '</cols>'
+      + '<sheetData>' + body.join('') + '</sheetData>'
+      // The filter covers the households only: with the total row inside it, filtering
+      // hid or stranded the totals.
+      + '<autoFilter ref="A' + HEAD_ROW + ':' + colName(cols.length) + last + '"/>'
+      + (merges.length ? '<mergeCells count="' + merges.length + '">'
+        + merges.map((m) => '<mergeCell ref="' + m + '"/>').join('') + '</mergeCells>' : '')
+      + cf.join('')
+      + '</worksheet>';
+
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(xlsxBlob("HH Detail", sheet));
+    a.download = "ento-hh-detail-" + new Date().toISOString().slice(0, 10) + ".xlsx";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  };
 
   downloadCsv = () => {
     const rows = this.rows();
@@ -2361,6 +2980,7 @@ class Component extends DCLogic {
       reloadLabel: s.loading ? "កំពុងទាញ…" : "ទាញឡើងវិញ · Reload",
       reload: this.load,
       downloadCsv: this.downloadCsv,
+      downloadHhXlsx: this.downloadHhXlsx,
       hasError: !!s.error, errorText: s.error,
       recCountLabel: fmt(rows.length) + " កំណត់ត្រា · record",
       filters: (function (list) {
