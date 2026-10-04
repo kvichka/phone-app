@@ -2001,7 +2001,15 @@ const SHARED_TAXA_KEYS = ["aedes_other", "culex", "other"];
 // they are not a trapped catch: these were never host-seeking, so they are stamped with
 // their own stage and reported apart from what the traps caught.
 const EMERGED = "Emerged";
-const LAB_STAGES = [["Larvae", "Larvae / Pupae"], [EMERGED, "Emerged adults"]];
+const PUPA = "Pupa";
+const LAB_STAGES = [["Larvae", "Larvae"], [PUPA, "Pupae"], [EMERGED, "Emerged adults"]];
+// Larvae and pupae are both immatures: identified to species and never sexed, counted on
+// the larval tally, and never part of what a trap caught. Almost everywhere that used to
+// ask "is the stage Larvae" was really asking this, and a stage added beside Larvae walks
+// straight past an equality test - into the adult tally, which is the one place it must
+// never land.
+const isImmatureStage = (v) => v === "Larvae" || v === PUPA;
+const isImmatureRec = (r) => isImmatureStage(String((r && r.specimen_stage) || ""));
 // An emerged tube reports the same insects the larval result already counted, read again
 // after rearing. It is a real lab result, so it still counts as one; it must never be
 // added to a "how many mosquitoes" total, or one mosquito is counted twice. The dashboard
@@ -2128,6 +2136,7 @@ const KM = {
   // The two ways a reared tube can be read. These are the stored specimen_stage values,
   // so the choice buttons look them up by the value itself.
   Larvae: "\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780",
+  Pupa: "ឌុកឌឿ",
   Emerged: "\u1798\u17bc\u179f\u1785\u17c1\u1789\u1796\u17b8\u178a\u1784\u17d2\u1780\u17bc\u179c",
   Stopped: "\u1788\u1794\u17cb\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Active until": "\u179f\u1780\u1798\u17d2\u1798\u178a\u179b\u17cb\u1781\u17c2",
@@ -2268,7 +2277,7 @@ function derive(type, r) {
     d.specimens = r.specimens === "" || r.specimens == null ? "" : Number(r.specimens);
   } else if (type === "lab") {
     d.eggs = Number(r.eggs) || 0;
-    const larval = r.specimen_stage === "Larvae";
+    const larval = isImmatureRec(r);
     const set = larval ? LARVAL_TAXA : TAXA;
     const total = set.reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
     d.total_catch = total;
@@ -4417,7 +4426,7 @@ class Component extends DCLogic {
       if (this.isOvitrapLab(f)) {
         if (!Number(f.eggs)) w.push("\u1798\u17b7\u1793\u1798\u17b6\u1793\u1785\u17c6\u1793\u17bd\u1793\u1796\u1784 \u00b7 no eggs counted.");
       } else {
-        const set = this.stageForForm(f) === "Larvae" ? LARVAL_TAXA : TAXA;
+        const set = isImmatureStage(this.stageForForm(f)) ? LARVAL_TAXA : TAXA;
         const total = set.reduce((a, [k]) => a + (Number(f[k]) || 0), 0);
         if (!total) w.push("\u1780\u17c6\u1794\u17c9\u17bb\u1784\u1793\u17c1\u17c7\u1798\u17b7\u1793\u1798\u17b6\u1793\u1798\u17bc\u179f\u1798\u17c2\u1793\u1791\u17c1? \u00b7 confirm this tube has no mosquito.");
       }
@@ -4537,7 +4546,7 @@ class Component extends DCLogic {
       bits.push(r.specimen_stage || "");
       if (r.container) bits.push(km(CONT_LABEL[r.container] || r.container));
       if (Number(r.eggs)) bits.push(r.eggs + " eggs");
-      const set = String(r.specimen_stage) === "Larvae" ? LARVAL_TAXA : TAXA;
+      const set = isImmatureRec(r) ? LARVAL_TAXA : TAXA;
       const named = set.filter(([k]) => Number(r[k]))
         .map(([k, label]) => label + " " + Number(r[k]));
       if (named.length) bits.push(named.join(", "));
@@ -4815,7 +4824,7 @@ class Component extends DCLogic {
       }
       // culex, other and aedes_other mean the same thing on both tallies, so they are
       // not "the other stage's field" — stripping them here would wipe a real count.
-      (rec.specimen_stage === "Larvae" ? TAXA : LARVAL_TAXA).forEach(([k]) => {
+      (isImmatureRec(rec) ? TAXA : LARVAL_TAXA).forEach(([k]) => {
         if (SHARED_TAXA_KEYS.indexOf(k) < 0) delete rec[k];
       });
     }
@@ -5216,7 +5225,12 @@ class Component extends DCLogic {
     // Reared material can be read either way, so the collector's choice wins over the
     // stage the source implies: a tube of larvae kept until the mosquitoes came out is
     // identified as those adults, with sex, not as immatures.
-    if (this.canEmerge(form) && form.specimen_stage === EMERGED) return EMERGED;
+    // Pupa is a choice the same way Emerged is: the source says a larval collection
+    // either way, and only the person reading the tube knows which it held.
+    if (this.canEmerge(form)
+      && (form.specimen_stage === EMERGED || form.specimen_stage === PUPA)) {
+      return form.specimen_stage;
+    }
     if (form.source_id) return this.stageOf(form.source_id);
     const t = String(form._srcType || "");
     if (t === "larvae" || t === "collect:Ovitrap") return "Larvae";
@@ -5873,7 +5887,7 @@ class Component extends DCLogic {
     // key put every larval Other Aedes into the Adults ring - and it left the larvae ring
     // unable to show those three at all. Emerged tubes are in neither: they re-count
     // larvae already counted here.
-    const larvalRec = (x) => String(x.specimen_stage || "") === "Larvae";
+    const larvalRec = (x) => isImmatureRec(x);
     const idLabs = labs.filter((x) => !isEmergedRec(x));
     const ADULT_SPECIES = [["aegypti_f", "Ae. aegypti \u2640"], ["aegypti_m", "Ae. aegypti \u2642"],
       ["albopictus_f", "Ae. albopictus \u2640"], ["albopictus_m", "Ae. albopictus \u2642"],
@@ -6552,9 +6566,11 @@ class Component extends DCLogic {
       { ...choice("specimen_stage", "Specimen stage", LAB_STAGES.map(([v]) => v)), wide: true },
       { label: "", isNote: true, value: form.specimen_stage === EMERGED
         ? "\u1798\u17bc\u179f\u1785\u17c1\u1789\u1796\u17b8\u178a\u1784\u17d2\u1780\u17bc\u179c \u00b7 emerged \u2014 species and sex, not a trap catch"
+        : form.specimen_stage === PUPA
+        ? "ឌុកឌឿ \u00b7 pupae \u2014 species only, no sex"
         : "\u1794\u1784\u17d2\u1780\u17be\u178f\u1796\u17b8\u1796\u1784/\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 reared \u2014 species only, no sex" },
       ] : this.showsTallies(form) ? [
-      { label: "Specimen stage", isNote: true, value: this.stageForForm(form) === "Larvae"
+      { label: "Specimen stage", isNote: true, value: isImmatureStage(this.stageForForm(form))
         ? "\u1794\u1784\u17d2\u1780\u17be\u178f\u1796\u17b8\u1796\u1784/\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 \u00b7 reared \u2014 species only, no sex"
         : "\u1798\u17bc\u179f\u1796\u17c1\u1789\u179c\u17d0\u1799 \u00b7 adult \u2014 species and sex" },
       ] : [],
@@ -6598,7 +6614,7 @@ class Component extends DCLogic {
             });
           }
           return rows;
-        })(this.stageForForm(form) === "Larvae" ? LARVAL_FIELDS : TAXA_FIELDS, this)).map((fd) => (
+        })(isImmatureStage(this.stageForForm(form)) ? LARVAL_FIELDS : TAXA_FIELDS, this)).map((fd) => (
           // Date and time stay side by side; everything else in the lab form is full width.
           fd.isPair || fd.k === "collected_date" || fd.k === "collected_time" ? fd : { ...fd, wide: true }));
     return [
@@ -6653,7 +6669,7 @@ class Component extends DCLogic {
       return [r.trap_id || "", side].filter(Boolean).join(" · ");
     }
     if (r.type === "lab") {
-      const larval = r.specimen_stage === "Larvae";
+      const larval = isImmatureRec(r);
       const total = (larval ? LARVAL_TAXA : TAXA).reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
       const eggs = Number(r.eggs) || 0;
       const fromOvitrap = /^(OV|VO|OVT)-/i.test(String(this.trapIdOf(r) || ""));
@@ -6685,7 +6701,7 @@ class Component extends DCLogic {
     return (r.household_id || r.house || "\u2014")
       + " \u00b7 \u1798\u17b7\u1793\u1798\u17b6\u1793\u1797\u17b6\u1787\u1793\u17cd\u1794\u17b6\u1793\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799 \u00b7 no container counted"
       + (Number(r.larvae) ? " \u00b7 \u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780 " + r.larvae : "")
-      + (Number(r.pupae) ? " \u00b7 \u178a\u17c6\u178e\u17b6\u1794 " + r.pupae : "")
+      + (Number(r.pupae) ? " \u00b7 \u178c\u17bb\u1780\u178c\u17bf " + r.pupae : "")
       + (Number(r.tubes_count) ? " \u00b7 \u1780\u17c6\u1794\u17c9\u17bb\u1784 " + r.tubes_count : "");
   }
 
@@ -7442,7 +7458,7 @@ class Component extends DCLogic {
         // Trapped adults only. An emerged adult is sexed the same way but was reared
         // from a container, so it does not belong in a trap-catch table.
         const adultLabs = hhRows.filter((r) => (r.form_type || r.type) === "lab"
-          && String(r.specimen_stage || "") !== "Larvae"
+          && !isImmatureRec(r)
           && String(r.specimen_stage || "") !== EMERGED);
         const months = [];
         adultLabs.forEach((r) => {

@@ -285,7 +285,12 @@ canvas{max-height:320px;max-width:100%}
 
   <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
     <div style="background:#fff;border:1px solid #F1F5F9;border-radius:8px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,62,120,.08)">
-      <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">ផែនទីគ្រួសារ <span style="font-weight:400;color:#9AA5AE">Household locations</span></div>
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+        <div style="font-size:14px;font-weight:700;color:#1A2332">{{ mapTitle }} <span style="font-weight:400;color:#9AA5AE">{{ mapTitleEn }}</span></div>
+        <button onClick="{{ downloadMapPng }}" title="ទាញយក PNG · download PNG" aria-label="Download PNG" style="margin-left:auto;flex:none;width:28px;height:28px;border:1px solid #D9DEE4;border-radius:7px;background:#fff;color:#117996;display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#D5E7EF;border-color:#117996;color:#003E78">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 11l5 5 5-5"></path><path d="M4 21h16"></path></svg>
+        </button>
+      </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
         <sc-for list="{{ mapModes }}" as="m" hint-placeholder-count="3">
           <button onClick="{{ m.go }}" style="padding:6px 12px;border:1px solid {{ m.bd }};border-radius:16px;background:{{ m.bg }};color:{{ m.fg }};font-weight:700;font-size:12px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
@@ -293,6 +298,11 @@ canvas{max-height:320px;max-width:100%}
             <span>{{ m.label }}</span>
           </button>
         </sc-for>
+        <button onClick="{{ mapUnit.go }}" title="{{ mapUnit.title }}" style="padding:6px 12px;border:1px solid {{ mapUnit.bd }};border-radius:16px;background:{{ mapUnit.bg }};color:{{ mapUnit.fg }};font-weight:700;font-size:12px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-left:6px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="{{ mapUnit.icon }}"></path></svg>
+          <span>{{ mapUnit.label }}</span>
+        </button>
+      </div>
       </div>
       <div ref="{{ mapRef }}" style="height:520px;border-radius:8px;border:1px solid #E4EBF0;background:#F8FAFB"></div>
       <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px">
@@ -550,7 +560,7 @@ const XF = { base: 0, title: 1, sub: 2,
   hdr: 10, hdrThick: 11,
   cell: 12, cellThick: 13, cellLeft: 14, cellPct: 15,
   tot: 16, totThick: 17, totPct: 18, totLeft: 19,
-  grpTeal: 20, grpRust: 21 };
+  grpTeal: 20, grpRust: 21, grpDarkGold: 22 };
 
 const XLSX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
   + '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
@@ -562,11 +572,11 @@ const XLSX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
   + '<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font>'
   + '<font><b/><sz val="11"/><name val="Calibri"/></font>'
   + '</fonts>'
-  + '<fills count="12">'
+  + '<fills count="13">'
   + '<fill><patternFill patternType="none"/></fill>'
   + '<fill><patternFill patternType="gray125"/></fill>'
   + ['FF1F3864', 'FF2E75B6', 'FF548235', 'FFC00000', 'FFBF8F00', 'FF7030A0', 'FF404040',
-     'FFD9E2F3', 'FF0D6177', 'FF843C0C']
+     'FFD9E2F3', 'FF0D6177', 'FF843C0C', 'FF7F6000']
     .map((c) => '<fill><patternFill patternType="solid"><fgColor rgb="' + c + '"/>'
       + '<bgColor indexed="64"/></patternFill></fill>').join('')
   + '</fills>'
@@ -578,7 +588,7 @@ const XLSX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
   + '<top style="thin"><color indexed="64"/></top><bottom style="thin"><color indexed="64"/></bottom><diagonal/></border>'
   + '</borders>'
   + '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
-  + '<cellXfs count="22">'
+  + '<cellXfs count="23">'
   + '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
   + '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
   + '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
@@ -599,7 +609,7 @@ const XLSX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
   + '<xf numFmtId="164" fontId="4" fillId="9" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
   + '<xf numFmtId="0" fontId="4" fillId="9" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left"/></xf>'
   // the emerged and BG bands, added after the rest so the indices above keep their meaning
-  + [10, 11].map((fill) => '<xf numFmtId="0" fontId="3" fillId="' + fill + '" borderId="2"'
+  + [10, 11, 12].map((fill) => '<xf numFmtId="0" fontId="3" fillId="' + fill + '" borderId="2"'
       + ' xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1">'
       + '<alignment horizontal="center" vertical="center"/></xf>').join('')
   + '</cellXfs>'
@@ -799,8 +809,20 @@ function placeLabel(level, code, km) {
 }
 const padTo = { province: 2, district: 4, commune: 6, village: 10 };
 
+// Larvae and pupae alike: both are identified to species, neither is sexed, and neither
+// is part of what a trap caught. Matching "larv" alone sent every pupal result down the
+// else-branch and into the adult tally.
 function isLarval(r) {
-  return String((r && r.specimen_stage) || "").toLowerCase().indexOf("larv") >= 0;
+  const v = String((r && r.specimen_stage) || "").toLowerCase();
+  return v.indexOf("larv") >= 0 || v.indexOf("pupa") >= 0;
+}
+
+// A pupa is an immature, so isLarval() covers it too and every "immatures" total keeps
+// counting it. This is the narrower question - which of those immatures were pupae - and
+// it exists so pupae can be reported as a named part of that total without any figure
+// already on the dashboard changing value.
+function isPupal(r) {
+  return String((r && r.specimen_stage) || "").toLowerCase().indexOf("pupa") >= 0;
 }
 
 // Adults reared out of a larval collection. They are sexed like a trap catch but were
@@ -877,7 +899,7 @@ function cleanRecords(list) {
 
 class Component extends DCLogic {
   state = { records: [], loading: true, error: "", tab: "overview",
-    prov: "", dist: "", comm: "", vill: "", month: "", mapMode: "ci", sortKey: "ci", sortDir: "desc",
+    prov: "", dist: "", comm: "", vill: "", month: "", mapMode: "ci", mapUnit: "hh", sortKey: "ci", sortDir: "desc",
     auth: readAuth(), loginUser: "", loginPin: "", loginBusy: false, loginError: "",
     users: [], usersBusy: false, usersLoaded: false, usersMsg: "", usersErr: false,
     newUser: "", newName: "", newPin: "", newRole: "guest" };
@@ -1086,6 +1108,22 @@ class Component extends DCLogic {
 
   // Unfilled and in their own pane below the pins, so no household is hidden behind a
   // boundary however often the pin layer is cleared and rebuilt.
+  // Which field the map is showing, and how a value turns into a colour and a radius.
+  // The live map, the legend beneath it and the PNG all read this: each used to carry its
+  // own copy, and a fourth copy in the exporter is how a PNG comes to disagree with the
+  // screen it was taken from.
+  mapMetric() {
+    const mode = this.state.mapMode;
+    return {
+      mode: mode,
+      unit: mode === "ci" ? "%" : "",
+      value: (h) => (mode === "ci" ? h.ci : mode === "adults" ? h.adults
+        : mode === "eggs" ? h.eggs : h.traps),
+      colorFor: (share) => (share > .66 ? "#7C1220" : share > .33 ? "#F4B71B" : "#117996"),
+      radiusFor: (share) => 7 + Math.round(share * 9),
+    };
+  }
+
   drawCommunes(map, layerKey) {
     const L = window.L;
     const rings = this.communeRings();
@@ -1196,6 +1234,38 @@ class Component extends DCLogic {
     });
   }
 
+  // What the map plots: a household each, or a village each. A village sits at the mean
+  // of its households' coordinates, which is close enough to place a circle and is not
+  // claimed to be anything else. Its CI comes from its own containers rather than from
+  // the mean of its households' indices, for the reason noted on the export.
+  mapPoints(rows) {
+    const hh = this.households(rows).filter((h) => h.lat && h.lon);
+    if (this.state.mapUnit !== "vill") return hh;
+    const map = {};
+    hh.forEach((h) => {
+      const key = (h.comm || "\u2014") + "|" + (h.vill || "\u2014");
+      const v = map[key] || (map[key] = { id: h.vill || "\u2014", head: "", houses: 0,
+        where: [h.vill, h.comm, h.dist].filter(Boolean).join(", "),
+        comm: h.comm, vill: h.vill, lat: 0, lon: 0,
+        insp: 0, pos: 0, adults: 0, eggs: 0, traps: 0, ci: 0 });
+      v.houses += 1;
+      v.lat += Number(h.lat);
+      v.lon += Number(h.lon);
+      v.insp += h.insp;
+      v.pos += h.pos;
+      v.adults += h.adults;
+      v.eggs += h.eggs;
+      v.traps += h.traps;
+    });
+    return Object.keys(map).map((k) => {
+      const v = map[k];
+      v.lat /= v.houses;
+      v.lon /= v.houses;
+      v.ci = v.insp ? Math.round((v.pos / v.insp) * 1000) / 10 : 0;
+      return v;
+    });
+  }
+
   // One row per village, built from the household rows so every figure traces to records.
   // Definitions follow the field team's spec: traps = households x 2 (one indoor, one outdoor
   // ovitrap), CI = positive containers / containers, HI = positive houses / households.
@@ -1246,6 +1316,12 @@ class Component extends DCLogic {
     const aedesOther = sumOf(adults, "aedes_other");
     const larvCulex = sumOf(larvals, "culex"), larvOther = sumOf(larvals, "other");
     const larvAedesOther = sumOf(larvals, "aedes_other");
+    // Inside larvals, not beside it: these are the immatures that were read as pupae.
+    const pupals = larvals.filter(isPupal);
+    const pupaAeg = sumOf(pupals, "aegypti"), pupaAlb = sumOf(pupals, "albopictus");
+    const pupaAedesOther = sumOf(pupals, "aedes_other");
+    const pupaCulexOther = sumOf(pupals, "culex") + sumOf(pupals, "other");
+    const pupaTotal = pupaAeg + pupaAlb + pupaAedesOther + pupaCulexOther;
     const emgAeg = sumOf(emerged, "aegypti_f") + sumOf(emerged, "aegypti_m");
     const emgAlb = sumOf(emerged, "albopictus_f") + sumOf(emerged, "albopictus_m");
     const emgAedesOther = sumOf(emerged, "aedes_other");
@@ -1259,6 +1335,12 @@ class Component extends DCLogic {
     return { adultAeg, adultAlb, aedesOther, larvAeg, larvAlb, larvAedesOther,
       culex, other, larvCulex, larvOther, adultTotal, larvTotal,
       culexOther: culex + other, larvCulexOther: larvCulex + larvOther,
+      pupaAeg, pupaAlb, pupaAedesOther, pupaCulexOther, pupaTotal,
+      pupaTubes: pupals.length,
+      pupaCatch: pupals.reduce((a, r) => a + num(r.total_catch), 0),
+      // the immatures that were NOT pupae, for the export's two bands
+      larvaeOnlyCatch: larvals.filter((r) => !isPupal(r))
+        .reduce((a, r) => a + num(r.total_catch), 0),
       emgAeg, emgAlb, emgAedesOther, emgCulexOther, emergedTotal,
       emgFemaleAeg: sumOf(emerged, "aegypti_f"), emgMaleAeg: sumOf(emerged, "aegypti_m"),
       emgFemaleAlb: sumOf(emerged, "albopictus_f"), emgMaleAlb: sumOf(emerged, "albopictus_m"),
@@ -1715,6 +1797,7 @@ class Component extends DCLogic {
     if (t === "epi") return this.epiSpecs(rows);
     if (t === "larval") {
       const larvRounds = roundsWith("larvLabs");
+      const pupaRounds = roundsWith("pupaLabs");
       const contInsp = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["inspected_" + k]), 0));
       const contPos = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["positive_" + k]), 0));
       return [
@@ -1741,6 +1824,17 @@ class Component extends DCLogic {
               data: larvRounds.mon.map((m) => m.larvAeg + m.larvAlb + m.larvAedesOther + m.larvCulexOther),
               borderColor: "#117996", backgroundColor: "rgba(17,121,150,.16)", fill: true, tension: .3,
               borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#117996" }] } } },
+        // Empty until October, when the stage starts being recorded. A round that
+        // identified no pupae leaves the axis rather than drawing a zero, so this stays
+        // blank instead of showing a flat line along the bottom.
+        { key: "pupaRound", title: "ឌុកឌឿតាមជុំ",
+          titleEn: "Pupae identified by report month",
+          textLabels: pupaRounds.textLabels,
+          spec: { type: "line", data: { labels: pupaRounds.labels, datasets: [
+            { label: "ឌុកឌឿ · Pupae",
+              data: pupaRounds.mon.map((m) => m.pupaAeg + m.pupaAlb + m.pupaAedesOther + m.pupaCulexOther),
+              borderColor: "#7F6000", backgroundColor: "rgba(127,96,0,.16)", fill: true, tension: .3,
+              borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#7F6000" }] } } },
         { key: "typePie", title: "សមាមាត្រភាជន៍មានដង្កូវ", titleEn: "Positive containers by type",
           spec: { type: "doughnut", data: { labels: contLabels(),
             datasets: [{ data: contPos, backgroundColor: COLORS }] } } },
@@ -1992,9 +2086,10 @@ class Component extends DCLogic {
     }
     // Every series summed: right for the stacked-species charts, which is why the two
     // whole-and-part trends above are handled before this.
-    if (/^(larvRound|aduRound|eggTrend)$/.test(k)) {
+    if (/^(larvRound|aduRound|eggTrend|pupaRound)$/.test(k)) {
       const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
-      const what = /larv/i.test(k) ? "immatures" : /egg/i.test(k) ? "eggs" : "adults";
+      const what = /pupa/i.test(k) ? "pupae"
+        : /larv/i.test(k) ? "immatures" : /egg/i.test(k) ? "eggs" : "adults";
       const verb = /egg/i.test(k) ? " counted " : " identified ";
       if (!sum(tot)) return "No " + what + (/egg/i.test(k) ? " counted" : " identified") + " in view.";
       // Every column is a round that reported - the chart drops the ones that did not.
@@ -2150,10 +2245,11 @@ class Component extends DCLogic {
         + " ក្បាល · " + which + " " + fmt(part[i]) + " ក្បាល · សរុប "
         + fmt(sum(all)) + " ក្បាល · " + which + " " + fmt(sum(part)) + " ក្បាល។";
     }
-    if (/^(larvRound|aduRound|eggTrend)$/.test(k)) {
+    if (/^(larvRound|aduRound|eggTrend|pupaRound)$/.test(k)) {
       const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
       const isEgg = /egg/i.test(k);
       const what = isEgg ? "ពង"
+        : /pupa/i.test(k) ? "ឌុកឌឿ"
         : /larv/i.test(k) ? "ដង្កូវទឹក" : "មូសពេញវ័យ";
       // "ក្បាល" counts animals, not eggs
       const unit = isEgg ? "" : " ក្បាល";
@@ -2240,6 +2336,189 @@ class Component extends DCLogic {
   // Saves the chart as a PNG with its title and key message drawn in, so the
   // image carries its own caption when it lands in a report. The chart is
   // re-rendered offscreen at 3x rather than scaled up, so nothing blurs.
+  // The map as one flat PNG. Nothing here is a screenshot: the tiles are copied from the
+  // <img> elements where they sit, and the outlines, circles and labels are re-projected
+  // through the live map and painted, so the file matches the view on screen including
+  // its pan and zoom.
+  downloadMapPng = () => {
+    const map = this._map;
+    const el = this._mapEl;
+    if (!map || !el || !window.L) return;
+    const rect = el.getBoundingClientRect();
+    const w = Math.round(rect.width);
+    const h = Math.round(rect.height);
+    if (!w || !h) return;
+
+    const pad = 32;
+    const scale = 2;                  // past this the 256px tiles only get blurrier
+    const pts = this.mapPoints(this.rows());
+    const metric = this.mapMetric();
+    const max = Math.max.apply(null, pts.map(metric.value).concat([1]));
+    const byVil = this.state.mapUnit === "vill";
+    const title = (byVil ? "\u1795\u17c2\u1793\u1791\u17b8\u1797\u17bc\u1798\u17b7 \u00b7 Village locations"
+      : "\u1795\u17c2\u1793\u1791\u17b8\u1782\u17d2\u179a\u17bd\u179f\u17b6\u179a \u00b7 Household locations");
+    const legendTitle = { ci: "\u179f\u1793\u17d2\u1791\u179f\u17d2\u179f\u1793\u17cd\u1797\u17b6\u1787\u1793\u17cd \u00b7 container index",
+      adults: "\u1798\u17bc\u179f \u00b7 mosquitoes", eggs: "\u1796\u1784 \u00b7 eggs",
+      traps: "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb \u00b7 traps" }[metric.mode] || "";
+    const at = (share) => (Math.round(max * share * 10) / 10) + metric.unit;
+    const bands = [
+      { color: metric.colorFor(.2), r: 5, label: "0 \u2013 " + at(.33) },
+      { color: metric.colorFor(.5), r: 7, label: at(.33) + " \u2013 " + at(.66) },
+      { color: metric.colorFor(.9), r: 9, label: at(.66) + " \u2013 " + at(1) },
+    ];
+
+    const headH = 46;
+    const footH = 74;
+    const out = document.createElement("canvas");
+    out.width = (w + pad * 2) * scale;
+    out.height = (headH + h + footH) * scale;
+    const ctx = out.getContext("2d");
+    ctx.scale(scale, scale);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, out.width, out.height);
+
+    ctx.fillStyle = "#1A2332";
+    ctx.font = "700 20px " + FONT;
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+    ctx.fillText(title, pad, 12);
+
+    // the map itself, clipped to its box so a half-drawn tile cannot spill
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(pad, headH, w, h);
+    ctx.clip();
+    ctx.translate(pad, headH);
+
+    // Tiles, at the position the browser has them. Reading each one's box rather than
+    // recomputing the tile grid keeps every pane transform - pan, zoom, fractional
+    // offsets - without repeating Leaflet's arithmetic.
+    let tainted = false;
+    Array.prototype.forEach.call(el.querySelectorAll("img.leaflet-tile-loaded"), (img) => {
+      const r = img.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      try {
+        ctx.drawImage(img, r.left - rect.left, r.top - rect.top, r.width, r.height);
+      } catch (e) { tainted = true; }
+    });
+
+    // commune outlines, projected through the live map
+    const rings = this.communeRings() || [];
+    ctx.strokeStyle = "#7C1220";
+    ctx.lineWidth = 1.6;
+    ctx.globalAlpha = .85;
+    rings.forEach((c) => {
+      ctx.beginPath();
+      let first = true;
+      (c.ring || []).forEach((ll) => {
+        const p = map.latLngToContainerPoint(ll);
+        if (first) { ctx.moveTo(p.x, p.y); first = false; } else ctx.lineTo(p.x, p.y);
+      });
+      if (!first) { ctx.closePath(); ctx.stroke(); }
+    });
+    ctx.globalAlpha = 1;
+
+    // the circles, then the labels over them, so no label hides under a later circle
+    const placed = [];
+    pts.forEach((p) => {
+      if (!p.lat || !p.lon) return;
+      const v = metric.value(p);
+      const share = max ? v / max : 0;
+      const pt = map.latLngToContainerPoint([Number(p.lat), Number(p.lon)]);
+      const r = metric.radiusFor(share);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = metric.colorFor(share);
+      ctx.globalAlpha = .92;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#fff";
+      ctx.stroke();
+      placed.push({ x: pt.x + r + 6, y: pt.y,
+        text: p.id + (p.head ? "  \u00b7  " + p.head : "") });
+    });
+    ctx.font = "700 11px " + FONT;
+    ctx.textBaseline = "middle";
+    placed.forEach((l) => {
+      const tw = ctx.measureText(l.text).width;
+      // the same white plate the on-screen label sits on
+      ctx.fillStyle = "rgba(255,255,255,.92)";
+      ctx.strokeStyle = "#C6D5E4";
+      ctx.lineWidth = 1;
+      const bx = l.x - 2, by = l.y - 9, bw = tw + 12, bh = 18;
+      if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 4); ctx.fill(); ctx.stroke(); }
+      else { ctx.fillRect(bx, by, bw, bh); ctx.strokeRect(bx, by, bw, bh); }
+      ctx.fillStyle = "#003E78";
+      ctx.fillText(l.text, l.x + 4, l.y);
+    });
+    ctx.restore();
+
+    // a hairline round the map, as the card draws it
+    ctx.strokeStyle = "#E4EBF0";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(pad + .5, headH + .5, w - 1, h - 1);
+
+    // legend, note and attribution
+    ctx.textBaseline = "middle";
+    let x = pad;
+    const lineY = headH + h + 22;
+    ctx.font = "700 11px " + FONT;
+    ctx.fillStyle = "#64748B";
+    ctx.fillText(legendTitle.toUpperCase(), x, lineY);
+    x += ctx.measureText(legendTitle.toUpperCase()).width + 18;
+    bands.forEach((b) => {
+      ctx.beginPath();
+      ctx.arc(x + b.r, lineY, b.r, 0, Math.PI * 2);
+      ctx.fillStyle = b.color;
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      x += b.r * 2 + 6;
+      ctx.font = "12px " + FONT;
+      ctx.fillStyle = "#475569";
+      ctx.fillText(b.label, x, lineY);
+      x += ctx.measureText(b.label).width + 16;
+    });
+    ctx.textBaseline = "top";
+    ctx.font = "12px " + FONT;
+    ctx.fillStyle = "#64748B";
+    const note = byVil
+      ? pts.length + (pts.length === 1 ? " village" : " villages")
+        + " plotted at the mean of their households' coordinates."
+      : pts.length + " households with coordinates.";
+    ctx.fillText(note, pad, lineY + 16);
+    ctx.font = "11px " + FONT;
+    ctx.fillStyle = "#9AA5AE";
+    ctx.fillText("Entomological Surveillance Dashboard \u00b7 "
+      + new Date().toISOString().slice(0, 10) + " \u00b7 \u00a9 OpenStreetMap contributors",
+      pad, lineY + 34);
+
+    // A tainted canvas throws here rather than earlier, so the message names the cause.
+    let url = "";
+    try {
+      url = out.toDataURL("image/png");
+    } catch (e) {
+      this.setState({ error: "\u1791\u17b6\u1789\u1799\u1780\u1798\u17b7\u1793\u1794\u17b6\u1793 \u00b7 "
+        + "the map image could not be saved - reload the page so the tiles load with CORS,"
+        + " then try again." });
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ento-map-" + (byVil ? "village" : "household") + "-" + metric.mode
+      + "-" + new Date().toISOString().slice(0, 10) + ".png";
+    a.click();
+    if (tainted) {
+      this.setState({ error: "\u1795\u17c2\u1793\u1791\u17b8\u1798\u17b7\u1793\u1782\u17d2\u179a\u1794\u17cb \u00b7 "
+        + "some map tiles were missing from the image - reload and try again once the map"
+        + " has finished loading." });
+    }
+  };
+
   downloadChart(c) {
     const live = document.querySelector('canvas[data-chart="' + c.key + '"]');
     if (!live) return;
@@ -2338,6 +2617,7 @@ class Component extends DCLogic {
       const m = map[k] || (map[k] = { key: k, insp: 0, pos: 0, installs: 0, collects: 0, labs: 0,
         eggs: 0, adults: 0,
         larvAeg: 0, larvAlb: 0, larvAedesOther: 0, larvCulexOther: 0, larvLabs: 0,
+        pupaAeg: 0, pupaAlb: 0, pupaAedesOther: 0, pupaCulexOther: 0, pupaLabs: 0,
         aduAeg: 0, aduAlb: 0, aduAedesOther: 0, aduCulexOther: 0, aduAegF: 0, aduLabs: 0,
         houses: {} });
       const t = this.type(r);
@@ -2355,6 +2635,14 @@ class Component extends DCLogic {
         // summed from its own set rather than from whichever key happens to be filled.
         if (isLarval(r)) {
           m.larvLabs += 1;
+          // the pupal part of the same round, counted again under its own name
+          if (isPupal(r)) {
+            m.pupaLabs += 1;
+            m.pupaAeg += num(r.aegypti);
+            m.pupaAlb += num(r.albopictus);
+            m.pupaAedesOther += num(r.aedes_other);
+            m.pupaCulexOther += num(r.culex) + num(r.other);
+          }
           m.larvAeg += num(r.aegypti);
           m.larvAlb += num(r.albopictus);
           m.larvAedesOther += num(r.aedes_other);
@@ -2485,27 +2773,33 @@ class Component extends DCLogic {
     });
     // Leaflet map, only while its tab is open.
     if (this.state.tab === "map" && this._mapEl && window.L) {
-      const hh = this.households(this.rows()).filter((h) => h.lat && h.lon);
+      const hh = this.mapPoints(this.rows());
       if (!this._map) {
         this._map = window.L.map(this._mapEl, { scrollWheelZoom: false });
+        // crossOrigin: OSM serves the tiles with CORS, and without asking for it the
+        // tiles taint a canvas they are copied into - the PNG export would throw a
+        // SecurityError rather than produce a file.
         window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-          { maxZoom: 19, attribution: "\u00a9 OpenStreetMap" }).addTo(this._map);
+          { maxZoom: 19, attribution: "\u00a9 OpenStreetMap", crossOrigin: true }).addTo(this._map);
         this._layer = window.L.layerGroup().addTo(this._map);
       }
       this.drawCommunes(this._map, "_communeLayer");
       this._layer.clearLayers();
-      const mode = this.state.mapMode;
-      const value = (h) => (mode === "ci" ? h.ci : mode === "adults" ? h.adults : mode === "eggs" ? h.eggs : h.traps);
+      const byVil = this.state.mapUnit === "vill";
+      const metric = this.mapMetric();
+      const value = metric.value;
       const max = Math.max.apply(null, hh.map(value).concat([1]));
       hh.forEach((h) => {
         const v = value(h);
         const share = max ? v / max : 0;
         window.L.circleMarker([Number(h.lat), Number(h.lon)], {
-          radius: 7 + Math.round(share * 9), weight: 2, color: "#fff",
-          fillColor: share > .66 ? "#7C1220" : share > .33 ? "#F4B71B" : "#117996", fillOpacity: .92,
+          radius: metric.radiusFor(share), weight: 2, color: "#fff",
+          fillColor: metric.colorFor(share), fillOpacity: .92,
         }).bindTooltip('<span style="font:700 11px ' + FONT + ';color:#003E78">' + h.id
           + (h.head ? "  \u00b7  " + h.head : "") + "</span>", { permanent: true, direction: "right", offset: [8, 0], opacity: 1, className: "hh-label" })
-          .bindPopup("<b>" + h.id + "</b><br>" + (h.where || "") + "<br>CI " + h.ci + "% · "
+          .bindPopup("<b>" + h.id + "</b><br>" + (h.where || "")
+            + (byVil ? "<br>" + h.houses + (h.houses === 1 ? " household" : " households") : "")
+            + "<br>CI " + h.ci + "% · "
             + h.pos + "/" + h.insp + " containers<br>" + h.adults + " mosquitoes · " + h.eggs + " eggs")
           .addTo(this._layer);
       });
@@ -2527,6 +2821,7 @@ class Component extends DCLogic {
       // one bucket per trap type: the same six taxa, read separately for each
       pk: bucket(), bg: bucket(),
       larvTot: 0, larvAeg: 0, larvAlb: 0, larvOther: 0, larvCulex: 0,
+      pupaTot: 0, pupaAeg: 0, pupaAlb: 0, pupaOther: 0, pupaCulex: 0,
       emgTubes: 0, emgTot: 0, emgAegF: 0, emgAegM: 0, emgAlbF: 0, emgAlbM: 0,
       emgOther: 0, emgCulex: 0 });
     const by = {};
@@ -2556,11 +2851,15 @@ class Component extends DCLogic {
       }
       if (t === "lab" && !isEmerged(r)) {
         if (isLarval(r)) {
-          d.larvTot += num(r.total_catch);
-          d.larvAeg += num(r.aegypti);
-          d.larvAlb += num(r.albopictus);
-          d.larvOther += num(r.aedes_other);
-          d.larvCulex += num(r.culex) + num(r.other);
+          // Here the two stages go to separate buckets, unlike the dashboard's figures:
+          // a sheet is read by adding its bands across, so a band that also contained its
+          // neighbour's count would make every row fail to reconcile.
+          const m = isPupal(r) ? "pupa" : "larv";
+          d[m + "Tot"] += num(r.total_catch);
+          d[m + "Aeg"] += num(r.aegypti);
+          d[m + "Alb"] += num(r.albopictus);
+          d[m + "Other"] += num(r.aedes_other);
+          d[m + "Culex"] += num(r.culex) + num(r.other);
         } else {
           d.aduTot += num(r.total_catch);
           // Matched by name, not by elimination: methodOf returns "" for a result whose
@@ -2645,12 +2944,23 @@ class Component extends DCLogic {
       { title: "ADULTS \u00b7 ALL TRAPS", xf: "grpDark", cols: [
         Object.assign({ head: "Trap n/k", w: 10 }, n((d) => d.aduUnk)),
         Object.assign({ head: "Adults Tot", w: 11 }, n((d) => d.aduTot))] },
+      // Larvae alone now that pupae have a band: the heading would otherwise promise
+      // every immature and deliver only some of them.
       { title: "LARVAE BY SPECIES", xf: "grpGold", cols: [
         Object.assign({ head: "Larvae Tot", w: 11, cf: "bar" }, n((d) => d.larvTot)),
-        Object.assign({ head: "Ae. aegypti", w: 12 }, n((d) => d.larvAeg)),
-        Object.assign({ head: "Ae. albopictus", w: 13 }, n((d) => d.larvAlb)),
-        Object.assign({ head: "Other Aedes", w: 12 }, n((d) => d.larvOther)),
-        Object.assign({ head: "Culex / Other", w: 12 }, n((d) => d.larvCulex))] },
+        Object.assign({ head: "La Ae. aegypti", w: 13 }, n((d) => d.larvAeg)),
+        Object.assign({ head: "La Ae. albopictus", w: 14 }, n((d) => d.larvAlb)),
+        Object.assign({ head: "La Other Aedes", w: 13 }, n((d) => d.larvOther)),
+        Object.assign({ head: "La Culex / Other", w: 13 }, n((d) => d.larvCulex))] },
+      // Pupae, kept out of the band above rather than inside it: the two are added
+      // across the row, and every immature on record before October is a larva, so this
+      // band reads zero throughout the history and the larvae band keeps its figures.
+      { title: "PUPAE BY SPECIES", xf: "grpDarkGold", cols: [
+        Object.assign({ head: "Pupae Tot", w: 11, cf: "bar" }, n((d) => d.pupaTot)),
+        Object.assign({ head: "Pu Ae. aegypti", w: 13 }, n((d) => d.pupaAeg)),
+        Object.assign({ head: "Pu Ae. albopictus", w: 14 }, n((d) => d.pupaAlb)),
+        Object.assign({ head: "Pu Other Aedes", w: 13 }, n((d) => d.pupaOther)),
+        Object.assign({ head: "Pu Culex / Other", w: 13 }, n((d) => d.pupaCulex))] },
       // Adults reared out of the immatures counted two bands to the left, so they sit
       // beside them - and in their own band, because they are never added to the trapped
       // catch: that would count one mosquito twice.
@@ -2824,6 +3134,8 @@ class Component extends DCLogic {
     const s = this.state;
     const rows = this.rows();
     const hh = this.households(rows);
+    // what the map is plotting right now: a household each, or a village each
+    const mapPts = this.mapPoints(rows);
     // Every record filed under each household, so a row can be opened to show
     // which activities produced its figures.
     const ACT = { install: "\u178a\u17b6\u1780\u17cb \u00b7 install", collect: "\u1794\u17d2\u179a\u1798\u17bc\u179b \u00b7 collect",
@@ -2911,6 +3223,9 @@ class Component extends DCLogic {
           sub: inspected.length ? fmt(inspected.length) + " houses inspected" : "no larval survey in view", color: "#7C1220" },
         { ico: "mosquito", label: "មូសពេញវ័យ · Adults", value: fmt(sp.adultCatch), sub: "identified in the lab", color: "#F4B71B" },
         { ico: "larva", label: "ដង្កូវទឹក · Larvae", value: fmt(sp.larvaeCatch), sub: "reared and identified in the lab", color: "#117996" },
+        { ico: "larva", label: "ឌុកឌឿ · Pupae", value: fmt(sp.pupaTotal),
+          sub: sp.pupaTotal ? "identified as pupae, part of the larvae above"
+            : "none identified as pupae in view", color: "#7F6000" },
         { ico: "mosquito", label: "មូសចេញពីដង្កូវ · Emerged", value: fmt(sp.emergedTotal),
           sub: sp.emergedTotal ? "reared from the larvae, counted apart" : "none reared to adult in view", color: "#6B4C7A" },
         { ico: "egg", label: "ពង · Eggs", value: fmt(sp.eggs), sub: "counted from ovitraps", color: "#1ED47F" },
@@ -2980,6 +3295,7 @@ class Component extends DCLogic {
       reloadLabel: s.loading ? "កំពុងទាញ…" : "ទាញឡើងវិញ · Reload",
       reload: this.load,
       downloadCsv: this.downloadCsv,
+      downloadMapPng: this.downloadMapPng,
       downloadHhXlsx: this.downloadHhXlsx,
       hasError: !!s.error, errorText: s.error,
       recCountLabel: fmt(rows.length) + " កំណត់ត្រា · record",
@@ -3049,6 +3365,13 @@ class Component extends DCLogic {
         { label: "Containers inspected", value: fmt(insp) },
         { label: "Containers positive", value: fmt(pos) },
         { label: "Reared Ae. aegypti", value: fmt(sp.larvAeg) },
+        { label: "Pupae identified", value: fmt(sp.pupaTotal),
+          of: over(sp.pupaTotal, sp.larvTotal, "immatures") },
+        // Pupae per 100 houses surveyed - the standard pupal index, and the reason the
+        // denominator is houses surveyed rather than houses with a container.
+        { label: "Pupal index (per 100 houses)", value: inspected.length
+          ? Math.round((sp.pupaTotal / inspected.length) * 1000) / 10 : "\u2014",
+          of: over(sp.pupaTotal, inspected.length, "houses surveyed") },
         { label: "Emerged adults", value: fmt(sp.emergedTotal) },
         { label: "Female of emerged Ae. aegypti", value: sp.emgAeg
           ? Math.round((sp.emgFemaleAeg / sp.emgAeg) * 1000) / 10 + "%" : "—",
@@ -3200,23 +3523,36 @@ class Component extends DCLogic {
         .map(([k, label, icon]) => ({ label, icon, go: () => this.setState({ mapMode: k }),
           bg: s.mapMode === k ? "#003E78" : "#fff", fg: s.mapMode === k ? "#fff" : "#64748B",
           bd: s.mapMode === k ? "#003E78" : "#D9DEE4" })),
+      mapUnit: (function (self, unit) {
+        const vill = unit === "vill";
+        return { label: vill ? "ភូមិ · Village" : "ខ្នងផ្ទះ · Household",
+          title: vill ? "ខ្នងផ្ទះ · show each household" : "ភូមិ · roll up to one circle per village",
+          icon: vill ? KPI_ICON.pin : KPI_ICON.house,
+          go: () => self.setState({ mapUnit: vill ? "hh" : "vill" }, () => setTimeout(self.draw, 0)),
+          bg: vill ? "#0D6177" : "#fff", fg: vill ? "#fff" : "#64748B",
+          bd: vill ? "#0D6177" : "#D9DEE4" };
+      })(this, s.mapUnit),
+      mapTitle: s.mapUnit === "vill" ? "ផែនទីភូមិ" : "ផែនទីគ្រួសារ",
+      mapTitleEn: s.mapUnit === "vill" ? "Village locations" : "Household locations",
       // Legend thresholds are the same thirds the markers are coloured by.
       mapLegendTitle: { ci: "សន្ទស្សន៍ភាជន៍ · container index", adults: "មូស · mosquitoes",
         eggs: "ពង · eggs", traps: "អន្ទាក់ · traps" }[s.mapMode] || "",
-      mapLegend: (function (list, mode) {
-        const val = (h) => (mode === "ci" ? h.ci : mode === "adults" ? h.adults : mode === "eggs" ? h.eggs : h.traps);
+      mapLegend: (function (list, metric) {  // list is mapPts: households or villages
         const pts = list.filter((h) => h.lat && h.lon);
-        const max = Math.max.apply(null, pts.map(val).concat([1]));
-        const unit = mode === "ci" ? "%" : "";
-        const at = (share) => fmt(Math.round(max * share * 10) / 10) + unit;
+        const max = Math.max.apply(null, pts.map(metric.value).concat([1]));
+        const at = (share) => fmt(Math.round(max * share * 10) / 10) + metric.unit;
         return [
-          { color: "#117996", size: "10px", label: "0 – " + at(.33) },
-          { color: "#F4B71B", size: "14px", label: at(.33) + " – " + at(.66) },
-          { color: "#7C1220", size: "18px", label: at(.66) + " – " + at(1) },
+          { color: metric.colorFor(.2), size: "10px", label: "0 – " + at(.33) },
+          { color: metric.colorFor(.5), size: "14px", label: at(.33) + " – " + at(.66) },
+          { color: metric.colorFor(.9), size: "18px", label: at(.66) + " – " + at(1) },
         ];
-      })(hh, s.mapMode),
+      })(mapPts, this.mapMetric()),
       mapNote: "ចំណុចធំ និងក្រហម មានតម្លៃខ្ពស់ · larger, redder circles carry the higher value. "
-        + hh.filter((h) => h.lat && h.lon).length + " of " + hh.length + " households have coordinates.",
+        + (s.mapUnit === "vill"
+          ? mapPts.length + " " + (mapPts.length === 1 ? "village" : "villages")
+            + " plotted at the mean of their households' coordinates."
+          : hh.filter((h) => h.lat && h.lon).length + " of " + hh.length
+            + " households have coordinates."),
       showTable: s.tab === "table" && (this.role() === "analyst" || this.role() === "admin"),
       showUsers: s.tab === "users" && this.role() === "admin",
       userRows: (s.users || []).map((u) => ({

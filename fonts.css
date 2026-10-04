@@ -1,0 +1,33 @@
+/* CHAI webfonts.
+   Official font: Trebuchet MS — now self-hosted from uploaded files.
+   Fira Sans (Google Fonts CDN) is the approved alternate for external graphic design. */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@font-face {
+  font-family: "Trebuchet MS";
+  src: url("../fonts/Trebuchet_MS.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Trebuchet MS";
+  src: url("../fonts/Trebuchet_MS_Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Trebuchet MS";
+  src: url("../fonts/Trebuchet_MS_Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Trebuchet MS";
+  src: url("../fonts/Trebuchet_MS_Bold_Italic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
