@@ -809,20 +809,19 @@ function placeLabel(level, code, km) {
 }
 const padTo = { province: 2, district: 4, commune: 6, village: 10 };
 
-// Larvae and pupae alike: both are identified to species, neither is sexed, and neither
-// is part of what a trap caught. Matching "larv" alone sent every pupal result down the
-// else-branch and into the adult tally.
+// The lab's immature reading. It still answers to a pupal stage because a handful of
+// records may carry one from before pupae moved onto their own form, and such a record is
+// an immature wherever it lands - never an adult, which is where an unmatched stage goes.
 function isLarval(r) {
   const v = String((r && r.specimen_stage) || "").toLowerCase();
   return v.indexOf("larv") >= 0 || v.indexOf("pupa") >= 0;
 }
 
-// A pupa is an immature, so isLarval() covers it too and every "immatures" total keeps
-// counting it. This is the narrower question - which of those immatures were pupae - and
-// it exists so pupae can be reported as a named part of that total without any figure
-// already on the dashboard changing value.
-function isPupal(r) {
-  return String((r && r.specimen_stage) || "").toLowerCase().indexOf("pupa") >= 0;
+// Pupae are counted per village on a survey of their own, so they are a record type and
+// not a reading taken off a tube. They carry no household_id and no container, which is
+// why nothing per-household can report them.
+function isPupaeRec(r) {
+  return String((r && (r.form_type || r.type)) || "") === "pupae";
 }
 
 // Adults reared out of a larval collection. They are sexed like a trap catch but were
@@ -1316,8 +1315,9 @@ class Component extends DCLogic {
     const aedesOther = sumOf(adults, "aedes_other");
     const larvCulex = sumOf(larvals, "culex"), larvOther = sumOf(larvals, "other");
     const larvAedesOther = sumOf(larvals, "aedes_other");
-    // Inside larvals, not beside it: these are the immatures that were read as pupae.
-    const pupals = larvals.filter(isPupal);
+    // Their own records, not a slice of the lab results: a pupae survey counts a village,
+    // so it is never one of the tubes above and is never added to the immature total.
+    const pupals = rows.filter(isPupaeRec);
     const pupaAeg = sumOf(pupals, "aegypti"), pupaAlb = sumOf(pupals, "albopictus");
     const pupaAedesOther = sumOf(pupals, "aedes_other");
     const pupaCulexOther = sumOf(pupals, "culex") + sumOf(pupals, "other");
@@ -1336,11 +1336,10 @@ class Component extends DCLogic {
       culex, other, larvCulex, larvOther, adultTotal, larvTotal,
       culexOther: culex + other, larvCulexOther: larvCulex + larvOther,
       pupaAeg, pupaAlb, pupaAedesOther, pupaCulexOther, pupaTotal,
-      pupaTubes: pupals.length,
-      pupaCatch: pupals.reduce((a, r) => a + num(r.total_catch), 0),
-      // the immatures that were NOT pupae, for the export's two bands
-      larvaeOnlyCatch: larvals.filter((r) => !isPupal(r))
-        .reduce((a, r) => a + num(r.total_catch), 0),
+      pupaSurveys: pupals.length,
+      // the surveyor's own denominator, summed across the villages in view
+      pupaHouses: pupals.reduce((a, r) => a + num(r.houses_surveyed), 0),
+      pupaHousesPos: pupals.reduce((a, r) => a + num(r.houses_positive), 0),
       emgAeg, emgAlb, emgAedesOther, emgCulexOther, emergedTotal,
       emgFemaleAeg: sumOf(emerged, "aegypti_f"), emgMaleAeg: sumOf(emerged, "aegypti_m"),
       emgFemaleAlb: sumOf(emerged, "albopictus_f"), emgMaleAlb: sumOf(emerged, "albopictus_m"),
@@ -1759,6 +1758,28 @@ class Component extends DCLogic {
     ];
   }
 
+  // Every pupae survey in view, summed per village across the rounds. Built from the
+  // records rather than from byVillage(), which starts at the household register and so
+  // cannot see a survey that belongs to no household.
+  pupaeByVillage(rows) {
+    const map = {};
+    rows.filter(isPupaeRec).forEach((r) => {
+      const key = r.village_code || r.village || "\u2014";
+      const v = map[key] || (map[key] = { key: key, name: placeLabel("village", r.village_code, r.village),
+        surveys: 0, houses: 0, housesPos: 0,
+        aeg: 0, alb: 0, aedesOther: 0, culexOther: 0, total: 0 });
+      v.surveys += 1;
+      v.houses += num(r.houses_surveyed);
+      v.housesPos += num(r.houses_positive);
+      v.aeg += num(r.aegypti);
+      v.alb += num(r.albopictus);
+      v.aedesOther += num(r.aedes_other);
+      v.culexOther += num(r.culex) + num(r.other);
+      v.total = v.aeg + v.alb + v.aedesOther + v.culexOther;
+    });
+    return Object.keys(map).map((k) => map[k]).sort((a, b) => b.total - a.total);
+  }
+
   chartSpecs() {
     const rows = this.rows();
     const vil = this.byVillage(rows);
@@ -1797,7 +1818,6 @@ class Component extends DCLogic {
     if (t === "epi") return this.epiSpecs(rows);
     if (t === "larval") {
       const larvRounds = roundsWith("larvLabs");
-      const pupaRounds = roundsWith("pupaLabs");
       const contInsp = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["inspected_" + k]), 0));
       const contPos = CONTAINERS.map(([k]) => rows.reduce((a, r) => a + num(r["positive_" + k]), 0));
       return [
@@ -1824,17 +1844,19 @@ class Component extends DCLogic {
               data: larvRounds.mon.map((m) => m.larvAeg + m.larvAlb + m.larvAedesOther + m.larvCulexOther),
               borderColor: "#117996", backgroundColor: "rgba(17,121,150,.16)", fill: true, tension: .3,
               borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#117996" }] } } },
-        // Empty until October, when the stage starts being recorded. A round that
-        // identified no pupae leaves the axis rather than drawing a zero, so this stays
-        // blank instead of showing a flat line along the bottom.
-        { key: "pupaRound", title: "ឌុកឌឿតាមជុំ",
-          titleEn: "Pupae identified by report month",
-          textLabels: pupaRounds.textLabels,
-          spec: { type: "line", data: { labels: pupaRounds.labels, datasets: [
-            { label: "ឌុកឌឿ · Pupae",
-              data: pupaRounds.mon.map((m) => m.pupaAeg + m.pupaAlb + m.pupaAedesOther + m.pupaCulexOther),
-              borderColor: "#7F6000", backgroundColor: "rgba(127,96,0,.16)", fill: true, tension: .3,
-              borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: "#7F6000" }] } } },
+        // Every survey in view, summed per village and split by species. A survey yields
+        // one figure per village per round, so splitting it by round drew a line through
+        // two or three points; the aggregate answers where the pupae are.
+        { key: "pupaVil", title: "ឌុកឌឿតាមភូមិ",
+          titleEn: "Pupae counted by village, all rounds in view",
+          spec: (function (list) {
+            const top = list.slice(0, 12);
+            return { type: "bar", data: { labels: top.map((v) => v.name), datasets: [
+              { label: SPECIES_LABELS[0], data: top.map((v) => v.aeg), backgroundColor: SPECIES_COLORS[0], borderRadius: 3, stack: "s" },
+              { label: SPECIES_LABELS[1], data: top.map((v) => v.alb), backgroundColor: SPECIES_COLORS[1], borderRadius: 3, stack: "s" },
+              { label: SPECIES_LABELS[2], data: top.map((v) => v.aedesOther), backgroundColor: SPECIES_COLORS[2], borderRadius: 3, stack: "s" },
+              { label: SPECIES_LABELS[3], data: top.map((v) => v.culexOther), backgroundColor: SPECIES_COLORS[3], borderRadius: 3, stack: "s" }] } };
+          })(this.pupaeByVillage(rows)) },
         { key: "typePie", title: "សមាមាត្រភាជន៍មានដង្កូវ", titleEn: "Positive containers by type",
           spec: { type: "doughnut", data: { labels: contLabels(),
             datasets: [{ data: contPos, backgroundColor: COLORS }] } } },
@@ -2086,10 +2108,17 @@ class Component extends DCLogic {
     }
     // Every series summed: right for the stacked-species charts, which is why the two
     // whole-and-part trends above are handled before this.
-    if (/^(larvRound|aduRound|eggTrend|pupaRound)$/.test(k)) {
+    if (k === "pupaVil") {
       const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
-      const what = /pupa/i.test(k) ? "pupae"
-        : /larv/i.test(k) ? "immatures" : /egg/i.test(k) ? "eggs" : "adults";
+      if (!sum(tot)) return "No pupae survey in view.";
+      const i = top(tot);
+      return labels[i] + " has the most pupae, " + fmt(tot[i]) + " of "
+        + fmt(sum(tot)) + " counted across " + labels.length
+        + (labels.length === 1 ? " village." : " villages.");
+    }
+    if (/^(larvRound|aduRound|eggTrend)$/.test(k)) {
+      const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
+      const what = /larv/i.test(k) ? "immatures" : /egg/i.test(k) ? "eggs" : "adults";
       const verb = /egg/i.test(k) ? " counted " : " identified ";
       if (!sum(tot)) return "No " + what + (/egg/i.test(k) ? " counted" : " identified") + " in view.";
       // Every column is a round that reported - the chart drops the ones that did not.
@@ -2245,11 +2274,17 @@ class Component extends DCLogic {
         + " ក្បាល · " + which + " " + fmt(part[i]) + " ក្បាល · សរុប "
         + fmt(sum(all)) + " ក្បាល · " + which + " " + fmt(sum(part)) + " ក្បាល។";
     }
-    if (/^(larvRound|aduRound|eggTrend|pupaRound)$/.test(k)) {
+    if (k === "pupaVil") {
+      const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
+      if (!sum(tot)) return "គ្មានឌុកឌឿក្នុងទិដ្ឋភាពនេះ។";
+      const i = top(tot);
+      return labels[i] + " មានឌុកឌឿច្រើនជាងគេ " + fmt(tot[i])
+        + " ក្នុងចំណោម " + fmt(sum(tot)) + "។";
+    }
+    if (/^(larvRound|aduRound|eggTrend)$/.test(k)) {
       const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
       const isEgg = /egg/i.test(k);
       const what = isEgg ? "ពង"
-        : /pupa/i.test(k) ? "ឌុកឌឿ"
         : /larv/i.test(k) ? "ដង្កូវទឹក" : "មូសពេញវ័យ";
       // "ក្បាល" counts animals, not eggs
       const unit = isEgg ? "" : " ក្បាល";
@@ -2618,9 +2653,19 @@ class Component extends DCLogic {
         eggs: 0, adults: 0,
         larvAeg: 0, larvAlb: 0, larvAedesOther: 0, larvCulexOther: 0, larvLabs: 0,
         pupaAeg: 0, pupaAlb: 0, pupaAedesOther: 0, pupaCulexOther: 0, pupaLabs: 0,
+        pupaHouses: 0,
         aduAeg: 0, aduAlb: 0, aduAedesOther: 0, aduCulexOther: 0, aduAegF: 0, aduLabs: 0,
         houses: {} });
       const t = this.type(r);
+      // A pupae survey is a village total for the round, not a lab result.
+      if (t === "pupae") {
+        m.pupaLabs += 1;
+        m.pupaAeg += num(r.aegypti);
+        m.pupaAlb += num(r.albopictus);
+        m.pupaAedesOther += num(r.aedes_other);
+        m.pupaCulexOther += num(r.culex) + num(r.other);
+        m.pupaHouses += num(r.houses_surveyed);
+      }
       if (r.household_id) m.houses[r.household_id] = 1;
       if (t === "install") m.installs += 1;
       if (t === "collect") m.collects += 1;
@@ -2635,14 +2680,6 @@ class Component extends DCLogic {
         // summed from its own set rather than from whichever key happens to be filled.
         if (isLarval(r)) {
           m.larvLabs += 1;
-          // the pupal part of the same round, counted again under its own name
-          if (isPupal(r)) {
-            m.pupaLabs += 1;
-            m.pupaAeg += num(r.aegypti);
-            m.pupaAlb += num(r.albopictus);
-            m.pupaAedesOther += num(r.aedes_other);
-            m.pupaCulexOther += num(r.culex) + num(r.other);
-          }
           m.larvAeg += num(r.aegypti);
           m.larvAlb += num(r.albopictus);
           m.larvAedesOther += num(r.aedes_other);
@@ -2669,7 +2706,7 @@ class Component extends DCLogic {
   // Which global filter a chart's labels correspond to.
   chartDim(key) {
     if (/month|round|trend|cycle/i.test(key)) return "month";
-    if (/vil|^ci$|visits|adults|eggsVil/i.test(key)) return "village";
+    if (/vil|^ci$|visits|adults|eggsVil|pupaVil/i.test(key)) return "village";
     return "";
   }
 
@@ -2821,7 +2858,6 @@ class Component extends DCLogic {
       // one bucket per trap type: the same six taxa, read separately for each
       pk: bucket(), bg: bucket(),
       larvTot: 0, larvAeg: 0, larvAlb: 0, larvOther: 0, larvCulex: 0,
-      pupaTot: 0, pupaAeg: 0, pupaAlb: 0, pupaOther: 0, pupaCulex: 0,
       emgTubes: 0, emgTot: 0, emgAegF: 0, emgAegM: 0, emgAlbF: 0, emgAlbM: 0,
       emgOther: 0, emgCulex: 0 });
     const by = {};
@@ -2851,15 +2887,11 @@ class Component extends DCLogic {
       }
       if (t === "lab" && !isEmerged(r)) {
         if (isLarval(r)) {
-          // Here the two stages go to separate buckets, unlike the dashboard's figures:
-          // a sheet is read by adding its bands across, so a band that also contained its
-          // neighbour's count would make every row fail to reconcile.
-          const m = isPupal(r) ? "pupa" : "larv";
-          d[m + "Tot"] += num(r.total_catch);
-          d[m + "Aeg"] += num(r.aegypti);
-          d[m + "Alb"] += num(r.albopictus);
-          d[m + "Other"] += num(r.aedes_other);
-          d[m + "Culex"] += num(r.culex) + num(r.other);
+          d.larvTot += num(r.total_catch);
+          d.larvAeg += num(r.aegypti);
+          d.larvAlb += num(r.albopictus);
+          d.larvOther += num(r.aedes_other);
+          d.larvCulex += num(r.culex) + num(r.other);
         } else {
           d.aduTot += num(r.total_catch);
           // Matched by name, not by elimination: methodOf returns "" for a result whose
@@ -2944,23 +2976,14 @@ class Component extends DCLogic {
       { title: "ADULTS \u00b7 ALL TRAPS", xf: "grpDark", cols: [
         Object.assign({ head: "Trap n/k", w: 10 }, n((d) => d.aduUnk)),
         Object.assign({ head: "Adults Tot", w: 11 }, n((d) => d.aduTot))] },
-      // Larvae alone now that pupae have a band: the heading would otherwise promise
-      // every immature and deliver only some of them.
+      // Every immature the lab read. Pupae are not here and cannot be: a pupae survey
+      // counts a village, so it has no household row to sit on.
       { title: "LARVAE BY SPECIES", xf: "grpGold", cols: [
         Object.assign({ head: "Larvae Tot", w: 11, cf: "bar" }, n((d) => d.larvTot)),
-        Object.assign({ head: "La Ae. aegypti", w: 13 }, n((d) => d.larvAeg)),
-        Object.assign({ head: "La Ae. albopictus", w: 14 }, n((d) => d.larvAlb)),
-        Object.assign({ head: "La Other Aedes", w: 13 }, n((d) => d.larvOther)),
-        Object.assign({ head: "La Culex / Other", w: 13 }, n((d) => d.larvCulex))] },
-      // Pupae, kept out of the band above rather than inside it: the two are added
-      // across the row, and every immature on record before October is a larva, so this
-      // band reads zero throughout the history and the larvae band keeps its figures.
-      { title: "PUPAE BY SPECIES", xf: "grpDarkGold", cols: [
-        Object.assign({ head: "Pupae Tot", w: 11, cf: "bar" }, n((d) => d.pupaTot)),
-        Object.assign({ head: "Pu Ae. aegypti", w: 13 }, n((d) => d.pupaAeg)),
-        Object.assign({ head: "Pu Ae. albopictus", w: 14 }, n((d) => d.pupaAlb)),
-        Object.assign({ head: "Pu Other Aedes", w: 13 }, n((d) => d.pupaOther)),
-        Object.assign({ head: "Pu Culex / Other", w: 13 }, n((d) => d.pupaCulex))] },
+        Object.assign({ head: "Ae. aegypti", w: 12 }, n((d) => d.larvAeg)),
+        Object.assign({ head: "Ae. albopictus", w: 13 }, n((d) => d.larvAlb)),
+        Object.assign({ head: "Other Aedes", w: 12 }, n((d) => d.larvOther)),
+        Object.assign({ head: "Culex / Other", w: 12 }, n((d) => d.larvCulex))] },
       // Adults reared out of the immatures counted two bands to the left, so they sit
       // beside them - and in their own band, because they are never added to the trapped
       // catch: that would count one mosquito twice.
@@ -3224,8 +3247,8 @@ class Component extends DCLogic {
         { ico: "mosquito", label: "មូសពេញវ័យ · Adults", value: fmt(sp.adultCatch), sub: "identified in the lab", color: "#F4B71B" },
         { ico: "larva", label: "ដង្កូវទឹក · Larvae", value: fmt(sp.larvaeCatch), sub: "reared and identified in the lab", color: "#117996" },
         { ico: "larva", label: "ឌុកឌឿ · Pupae", value: fmt(sp.pupaTotal),
-          sub: sp.pupaTotal ? "identified as pupae, part of the larvae above"
-            : "none identified as pupae in view", color: "#7F6000" },
+          sub: sp.pupaTotal ? "counted per village, " + fmt(sp.pupaHouses) + " houses surveyed"
+            : "no pupae survey in view", color: "#7F6000" },
         { ico: "mosquito", label: "មូសចេញពីដង្កូវ · Emerged", value: fmt(sp.emergedTotal),
           sub: sp.emergedTotal ? "reared from the larvae, counted apart" : "none reared to adult in view", color: "#6B4C7A" },
         { ico: "egg", label: "ពង · Eggs", value: fmt(sp.eggs), sub: "counted from ovitraps", color: "#1ED47F" },
@@ -3237,6 +3260,18 @@ class Component extends DCLogic {
           sub: inspected.length ? fmt(inspected.filter((h) => h.positiveHouse).length) + " positive houses" : "no larval survey in view", color: "#7C1220" },
         { ico: "container", label: "ភាជន៍បានពិនិត្យ · Inspected", value: fmt(insp), sub: "containers", color: "#6EDBCD" },
         { ico: "container", label: "ភាជន៍មានដង្កូវ · Positive", value: fmt(pos), sub: "containers with larvae", color: "#F4B71B" },
+        // Pupae sit on this tab because they are an immature stage, even though they are
+        // counted on their own village survey rather than read off the containers above.
+        { ico: "larva", label: "ឌុកឌឿ · Pupae", value: fmt(sp.pupaTotal),
+          sub: sp.pupaTotal
+            ? "counted in " + fmt(sp.pupaSurveys) + (sp.pupaSurveys === 1 ? " village survey" : " village surveys")
+            : "no pupae survey in view", color: "#7F6000" },
+        // Over the pupae surveys' own houses, never the larval survey's - see the note on
+        // the indicator of the same name.
+        { ico: "ci", label: "សន្ទស្សន៍ឌុកឌឿ · Pupal index", value: sp.pupaHouses
+          ? Math.round((sp.pupaTotal / sp.pupaHouses) * 1000) / 10 : "—",
+          sub: sp.pupaHouses ? "per 100 of " + fmt(sp.pupaHouses) + " houses surveyed"
+            : "no pupae survey in view", color: "#BF8F00" },
         { ico: "mosquito", label: "មូសចេញពីដង្កូវ · Emerged", value: fmt(sp.emergedTotal),
           sub: sp.emergedTotal
             ? "from " + fmt(sp.emergedTubes) + (sp.emergedTubes === 1 ? " tube" : " tubes") + ", not a trap catch"
@@ -3365,13 +3400,21 @@ class Component extends DCLogic {
         { label: "Containers inspected", value: fmt(insp) },
         { label: "Containers positive", value: fmt(pos) },
         { label: "Reared Ae. aegypti", value: fmt(sp.larvAeg) },
-        { label: "Pupae identified", value: fmt(sp.pupaTotal),
-          of: over(sp.pupaTotal, sp.larvTotal, "immatures") },
-        // Pupae per 100 houses surveyed - the standard pupal index, and the reason the
-        // denominator is houses surveyed rather than houses with a container.
-        { label: "Pupal index (per 100 houses)", value: inspected.length
-          ? Math.round((sp.pupaTotal / inspected.length) * 1000) / 10 : "\u2014",
-          of: over(sp.pupaTotal, inspected.length, "houses surveyed") },
+        { label: "Pupae counted", value: fmt(sp.pupaTotal),
+          of: sp.pupaSurveys
+            ? fmt(sp.pupaSurveys) + (sp.pupaSurveys === 1 ? " village survey" : " village surveys")
+            : "" },
+        // Pupae per 100 houses, over the houses the pupae surveys themselves recorded.
+        // The larval survey's house count belongs to a different survey and would make
+        // the index right only by coincidence.
+        { label: "Pupal index (per 100 houses)", value: sp.pupaHouses
+          ? Math.round((sp.pupaTotal / sp.pupaHouses) * 1000) / 10 : "\u2014",
+          of: over(sp.pupaTotal, sp.pupaHouses, "houses surveyed") },
+        // How widespread rather than how many: one productive jar can carry the index
+        // above without a second house being involved.
+        { label: "House index for pupae", value: sp.pupaHouses
+          ? Math.round((sp.pupaHousesPos / sp.pupaHouses) * 1000) / 10 + "%" : "—",
+          of: over(sp.pupaHousesPos, sp.pupaHouses, "houses surveyed") },
         { label: "Emerged adults", value: fmt(sp.emergedTotal) },
         { label: "Female of emerged Ae. aegypti", value: sp.emgAeg
           ? Math.round((sp.emgFemaleAeg / sp.emgAeg) * 1000) / 10 + "%" : "—",

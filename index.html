@@ -371,6 +371,10 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           <span style="width: 30px; height: 30px; flex: none; border-radius: 8px; color: #fff; display: inline-flex; align-items: center; justify-content: center; background-color: #7C1220"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 10 11 3.5l8.2 6.5"></path><path d="M5 8.9V19h6.5"></path><circle cx="16.6" cy="16.6" r="3.6"></circle><path d="M19.3 19.3 22 22"></path></svg></span>
           <span style="font-size:11px;font-weight:700;line-height:1.2;text-align:left"><span style="display: block; color: #003E78">ស្វែងរកខ្នងផ្ទះ</span><span style="display: block; font-size:11px;font-weight:400;color:#767676;margin-top:1px">Find household</span></span>
         </button>
+        <button onClick="{{ openPupae }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 54px; padding: 8px 9px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 8px; background-color: #e8dcae">
+          <span style="width:30px;height:30px;flex:none;border-radius:8px;background:#7F6000;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c3.3 0 5.5 2.6 5.5 6S15.3 20 12 20s-5.5-6.6-5.5-10S8.7 4 12 4Z"></path><path d="M9.6 8.4h4.8M9.2 12h5.6M9.6 15.6h4.8"></path></svg></span>
+          <span style="font-size:11px;font-weight:700;line-height:1.2;text-align:left"><span style="display:block">ប្រមូលឌុកឌឿ</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Pupae survey · per village</span></span>
+        </button>
         
         
         
@@ -1963,6 +1967,8 @@ const TYPES = {
   larvae: { label: "Larvae collection", bar: "#ccdbb2", prefix: "LC" },
   // Khmer forms of the type labels live in KM below.
   lab: { label: "Lab result", bar: "#ffe1d0", prefix: "LR" },
+  // Counted per village, not per house: no tube, no container, no household_id.
+  pupae: { label: "Pupae survey", bar: "#e8dcae", prefix: "PU" },
 };
 
 // Larvae are reared and identified to species; sex is not determined.
@@ -2001,8 +2007,11 @@ const SHARED_TAXA_KEYS = ["aedes_other", "culex", "other"];
 // they are not a trapped catch: these were never host-seeking, so they are stamped with
 // their own stage and reported apart from what the traps caught.
 const EMERGED = "Emerged";
+// Pupae are no longer a stage a tube can be read as - they are counted per village on
+// their own form - so the lab form offers the two readings a tube still has. The constant
+// stays because records already stamped "Pupa", and isImmatureStage below, still mean it.
 const PUPA = "Pupa";
-const LAB_STAGES = [["Larvae", "Larvae"], [PUPA, "Pupae"], [EMERGED, "Emerged adults"]];
+const LAB_STAGES = [["Larvae", "Larvae"], [EMERGED, "Emerged adults"]];
 // Larvae and pupae are both immatures: identified to species and never sexed, counted on
 // the larval tally, and never part of what a trap caught. Almost everywhere that used to
 // ask "is the stage Larvae" was really asking this, and a stage added beside Larvae walks
@@ -2097,6 +2106,12 @@ const KM = {
   "District *": "\u179f\u17d2\u179a\u17bb\u1780 / \u1781\u178e\u17d2\u178c",
   "Commune": "\u1783\u17c6\u17bb / \u179f\u1784\u17d2\u1780\u17b6\u178f\u17cb",
   "Village": "\u1797\u17bc\u1798\u17b7",
+  "Village *": "\u1797\u17bc\u1798\u17b7",
+  "Report month": "\u1787\u17bb\u17c6\u179a\u1794\u17b6\u1799\u1780\u17b6\u179a\u178e\u17cd",
+  "Pupae survey": "\u1794\u17d2\u179a\u1798\u17bc\u179b\u178c\u17bb\u1780\u178c\u17bf",
+  "Pupae counted": "\u178c\u17bb\u1780\u178c\u17bf",
+  "Households with pupae": "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7\u1798\u17b6\u1793\u178c\u17bb\u1780\u178c\u17bf",
+  "Households surveyed": "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7\u1794\u17b6\u1793\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799",
   "House / street": "\u1795\u17d2\u1791\u17c7 / \u1795\u17d2\u179b\u17bc\u179c",
   "Structure": "\u1794\u17d2\u179a\u1797\u17c1\u1791\u1795\u17d2\u1791\u17c7",
   "Consent": "\u1799\u179b\u17cb\u1796\u17d2\u179a\u1798 \u1795\u17d2\u178f\u179b\u17cb\u1791\u17b8\u178f\u17b6\u17c6\u1784",
@@ -2107,6 +2122,7 @@ const KM = {
   "Trap ID": "\u179b\u17c1\u1781\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb",
   "Two traps": "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u1796\u17b8\u179a",
   "Traps at this household": "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u1793\u17c5\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7\u1793\u17c1\u17c7",
+  "Collection days": "\u1785\u17c6\u1793\u17bd\u1793\u1790\u17d2\u1784\u17c3\u1794\u17d2\u179a\u1798\u17bc\u179b",
   "Substrate": "\u1791\u17b9\u1780\u1780\u17d2\u1793\u17bb\u1784\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u178a\u17b6\u1780\u17cb\u1796\u1784\u1798\u17bc\u179f",
   "Notes": "\u1780\u17c6\u178e\u178f\u17cb\u179f\u1798\u17d2\u1782\u17b6\u179b\u17cb",
   "Trap *": "\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb",
@@ -2275,6 +2291,21 @@ function derive(type, r) {
 
   } else if (type === "adult") {
     d.specimens = r.specimens === "" || r.specimens == null ? "" : Number(r.specimens);
+  } else if (type === "pupae") {
+    const total = LARVAL_TAXA.reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
+    const houses = Number(r.houses_surveyed) || 0;
+    const posHouses = Number(r.houses_positive) || 0;
+    d.houses_positive = posHouses;
+    // Share of the houses walked that held any pupae. The pupal index counts insects and
+    // one productive jar can carry it; this says how widespread they are.
+    d.house_pupa_index = houses ? Math.round((posHouses / houses) * 1000) / 10 : 0;
+    d.total_catch = total;
+    d.aegypti_total = Number(r.aegypti) || 0;
+    d.aegypti_pct = total ? Math.round((d.aegypti_total / total) * 1000) / 10 : 0;
+    d.houses_surveyed = houses;
+    // Pupae per 100 houses - the standard pupal index, carried on the record so every
+    // report reads the same figure rather than each recomputing its own denominator.
+    d.pupal_index = houses ? Math.round((total / houses) * 1000) / 10 : 0;
   } else if (type === "lab") {
     d.eggs = Number(r.eggs) || 0;
     const larval = isImmatureRec(r);
@@ -4070,10 +4101,21 @@ class Component extends DCLogic {
     const today = new Date().toISOString().slice(0, 10);
     const blank = {
       household: { head: "", phone: "", residents: "", hh_id: "", province_code: "", province: "", district_code: "", district: "", commune_code: "", commune: "", village_code: "", village: "", address: "", structure: "House", consent: "Given", exit_reason: "", active_to: "" },
-      install: { trap_id_inside: "", trap_id_outside: "", trap_type: "Ovitrap", house: "", position: "Both", substrate: "Hay infusion", notes: "" },
+      install: { trap_id_inside: "", trap_id_outside: "", trap_type: "Ovitrap", house: "", position: "Both", substrate: "Hay infusion", collect_days: "1", notes: "" },
       collect: { trap_ids: [], trap_id: "", position: "Both", found: "Yes", condition: "Intact", paddle: 0, notes: "" },
       adult: { method: "Procopack", trap_id: "", house: "", specimens: 0, notes: "" },
       lab: { source_id: "", tube_id: "", house: "", trap_id: "", specimen_stage: "Larvae", container: "", eggs: 0, aegypti: 0, albopictus: 0, aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0, culex: 0, other: 0, wmel: "Not tested" },
+      // No house, no tube, no container: this is the village's total. houses_surveyed
+      // is the pupal index's denominator and belongs to this survey, not another one.
+      pupae: { province_code: "", province: "", district_code: "", district: "",
+        commune_code: "", commune: "", village_code: "", village: "",
+        // Seeded, not blank: commit() spreads the form over its own date-derived round,
+        // so an empty value here would overwrite a good month with nothing.
+        period_month: this.currentRound(),
+        period_label: period(this.currentRound() + "-15").label,
+        houses_surveyed: 0, houses_positive: 0,
+        aegypti: 0, albopictus: 0, aedes_other: 0, culex: 0, other: 0,
+        notes: "" },
       // The per-container cells are part of the blank form, so editing a saved survey
       // loads them back instead of reopening it as 0 / 0.
       larvae: CONTAINERS.reduce((a, [k]) => {
@@ -4133,14 +4175,60 @@ class Component extends DCLogic {
     });
     const trapPos = {};
     traps.forEach((t) => { if (t.position) trapPos[t.value] = t.position; });
-    return { hh, traps, trapPos };
+    // Every village the register knows, with the place chain above it, so a form with no
+    // household to inherit from can still stamp province through village.
+    const vmap = {};
+    this.state.records.forEach((r) => {
+      if ((r.form_type || r.type) !== "household") return;
+      // Keyed bare: the register holds the same village both zero-padded and not, and
+      // keying on the raw code listed it twice.
+      const code = this.bareCode(r.village_code) || r.village;
+      if (!code || vmap[code]) return;
+      vmap[code] = { value: code,
+        label: (r.village || code) + (r.commune ? "  \u00b7  " + r.commune : ""),
+        province_code: r.province_code || "", province: r.province || "",
+        district_code: r.district_code || "", district: r.district || "",
+        commune_code: r.commune_code || "", commune: r.commune || "",
+        village_code: r.village_code || "", village: r.village || "" };
+    });
+    const villages = Object.keys(vmap).map((k) => vmap[k])
+      .sort((a, b) => String(a.label).localeCompare(String(b.label), "km"));
+    return { hh, traps, trapPos, villages };
   }
+
+  // One pick fills province through village. A pupae record has no household to take
+  // them from, and a record with a village name but no codes sorts nowhere.
+  setPupaeVillage = (e) => {
+    const v = (e && e.target ? e.target.value : e) || "";
+    const hit = (this.registered().villages || [])
+      .filter((x) => this.bareCode(x.value) === this.bareCode(v))[0];
+    this.setState((p) => ({
+      form: { ...p.form, village_code: hit ? hit.village_code : "", village: hit ? hit.village : v,
+        commune_code: hit ? hit.commune_code : "", commune: hit ? hit.commune : "",
+        district_code: hit ? hit.district_code : "", district: hit ? hit.district : "",
+        province_code: hit ? hit.province_code : "", province: hit ? hit.province : "",
+        _village: v },
+      error: "",
+    }));
+  };
 
   set = (k) => (e) => {
     const v = e && e.target ? e.target.value : e;
-    this.setState((p) => ({ form: this.autoIds(p.type, { ...p.form, [k]: v }), error: "" }));
+    this.setState((p) => ({ form: this.autoIds(p.type, this.withDefaults(p.type, k, v, p.form)), error: "" }));
   };
-  pick = (k, v) => () => this.setState((p) => ({ form: this.autoIds(p.type, { ...p.form, [k]: v }), error: "" }));
+
+  // Switching an installation's trap type carries its collection schedule with it: a BG
+  // is emptied over three days, an ovitrap's paddle is retrieved once. Typed as a plain
+  // default, so a number already chosen by hand is left alone.
+  withDefaults(type, k, v, form) {
+    const next = { ...form, [k]: v };
+    if (type === "install" && k === "trap_type" && v !== form.trap_type) {
+      // strings, because that is what the choice buttons compare against
+      next.collect_days = v === "BG-Sentinel" ? "3" : "1";
+    }
+    return next;
+  }
+  pick = (k, v) => () => this.setState((p) => ({ form: this.autoIds(p.type, this.withDefaults(p.type, k, v, p.form)), error: "" }));
 
   // One standard trap ID format everywhere: TYPE-HOUSE-POSITION, e.g. Ov-0009-IN,
   // BGS-0009-OUT. Regenerated while the field still holds an auto value; typing over it wins.
@@ -4277,6 +4365,10 @@ class Component extends DCLogic {
       if (!picks.length) out.push("trap_ids");
     }
     if (type === "adult" || type === "larvae") { if (!f.house) out.push("house"); }
+    if (type === "pupae") {
+      if (!f.village_code && !f.village) out.push("village_code");
+      if (!(Number(f.houses_surveyed) > 0)) out.push("houses_surveyed");
+    }
     if (type === "lab") {
       if (!f.source_id) out.push("source_id");
       else {
@@ -4307,6 +4399,10 @@ class Component extends DCLogic {
     // collector from the account (name or username), and the user's role carries
     // the rest of what tracking needs, so an unset cluster must not block a save.
 
+    if (type === "pupae" && n("houses_positive") > n("houses_surveyed")) {
+      e.push("ខ្នងផ្ទះមានឌុកឌឿច្រើនជាងពិនិត្យ · "
+        + "More households held pupae than were surveyed.");
+    }
     if (type === "household") {
       if (String(f.head || "").trim().length < 2) e.push("បំពេញឈ្មោះមេគ្រួសារ · Enter the head of household's name.");
       if (filled("hh_id")) {
@@ -4352,15 +4448,25 @@ class Component extends DCLogic {
         const dates = recs.filter((r) => (r.form_type || r.type) === "install" && r.trap_id === id)
           .map((r) => r.collected_date).filter(Boolean).sort();
         if (dates.length && date < dates[0]) e.push("ថ្ងៃប្រមូលមុនថ្ងៃដាក់អន្ទាក់ · " + id + " was installed on " + dates[0] + ", so it cannot be collected earlier.");
-        // One collection per trap per report month. The tick list hides collected traps, but a
-        // pick can also arrive from a saved form or a typed trap_id, so block it here too.
+        // As many collections per round as the installation is scheduled for: one for an
+        // ovitrap, three for a BG set over three days. The tick list already closes a trap
+        // once its days are done, but a pick can also arrive from a saved form or a typed
+        // trap_id, so the count is enforced here too.
         const month = period(date).month;
-        const dup = recs.find((r) => (r.form_type || r.type) === "collect"
+        const sameRound = recs.filter((r) => (r.form_type || r.type) === "collect"
           && r.record_id !== editing
           && r.trap_id === id
           && (r.period_month || "") === month);
-        if (dup) e.push("អន្ទាក់នេះបានប្រមូលរួចហើយក្នុងជុំនេះ · " + id + " was already collected this report month on "
-          + (dup.collected_date || "") + " (" + (dup.record_id || "") + "). Edit that record instead.");
+        const dueDays = this.trapDaysDue(id);
+        if (sameRound.length >= dueDays) {
+          const last = sameRound[sameRound.length - 1] || {};
+          e.push(dueDays > 1
+            ? "អន្ទាក់នេះបានប្រមូលគ្រប់ថ្ងៃហើយក្នុងជុំនេះ · " + id + " already has all "
+              + dueDays + " days collected this report month ("
+              + sameRound.map((r) => r.record_id).join(", ") + "). Edit one of those instead."
+            : "អន្ទាក់នេះបានប្រមូលរួចហើយក្នុងជុំនេះ · " + id + " was already collected this report month on "
+              + (last.collected_date || "") + " (" + (last.record_id || "") + "). Edit that record instead.");
+        }
       });
     }
 
@@ -4608,7 +4714,12 @@ class Component extends DCLogic {
           .concat(form.position === "Outside" || form.position === "Both"
             ? [{ position: "Outside", trap_id: String(form.trap_id_outside || "").trim() || form._hint_trap_id_outside || "" }] : [])
       : type === "collect" && Array.isArray(form.trap_ids) && form.trap_ids.length
-        ? form.trap_ids.map((id) => ({ trap_id: id, position: this.registered().trapPos[id] || form.position }))
+        // Stamped per trap rather than per visit: one round of the village can empty
+        // several traps that are each on a different day of their own cycle.
+        ? form.trap_ids.map((id) => ({ trap_id: id,
+            position: this.registered().trapPos[id] || form.position,
+            day_no: this.state.editId ? undefined : this.trapDaysDone(id) + 1,
+            days_due: this.trapDaysDue(id) }))
       : type === "lab"
         ? [{ specimen_stage: this.stageForForm(form) }]
         : [(type === "collect" || type === "adult") && this.registered().trapPos[form.trap_id]
@@ -5220,6 +5331,30 @@ class Component extends DCLogic {
     return !this.sourceIsOvitrap(form.source_id);
   }
 
+  // January of this year up to the current round, newest first - the same span a
+  // household offers. A survey written up late is filed into the round it was walked in.
+  yearRoundOptions() {
+    const now = new Date();
+    const out = [];
+    for (let k = now.getMonth(); k >= 0; k -= 1) {
+      const m = now.getFullYear() + "-" + String(k + 1).padStart(2, "0");
+      out.push({ value: m, label: period(m + "-15").label });
+    }
+    const cur = this.currentRound();
+    if (!out.some((o) => o.value === cur)) out.unshift({ value: cur, label: period(cur + "-15").label });
+    return out;
+  }
+
+  // Picking a round sets the label with it: they are written together everywhere else,
+  // and a record carrying one without the other reads as an unnamed month.
+  setRound = (e) => {
+    const v = (e && e.target ? e.target.value : e) || "";
+    this.setState((p) => ({
+      form: { ...p.form, period_month: v, period_label: period(v + "-15").label },
+      error: "",
+    }));
+  };
+
   // Stage for the open form: the picked record if there is one, otherwise the activity filter.
   stageForForm(form) {
     // Reared material can be read either way, so the collector's choice wins over the
@@ -5369,29 +5504,38 @@ class Component extends DCLogic {
           if (/-IN$/.test(s2) || Number(r.pos_inside) === 1) return "IN";
           return "";
         })(r.trap_id || "");
-        // Led by the collection's own id — this field asks for a collection record, so
-        // naming it after the installation that set the trap read as the wrong record.
-        // The install id still follows in brackets, since that is how the trap is known
-        // in the field.
-        const setId = (function (self, id) {
-          if (!id) return "";
-          const inst = self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === id);
-          return (inst && (inst.record_id || inst.id)) || "";
-        })(this, r.trap_id);
-        // The round is part of the label because this list is not filtered by report month: a
-        // collection still awaiting a result shows up months later, and picking one
-        // blind is how a result ends up filed against the wrong round.
-        const round = (function (m) {
+        // The date the specimens were collected, leading the line because it is the thing
+        // being chosen between: across a three-day BG every other part is identical, and
+        // the record IDs this line used to lead with are not what anyone reads.
+        const when = (function (d) {
+          const v = String(d || "").slice(0, 10);
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return "";
+          const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          return Number(v.slice(8, 10)) + " " + (MON[Number(v.slice(5, 7)) - 1] || "") + " " + v.slice(2, 4);
+        })(r.collected_date || r.collected_at_utc);
+        // Which day of a multi-day cycle this was, on the traps that have one — an
+        // ovitrap's line should not carry a meaningless "day 1/1".
+        const nth = (Number(r.days_due) || 0) > 1 && Number(r.day_no)
+          ? "ថ្ងៃ " + Number(r.day_no) + "/" + Number(r.days_due) : "";
+        // The round, but only when the date does not already imply it. This list is not
+        // filtered by month — a collection still awaiting a result surfaces months later —
+        // and a result filed against the wrong round is what this guards against.
+        const round = (function (m, d) {
           if (!/^\d{4}-\d{2}$/.test(String(m || ""))) return "";
+          if (String(m) === String(d || "").slice(0, 7)) return "";
           const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
           return (MON[Number(String(m).slice(5, 7)) - 1] || "") + "-" + String(m).slice(2, 4);
-        })(r.period_month);
+        })(r.period_month, r.collected_date);
         return {
           value: r.record_id,
-          label: (r.record_id || "") + " · " + kind + (pos ? " " + pos : "")
-            + (setId && setId !== r.record_id ? " · " + setId : "")
-            + (round ? " · " + round : ""),
+          label: [when, kind + (pos ? " " + pos : ""), nth, round].filter(Boolean).join(" · "),
         };
+      })
+      // The ID is the noise this change removes, so it comes back only where two options
+      // would otherwise read identically — better a long line than an ambiguous one.
+      .map(function (opt, _i, all) {
+        const twin = all.filter((x) => x.label === opt.label).length > 1;
+        return twin ? { value: opt.value, label: opt.label + " · " + opt.value } : opt;
       });
   }
 
@@ -6083,6 +6227,27 @@ class Component extends DCLogic {
 
   // Outstanding traps as a tick list. A trap that has already been collected is not
   // shown again at all — an empty list says there is nothing left to collect.
+  // How many days this trap is collected over, from its installation. A BG set for
+  // three days is three collections on one install; anything else is collected once.
+  trapDaysDue(trapId) {
+    const inst = this.state.records.find((r) => (r.form_type || r.type) === "install"
+      && r.trap_id === trapId);
+    if (!inst) return 1;
+    const n = Number(inst.collect_days);
+    if (n >= 1) return Math.min(Math.round(n), 14);
+    // No schedule on the record: it was installed before this field existed, so it keeps
+    // the single collection it was recorded under. Reading an old BG as a three-day trap
+    // would reopen installations that were closed out rounds ago.
+    return 1;
+  }
+
+  // Collections already recorded against it, the one being edited excluded so that
+  // editing day 2 does not read as a third day having been done.
+  trapDaysDone(trapId) {
+    return this.state.records.filter((r) => (r.form_type || r.type) === "collect"
+      && r.trap_id === trapId && r.record_id !== this.state.editId).length;
+  }
+
   trapPicksField(form, traps) {
     const done = {};
     this.state.records.forEach((r) => {
@@ -6092,7 +6257,11 @@ class Component extends DCLogic {
       if (!prev || String(r.updated_at || r.collected_date || "") >= String(prev.updated_at || prev.collected_date || "")) done[r.trap_id] = r;
     });
     const picked = Array.isArray(form.trap_ids) ? form.trap_ids : [];
-    const open = traps.filter((t) => !done[t.value] || picked.indexOf(t.value) >= 0);
+    // Open until its days are done, not until it has been collected once. A BG emptied
+    // on day 1 is still due on days 2 and 3, and dropping it here was why those days
+    // could not be recorded at all.
+    const open = traps.filter((t) => this.trapDaysDone(t.value) < this.trapDaysDue(t.value)
+      || picked.indexOf(t.value) >= 0);
     return {
       label: "Traps to collect *",
       isPicks: true,
@@ -6105,7 +6274,10 @@ class Component extends DCLogic {
           const type = (inst && inst.trap_type)
             || label.replace(id + " \u00b7 ", "").split(" \u00b7 ")[0] || "";
           const day = inst && (inst.collected_date || String(inst.collected_at_utc || "").slice(0, 10));
-          return [type, day ? "\u178a\u17b6\u1780\u17cb " + mdy(day) : ""].filter(Boolean).join(" \u00b7 ");
+          // On a multi-day trap, which of its days this collection would be.
+          const due = self.trapDaysDue(id), got = self.trapDaysDone(id);
+          const nth = due > 1 ? "\u1790\u17d2\u1784\u17c3 " + Math.min(got + 1, due) + " / " + due : "";
+          return [type, nth, day ? "\u178a\u17b6\u1780\u17cb " + mdy(day) : ""].filter(Boolean).join(" \u00b7 ");
         })(this, t.value, t.label),
         on: picked.indexOf(t.value) >= 0,
         bg: picked.indexOf(t.value) >= 0 ? "#D5E7EF" : "#fff",
@@ -6475,7 +6647,12 @@ class Component extends DCLogic {
       form.house ? [this.trapListField(form.house, form, "session")] : [],
     ).concat(
       [sel("house", "Household *", reg.hh, { placeholder: "Register the household first" })],
-      form.trap_type === "BG-Sentinel" ? [] : [choice("substrate", "Substrate", ["Hay infusion", "Tap water"])],
+      form.trap_type === "BG-Sentinel"
+        ? [{ ...choice("collect_days", "Collection days", ["1", "2", "3", "4", "5"]),
+             isChoice: false, isNarrowChoice: true, narrow: true },
+           { label: "", isNote: true, value: "\u1785\u17c6\u1793\u17bd\u1793\u1790\u17d2\u1784\u17c3\u1794\u17d2\u179a\u1798\u17bc\u179b \u00b7 "
+             + "one installation, collected and resulted on each of these days" }]
+        : [choice("substrate", "Substrate", ["Hay infusion", "Tap water"])],
       [txt("notes", "Notes", { placeholder: "Shade, hazards, exact spot" })]
     );
     if (type === "collect") return [
@@ -6522,6 +6699,41 @@ class Component extends DCLogic {
           : "" },
       txt("notes", "Notes", { placeholder: "Rooms swept, time on site" }),
     ];
+    if (type === "pupae") return [
+      dateField, timeField,
+      { label: "Village *", isSelect: true,
+        value: this.bareCode(form.village_code) || form._village || "",
+        onChange: this.setPupaeVillage,
+        options: [{ value: "", label: "\u2014 select \u2014" }].concat(reg.villages || []) },
+      { label: "Report month", isSelect: true, value: form.period_month || this.currentRound(),
+        onChange: this.setRound, options: this.yearRoundOptions() },
+      { label: "", isNote: true, value: "\u1798\u17bd\u1799\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1780\u17d2\u1793\u17bb\u1784\u1798\u17bd\u1799\u1797\u17bc\u1798\u17b7 \u00b7 one record per village \u2014 not per house, not per container" },
+      txt("houses_surveyed", "Households surveyed", { type: "number", inputmode: "numeric", placeholder: "0" }),
+      txt("houses_positive", "Households with pupae", { type: "number", inputmode: "numeric", placeholder: "0" }),
+      ].concat(
+        // The same four taxa the lab reads off immatures, two to a row, built the way
+        // the lab form builds them: a pupa is identified to species and never sexed.
+        (function (list, self) {
+          const rows = [];
+          for (let i = 0; i < list.length; i += 2) {
+            const a = list[i], b = list[i + 1];
+            rows.push({
+              label: "", isPair: true,
+              aCap: km(a[1]), aCapSci: sciSplit(km(a[1])).sci, aCapRest: sciSplit(km(a[1])).rest,
+              aValue: form[a[0]] === "" ? "" : String(form[a[0]] || 0), aChange: self.setNum(a[0]),
+              aFocus: self.numFocus(a[0]), aBlur: self.numBlur(a[0]),
+              bCap: b ? km(b[1]) : "",
+              bCapSci: b ? sciSplit(km(b[1])).sci : "",
+              bCapRest: b ? sciSplit(km(b[1])).rest : "",
+              bValue: b ? (form[b[0]] === "" ? "" : String(form[b[0]] || 0)) : "",
+              bChange: b ? self.setNum(b[0]) : null,
+              bFocus: b ? self.numFocus(b[0]) : null, bBlur: b ? self.numBlur(b[0]) : null,
+            });
+          }
+          return rows;
+        })(LARVAL_FIELDS, this),
+        [txt("notes", "Notes", { placeholder: "Who surveyed, anything unusual" })]
+      );
     if (type === "lab") return [
       { ...dateField, label: "Date of lab result" }, timeField,
       // Narrow the source list to one household and one activity before picking.
@@ -8332,6 +8544,7 @@ class Component extends DCLogic {
       openCollect: () => this.open("collect"),
       openAdult: () => this.open("adult"),
       openLarvae: () => this.open("larvae"),
+      openPupae: () => this.open("pupae"),
       openLab: () => this.open("lab"),
       editHousehold: current ? () => this.open("household", { edit: current.household_id, returnTo: "hhdetail" }) : null,
       hhInstall: current ? () => this.open("install", { house: current.household_id, returnTo: "hhdetail" }) : null,
