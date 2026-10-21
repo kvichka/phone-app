@@ -1758,6 +1758,29 @@ class Component extends DCLogic {
     ];
   }
 
+  // The BG-Sentinel catch per village. Matched on the method the result resolves to, not
+  // on the trap ID's spelling: methodOf walks back to the installation, which is the only
+  // place that actually says what kind of trap it was. Emerged and immature readings are
+  // excluded for the usual reason — neither is a trap catch.
+  bgByVillage(rows) {
+    const map = {};
+    rows.filter((r) => this.type(r) === "lab" && !isEmerged(r) && !isLarval(r))
+      .filter((r) => /^bg/i.test(String(this.methodOf(r) || "")))
+      .forEach((r) => {
+        const key = r.village_code || r.village || "—";
+        const v = map[key] || (map[key] = { key: key,
+          name: placeLabel("village", r.village_code, r.village),
+          tubes: 0, aeg: 0, alb: 0, aedesOther: 0, culexOther: 0, total: 0 });
+        v.tubes += 1;
+        v.aeg += num(r.aegypti_f) + num(r.aegypti_m);
+        v.alb += num(r.albopictus_f) + num(r.albopictus_m);
+        v.aedesOther += num(r.aedes_other);
+        v.culexOther += num(r.culex) + num(r.other);
+        v.total = v.aeg + v.alb + v.aedesOther + v.culexOther;
+      });
+    return Object.keys(map).map((k) => map[k]).sort((a, b) => b.total - a.total);
+  }
+
   // Every pupae survey in view, summed per village across the rounds. Built from the
   // records rather than from byVillage(), which starts at the household register and so
   // cannot see a survey that belongs to no household.
@@ -1930,6 +1953,19 @@ class Component extends DCLogic {
               datasets: [{ data: m.map((x) => x.aeg + x.alb + x.aedesOther + x.culexOther),
                 backgroundColor: COLORS }] } };
           })(this.byMethod(rows)) },
+        // The BG catch alone, by village. The donut beside it says how much of the catch
+        // each trap type made; this says where the BG part of it came from, which the
+        // combined by-village chart cannot show — a Procopack sweep and a BG are not
+        // comparable effort and one village's BG can disappear inside the other's sweeps.
+        { key: "bgVil", title: "BG តាមភូមិ", titleEn: "BG-Sentinel catch by village",
+          spec: (function (list) {
+            const top = list.slice(0, 12);
+            return { type: "bar", data: { labels: top.map((v) => v.name), datasets: [
+              { label: SPECIES_LABELS[0], data: top.map((v) => v.aeg), backgroundColor: SPECIES_COLORS[0], borderRadius: 3, stack: "s" },
+              { label: SPECIES_LABELS[1], data: top.map((v) => v.alb), backgroundColor: SPECIES_COLORS[1], borderRadius: 3, stack: "s" },
+              { label: SPECIES_LABELS[2], data: top.map((v) => v.aedesOther), backgroundColor: SPECIES_COLORS[2], borderRadius: 3, stack: "s" },
+              { label: SPECIES_LABELS[3], data: top.map((v) => v.culexOther), backgroundColor: SPECIES_COLORS[3], borderRadius: 3, stack: "s" }] } };
+          })(this.bgByVillage(rows)) },
       ];
     }
     if (t === "ovitrap") {
@@ -2116,6 +2152,14 @@ class Component extends DCLogic {
         + fmt(sum(tot)) + " counted across " + labels.length
         + (labels.length === 1 ? " village." : " villages.");
     }
+    if (k === "bgVil") {
+      const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
+      if (!sum(tot)) return "No BG-Sentinel catch in view.";
+      const i = top(tot);
+      return labels[i] + " caught the most in BG traps, " + fmt(tot[i]) + " of "
+        + fmt(sum(tot)) + " across " + labels.length
+        + (labels.length === 1 ? " village." : " villages.");
+    }
     if (/^(larvRound|aduRound|eggTrend)$/.test(k)) {
       const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
       const what = /larv/i.test(k) ? "immatures" : /egg/i.test(k) ? "eggs" : "adults";
@@ -2279,6 +2323,13 @@ class Component extends DCLogic {
       if (!sum(tot)) return "គ្មានឌុកឌឿក្នុងទិដ្ឋភាពនេះ។";
       const i = top(tot);
       return labels[i] + " មានឌុកឌឿច្រើនជាងគេ " + fmt(tot[i])
+        + " ក្នុងចំណោម " + fmt(sum(tot)) + "។";
+    }
+    if (k === "bgVil") {
+      const tot = labels.map((_, i) => ds.reduce((a, _d, j) => a + (set(j)[i] || 0), 0));
+      if (!sum(tot)) return "គ្មានមូសចាប់ដោយ BG ក្នុងទិដ្ឋភាពនេះ។";
+      const i = top(tot);
+      return labels[i] + " ចាប់បានដោយ BG ច្រើនជាងគេ " + fmt(tot[i])
         + " ក្នុងចំណោម " + fmt(sum(tot)) + "។";
     }
     if (/^(larvRound|aduRound|eggTrend)$/.test(k)) {

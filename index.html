@@ -1008,6 +1008,43 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           </sc-for>
         </div>
       </sc-if>
+      <sc-if value="{{ hasPrevPupae }}" hint-placeholder-val="{{ false }}">
+        <div style="border:1px solid #D9DEE4;border-radius:8px;overflow:hidden;background:#fff">
+          <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
+            <span style="flex:0 0 116px;min-width:0;font-size:11px;line-height:1.3;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">ភូមិ <span style="color:#767676">Village</span></span>
+            <span style="flex:1 1 auto;min-width:0;font-size:11px;line-height:1.3;color:#003E78">ពាត៌មាន <span style="color:#767676">Detail</span></span>
+            <span style="flex:none;text-align:right;font-size:11px;line-height:1.3;color:#003E78">ស្ថានភាព <span style="color:#767676">Status</span></span>
+          </div>
+          <sc-if value="{{ pupaeEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:10px;border-top:1px solid #D9DEE4;font-size:11.5px;color:#767676;line-height:1.5">គ្មានការស្ទង់ឌុកឌឿនៅឡើយទេ · no pupae survey recorded yet — the villages you save will be listed here, by round</div>
+          </sc-if>
+          <sc-for list="{{ prevPupaeMonths }}" as="g" hint-placeholder-count="1">
+          <button onClick="{{ g.toggle }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 10px;border:none;border-top:1px solid #D9DEE4;background:#F8FAFB;cursor:pointer;font-family:inherit;text-align:left">
+            <span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="flex:none;width:16px;height:16px;border:1px solid #A8C8DC;border-radius:5px;color:#117996;font-size:11px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ g.caret }}</span><span style="font-size:11px;font-weight:700;color:#003E78;white-space:nowrap">{{ g.label }}</span></span>
+            <span style="font-size:11px;color:#767676">{{ g.count }}</span>
+          </button>
+          <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ g.rows }}" as="l" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-top:1px solid #EDF1F4">
+              <span style="flex:0 0 116px;min-width:0;font-weight:700;font-size:11.5px;line-height:1.4;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ l.id }}</span>
+              <span style="flex:1 1 auto;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ l.meta }}</span>
+              <span style="flex:none;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+                <span style="flex:none;font-size:10.5px;font-weight:700;border-radius:5px;padding:3px 7px;background:{{ l.tagBg }};color:{{ l.tagFg }};white-space:nowrap">{{ l.tag }}</span>
+                <sc-if value="{{ l.notArmed }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ l.edit }}" title="កែសម្រួល · Edit this survey" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #A8C8DC;background:#fff;color:#117996;border-radius:5px;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+                  <button onClick="{{ l.arm }}" title="លុប · Delete this survey" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #E3BFC4;background:#fff;color:#7C1220;border-radius:5px;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
+                </sc-if>
+                <sc-if value="{{ l.armed }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ l.cancelDel }}" style="font-size:11px;font-weight:700;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit">បោះបង់</button>
+                  <button onClick="{{ l.confirmDel }}" style="font-size:11px;font-weight:700;background:#7C1220;color:#fff;border:none;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit">{{ l.delLabel }}</button>
+                </sc-if>
+              </span>
+            </div>
+          </sc-for>
+          </sc-if>
+          </sc-for>
+        </div>
+      </sc-if>
       <sc-if value="{{ hasPrevLarvae }}" hint-placeholder-val="{{ false }}">
         <div style="border:1px solid #D9DEE4;border-radius:8px;overflow:hidden;background:#fff">
           <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
@@ -4097,6 +4134,25 @@ class Component extends DCLogic {
     this.toast(id + " បានលុប · " + id + " deleted — it leaves the sheet when you press Sync now", "ok");
   }
 
+  // Several records in one pass. deleteRecordNow reads state.records and persists, so
+  // calling it in a loop would have each call working from the list before the last one
+  // — the second delete would resurrect the first. A village line on the pupae list can
+  // stand for more than one survey, which is the only place this is needed.
+  deleteRecordsNow(ids) {
+    const want = (ids || []).filter(Boolean);
+    if (!want.length) return;
+    const hit = (r) => want.indexOf(r.record_id || r.id) >= 0;
+    const recs = this.state.records;
+    saveTrash(loadTrash().concat(recs.filter(hit)));
+    saveDelLog(loadDelLog().concat(want.map((id) => ({
+      id, kind: "record", at: new Date().toISOString(), by: this.state.collector || "" }))));
+    this.persist(recs.filter((r) => !hit(r)));
+    want.forEach((id) => this.queueDeleteRecord(id));
+    this.toast(want.length + " បានលុប · " + want.length
+      + (want.length === 1 ? " record" : " records")
+      + " deleted — they leave the sheet when you press Sync now", "ok");
+  }
+
   blankForm(type) {
     const today = new Date().toISOString().slice(0, 10);
     const blank = {
@@ -4448,25 +4504,9 @@ class Component extends DCLogic {
         const dates = recs.filter((r) => (r.form_type || r.type) === "install" && r.trap_id === id)
           .map((r) => r.collected_date).filter(Boolean).sort();
         if (dates.length && date < dates[0]) e.push("ថ្ងៃប្រមូលមុនថ្ងៃដាក់អន្ទាក់ · " + id + " was installed on " + dates[0] + ", so it cannot be collected earlier.");
-        // As many collections per round as the installation is scheduled for: one for an
-        // ovitrap, three for a BG set over three days. The tick list already closes a trap
-        // once its days are done, but a pick can also arrive from a saved form or a typed
-        // trap_id, so the count is enforced here too.
-        const month = period(date).month;
-        const sameRound = recs.filter((r) => (r.form_type || r.type) === "collect"
-          && r.record_id !== editing
-          && r.trap_id === id
-          && (r.period_month || "") === month);
-        const dueDays = this.trapDaysDue(id);
-        if (sameRound.length >= dueDays) {
-          const last = sameRound[sameRound.length - 1] || {};
-          e.push(dueDays > 1
-            ? "អន្ទាក់នេះបានប្រមូលគ្រប់ថ្ងៃហើយក្នុងជុំនេះ · " + id + " already has all "
-              + dueDays + " days collected this report month ("
-              + sameRound.map((r) => r.record_id).join(", ") + "). Edit one of those instead."
-            : "អន្ទាក់នេះបានប្រមូលរួចហើយក្នុងជុំនេះ · " + id + " was already collected this report month on "
-              + (last.collected_date || "") + " (" + (last.record_id || "") + "). Edit that record instead.");
-        }
+        // No duplicate check here. A trap collected more than its schedule says is a
+        // judgement the field makes, not an impossibility, and blocking the save was
+        // costing real collections — the tick list is the only gate now.
       });
     }
 
@@ -4536,6 +4576,15 @@ class Component extends DCLogic {
         const total = set.reduce((a, [k]) => a + (Number(f[k]) || 0), 0);
         if (!total) w.push("\u1780\u17c6\u1794\u17c9\u17bb\u1784\u1793\u17c1\u17c7\u1798\u17b7\u1793\u1798\u17b6\u1793\u1798\u17bc\u179f\u1798\u17c2\u1793\u1791\u17c1? \u00b7 confirm this tube has no mosquito.");
       }
+    }
+    // Every pupae survey entered so far has come in with no households counted, which
+    // silently costs both indices the survey exists to produce: with no denominator the
+    // dashboard can only show the raw count. The save still goes through on a second
+    // press — a village really can be walked without the houses being tallied — but it
+    // is no longer possible to lose the denominator without being told.
+    if (type === "pupae" && !(Number(f.houses_surveyed) > 0)) {
+      w.push("មិនទាន់រាប់ខ្នងផ្ទះ · "
+        + "no households counted — the pupal index cannot be calculated without it.");
     }
     if (type === "larvae") {
       let pos = 0;
@@ -5489,21 +5538,13 @@ class Component extends DCLogic {
         return labs.length === 0;
       })
       .map((r) => {
-        // Three letters for the activity, plus IN/OUT for a trap that has a position,
-        // so one line says what the collection was.
+        // The trap's own ID is what the line is named by — it is what is written on the
+        // trap and what the collector is holding. Position is already inside it
+        // (…-IN, …-OUT), so it is not repeated. A Procopack sweep and a larval survey
+        // have no trap, so those keep a word for the activity instead.
         const t = r.form_type || r.type;
-        const trapType = r.trap_type || (function (self, id) {
-          const inst = self.state.records.find((x) => (x.form_type || x.type) === "install" && x.trap_id === id);
-          return (inst && inst.trap_type) || "";
-        })(this, r.trap_id);
-        const kind = t === "adult" ? "Pro" : t === "larvae" ? "Larvae/Pupae"
-          : String(trapType).indexOf("BG") === 0 ? "BG" : "Ovi";
-        const pos = (function (raw) {
-          const s2 = String(raw).toUpperCase();
-          if (/-OUT$/.test(s2) || Number(r.pos_outside) === 1) return "OUT";
-          if (/-IN$/.test(s2) || Number(r.pos_inside) === 1) return "IN";
-          return "";
-        })(r.trap_id || "");
+        const kind = r.trap_id ? String(r.trap_id)
+          : t === "adult" ? "Pro" : t === "larvae" ? "Larvae/Pupae" : "";
         // The date the specimens were collected, leading the line because it is the thing
         // being chosen between: across a three-day BG every other part is identical, and
         // the record IDs this line used to lead with are not what anyone reads.
@@ -5513,10 +5554,10 @@ class Component extends DCLogic {
           const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
           return Number(v.slice(8, 10)) + " " + (MON[Number(v.slice(5, 7)) - 1] || "") + " " + v.slice(2, 4);
         })(r.collected_date || r.collected_at_utc);
-        // Which day of a multi-day cycle this was, on the traps that have one — an
-        // ovitrap's line should not carry a meaningless "day 1/1".
+        // Which day of a multi-day cycle this was: (D1), (D2), (D3). Only on the traps
+        // that have a cycle — an ovitrap's line should not carry a meaningless (D1).
         const nth = (Number(r.days_due) || 0) > 1 && Number(r.day_no)
-          ? "ថ្ងៃ " + Number(r.day_no) + "/" + Number(r.days_due) : "";
+          ? "(D" + Number(r.day_no) + ")" : "";
         // The round, but only when the date does not already imply it. This list is not
         // filtered by month — a collection still awaiting a result surfaces months later —
         // and a result filed against the wrong round is what this guards against.
@@ -5528,7 +5569,7 @@ class Component extends DCLogic {
         })(r.period_month, r.collected_date);
         return {
           value: r.record_id,
-          label: [when, kind + (pos ? " " + pos : ""), nth, round].filter(Boolean).join(" · "),
+          label: [kind, when, nth, round].filter(Boolean).join(" · "),
         };
       })
       // The ID is the noise this change removes, so it comes back only where two options
@@ -7774,6 +7815,97 @@ class Component extends DCLogic {
           })),
           hasPrevLarvae: rows.length > 0,
           prevLarvaeLabel: "\u1780\u17b6\u179a\u1780\u17c6\u178e\u178f\u17cb\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780\u1798\u17bb\u1793 \u00b7 larvae surveys already at this household",
+        };
+      })(this, s),
+      // Every pupae survey already recorded, newest first and grouped by round. Not
+      // scoped to a household the way the other lists are, because a pupae survey has
+      // none — the village is the unit, and seeing which villages a round already covers
+      // is the whole point of showing this under the form.
+      ...(function (self, st) {
+        const on = st.screen === "form" && st.type === "pupae";
+        // One line per village per round, not per record. A village is normally surveyed
+        // once in a round, so the two usually coincide \u2014 but the question this list
+        // answers is "which villages has this round covered", and that is a question
+        // about villages. Repeat surveys of one village sum into its line.
+        const byMonth = [];
+        if (on) {
+          self.state.records
+            .filter((r) => (r.form_type || r.type) === "pupae" && r.record_id !== st.editId)
+            .sort((a, b) => String(b.collected_at_utc).localeCompare(String(a.collected_at_utc)))
+            .forEach((r) => {
+              const month = r.period_month || String(r.collected_date || "").slice(0, 7);
+              let g = byMonth.find((x) => x.month === month);
+              if (!g) { g = { month: month, label: r.period_label || month, rows: [] }; byMonth.push(g); }
+              const key = r.village_code || r.village || "\u2014";
+              let v = g.rows.find((x) => x.key === key);
+              if (!v) {
+                v = { key: key, id: r.village || r.village_code || "\u2014",
+                  houses: 0, pos: 0, total: 0, surveys: 0, last: "", ids: [],
+                  aeg: 0, alb: 0, oth: 0, cx: 0 };
+                g.rows.push(v);
+              }
+              v.surveys += 1;
+              v.ids.push(r.record_id);
+              v.houses += Number(r.houses_surveyed) || 0;
+              v.pos += Number(r.houses_positive) || 0;
+              v.total += Number(r.total_catch) || 0;
+              // The four taxa the form counts, summed across a village's surveys.
+              v.aeg += Number(r.aegypti) || 0;
+              v.alb += Number(r.albopictus) || 0;
+              v.oth += Number(r.aedes_other) || 0;
+              v.cx += (Number(r.culex) || 0) + (Number(r.other) || 0);
+              const d = r.collected_date || String(r.collected_at_utc || "").slice(0, 10);
+              if (String(d) > String(v.last)) v.last = d;
+            });
+        }
+        byMonth.forEach((g) => {
+          g.rows.sort((a, b) => b.total - a.total);
+          g.rows = g.rows.map((v) => {
+            // Every line can be edited and deleted. Where a village was surveyed more
+            // than once in a round, edit opens the most recent of them and delete removes
+            // the whole set the line stands for \u2014 the count is on the confirm button, so
+            // a press that removes three records says three before it is made.
+            const newest = v.ids[0];
+            const armed = st.prevDelArm === newest;
+            return {
+              id: v.id,
+              // What was found, by species. All four are printed even at zero: this list
+              // is read down a column to compare villages, and a row that drops its empty
+              // taxa puts a different species under the same position on every line.
+              meta: ["Aeg " + v.aeg, "Alb " + v.alb, "Ae.oth " + v.oth, "Cx/oth " + v.cx]
+                .join("  \u00b7  ")
+                + (v.surveys > 1 ? "   (" + v.surveys + " \u1780\u17b6\u179a\u179f\u17d2\u1791\u1784\u17cb)" : ""),
+              // The village's total, which is what the species columns add up to.
+              tag: v.total + " \u178c\u17bb\u1780\u178c\u17bf",
+              tagBg: v.total ? "#F6DCDF" : "#D5E7EF",
+              tagFg: v.total ? "#7C1220" : "#003E78",
+              armed: armed,
+              notArmed: !armed,
+              // The confirm says how many it takes, because one press can remove several.
+              delLabel: v.surveys > 1 ? "លុប " + v.surveys : "លុប",
+              edit: () => self.open("pupae", { edit: newest, returnTo: st.returnTo }),
+              arm: () => self.setState({ prevDelArm: newest }),
+              cancelDel: () => self.setState({ prevDelArm: "" }),
+              confirmDel: () => { self.setState({ prevDelArm: "" }); self.deleteRecordsNow(v.ids); },
+            };
+          });
+        });
+        return {
+          prevPupaeMonths: byMonth.map((g) => ({
+            label: g.label,
+            count: g.rows.length + " \u1797\u17bc\u1798\u17b7 \u00b7 "
+              + (g.rows.length === 1 ? "village" : "villages"),
+            rows: g.rows,
+            open: !!(st.openMonths || {})[g.month],
+            caret: (st.openMonths || {})[g.month] ? "\u2212" : "+",
+            toggle: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [g.month]: !(p.openMonths || {})[g.month] } })),
+          })),
+          // The panel shows whenever the form is open, not only when it has rows: an
+          // empty form with nothing beneath it gave no sign that a list existed at all,
+          // and "no village surveyed yet this round" is itself worth saying on a survey
+          // that is recorded once per village.
+          hasPrevPupae: on,
+          pupaeEmpty: on && byMonth.length === 0,
         };
       })(this, s),
       // Trap installations and collections already recorded at this household, by report month.
