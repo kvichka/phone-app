@@ -2051,11 +2051,26 @@ class Component extends DCLogic {
           { label: "CI %", data: take((v) => v.ci), backgroundColor: "#117996", borderRadius: 3 },
           { label: "HI %", data: take((v) => v.hi), backgroundColor: "#003E78", borderRadius: 3 },
           whoLine(labels.length)] } } },
-      { key: "pie", title: "សមាសភាពប្រភេទ", titleEn: "Species composition",
-        spec: { type: "doughnut", data: { labels: SPECIES_LABELS,
-          datasets: [{ data: [sp.adultAeg + sp.larvAeg, sp.adultAlb + sp.larvAlb,
-            sp.aedesOther + sp.larvAedesOther, sp.culexOther + sp.larvCulexOther],
-            backgroundColor: SPECIES_COLORS }] } } },
+      // Was one donut over adults and immatures added together. They are two different
+      // samples - a trap catches what is flying, a container holds what was laid there -
+      // and pooling them produced a single share that matched neither: 69.6% aegypti
+      // from 43% of the adults and 81.7% of the immatures. Shown side by side, as a
+      // share within each stage, the two frames stay separate and can be compared,
+      // which is the actual question: does the adult catch agree with the breeding.
+      { key: "compoStage", title: "សមាសភាពប្រភេទ — ពេញវ័យ / ដង្កូវ",
+        titleEn: "Species composition — adults vs immatures, as a share of each",
+        spec: { type: "bar",
+          opt: { indexAxis: "y", scales: { x: { max: 100, ticks: { callback: (v) => v + "%" } } } },
+          data: { labels: SPECIES_LABELS, datasets: [
+            { label: "មូសពេញវ័យ · Adults",
+              data: [sp.adultAeg, sp.adultAlb, sp.aedesOther, sp.culexOther]
+                .map((n) => (sp.adultTotal ? Math.round((n / sp.adultTotal) * 1000) / 10 : 0)),
+              backgroundColor: "#F4B71B" },
+            { label: "ដង្កូវទឹក · Immatures",
+              data: [sp.larvAeg, sp.larvAlb, sp.larvAedesOther, sp.larvCulexOther]
+                .map((n) => (sp.larvTotal ? Math.round((n / sp.larvTotal) * 1000) / 10 : 0)),
+              backgroundColor: "#117996" },
+          ] } } },
     ];
   }
 
@@ -2111,6 +2126,17 @@ class Component extends DCLogic {
       return "In " + labels[i] + ", " + ins[i] + " traps were installed, " + col[i] + " collected and "
         + lab[i] + " lab results returned"
         + (gap > 0 ? " \u2014 " + gap + " traps are still out." : ".");
+    }
+    if (k === "compoStage") {
+      const ad = set(0), im = set(1);
+      if (!sum(ad) && !sum(im)) return "Nothing identified in the lab in view.";
+      const agree = Math.abs(ad[0] - im[0]) <= 10;
+      return "Ae. aegypti is " + one(ad[0]) + " percent of the adult catch and "
+        + one(im[0]) + " percent of the immatures reared"
+        + (agree ? " — the two stages agree."
+          : im[0] > ad[0]
+            ? " — the containers are more strongly Ae. aegypti than the traps, which is what a trap that also takes Culex looks like."
+            : " — the traps are more strongly Ae. aegypti than the containers.");
     }
     if (k === "pie" || k === "compo") {
       const v = set(0), t = sum(v);
@@ -2292,6 +2318,12 @@ class Component extends DCLogic {
       return "ក្នុងជុំ " + labels[i] + " ដំឡើងអន្ទាក់ " + ins[i] + " ប្រមូល " + col[i]
         + " និងលទ្ធផលមន្ទីរពិសោធន៍ " + lab[i]
         + (gap > 0 ? " \u2014 អន្ទាក់ " + gap + " មិនទាន់ប្រមូល។" : "។");
+    }
+    if (k === "compoStage") {
+      const ad = set(0), im = set(1);
+      if (!sum(ad) && !sum(im)) return "គ្មានសំណាកកំណត់ដោយមន្ទីរពិសោធន៍ទេ។";
+      return "Ae. aegypti មាន " + one(ad[0]) + "% នៃមូសពេញវ័យដែលចាប់បាន និង "
+        + one(im[0]) + "% នៃដង្កូវទឹកដែលចិញ្ចឹម។";
     }
     if (k === "pie" || k === "compo") {
       const v = set(0), t = sum(v);
@@ -2706,7 +2738,11 @@ class Component extends DCLogic {
         pupaAeg: 0, pupaAlb: 0, pupaAedesOther: 0, pupaCulexOther: 0, pupaLabs: 0,
         pupaHouses: 0,
         aduAeg: 0, aduAlb: 0, aduAedesOther: 0, aduCulexOther: 0, aduAegF: 0, aduLabs: 0,
-        houses: {} });
+        // houses holds every household with any record in the round; larvHouses only
+        // those the larval survey actually reached. The Breteau index divides by the
+        // second, never the first - a house that was only trapped was never searched
+        // for containers and cannot belong in the denominator.
+        houses: {}, larvHouses: {}, posHouses: {} });
       const t = this.type(r);
       // A pupae survey is a village total for the round, not a lab result.
       if (t === "pupae") {
@@ -2745,12 +2781,25 @@ class Component extends DCLogic {
           m.aduCulexOther += num(r.culex) + num(r.other);
         }
       }
-      if (t === "larvae") { m.insp += num(r.containers_inspected); m.pos += num(r.containers_positive); }
+      if (t === "larvae") {
+        m.insp += num(r.containers_inspected); m.pos += num(r.containers_positive);
+        if (r.household_id) {
+          m.larvHouses[r.household_id] = 1;
+          if (num(r.containers_positive) > 0) m.posHouses[r.household_id] = 1;
+        }
+      }
     });
     return Object.keys(map).sort().map((k) => {
       const m = map[k];
+      const searched = Object.keys(m.larvHouses).length;
       return { ...m, visits: Object.keys(m.houses).length,
-        ci: m.insp ? Math.round((m.pos / m.insp) * 1000) / 10 : 0 };
+        searched: searched, posHouseCount: Object.keys(m.posHouses).length,
+        ci: m.insp ? Math.round((m.pos / m.insp) * 1000) / 10 : 0,
+        // Breteau: positive containers per 100 houses searched. Per round and never
+        // pooled across rounds - the numerator accumulates with every round while the
+        // denominator does not, so a pooled BI reads several times its true value.
+        bi: searched ? Math.round((m.pos / searched) * 1000) / 10 : null,
+        hi: searched ? Math.round((Object.keys(m.posHouses).length / searched) * 1000) / 10 : null };
     });
   }
 
@@ -3282,6 +3331,25 @@ class Component extends DCLogic {
     // houses that actually had a survey, and the species shares are over the catch. Each
     // one carries its own fraction so the reader never has to assume which.
     const over = (a, b, unit) => (b ? fmt(a) + " / " + fmt(b) + (unit ? " " + unit : "") : "");
+    // Installations by trap type. Anything that is not explicitly an ovitrap is a BG —
+    // the same rule the ovitrap tab and the household table already use, so the three
+    // places never disagree about which trap a record is.
+    // The last round big enough to read as an index. Every per-round figure on the
+    // cards comes from this one round, labelled with its name, rather than from the
+    // whole view: an index pooled over five rounds answers no question anyone asks.
+    const roundsAll = this.byMonth(rows);
+    const lastMeasured = roundsAll.filter((m) => m.insp >= 20).slice(-1)[0] || null;
+    const lastLabel = lastMeasured ? this.monthLabel(lastMeasured.key) : "";
+    // WHO's Stegomyia reading. BI below 5 is the classic low-risk band for dengue
+    // transmission; CI is read against 20%. Both are stated on the card so the number
+    // does not have to be carried to a chart to find out whether it is a problem.
+    const biBand = (bi) => (bi === null || bi === undefined ? ""
+      : bi >= 50 ? "high risk — BI 50+"
+      : bi >= 5 ? "transmission risk — BI 5+"
+      : "low risk — under BI 5");
+    const installs = rows.filter((r) => this.type(r) === "install");
+    const instOvi = installs.filter((r) => (r.trap_type || "Ovitrap") === "Ovitrap").length;
+    const instBg = installs.length - instOvi;
     const tabs = [["overview", "ទូទៅ · Overview"], ["larval", "ដង្កូវទឹក · Larvae"],
       ["adult", "មូសពេញវ័យ · Adults"], ["ovitrap", "អន្ទាក់ពង · Ovitrap"],
       ["map", "ផែនទី · Map"], ["epi", "ជំងឺរាតត្បាត · Epidemiology"]];
@@ -3290,11 +3358,23 @@ class Component extends DCLogic {
     const kpiSets = {
       overview: [
         { ico: "house", label: "ខ្នងផ្ទះ · Households", value: fmt(hh.length), sub: "registered in view", color: "#003E78" },
-        { ico: "trap", label: "អន្ទាក់ · Traps", value: fmt(rows.filter((r) => this.type(r) === "install").length), sub: "installations", color: "#117996" },
+        // Split, because one number over both hid the thing worth knowing: an ovitrap and
+        // a BG-Sentinel are set for different reasons and read out differently — eggs
+        // against adults — so a round that drifts from one to the other does not show up
+        // in a combined total at all. The two still add back to every installation in view.
+        { ico: "trap", label: "អន្ទាក់ពង · Ovitraps", value: fmt(instOvi), sub: "installed", color: "#117996" },
+        { ico: "trap", label: "អន្ទាក់ BG · BG traps", value: fmt(instBg), sub: "installed", color: "#6B4C7A" },
         { ico: "ci", label: "សន្ទស្សន៍ភាជន៍ · CI", value: insp ? Math.round((pos / insp) * 1000) / 10 + "%" : "—",
           sub: insp ? fmt(pos) + " of " + fmt(insp) + " positive" : "no larval survey in view", color: "#6EDBCD" },
         { ico: "hi", label: "សន្ទស្សន៍ផ្ទះ · HI", value: inspected.length ? Math.round((inspected.filter((h) => h.positiveHouse).length / inspected.length) * 1000) / 10 + "%" : "—",
           sub: inspected.length ? fmt(inspected.length) + " houses inspected" : "no larval survey in view", color: "#7C1220" },
+        // The third Stegomyia index, and the one the other two cannot stand in for: CI
+        // says how many containers hold larvae, HI how many houses, BI how much
+        // productive habitat there is per house - the figure vector control is sized on.
+        { ico: "container", label: "សន្ទស្សន៍ Breteau · BI", value: lastMeasured && lastMeasured.bi !== null ? lastMeasured.bi : "—",
+          sub: lastMeasured && lastMeasured.bi !== null
+            ? biBand(lastMeasured.bi) + " · " + lastLabel
+            : "no larval survey in view", color: "#BF8F00" },
         { ico: "mosquito", label: "មូសពេញវ័យ · Adults", value: fmt(sp.adultCatch), sub: "identified in the lab", color: "#F4B71B" },
         { ico: "larva", label: "ដង្កូវទឹក · Larvae", value: fmt(sp.larvaeCatch), sub: "reared and identified in the lab", color: "#117996" },
         { ico: "larva", label: "ឌុកឌឿ · Pupae", value: fmt(sp.pupaTotal),
@@ -3306,7 +3386,13 @@ class Component extends DCLogic {
       ],
       larval: [
         { ico: "ci", label: "សន្ទស្សន៍ភាជន៍ · CI", value: insp ? Math.round((pos / insp) * 1000) / 10 + "%" : "—",
-          sub: insp ? "WHO threshold 20%" : "no larval survey in view", color: "#117996" }, 
+          sub: insp ? (Math.round((pos / insp) * 1000) / 10 >= 20
+            ? "above the WHO 20% threshold" : "below the WHO 20% threshold")
+            : "no larval survey in view", color: "#117996" },
+        { ico: "container", label: "សន្ទស្សន៍ Breteau · BI", value: lastMeasured && lastMeasured.bi !== null ? lastMeasured.bi : "—",
+          sub: lastMeasured && lastMeasured.bi !== null
+            ? biBand(lastMeasured.bi) + " · " + lastLabel
+            : "no larval survey in view", color: "#BF8F00" }, 
         { ico: "hi", label: "សន្ទស្សន៍ផ្ទះ · HI", value: inspected.length ? Math.round((inspected.filter((h) => h.positiveHouse).length / inspected.length) * 1000) / 10 + "%" : "—",
           sub: inspected.length ? fmt(inspected.filter((h) => h.positiveHouse).length) + " positive houses" : "no larval survey in view", color: "#7C1220" },
         { ico: "container", label: "ភាជន៍បានពិនិត្យ · Inspected", value: fmt(insp), sub: "containers", color: "#6EDBCD" },
@@ -3317,16 +3403,9 @@ class Component extends DCLogic {
           sub: sp.pupaTotal
             ? "counted in " + fmt(sp.pupaSurveys) + (sp.pupaSurveys === 1 ? " village survey" : " village surveys")
             : "no pupae survey in view", color: "#7F6000" },
-        // Over the pupae surveys' own houses, never the larval survey's - see the note on
-        // the indicator of the same name.
-        { ico: "ci", label: "សន្ទស្សន៍ឌុកឌឿ · Pupal index", value: sp.pupaHouses
-          ? Math.round((sp.pupaTotal / sp.pupaHouses) * 1000) / 10 : "—",
-          sub: sp.pupaHouses ? "per 100 of " + fmt(sp.pupaHouses) + " houses surveyed"
-            : "no pupae survey in view", color: "#BF8F00" },
-        { ico: "mosquito", label: "មូសចេញពីដង្កូវ · Emerged", value: fmt(sp.emergedTotal),
-          sub: sp.emergedTotal
-            ? "from " + fmt(sp.emergedTubes) + (sp.emergedTubes === 1 ? " tube" : " tubes") + ", not a trap catch"
-            : "none reared to adult in view", color: "#6B4C7A" },
+        // Pupal index and Emerged are gone from this row: the index could not be
+        // computed from surveys that carry no house count, and emerged adults are
+        // already a tile of their own on the overview and a chart on the adult tab.
       ],
       adult: [
         { ico: "mosquito", label: "មូសពេញវ័យ · Adults", value: fmt(sp.adultTotal), sub: "sexed specimens", color: "#003E78" },
@@ -3336,7 +3415,7 @@ class Component extends DCLogic {
       ],
       ovitrap: [
         { ico: "egg", label: "ពង · Eggs", value: fmt(sp.eggs), sub: "all ovitrap results", color: "#F4B71B" },
-        { ico: "trap", label: "អន្ទាក់ពង · Ovitraps", value: fmt(rows.filter((r) => this.type(r) === "install" && (r.trap_type || "Ovitrap") === "Ovitrap").length), sub: "installed", color: "#003E78" },
+        { ico: "trap", label: "អន្ទាក់ពង · Ovitraps", value: fmt(instOvi), sub: "installed", color: "#003E78" },
         { ico: "collect", label: "ប្រមូល · Collections", value: fmt(rows.filter((r) => this.type(r) === "collect").length), sub: "trap collections", color: "#117996" },
       ],
       map: [
@@ -3448,28 +3527,30 @@ class Component extends DCLogic {
           of: over(pos, insp, "containers") },
         { label: "House index (HI)", value: inspected.length ? Math.round((inspected.filter((h) => h.positiveHouse).length / inspected.length) * 1000) / 10 + "%" : "—",
           of: over(inspected.filter((h) => h.positiveHouse).length, inspected.length, "houses surveyed") },
-        { label: "Containers inspected", value: fmt(insp) },
-        { label: "Containers positive", value: fmt(pos) },
-        { label: "Reared Ae. aegypti", value: fmt(sp.larvAeg) },
+        // Both counts dropped: the CI row above already reads "247 / 999 containers",
+        // so a line for each was the same pair of numbers printed twice.
+        // Both Aedes species, not aegypti alone. The two are reared from the same
+        // containers and separated in the lab, so showing one without the other left the
+        // reader to guess whether albopictus was absent or simply not printed. Each
+        // carries its share of the whole rearing, which is the number they add up to.
+        // Read as a share, the way the adult panel reads: the count alone says nothing
+        // about whether a village is an aegypti village or an albopictus one, and that
+        // is the comparison these two rows exist to make. The fraction stays underneath
+        // so the percentage never has to be taken on trust.
+        { label: "Reared Ae. aegypti",
+          value: sp.larvaeCatch ? Math.round((sp.larvAeg / sp.larvaeCatch) * 1000) / 10 + "%" : "—",
+          of: over(sp.larvAeg, sp.larvaeCatch) },
+        { label: "Reared Ae. albopictus",
+          value: sp.larvaeCatch ? Math.round((sp.larvAlb / sp.larvaeCatch) * 1000) / 10 + "%" : "—",
+          of: over(sp.larvAlb, sp.larvaeCatch) },
+        { label: "Breteau index (BI)", value: lastMeasured && lastMeasured.bi !== null ? lastMeasured.bi : "—",
+          of: lastMeasured && lastMeasured.bi !== null
+            ? fmt(lastMeasured.pos) + " positive containers / " + fmt(lastMeasured.searched) + " houses, " + lastLabel
+            : "" },
         { label: "Pupae counted", value: fmt(sp.pupaTotal),
           of: sp.pupaSurveys
             ? fmt(sp.pupaSurveys) + (sp.pupaSurveys === 1 ? " village survey" : " village surveys")
             : "" },
-        // Pupae per 100 houses, over the houses the pupae surveys themselves recorded.
-        // The larval survey's house count belongs to a different survey and would make
-        // the index right only by coincidence.
-        { label: "Pupal index (per 100 houses)", value: sp.pupaHouses
-          ? Math.round((sp.pupaTotal / sp.pupaHouses) * 1000) / 10 : "\u2014",
-          of: over(sp.pupaTotal, sp.pupaHouses, "houses surveyed") },
-        // How widespread rather than how many: one productive jar can carry the index
-        // above without a second house being involved.
-        { label: "House index for pupae", value: sp.pupaHouses
-          ? Math.round((sp.pupaHousesPos / sp.pupaHouses) * 1000) / 10 + "%" : "—",
-          of: over(sp.pupaHousesPos, sp.pupaHouses, "houses surveyed") },
-        { label: "Emerged adults", value: fmt(sp.emergedTotal) },
-        { label: "Female of emerged Ae. aegypti", value: sp.emgAeg
-          ? Math.round((sp.emgFemaleAeg / sp.emgAeg) * 1000) / 10 + "%" : "—",
-          of: over(sp.emgFemaleAeg, sp.emgAeg) },
       ].map((r) => ({ ...r, labelParts: sciParts(r.label) })),
       showEpi: s.tab === "epi",
       ...(function (self) {
@@ -3556,6 +3637,45 @@ class Component extends DCLogic {
         } else {
           km.push("គ្មានការស្រាវជ្រាវធំល្មមអាចអានជាសន្ទស្សន៍ក្នុងទិដ្ឋភាពនេះ។");
           en.push("No larval survey large enough to read as an index has been recorded for this view.");
+        }
+
+        // The Breteau index for the same round, which is the figure control effort is
+        // sized on: CI says what share of containers are productive, BI says how many
+        // productive containers there are per house.
+        if (now && now.bi !== null && now.bi !== undefined) {
+          const band = now.bi >= 50 ? ["ហានិភ័យខ្ពស់", "high risk"]
+            : now.bi >= 5 ? ["មានហានិភ័យឆ្លង", "transmission risk"]
+            : ["ហានិភ័យទាប", "low risk"];
+          km.push("សន្ទស្សន៍ Breteau " + now.bi + " (" + band[0] + ")។");
+          en.push("Breteau index " + now.bi + " — " + band[1]
+            + ", " + fmt(now.pos) + " positive containers per " + fmt(now.searched) + " houses searched.");
+        }
+
+        // Which villages, not just how many. A programme acts on a village; a view that
+        // reports only the aggregate leaves the reader to find the villages on a
+        // twelve-bar chart and read the names off a rotated axis.
+        const vil = {};
+        list.forEach((h) => {
+          const name = h.vill || "";
+          if (!name || !h.larvaeRecords) return;
+          const v = vil[name] || (vil[name] = { insp: 0, pos: 0 });
+          v.insp += num(h.insp); v.pos += num(h.pos);
+        });
+        const ranked = Object.keys(vil)
+          .filter((name) => vil[name].insp >= MIN_CONTAINERS)
+          .map((name) => ({ name: name, ci: Math.round((vil[name].pos / vil[name].insp) * 1000) / 10 }))
+          .sort((a, b) => b.ci - a.ci);
+        const over = ranked.filter((v) => v.ci >= 20);
+        if (ranked.length > 1 && over.length) {
+          const names = over.slice(0, 3).map((v) => v.name + " " + v.ci + "%").join(", ");
+          const more = over.length > 3 ? " (+" + (over.length - 3) + ")" : "";
+          km.push("ភូមិលើសកម្រិត៖ " + fmt(over.length) + " ក្នុងចំណោម " + fmt(ranked.length)
+            + " — " + names + more + "។");
+          en.push("Over threshold: " + fmt(over.length) + " of " + fmt(ranked.length)
+            + " villages — " + names + more + ".");
+        } else if (ranked.length > 1) {
+          km.push("គ្មានភូមិណាលើសកម្រិត WHO 20% ទេ។");
+          en.push("No village is at or above the WHO 20% threshold.");
         }
 
         // species() already adds these up, Other Aedes spp. included — recomputing them
