@@ -322,11 +322,12 @@ canvas{max-height:320px;max-width:100%}
     <div style="background:#fff;border:1px solid #F1F5F9;border-radius:8px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,62,120,.08);margin-bottom:18px">
       <div style="font-size:14px;font-weight:700;color:#1A2332;margin-bottom:10px">សេចក្ដីសង្ខេបតាមភូមិ <span style="font-weight:400;color:#9AA5AE">Village detail summary · dengue vector surveillance</span></div>
       <div data-scroll-x="1" data-vtable="1" style="max-height:560px;overflow:auto;border:1px solid #D9DEE4;border-radius:6px">
-        <div data-vrow="1" style="display:flex;min-width:978px;position:sticky;top:0;z-index:2;background:#003E78;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px">
+        <div data-vrow="1" style="display:flex;min-width:1048px;position:sticky;top:0;z-index:2;background:#003E78;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px">
           <span data-vc="no" style="flex:none;width:34px;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">No</span>
           <span data-vc="sangkat" style="flex:1 1 130px;min-width:130px;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">Sangkat</span>
           <span data-vc="village" style="flex:1 1 130px;min-width:130px;padding:9px 8px;border-right:1px solid rgba(255,255,255,.22)">Village</span>
           <span data-vc="hh" style="flex:none;width:56px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">HH</span>
+          <span data-vc="members" style="flex:none;width:70px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Members</span>
           <span data-vc="cont" style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Cont.</span>
           <span data-vc="pos" style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid rgba(255,255,255,.22)">Pos.</span>
           <span data-vc="ci" style="flex:none;width:56px;padding:9px 8px;text-align:right;background:#117996;border-right:1px solid rgba(255,255,255,.22)">CI %</span>
@@ -338,11 +339,12 @@ canvas{max-height:320px;max-width:100%}
           <span data-vc="eggs" style="flex:none;width:68px;padding:9px 8px;text-align:right">Eggs</span>
         </div>
         <sc-for list="{{ villageRows }}" as="v" hint-placeholder-count="6">
-          <div data-vrow="1" style="display:flex;min-width:978px;font-size:12.5px;border-top:1px solid #E8EDF1;color:#1A2332">
+          <div data-vrow="1" style="display:flex;min-width:1048px;font-size:12.5px;border-top:1px solid #E8EDF1;color:#1A2332">
             <span data-vc="no" style="flex:none;width:34px;padding:8px;color:#9AA5AE;border-right:1px solid #E8EDF1">{{ v.no }}</span>
             <span data-vc="sangkat" style="flex:1 1 130px;min-width:130px;padding:8px;color:#475569;border-right:1px solid #E8EDF1;white-space:normal;overflow-wrap:break-word;line-height:1.35">{{ v.comm }}</span>
             <button data-vc="village" onClick="{{ v.toggle }}" style="flex:1 1 130px;min-width:130px;padding:8px;display:flex;align-items:center;gap:6px;background:transparent;border:none;border-right:1px solid #E8EDF1;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;color:#003E78;text-align:left;overflow:hidden" style-hover="background:#F1F5F9"><span style="flex:none;width:14px;height:14px;border:1px solid #A8C8DC;border-radius:4px;font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;color:#117996">{{ v.caret }}</span><span style="white-space:normal;overflow-wrap:break-word;line-height:1.35">{{ v.vill }}</span></button>
             <span data-vc="hh" style="flex:none;width:56px;padding:8px;text-align:right;border-right:1px solid #E8EDF1">{{ v.households }}</span>
+            <span data-vc="members" style="flex:none;width:70px;padding:8px;text-align:right;border-right:1px solid #E8EDF1;line-height:1.25">{{ v.members }}<sc-if value="{{ v.membersNote }}" hint-placeholder-val="{{ '' }}"><span style="display:block;font-size:10px;color:#9AA5AE">{{ v.membersNote }}</span></sc-if></span>
             <span data-vc="cont" style="flex:none;width:74px;padding:8px;text-align:right;border-right:1px solid #E8EDF1">{{ v.insp }}</span>
             <span data-vc="pos" style="flex:none;width:74px;padding:8px;text-align:right;border-right:1px solid #E8EDF1">{{ v.pos }}</span>
             <span data-vc="ci" style="flex:none;width:56px;padding:8px;text-align:right;font-weight:700;border-right:1px solid #E8EDF1;background:{{ v.ciBg }};color:{{ v.ciFg }}">{{ v.ci }}</span>
@@ -360,6 +362,7 @@ canvas{max-height:320px;max-width:100%}
                 <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;font-size:12px">
                   <div style="grid-column:1/-1;display:flex;justify-content:space-between;gap:10px;padding-bottom:4px;border-bottom:1px dotted #D9DEE4"><span style="color:#64748B">ឃុំ · Sangkat</span><span style="font-weight:700;color:#1A2332;text-align:right;min-width:0;overflow-wrap:break-word">{{ v.comm }}</span></div>
                   <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#64748B">ខ្នងផ្ទះ · HH</span><span style="font-weight:700;color:#1A2332">{{ v.households }}</span></div>
+                  <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#64748B">សមាជិក · Members</span><span style="font-weight:700;color:#1A2332">{{ v.members }}</span></div>
                   <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#64748B">ភាជន៍ · Cont.</span><span style="font-weight:700;color:#1A2332">{{ v.insp }}</span></div>
                   <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#64748B">វិជ្ជមាន · Pos.</span><span style="font-weight:700;color:#1A2332">{{ v.pos }}</span></div>
                   <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#64748B">ផ្ទះវិជ្ជមាន · Houses +</span><span style="font-weight:700;color:#1A2332">{{ v.housesPos }}</span></div>
@@ -371,11 +374,12 @@ canvas{max-height:320px;max-width:100%}
               </div>
               <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#64748B;padding:7px 8px 3px 52px">{{ v.hhCount }}</div>
               <sc-for list="{{ v.hhs }}" as="h" hint-placeholder-count="3">
-                <div data-hhrow="1" style="display:flex;min-width:978px;font-size:12px;border-top:1px solid #EDF1F4;color:#475569">
+                <div data-hhrow="1" style="display:flex;min-width:1048px;font-size:12px;border-top:1px solid #EDF1F4;color:#475569">
                   <span data-vc="no" style="flex:none;width:34px;padding:7px 8px"></span>
                   <span data-vc="hhid" style="flex:1 1 130px;min-width:130px;padding:7px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="{{ h.href }}" style="font-family:ui-monospace,Menlo,monospace;font-weight:700;color:#117996;text-decoration:none;border-bottom:1px solid #A8C8DC" style-hover="color:#003E78;border-bottom-color:#003E78">{{ h.id }}</a></span>
                   <span data-vc="hhhead" style="flex:1 1 130px;min-width:130px;padding:7px 8px;white-space:normal;overflow-wrap:break-word;line-height:1.35">{{ h.head }}</span>
                   <span data-vc="hh" style="flex:none;width:56px;padding:7px 8px"></span>
+                  <span data-vc="members" style="flex:none;width:70px;padding:7px 8px;text-align:right">{{ h.members }}</span>
                   <span data-vc="cont" style="flex:none;width:74px;padding:7px 8px;text-align:right">{{ h.insp }}</span>
                   <span data-vc="pos" style="flex:none;width:74px;padding:7px 8px;text-align:right">{{ h.pos }}</span>
                   <span data-vc="ci" style="flex:none;width:56px;padding:7px 8px;text-align:right;font-weight:700;color:#003E78">{{ h.ci }}</span>
@@ -390,11 +394,12 @@ canvas{max-height:320px;max-width:100%}
             </div>
           </sc-if>
         </sc-for>
-        <div data-vrow="1" style="display:flex;min-width:978px;font-size:12.5px;font-weight:700;border-top:2px solid #003E78;background:#F1F5F9;color:#1A2332">
+        <div data-vrow="1" style="display:flex;min-width:1048px;font-size:12.5px;font-weight:700;border-top:2px solid #003E78;background:#F1F5F9;color:#1A2332">
           <span data-vc="no" style="flex:none;width:34px;padding:9px 8px;border-right:1px solid #E8EDF1"></span>
           <span data-vc="totlabel" style="flex:1 1 130px;min-width:130px;padding:9px 8px;color:#003E78;border-right:1px solid #E8EDF1">{{ villageTotals.label }}</span>
           <span data-vc="totblank" style="flex:1 1 130px;min-width:130px;padding:9px 8px;border-right:1px solid #E8EDF1"></span>
           <span data-vc="hh" style="flex:none;width:56px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1">{{ villageTotals.households }}</span>
+          <span data-vc="members" style="flex:none;width:70px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1;line-height:1.25">{{ villageTotals.members }}<sc-if value="{{ villageTotals.membersNote }}" hint-placeholder-val="{{ '' }}"><span style="display:block;font-size:10px;font-weight:400;color:#9AA5AE">{{ villageTotals.membersNote }}</span></sc-if></span>
           <span data-vc="cont" style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1">{{ villageTotals.insp }}</span>
           <span data-vc="pos" style="flex:none;width:74px;padding:9px 8px;text-align:right;border-right:1px solid #E8EDF1">{{ villageTotals.pos }}</span>
           <span data-vc="ci" style="flex:none;width:56px;padding:9px 8px;text-align:right;color:#7C1220;border-right:1px solid #E8EDF1">{{ villageTotals.ci }}</span>
@@ -1166,6 +1171,25 @@ class Component extends DCLogic {
     });
   }
 
+  // How many people live in each household, from the register row and from every
+  // record rather than the filtered ones. A register is written once, when the house
+  // joins, and carries that month - so under a month filter it is almost always out of
+  // view, and a column fed from the filtered rows read "—" for houses that plainly
+  // have people in them. Zero and "not recorded" stay different states throughout.
+  membersById() {
+    if (this._members && this._membersFrom === this.state.records) return this._members;
+    const map = {};
+    (this.state.records || []).forEach((r) => {
+      if ((r.form_type || r.type) !== "household") return;
+      if (String(r.residents == null ? "" : r.residents).trim() === "") return;
+      const id = r.household_id || r.record_id;
+      if (id) map[id] = num(r.residents);
+    });
+    this._members = map;
+    this._membersFrom = this.state.records;
+    return map;
+  }
+
   // One row per household, with everything measured against it.
   households(rows) {
     const map = {};
@@ -1175,7 +1199,7 @@ class Component extends DCLogic {
       const h = map[id] || (map[id] = { id, head: "", where: "", prov: "", dist: "", comm: "", vill: "", lat: "", lon: "",
         traps: 0, trapsOvi: 0, trapsBg: 0, insp: 0, pos: 0, adults: 0, adultCatch: 0, larvaeCatch: 0, eggs: 0, eggsIn: 0, eggsOut: 0,
         aeg: 0, alb: 0, culex: 0, emergedCatch: 0, emergedTubes: 0,
-        larvaeRecords: 0, positiveHouse: false });
+        larvaeRecords: 0, positiveHouse: false, members: 0, hasMembers: false });
       const t = this.type(r);
       // any record can supply the household's place; the register row is preferred
       h.prov = h.prov || r.province || "";
@@ -1226,9 +1250,14 @@ class Component extends DCLogic {
         }
       }
     });
+    const members = this.membersById();
     return Object.keys(map).map((k) => {
       const h = map[k];
       h.ci = h.insp ? Math.round((h.pos / h.insp) * 1000) / 10 : 0;
+      if (Object.prototype.hasOwnProperty.call(members, h.id)) {
+        h.members = members[h.id];
+        h.hasMembers = true;
+      }
       return h;
     });
   }
@@ -1274,9 +1303,11 @@ class Component extends DCLogic {
       const key = (h.comm || "\u2014") + "|" + (h.vill || "\u2014");
       const v = map[key] || (map[key] = { comm: h.comm || "\u2014", vill: h.vill || "\u2014",
         households: 0, inspectedHouses: 0, insp: 0, pos: 0, housesPos: 0,
+        members: 0, membersKnown: 0,
         adults: 0, larvae: 0, emerged: 0, emergedTubes: 0, eggs: 0, installs: 0, hhs: [] });
       v.hhs.push(h);
       v.households += 1;
+      if (h.hasMembers) { v.members += h.members; v.membersKnown += 1; }
       v.insp += h.insp;
       v.pos += h.pos;
       v.installs += h.traps;
@@ -3831,12 +3862,18 @@ class Component extends DCLogic {
               return { id: h.id, href: base + "#hh=" + encodeURIComponent(h.id),
                 head: h.head || "\u2014", installs: fmt(h.traps),
                 insp: fmt(h.insp), pos: fmt(h.pos), ci: show(hci),
+                members: h.hasMembers ? fmt(h.members) : "—",
                 positive: h.positiveHouse ? "\u2713" : (h.larvaeRecords ? "\u2014" : ""),
                 positiveFg: h.positiveHouse ? "#7C1220" : "#9AA5AE",
                 adults: fmt(h.adultCatch), larvae: fmt(h.larvaeCatch),
                 emerged: h.emergedTubes ? fmt(h.emergedCatch) : "—", eggs: fmt(h.eggs) };
             }),
             households: fmt(v.households),
+            // The count, and under it how many registers it came from when some are
+            // blank - "131" over 25 of 52 registers is a different fact from "131".
+            members: v.membersKnown ? fmt(v.members) : "—",
+            membersNote: v.membersKnown && v.membersKnown < v.households
+              ? v.membersKnown + "/" + v.households : "",
             insp: fmt(v.insp), pos: fmt(v.pos), ci: show(ci),
             housesPos: fmt(v.housesPos), hi: show(hi),
             adults: fmt(v.adults), larvae: fmt(v.larvae),
@@ -3844,16 +3881,21 @@ class Component extends DCLogic {
             ciBg: scale(ci, maxCi, true), ciFg: ci !== null && ci > maxCi * 0.55 ? "#fff" : "#7C1220",
             hiBg: scale(hi, maxHi, false), hiFg: hi !== null && hi > maxHi * 0.55 ? "#fff" : "#003E78" };
         });
-        const t = vs.reduce((a, v) => ({ households: a.households + v.households, insp: a.insp + v.insp,
+        const t = vs.reduce((a, v) => ({ households: a.households + v.households,
+          members: a.members + v.members, membersKnown: a.membersKnown + v.membersKnown,
+          insp: a.insp + v.insp,
           pos: a.pos + v.pos, housesPos: a.housesPos + v.housesPos, adults: a.adults + v.adults,
           larvae: a.larvae + v.larvae, emerged: a.emerged + v.emerged,
           emergedTubes: a.emergedTubes + v.emergedTubes,
           eggs: a.eggs + v.eggs, installs: a.installs + v.installs }),
-          { households: 0, insp: 0, pos: 0, housesPos: 0, adults: 0, larvae: 0,
+          { households: 0, members: 0, membersKnown: 0, insp: 0, pos: 0, housesPos: 0, adults: 0, larvae: 0,
             emerged: 0, emergedTubes: 0, eggs: 0, installs: 0 });
         return {
           villageRows: rowsOut,
           villageTotals: { label: "សរុប · TOTAL", households: fmt(t.households),
+            members: t.membersKnown ? fmt(t.members) : "—",
+            membersNote: t.membersKnown && t.membersKnown < t.households
+              ? t.membersKnown + "/" + t.households : "",
             insp: fmt(t.insp), pos: fmt(t.pos), ci: show(pct(t.pos, t.insp)),
             housesPos: fmt(t.housesPos), hi: show(pct(t.housesPos, t.households)),
             adults: fmt(t.adults), larvae: fmt(t.larvae),
