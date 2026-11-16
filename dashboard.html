@@ -833,7 +833,16 @@ function isPupaeRec(r) {
 // never host-seeking, so they are counted on their own and must be kept out of every
 // figure that describes what the traps caught.
 function isEmerged(r) {
+  // Two shapes, one meaning. Emerged adults are now recorded per village on their own
+  // form; before that they were a lab result against one tube, stamped with the stage.
+  // Both are still read here so the records already entered keep counting.
+  if (String((r && (r.form_type || r.type)) || "") === "emerged") return true;
   return String((r && r.specimen_stage) || "").toLowerCase().indexOf("emerg") >= 0;
+}
+
+// Only the per-village form, for the places that need the survey rather than the catch.
+function isEmergedRec(r) {
+  return String((r && (r.form_type || r.type)) || "") === "emerged";
 }
 
 function cleanRecords(list) {
@@ -1334,7 +1343,9 @@ class Component extends DCLogic {
     // own bucket they fell through to "not larval" and inflated the trap catch.
     const adults = labs.filter((r) => !isLarval(r) && !isEmerged(r));
     const larvals = labs.filter(isLarval);
-    const emerged = labs.filter(isEmerged);
+    // From all records, not the lab slice: a per-village emerged survey is its own
+    // record type and never appears among the tubes.
+    const emerged = rows.filter(isEmerged);
     const sumOf = (list, k) => list.reduce((a, r) => a + num(r[k]), 0);
     const adultAeg = sumOf(adults, "aegypti_f") + sumOf(adults, "aegypti_m");
     const adultAlb = sumOf(adults, "albopictus_f") + sumOf(adults, "albopictus_m");
@@ -1374,7 +1385,11 @@ class Component extends DCLogic {
       emgAeg, emgAlb, emgAedesOther, emgCulexOther, emergedTotal,
       emgFemaleAeg: sumOf(emerged, "aegypti_f"), emgMaleAeg: sumOf(emerged, "aegypti_m"),
       emgFemaleAlb: sumOf(emerged, "albopictus_f"), emgMaleAlb: sumOf(emerged, "albopictus_m"),
-      emergedTubes: emerged.length,
+      // The per-village form states how many tubes produced its figure; a legacy lab
+      // row is one tube by definition. Counting records would undercount the first.
+      emergedTubes: emerged.reduce((a, r) => a
+        + (isEmergedRec(r) ? num(r.tubes_reared) : 1), 0),
+      emergedSurveys: emerged.filter(isEmergedRec).length,
       femaleAeg: sumOf(adults, "aegypti_f"), femaleAlb: sumOf(adults, "albopictus_f"),
       maleAeg: sumOf(adults, "aegypti_m"), maleAlb: sumOf(adults, "albopictus_m"),
       eggs: sum("eggs"), catchTotal: labs.reduce((a, r) => a + num(r.total_catch), 0),
@@ -1512,6 +1527,16 @@ class Component extends DCLogic {
           v.seenHouses[r.household_id] = 1;
           if (num(r.containers_positive) > 0) v.posHouses[r.household_id] = 1;
         }
+      }
+      // A per-village emerged survey, which is not a lab row and so never reaches the
+      // branch below. Same buckets, same keys - the emerged chart reads one series
+      // whichever way the figure was recorded.
+      if (t === "emerged") {
+        v.emerged += num(r.total_catch);
+        v.emgAeg += num(r.aegypti_f) + num(r.aegypti_m);
+        v.emgAlb += num(r.albopictus_f) + num(r.albopictus_m);
+        v.emgAedesOther += num(r.aedes_other);
+        v.emgCulexOther += num(r.culex) + num(r.other);
       }
       if (t === "lab") {
         // Emerged tubes are held out of v.adults for the same reason as in households():
@@ -2984,7 +3009,7 @@ class Component extends DCLogic {
   // mosquitoes a second time and a larval identification does not land among the adults.
   hhDetail(rows) {
     const bucket = () => ({ aegF: 0, aegM: 0, albF: 0, albM: 0, other: 0, culex: 0, tot: 0 });
-    const blank = () => ({ contInsp: {}, contPos: {}, commCode: "", villCode: "",
+    const blank = () => ({ contInsp: {}, contPos: {}, commCode: "", villCode: "", months: {},
       aduTot: 0, aduUnk: 0,
       // one bucket per trap type: the same six taxa, read separately for each
       pk: bucket(), bg: bucket(),
@@ -2997,6 +3022,11 @@ class Component extends DCLogic {
       if (!id) return;
       const d = by[id] || (by[id] = blank());
       const t = this.type(r);
+      // Every round this household has a record in. One when the view is filtered to a
+      // round, which is the usual case; more when it is not, and then the cell says so
+      // rather than quietly picking one of them.
+      const mk = this.monthKey(r);
+      if (mk) d.months[mk] = 1;
       // the codes, so the place can be named in both languages the way the filters are
       d.commCode = d.commCode || this.code("commune", r) || "";
       d.villCode = d.villCode || this.code("village", r) || "";
@@ -3071,7 +3101,17 @@ class Component extends DCLogic {
         { head: "Sangkat", w: 22, kind: "text",
           get: (d) => (d.h.comm ? placeLabel("commune", d.commCode, d.h.comm) : "—") },
         { head: "Village", w: 22, kind: "text", total: "TOTAL",
-          get: (d) => (d.h.vill ? placeLabel("village", d.villCode, d.h.vill) : "—") }] },
+          get: (d) => (d.h.vill ? placeLabel("village", d.villCode, d.h.vill) : "—") },
+        // The sheet names the round in its sub-heading, but only the one the view was
+        // filtered to. Unfiltered, every row pooled its rounds with nothing on the row
+        // to say which - so a reader could not tell a one-round house from one carrying
+        // five, and the sheet could not be sorted or pivoted by round at all.
+        { head: "Report Month", w: 15, kind: "text", get: (d) => {
+          const ms = Object.keys(d.months).sort();
+          if (!ms.length) return "—";
+          if (ms.length === 1) return ms[0];
+          return ms[0] + " → " + ms[ms.length - 1] + " (" + ms.length + ")";
+        } }] },
       { title: "CONTAINERS BY TYPE", xf: "grpBlue", cols: cont },
       { title: "CONTAINER SUMMARY", xf: "grpGreen", cols: [
         Object.assign({ head: "Total Cont.", w: 11 }, n((d) => d.h.insp)),
@@ -3148,6 +3188,9 @@ class Component extends DCLogic {
     plan.forEach((g, gi) => g.cols.forEach((c, i) =>
       cols.push(Object.assign({ grp: g, opens: i === 0 && gi > 0 }, c))));
 
+    // How wide the identification band is, and the first column after it.
+    const idCols = plan[0].cols.length;
+    const firstData = colName(idCols + 1);
     const HEAD_ROW = 5;
     const first = HEAD_ROW + 1;
     const last = first + data.length - 1;
@@ -3244,11 +3287,15 @@ class Component extends DCLogic {
     const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       + '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
       + '<dimension ref="A1:' + colName(cols.length) + totalRow + '"/>'
-      // The four identification columns and the header block stay put, so a row can be
-      // read at the far right of a 37-column sheet.
-      + '<sheetViews><sheetView workbookViewId="0"><pane xSplit="4" ySplit="' + HEAD_ROW
-      + '" topLeftCell="E' + first + '" activePane="bottomRight" state="frozen"/>'
-      + '<selection pane="bottomRight" activeCell="E' + first + '" sqref="E' + first
+      // The identification columns and the header block stay put, so a row can be read
+      // at the far right of the sheet. The split is taken from the plan rather than
+      // written as a number: adding Report Month to that band moved the boundary, and a
+      // hard 4 would have left the new column scrolling away with the data.
+      + '<sheetViews><sheetView workbookViewId="0"><pane xSplit="' + idCols
+      + '" ySplit="' + HEAD_ROW
+      + '" topLeftCell="' + firstData + first + '" activePane="bottomRight" state="frozen"/>'
+      + '<selection pane="bottomRight" activeCell="' + firstData + first
+      + '" sqref="' + firstData + first
       + '"/></sheetView></sheetViews>'
       + '<cols>' + cols.map((c, i) => '<col min="' + (i + 1) + '" max="' + (i + 1)
         + '" width="' + c.w + '" customWidth="1"/>').join('') + '</cols>'
@@ -3273,11 +3320,23 @@ class Component extends DCLogic {
     if (!rows.length) return;
     const cols = [];
     rows.forEach((r) => Object.keys(r).forEach((k) => { if (cols.indexOf(k) < 0) cols.push(k); }));
+    // The round each row is reported in, in front of the raw fields. Supabase returns
+    // period_month as a timestamp on most rows, and a lab result belongs to its source
+    // collection's round rather than its own - so the export carries what monthKey()
+    // resolves, which is what every figure on this dashboard was counted under. The
+    // raw period_month column is left in place beside it.
+    const months = new Map();
+    rows.forEach((r) => months.set(r, this.monthKey(r)));
     const esc = (v) => {
       const s = v == null ? "" : String(v);
       return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
     };
-    const csv = [cols.join(",")].concat(rows.map((r) => cols.map((c) => esc(r[c])).join(","))).join("\n");
+    const head = ["report_month", "report_month_label"].concat(cols);
+    const csv = [head.join(",")].concat(rows.map((r) => {
+      const m = months.get(r) || "";
+      return [esc(m), esc(m ? this.monthLabel(m) : "")]
+        .concat(cols.map((c) => esc(r[c]))).join(",");
+    })).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
     a.download = "ento-dashboard-" + new Date().toISOString().slice(0, 10) + ".csv";
@@ -3877,7 +3936,7 @@ class Component extends DCLogic {
             insp: fmt(v.insp), pos: fmt(v.pos), ci: show(ci),
             housesPos: fmt(v.housesPos), hi: show(hi),
             adults: fmt(v.adults), larvae: fmt(v.larvae),
-            emerged: v.emergedTubes ? fmt(v.emerged) : "—", eggs: fmt(v.eggs),
+            emerged: (v.emergedTubes || v.emerged) ? fmt(v.emerged) : "—", eggs: fmt(v.eggs),
             ciBg: scale(ci, maxCi, true), ciFg: ci !== null && ci > maxCi * 0.55 ? "#fff" : "#7C1220",
             hiBg: scale(hi, maxHi, false), hiFg: hi !== null && hi > maxHi * 0.55 ? "#fff" : "#003E78" };
         });
@@ -3899,7 +3958,7 @@ class Component extends DCLogic {
             insp: fmt(t.insp), pos: fmt(t.pos), ci: show(pct(t.pos, t.insp)),
             housesPos: fmt(t.housesPos), hi: show(pct(t.housesPos, t.households)),
             adults: fmt(t.adults), larvae: fmt(t.larvae),
-            emerged: t.emergedTubes ? fmt(t.emerged) : "—", eggs: fmt(t.eggs) },
+            emerged: (t.emergedTubes || t.emerged) ? fmt(t.emerged) : "—", eggs: fmt(t.eggs) },
           villageNote: "CI = ភាជន៍មានដង្កូវ / ភាជន៍បានពិនិត្យ · positive containers / containers inspected. "
             + "HI = ផ្ទះមានដង្កូវ / ខ្នងផ្ទះ · positive houses / all households in the village. "
             + "Click a village to open its households. Adults and larvae are total_catch split by "

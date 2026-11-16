@@ -371,6 +371,10 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
           <span style="width: 30px; height: 30px; flex: none; border-radius: 8px; color: #fff; display: inline-flex; align-items: center; justify-content: center; background-color: #7C1220"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 10 11 3.5l8.2 6.5"></path><path d="M5 8.9V19h6.5"></path><circle cx="16.6" cy="16.6" r="3.6"></circle><path d="M19.3 19.3 22 22"></path></svg></span>
           <span style="font-size:11px;font-weight:700;line-height:1.2;text-align:left"><span style="display: block; color: #003E78">ស្វែងរកខ្នងផ្ទះ</span><span style="display: block; font-size:11px;font-weight:400;color:#767676;margin-top:1px">Find household</span></span>
         </button>
+        <button onClick="{{ openEmerged }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 54px; padding: 8px 9px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 8px; background-color: #d9cfe6">
+          <span style="width:30px;height:30px;flex:none;border-radius:8px;background:#6B4C7A;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v13"></path><path d="M12 9c-1.6-3-4-4.5-6.5-4.5C4 7 5.5 11 8.5 12c-2 .6-3 2-3 3.5 2.6 0 5-1.6 6.5-4"></path><path d="M12 9c1.6-3 4-4.5 6.5-4.5C20 7 18.5 11 15.5 12c2 .6 3 2 3 3.5-2.6 0-5-1.6-6.5-4"></path></svg></span>
+          <span style="font-size:11px;font-weight:700;line-height:1.2;text-align:left"><span style="display:block">មូសចេញពីដង្កូវ</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Emerged survey · per village</span></span>
+        </button>
         <button onClick="{{ openPupae }}" style="border: 1px solid #D9DEE4; border-radius: 8px; min-height: 54px; padding: 8px 9px; cursor: pointer; font-family: inherit; color: #003E78; display: flex; align-items: center; justify-content: flex-start; gap: 8px; background-color: #e8dcae">
           <span style="width:30px;height:30px;flex:none;border-radius:8px;background:#7F6000;color:#fff;display:inline-flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c3.3 0 5.5 2.6 5.5 6S15.3 20 12 20s-5.5-6.6-5.5-10S8.7 4 12 4Z"></path><path d="M9.6 8.4h4.8M9.2 12h5.6M9.6 15.6h4.8"></path></svg></span>
           <span style="font-size:11px;font-weight:700;line-height:1.2;text-align:left"><span style="display:block">ប្រមូលឌុកឌឿ</span><span style="display:block;font-size:11px;font-weight:400;color:#767676;margin-top:1px">Pupae survey · per village</span></span>
@@ -907,6 +911,12 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             </sc-if>
             <sc-if value="{{ f.isPicks }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-if value="{{ f.hasMany }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ f.toggleAll }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:9px;text-align:left;background:{{ f.allBg }};border:1px dashed {{ f.allBd }};border-radius:6px;padding:6px 10px;min-height:30px;cursor:pointer;font-family:inherit">
+                    <span style="width:18px;height:18px;flex:none;border-radius:5px;border:1.5px solid {{ f.allBd }};background:#fff;color:#117996;font-weight:700;font-size:12px;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ f.allMark }}</span>
+                    <span style="flex:1;min-width:0;font-size:11.5px;font-weight:700;color:#003E78">{{ f.allLabel }}</span>
+                  </button>
+                </sc-if>
                 <sc-for list="{{ f.rows }}" as="t" hint-placeholder-count="2">
                   <div style="display:flex;align-items:center;gap:6px">
                     <button onClick="{{ t.toggle }}" style="display:flex;align-items:center;gap:9px;text-align:left;background:{{ t.bg }};border:1px solid {{ t.bd }};border-radius:6px;padding:5px 10px;min-height:30px;cursor:pointer;font-family:inherit;flex:1;min-width:0;box-sizing:border-box">
@@ -923,6 +933,15 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
                 </sc-for>
                 <sc-if value="{{ f.noRows }}" hint-placeholder-val="{{ false }}">
                   <div style="border:1px solid #D9DEE4;border-radius:6px;padding:11px 12px;font-size:11px;color:#767676">{{ f.empty }}</div>
+                </sc-if>
+                <sc-if value="{{ f.hasMulti }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ f.toggleAllDays }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:9px;text-align:left;background:{{ f.allDaysBg }};border:1px solid {{ f.allDaysBd }};border-radius:6px;padding:7px 10px;cursor:pointer;font-family:inherit">
+                    <span style="width:18px;height:18px;flex:none;border-radius:5px;border:1.5px solid {{ f.allDaysBd }};background:#fff;color:#117996;font-weight:700;font-size:12px;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ f.allDaysMark }}</span>
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:11.5px;font-weight:700;color:#003E78;line-height:1.3">{{ f.allDaysLabel }}</span>
+                      <span style="display:block;font-size:11px;color:#767676;line-height:1.35;margin-top:1px">{{ f.allDaysNote }}</span>
+                    </span>
+                  </button>
                 </sc-if>
                 <div style="font-size:11px;color:#767676">{{ f.summary }}</div>
               </div>
@@ -1000,6 +1019,43 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
                 <sc-if value="{{ t.armed }}" hint-placeholder-val="{{ false }}">
                   <button onClick="{{ t.cancelDel }}" style="font-size:11px;font-weight:700;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit;white-space:nowrap">បោះបង់ Cancel</button>
                   <button onClick="{{ t.confirmDel }}" style="font-size:11px;font-weight:700;background:#7C1220;color:#fff;border:none;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit;white-space:nowrap">លុប Delete</button>
+                </sc-if>
+              </span>
+            </div>
+          </sc-for>
+          </sc-if>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasPrevEmerged }}" hint-placeholder-val="{{ false }}">
+        <div style="border:1px solid #D9DEE4;border-radius:8px;overflow:hidden;background:#fff">
+          <div style="display:flex;align-items:baseline;gap:8px;padding:6px 10px;background:#F2F2F2">
+            <span style="flex:0 0 116px;min-width:0;font-size:11px;line-height:1.3;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">ភូមិ <span style="color:#767676">Village</span></span>
+            <span style="flex:1 1 auto;min-width:0;font-size:11px;line-height:1.3;color:#003E78">ពាត៌មាន <span style="color:#767676">Detail</span></span>
+            <span style="flex:none;text-align:right;font-size:11px;line-height:1.3;color:#003E78">ស្ថានភាព <span style="color:#767676">Status</span></span>
+          </div>
+          <sc-if value="{{ emergedEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:10px;border-top:1px solid #D9DEE4;font-size:11.5px;color:#767676;line-height:1.5">គ្មានមូសចេញពីដង្កូវនៅឡើយទេ · no emerged survey recorded yet — the villages you save will be listed here, by round</div>
+          </sc-if>
+          <sc-for list="{{ prevEmergedMonths }}" as="g" hint-placeholder-count="1">
+          <button onClick="{{ g.toggle }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 10px;border:none;border-top:1px solid #D9DEE4;background:#F8FAFB;cursor:pointer;font-family:inherit;text-align:left">
+            <span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="flex:none;width:16px;height:16px;border:1px solid #A8C8DC;border-radius:5px;color:#117996;font-size:11px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ g.caret }}</span><span style="font-size:11px;font-weight:700;color:#003E78;white-space:nowrap">{{ g.label }}</span></span>
+            <span style="font-size:11px;color:#767676">{{ g.count }}</span>
+          </button>
+          <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ g.rows }}" as="l" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-top:1px solid #EDF1F4">
+              <span style="flex:0 0 116px;min-width:0;font-weight:700;font-size:11.5px;line-height:1.4;color:#003E78;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ l.id }}</span>
+              <span style="flex:1 1 auto;min-width:0;font-size:11px;color:#767676;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ l.meta }}</span>
+              <span style="flex:none;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+                <span style="flex:none;font-size:10.5px;font-weight:700;border-radius:5px;padding:3px 7px;background:{{ l.tagBg }};color:{{ l.tagFg }};white-space:nowrap">{{ l.tag }}</span>
+                <sc-if value="{{ l.notArmed }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ l.edit }}" title="កែសម្រួល · Edit this survey" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #A8C8DC;background:#fff;color:#117996;border-radius:5px;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M4.5 19.5h5L20 9a2.5 2.5 0 0 0-3.5-3.5L6 16v3.5Z"></path></svg></button>
+                  <button onClick="{{ l.arm }}" title="លុប · Delete this survey" style="display:inline-flex;align-items:center;justify-content:center;border:1px solid #E3BFC4;background:#fff;color:#7C1220;border-radius:5px;width:24px;height:24px;flex:none;cursor:pointer;padding:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
+                </sc-if>
+                <sc-if value="{{ l.armed }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ l.cancelDel }}" style="font-size:11px;font-weight:700;background:#fff;color:#003E78;border:1px solid #D9DEE4;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit">បោះបង់</button>
+                  <button onClick="{{ l.confirmDel }}" style="font-size:11px;font-weight:700;background:#7C1220;color:#fff;border:none;border-radius:5px;padding:4px 8px;cursor:pointer;font-family:inherit">{{ l.delLabel }}</button>
                 </sc-if>
               </span>
             </div>
@@ -1507,6 +1563,19 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border:1.5px solid #f
             <button onClick="{{ askClearWaiting }}" title="លុបទាំងអស់ដែលរង់ចាំផ្ញើ · Delete all waiting" style="flex:0 0 auto;background:#fff;color:#7C1220;border:1px solid #E3BFC4;border-radius:6px;min-height:32px;width:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"></path><path d="M9.5 7V4.5h5V7"></path><path d="M6.5 7l1 12.5h9L17 7"></path></svg></button>
           </sc-if>
         </div>
+        <div style="margin-top:10px;padding:9px 10px;background:#F7FAFC;border:1px solid #E3E9EF;border-radius:8px">
+          <button onClick="{{ toggleAutoSync }}" style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:8px;background:transparent;border:none;padding:0;cursor:pointer;font-family:inherit;text-align:left">
+            <span style="flex:none;width:16px;height:16px;border:1.5px solid {{ autoBoxBd }};border-radius:4px;background:{{ autoBoxBg }};color:#fff;font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center">{{ autoMark }}</span>
+            <span style="flex:1 1 auto;min-width:0">
+              <span style="display:block;font-size:11.5px;font-weight:700;color:#003E78;line-height:1.3">ផ្ទេរដោយស្វ័យប្រវត្តិ <span style="font-weight:400;color:#767676">Auto-sync</span></span>
+              <span style="display:block;font-size:11px;color:#767676;line-height:1.35;margin-top:1px">{{ autoState }}</span>
+            </span>
+            <sc-if value="{{ hasAutoLast }}" hint-placeholder-val="{{ false }}">
+              <span style="flex:none;text-align:right"><span style="display:block;font-size:11px;font-weight:700;color:#117996;line-height:1.3">{{ autoLastLabel }}</span><span style="display:block;font-size:10px;color:#9AA5AE;white-space:nowrap">ចុងក្រោយ · last</span></span>
+            </sc-if>
+          </button>
+          <div style="margin-top:6px;font-size:10.5px;color:#9AA5AE;line-height:1.4">Sends what you recorded and brings back what the rest of the team has sent, so every phone shows the same data. Records you have not sent yet are never overwritten.</div>
+        </div>
         <div style="margin-top:10px;padding-top:9px;border-top:1px solid #EDF1F5">
           <label style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:4px">ទាញតែតំបន់នេះ<span style="font-size:11px;font-weight:400;color:#767676;text-transform:none;letter-spacing:0">Pull only this area · faster</span></label>
         </div>
@@ -2006,6 +2075,10 @@ const TYPES = {
   lab: { label: "Lab result", bar: "#ffe1d0", prefix: "LR" },
   // Counted per village, not per house: no tube, no container, no household_id.
   pupae: { label: "Pupae survey", bar: "#e8dcae", prefix: "PU" },
+  // Adults reared out of the immatures, counted per village the same way. They were
+  // entered as a lab result against one tube, which tied a village-level figure to
+  // whichever household happened to supply the tube.
+  emerged: { label: "Emerged survey", bar: "#d9cfe6", prefix: "EM" },
 };
 
 // Larvae are reared and identified to species; sex is not determined.
@@ -2048,7 +2121,10 @@ const EMERGED = "Emerged";
 // their own form - so the lab form offers the two readings a tube still has. The constant
 // stays because records already stamped "Pupa", and isImmatureStage below, still mean it.
 const PUPA = "Pupa";
-const LAB_STAGES = [["Larvae", "Larvae"], [EMERGED, "Emerged adults"]];
+// Emerged adults moved to their own per-village survey, so the lab form offers the
+// one stage it still reads off a tube. EMERGED itself stays defined: every record
+// already entered under it must keep being recognised everywhere it is counted.
+const LAB_STAGES = [["Larvae", "Larvae"]];
 // Larvae and pupae are both immatures: identified to species and never sexed, counted on
 // the larval tally, and never part of what a trap caught. Almost everywhere that used to
 // ask "is the stage Larvae" was really asking this, and a stage added beside Larvae walks
@@ -2146,6 +2222,7 @@ const KM = {
   "Village *": "\u1797\u17bc\u1798\u17b7",
   "Report month": "\u1787\u17bb\u17c6\u179a\u1794\u17b6\u1799\u1780\u17b6\u179a\u178e\u17cd",
   "Pupae survey": "\u1794\u17d2\u179a\u1798\u17bc\u179b\u178c\u17bb\u1780\u178c\u17bf",
+  "Emerged survey": "\u1798\u17bc\u179f\u1785\u17c1\u1789\u1796\u17b8\u178a\u1784\u17d2\u1780\u17bc\u179c",
   "Pupae counted": "\u178c\u17bb\u1780\u178c\u17bf",
   "Households with pupae": "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7\u1798\u17b6\u1793\u178c\u17bb\u1780\u178c\u17bf",
   "Households surveyed": "\u1781\u17d2\u1793\u1784\u1795\u17d2\u1791\u17c7\u1794\u17b6\u1793\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799",
@@ -2295,6 +2372,16 @@ function gpsProblem(err) {
   return (err && err.message) || "រកទីតាំងមិនបាន";
 }
 
+// n days on from an ISO date, as an ISO date. Built at midday UTC so a daylight or
+// timezone shift cannot push the result onto the day before.
+function addDays(iso, n) {
+  const v = String(iso || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  const d = new Date(v + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() + Number(n || 0));
+  return d.toISOString().slice(0, 10);
+}
+
 function isoWeek(d) {
   const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   const day = t.getUTCDay() || 7;
@@ -2343,6 +2430,21 @@ function derive(type, r) {
     // Pupae per 100 houses - the standard pupal index, carried on the record so every
     // report reads the same figure rather than each recomputing its own denominator.
     d.pupal_index = houses ? Math.round((total / houses) * 1000) / 10 : 0;
+  } else if (type === "emerged") {
+    // Sexed, because an emerged adult was reared to adulthood and the females are the
+    // part of the population that bites. The same keys the lab uses for a trapped
+    // adult, so every chart that reads a species split reads this one unchanged.
+    const total = TAXA.reduce((a, [k]) => a + (Number(r[k]) || 0), 0);
+    d.total_catch = total;
+    d.aegypti_total = (Number(r.aegypti_f) || 0) + (Number(r.aegypti_m) || 0);
+    d.aegypti_pct = total ? Math.round((d.aegypti_total / total) * 1000) / 10 : 0;
+    d.female_aegypti = Number(r.aegypti_f) || 0;
+    d.female_pct = d.aegypti_total
+      ? Math.round((d.female_aegypti / d.aegypti_total) * 1000) / 10 : 0;
+    d.tubes_reared = Number(r.tubes_reared) || 0;
+    // Adults out of each tube set to rear: the yield, which is what says whether a
+    // village total reflects abundance or simply more tubes.
+    d.per_tube = d.tubes_reared ? Math.round((total / d.tubes_reared) * 100) / 100 : 0;
   } else if (type === "lab") {
     d.eggs = Number(r.eggs) || 0;
     const larval = isImmatureRec(r);
@@ -2868,6 +2970,8 @@ class Component extends DCLogic {
       target: c.target || "", round: c.round || "",
       sheetUrl: c.sheetUrl && c.sheetUrl.indexOf("script.google.com") < 0 ? c.sheetUrl : SHEET_URL,
       lastSync: c.lastSync || "",
+      // Auto-sync is on unless this device has turned it off.
+      autoSync: c.autoSync !== false,
       pendingDel: loadDel(),
     });
     const saved = loadAuth();
@@ -3233,7 +3337,10 @@ class Component extends DCLogic {
     setTimeout(() => this.setState({ syncPct: 0 }), 1500);
   }
 
-  syncNow = () => {
+  // quiet: the background loop's send. Same work, but no progress bar - an auto-sync
+  // that drew a progress bar every few minutes would be unusable in the field. The
+  // toast stays: it only fires when records actually went up, which is worth seeing.
+  syncNow = (quiet) => {
     const url = String(this.state.sheetUrl || "").trim();
     if (!url) { this.setState({ syncMsg: "\u1794\u1789\u17d2\u1785\u17bc\u179b URL \u1787\u17b6\u1798\u17bb\u1793 \u00b7 paste the sync URL first" }); return; }
     const pending = this.state.records.filter((r) => !r.synced_at && !r._draft);
@@ -3242,7 +3349,7 @@ class Component extends DCLogic {
       this.setState({ syncMsg: "\u1782\u17d2\u1798\u17b6\u1793\u17a2\u17d2\u179c\u17b8\u1793\u17c5\u179f\u179b\u17cb \u00b7 nothing to send" }); return;
     }
     const dels = loadDel();
-    this.startProgress();
+    if (quiet !== true) this.startProgress();
     this.setState({ syncing: true, syncMsg: "\u1780\u17c6\u1796\u17bb\u1784\u1795\u17d2\u1789\u17be \u00b7 sending " + pending.length + "\u2026" });
     return this.apiFetch(url, {
       method: "POST",
@@ -3259,12 +3366,12 @@ class Component extends DCLogic {
         const c = loadCtx(); c.lastSync = at;
         try { localStorage.setItem(CTX, JSON.stringify(c)); } catch (e) {}
         this.toast("\u1794\u17b6\u1793\u1795\u17d2\u1789\u17be " + (out.count || pending.length) + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 " + (out.count || pending.length) + " records sent to the sheet", "ok");
-        this.stopProgress();
+        if (quiet !== true) this.stopProgress();
         this.setState({ syncing: false, lastSync: at, syncMsg: "\u1794\u17b6\u1793\u1795\u17d2\u1789\u17be " + (out.count || pending.length) + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6 \u00b7 sent to the sheet" });
         // Tell the caller it worked, so a replacing pull knows it is safe to proceed.
         return { ok: true };
       })
-      .catch((err) => (this.stopProgress(), this.setState({
+      .catch((err) => (quiet === true || this.stopProgress(), this.setState({
         syncing: false,
         syncMsg: "\u1798\u17b7\u1793\u1787\u17c4\u1782\u1787\u17d0\u1799 \u00b7 failed: " + (err && err.message ? err.message : "no connection"),
       }), { ok: false, error: (err && err.message) || "no connection" }));
@@ -3307,23 +3414,107 @@ class Component extends DCLogic {
       }));
   };
 
-  // Nothing is fetched on its own. The phone keeps what was pulled plus whatever has
-  // been recorded since; the sheet is only read when Pull data is pressed. Every 30
-  // minutes, if records are still unsent, ask whether to sync now.
+  // ---- Auto-sync ----
+  // The phone used to fetch nothing on its own: the sheet was read only when Pull data
+  // was pressed, and every 30 minutes an unsent pile would ask to be sent. That meant
+  // one phone's work was invisible to the rest of the team until somebody remembered to
+  // press a button on both ends - which is the whole reason two surveyors could record
+  // the same village twice in a round.
+  //
+  // Now, whenever this phone is online and signed in, it sends what it has and merges
+  // back what the others have sent. Three things make that safe to run unattended:
+  //
+  //  - the pull is the MERGING one, never the replacing one. Unsent local records win,
+  //    so a background pull can never overwrite work that has not reached the sheet.
+  //  - it never runs while a form is open. A redraw under someone's fingers would move
+  //    the field they were typing in.
+  //  - it sends before it pulls, so this phone's work is in the sheet before the
+  //    sheet's version of the world comes back.
+  AUTO_MS = 120000;
+
+  autoSyncEnabled() {
+    // On unless it has been turned off. Stored with the rest of the device context so
+    // the choice survives a reload.
+    return this.state.autoSync !== false;
+  }
+
+  setAutoSync = (on) => {
+    this.setState({ autoSync: !!on });
+    const c = loadCtx(); c.autoSync = !!on;
+    try { localStorage.setItem(CTX, JSON.stringify(c)); } catch (e) {}
+    if (on) this.autoSync("toggled on");
+  };
+
+  toggleAutoSync = () => this.setAutoSync(!this.autoSyncEnabled());
+
+  // Why a tick is being skipped, or "" when it may run. Kept as one function so the
+  // reason can also be shown on screen rather than the loop silently doing nothing.
+  autoBlockedBy() {
+    if (!this.autoSyncEnabled()) return "off";
+    if (typeof navigator !== "undefined" && !navigator.onLine) return "offline";
+    if (!this.state.auth) return "signed out";
+    if (!String(this.state.sheetUrl || "").trim()) return "no sync URL";
+    if (this.state.screen === "form") return "form open";
+    if (this.state.syncing || this.state.autoBusy || this._autoRunning) return "busy";
+    return "";
+  }
+
+  autoSync = (why) => {
+    if (this.autoBlockedBy()) return;
+    const pending = this.state.records.filter((r) => !r.synced_at && !r._draft).length;
+    const dels = loadDel().length;
+    this._autoRunning = true;
+    this.setState({ autoWhy: why || "" });
+    const done = () => { this._autoRunning = false; };
+    const pull = () => {
+      const p = this.pullNow(true, false);
+      if (p && p.then) p.then(done, done); else done();
+    };
+    // Nothing of ours to send: go straight to reading what the others sent.
+    if (!pending && !dels) return pull();
+    const p = this.syncNow(true);
+    if (p && p.then) p.then(pull, pull); else pull();
+  };
+
   startPolling() {
     if (this._poll) return;
-    const tick = () => {
-      if (!navigator.onLine) return;
-      if (!this.state.auth) return;
+    this._poll = setInterval(() => {
+      if (this.autoSyncEnabled()) return this.autoSync("timer");
+      // Turned off: fall back to what the app did before, which is to ask every half
+      // hour if work is piling up unsent. Silence would be worse than a prompt.
+      if (!navigator.onLine || !this.state.auth) return;
       if (!String(this.state.sheetUrl || "").trim()) return;
-      if (this.state.screen === "form" || this.state.syncing) return;
-      if (this.state.syncAsk) return;
-      const pending = this.state.records.filter((r) => !r.synced_at && !r._draft).length;
-      if (!pending) return;
-      this.setState({ syncAsk: pending });
-    };
-    this._poll = setInterval(tick, 1800000);
+      if (this.state.screen === "form" || this.state.syncing || this.state.syncAsk) return;
+      const now = Date.now();
+      if (this._lastAsk && now - this._lastAsk < 1800000) return;
+      const waiting = this.state.records.filter((r) => !r.synced_at && !r._draft).length;
+      if (!waiting) return;
+      this._lastAsk = now;
+      this.setState({ syncAsk: waiting });
+    }, this.AUTO_MS);
+    // A tick on the clock is the backstop, not the main path. These three are what
+    // make it feel immediate: coming back into signal, bringing the app back to the
+    // front, and finishing a save.
+    this._autoOnline = () => this.autoSync("back online");
+    this._autoVisible = () => { if (!document.hidden) this.autoSync("app in front"); };
+    window.addEventListener("online", this._autoOnline);
+    document.addEventListener("visibilitychange", this._autoVisible);
+    // Give the first run a moment so a cold start finishes drawing first.
+    setTimeout(() => this.autoSync("start"), 4000);
   }
+
+  stopPolling() {
+    if (this._poll) { clearInterval(this._poll); this._poll = null; }
+    if (this._autoOnline) window.removeEventListener("online", this._autoOnline);
+    if (this._autoVisible) document.removeEventListener("visibilitychange", this._autoVisible);
+  }
+
+  // Called after a record is saved. Debounced, because "save and add another" writes
+  // several in a row and each one must not start its own upload.
+  autoSyncSoon = () => {
+    if (this._autoSoon) clearTimeout(this._autoSoon);
+    this._autoSoon = setTimeout(() => this.autoSync("after save"), 6000);
+  };
   dismissSyncAsk = () => this.setState({ syncAsk: 0 });
   acceptSyncAsk = () => {
     this.setState({ syncAsk: 0 });
@@ -3372,7 +3563,7 @@ class Component extends DCLogic {
       .filter((p) => p[1])
       .map((p) => "&" + p[0] + "=" + encodeURIComponent(p[1]))
       .join("");
-    this.apiFetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "action=records&token=" + encodeURIComponent(this.authToken()) + scope)
+    return this.apiFetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "action=records&token=" + encodeURIComponent(this.authToken()) + scope)
 
       .then((out) => {
         if (!out || !out.ok) throw new Error((out && out.error) || "server refused");
@@ -3415,7 +3606,7 @@ class Component extends DCLogic {
         this.setState({ lastPullAt: stamp });
         this.persist(merged);
         if (quiet === true) {
-          this.setState({ autoBusy: false, autoAt: stamp,
+          this.setState({ syncing: false, autoBusy: false, autoAt: stamp,
             autoMsg: (added + updated) ? added + " \u1790\u17d2\u1798\u17b8 \u00b7 " + updated + " refreshed" : "" });
         } else {
           this.stopProgress();
@@ -3434,7 +3625,7 @@ class Component extends DCLogic {
         }
       })
       .catch((err) => this.setState(quiet === true
-        ? { autoBusy: false }
+        ? { syncing: false, autoBusy: false }
         : (this.stopProgress(), { syncing: false,
             syncMsg: "\u1798\u17b7\u1793\u1787\u17c4\u1782\u1787\u17d0\u1799 \u00b7 pull failed: " + (err && err.message ? err.message : "no connection"),
             pullDone: { failed: true, error: (err && err.message) || "no connection" } })));
@@ -3897,7 +4088,8 @@ class Component extends DCLogic {
     // A GPS watch outlives the component unless it is cleared, and a forgotten one is
     // the fastest way to flatten a field phone's battery.
     this.stopFollow();
-    if (this._poll) { clearInterval(this._poll); this._poll = null; }
+    this.stopPolling();
+    clearTimeout(this._autoSoon);
     window.removeEventListener("online", this._on);
     window.removeEventListener("offline", this._on);
     document.removeEventListener("focusin", this._onFieldFocusIn, true);
@@ -4172,6 +4364,18 @@ class Component extends DCLogic {
         houses_surveyed: 0, houses_positive: 0,
         aegypti: 0, albopictus: 0, aedes_other: 0, culex: 0, other: 0,
         notes: "" },
+      // The village's emerged adults. Sexed, unlike a pupa: these were reared through to
+      // adulthood and the females are the part of the population that transmits, so the
+      // split is the point of counting them. tubes_reared is how many tubes the figure
+      // came from - without it a village total says nothing about the effort behind it.
+      emerged: { province_code: "", province: "", district_code: "", district: "",
+        commune_code: "", commune: "", village_code: "", village: "",
+        period_month: this.currentRound(),
+        period_label: period(this.currentRound() + "-15").label,
+        tubes_reared: 0,
+        aegypti_f: 0, aegypti_m: 0, albopictus_f: 0, albopictus_m: 0,
+        aedes_other: 0, culex: 0, other: 0,
+        notes: "" },
       // The per-container cells are part of the blank form, so editing a saved survey
       // loads them back instead of reopening it as 0 / 0.
       larvae: CONTAINERS.reduce((a, [k]) => {
@@ -4421,6 +4625,9 @@ class Component extends DCLogic {
       if (!picks.length) out.push("trap_ids");
     }
     if (type === "adult" || type === "larvae") { if (!f.house) out.push("house"); }
+    if (type === "emerged") {
+      if (!f.village_code && !f.village) out.push("village_code");
+    }
     if (type === "pupae") {
       if (!f.village_code && !f.village) out.push("village_code");
       if (!(Number(f.houses_surveyed) > 0)) out.push("houses_surveyed");
@@ -4455,6 +4662,9 @@ class Component extends DCLogic {
     // collector from the account (name or username), and the user's role carries
     // the rest of what tracking needs, so an unset cluster must not block a save.
 
+    if ((type === "pupae" || type === "emerged") && !f.village_code && !f.village) {
+      e.push("\u1787\u17d2\u179a\u17be\u179f\u179a\u17be\u179f\u1797\u17bc\u1798\u17b7 \u00b7 Pick the village this survey covers.");
+    }
     if (type === "pupae" && n("houses_positive") > n("houses_surveyed")) {
       e.push("ខ្នងផ្ទះមានឌុកឌឿច្រើនជាងពិនិត្យ · "
         + "More households held pupae than were surveyed.");
@@ -4582,6 +4792,9 @@ class Component extends DCLogic {
     // dashboard can only show the raw count. The save still goes through on a second
     // press — a village really can be walked without the houses being tallied — but it
     // is no longer possible to lose the denominator without being told.
+    if (type === "emerged" && !(Number(f.tubes_reared) > 0)) {
+      w.push("\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u179a\u17b6\u1794\u17cb\u1794\u17c6\u1796\u1784\u17cb \u00b7 no tubes counted — without it the yield per tube cannot be worked out.");
+    }
     if (type === "pupae" && !(Number(f.houses_surveyed) > 0)) {
       w.push("មិនទាន់រាប់ខ្នងផ្ទះ · "
         + "no households counted — the pupal index cannot be calculated without it.");
@@ -4765,15 +4978,41 @@ class Component extends DCLogic {
       : type === "collect" && Array.isArray(form.trap_ids) && form.trap_ids.length
         // Stamped per trap rather than per visit: one round of the village can empty
         // several traps that are each on a different day of their own cycle.
-        ? form.trap_ids.map((id) => ({ trap_id: id,
-            position: this.registered().trapPos[id] || form.position,
-            day_no: this.state.editId ? undefined : this.trapDaysDone(id) + 1,
-            days_due: this.trapDaysDue(id) }))
+        //
+        // A BG-Sentinel is set once and emptied on each of three days. Recorded one day
+        // at a time that is three trips back into this form for the same trap, and the
+        // days most often get entered together anyway - so with "all days" ticked each
+        // trap expands into one record per day it still owes, dated a day apart from
+        // the date above. Nothing else changes: each day is still its own collection
+        // record, carrying its own day_no, and each can still be opened and edited.
+        ? form.trap_ids.reduce((out, id) => {
+            const due = this.trapDaysDue(id);
+            const done = this.trapDaysDone(id);
+            const pos = this.registered().trapPos[id] || form.position;
+            // Editing touches the one record on screen; "all days" only ever applies to
+            // new entry, and a single-day trap has nothing to expand.
+            const span = (!this.state.editId && form._allDays && due > 1)
+              ? Math.max(1, due - done) : 1;
+            for (let i = 0; i < span; i += 1) {
+              out.push({ trap_id: id, position: pos,
+                day_no: this.state.editId ? undefined : done + 1 + i,
+                days_due: due,
+                // Day one keeps the date on the form; each later day is the next day.
+                collected_date: i ? addDays(form.collected_date, i) : undefined });
+            }
+            return out;
+          }, [])
       : type === "lab"
         ? [{ specimen_stage: this.stageForForm(form) }]
         : [(type === "collect" || type === "adult") && this.registered().trapPos[form.trap_id]
             ? { position: this.registered().trapPos[form.trap_id] } : {}];
-    const built = variants.map((v) => this.buildRecord(type, { ...form, ...v }, gps, stamp, now, wk));
+    // Each variant is stamped from its own date when it carries one, so the days of a
+    // multi-day collection land on different days rather than all on the form's date.
+    const built = variants.map((v) => {
+      if (!v.collected_date) return this.buildRecord(type, { ...form, ...v }, gps, stamp, now, wk);
+      const st = new Date(v.collected_date + "T12:00:00Z");
+      return this.buildRecord(type, { ...form, ...v }, gps, st, now, isoWeek(st));
+    });
     if (type === "install" && !this.state.editId) {
       const taken = {};
       this.state.records.forEach((r) => { if (r.trap_id) taken[String(r.trap_id).toUpperCase()] = 1; });
@@ -4829,6 +5068,7 @@ class Component extends DCLogic {
       return;
     }
     this.persist((again ? built.map((r) => ({ ...r, _draft: true })) : built).concat(this.state.records));
+    this.autoSyncSoon();
     if (again) {
       // Same household, same day, same location — only the trap changes.
       // Clear the IDs, then mint the next pair so the field is never empty.
@@ -6343,9 +6583,65 @@ class Component extends DCLogic {
           return { form: { ...p.form, trap_ids: list }, error: "" };
         }),
       })),
+      // ---- the whole cycle in one save ----
+      // A BG-Sentinel is set once and emptied on each of three days. One record per day
+      // is right - each day is its own catch - but entering them one day at a time means
+      // three trips into this form for the same trap, and they are usually written up
+      // together anyway. Ticked, each multi-day trap writes every day it still owes,
+      // dated a day apart, and the dates are listed here so nothing has to be guessed.
+      ...(function (self, form2, open2, picked2) {
+        const multi = open2.filter((t) => picked2.indexOf(t.value) >= 0
+          && self.trapDaysDue(t.value) > 1
+          && self.trapDaysDue(t.value) - self.trapDaysDone(t.value) > 1);
+        if (!multi.length || self.state.editId) return { hasMulti: false };
+        const on = !!form2._allDays;
+        const left = Math.max.apply(null, multi.map((t) => self.trapDaysDue(t.value) - self.trapDaysDone(t.value)));
+        const dates = [];
+        for (let i = 0; i < left; i += 1) dates.push(mdy(addDays(form2.collected_date, i)));
+        return {
+          hasMulti: true,
+          allDaysMark: on ? "✓" : "",
+          allDaysBg: on ? "#D5E7EF" : "#fff",
+          allDaysBd: on ? "#117996" : "#D9DEE4",
+          allDaysLabel: "កត់ត្រាគ្រប់ថ្ងៃ · record all " + left + " days at once",
+          allDaysNote: on
+            ? "writes " + left + " collections: " + dates.join(", ")
+            : "one collection on " + dates[0] + " — tick to write all " + left + " days",
+          toggleAllDays: () => self.setState((p) => ({ form: { ...p.form, _allDays: !p.form._allDays }, error: "" })),
+        };
+      })(this, form, open, picked),
+      // One tick for the whole list. A household carries two ovitraps and a BG and they
+      // are nearly always emptied in the same visit, so ticking them one at a time was
+      // three presses to say the obvious. Off by default: what is collected still has
+      // to be stated, because a trap that was not emptied must not get a record.
+      hasMany: open.length > 1,
+      allOn: open.length > 0 && open.every((t) => picked.indexOf(t.value) >= 0),
+      allMark: open.length > 0 && open.every((t) => picked.indexOf(t.value) >= 0) ? "\u2713" : "",
+      allBg: open.length > 0 && open.every((t) => picked.indexOf(t.value) >= 0) ? "#D5E7EF" : "#fff",
+      allBd: open.length > 0 && open.every((t) => picked.indexOf(t.value) >= 0) ? "#117996" : "#D9DEE4",
+      allLabel: open.length > 0 && open.every((t) => picked.indexOf(t.value) >= 0)
+        ? "\u179f\u1798\u17d2\u17a2\u17b6\u178f \u00b7 clear all"
+        : "\u1791\u17b6\u17c6\u1784\u17a2\u179f\u17cb \u00b7 collect all " + open.length + " traps",
+      toggleAll: () => this.setState((p) => {
+        const ids = open.map((t) => t.value);
+        const now = Array.isArray(p.form.trap_ids) ? p.form.trap_ids : [];
+        const allOn = ids.length > 0 && ids.every((id) => now.indexOf(id) >= 0);
+        return { form: { ...p.form, trap_ids: allOn ? [] : ids }, error: "" };
+      }),
       count: picked.length,
+      // Says how many records the save will actually write. With the days expanded
+      // that is more than one per trap, and a line still promising one each would be
+      // the only thing on screen contradicting the dates listed just above it.
       summary: picked.length
-        ? picked.length + " \u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb \u00b7 selected \u2014 saving writes one record for each"
+        ? (function (self, form3, picks) {
+            const total = picks.reduce(function (a, id) {
+              const due = self.trapDaysDue(id), done = self.trapDaysDone(id);
+              return a + ((!self.state.editId && form3._allDays && due > 1)
+                ? Math.max(1, due - done) : 1);
+            }, 0);
+            return picks.length + " \u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb \u00b7 selected \u2014 saving writes "
+              + (total === 1 ? "one record" : total + " \u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6");
+          })(this, form, picked)
         : "\u1787\u17d2\u179a\u17be\u179f\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb \u00b7 tick every trap collected on this visit",
       noRows: open.length === 0,
       empty: "\u1798\u17b7\u1793\u1798\u17b6\u1793\u17a2\u1793\u17d2\u1791\u17b6\u1780\u17cb\u178f\u17d2\u179a\u17bc\u179c\u1794\u17d2\u179a\u1798\u17bc\u179b \u00b7 no trap to collect \u2014 every trap here is already collected",
@@ -6740,6 +7036,43 @@ class Component extends DCLogic {
           : "" },
       txt("notes", "Notes", { placeholder: "Rooms swept, time on site" }),
     ];
+    // Entered per village, exactly like the pupae survey it is reared from: the tubes
+    // that produced these adults came from containers all over the village, so tying the
+    // figure to whichever household supplied one tube made it read as that house's.
+    if (type === "emerged") return [
+      dateField, timeField,
+      { label: "Village *", isSelect: true,
+        value: this.bareCode(form.village_code) || form._village || "",
+        onChange: this.setPupaeVillage,
+        options: [{ value: "", label: "— select —" }].concat(reg.villages || []) },
+      { label: "Report month", isSelect: true, value: form.period_month || this.currentRound(),
+        onChange: this.setRound, options: this.yearRoundOptions() },
+      { label: "", isNote: true, value: "\u1798\u17bd\u1799\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1780\u17d2\u1793\u17bb\u1784\u1798\u17bd\u1799\u1797\u17bc\u1798\u17b7 \u00b7 one record per village — adults reared from this village's immatures" },
+      txt("tubes_reared", "Tubes set to rear", { type: "number", inputmode: "numeric", placeholder: "0" }),
+      ].concat(
+        // Sexed, unlike the pupae survey: these were reared to adulthood, and the
+        // females are the part of the population that bites.
+        (function (list, self) {
+          const rows = [];
+          for (let i = 0; i < list.length; i += 2) {
+            const a = list[i], b = list[i + 1];
+            rows.push({
+              label: "", isPair: true,
+              aCap: km(a[1]), aCapSci: sciSplit(km(a[1])).sci, aCapRest: sciSplit(km(a[1])).rest,
+              aValue: form[a[0]] === "" ? "" : String(form[a[0]] || 0), aChange: self.setNum(a[0]),
+              aFocus: self.numFocus(a[0]), aBlur: self.numBlur(a[0]),
+              bCap: b ? km(b[1]) : "",
+              bCapSci: b ? sciSplit(km(b[1])).sci : "",
+              bCapRest: b ? sciSplit(km(b[1])).rest : "",
+              bValue: b ? (form[b[0]] === "" ? "" : String(form[b[0]] || 0)) : "",
+              bChange: b ? self.setNum(b[0]) : null,
+              bFocus: b ? self.numFocus(b[0]) : null, bBlur: b ? self.numBlur(b[0]) : null,
+            });
+          }
+          return rows;
+        })(TAXA_FIELDS, this),
+        [txt("notes", "Notes", { placeholder: "Who reared them, anything unusual" })]
+      );
     if (type === "pupae") return [
       dateField, timeField,
       { label: "Village *", isSelect: true,
@@ -6816,7 +7149,13 @@ class Component extends DCLogic {
       // Reared material is a choice, because the tube may have been read as immatures
       // or kept until the adults came out; anything else states the stage it must be.
       this.showsTallies(form) && this.canEmerge(form) ? [
-      { ...choice("specimen_stage", "Specimen stage", LAB_STAGES.map(([v]) => v)), wide: true },
+      ...(LAB_STAGES.length > 1
+            || (this.state.editId && LAB_STAGES.every(([v]) => v !== this.stageForForm(form)))
+        ? [{ ...choice("specimen_stage", "Specimen stage",
+              LAB_STAGES.map(([v]) => v).concat(
+                LAB_STAGES.some(([v]) => v === this.stageForForm(form)) ? [] : [this.stageForForm(form)])),
+            wide: true }]
+        : []),
       { label: "", isNote: true, value: form.specimen_stage === EMERGED
         ? "\u1798\u17bc\u179f\u1785\u17c1\u1789\u1796\u17b8\u178a\u1784\u17d2\u1780\u17bc\u179c \u00b7 emerged \u2014 species and sex, not a trap catch"
         : form.specimen_stage === PUPA
@@ -7817,6 +8156,98 @@ class Component extends DCLogic {
           prevLarvaeLabel: "\u1780\u17b6\u179a\u1780\u17c6\u178e\u178f\u17cb\u178a\u1784\u17d2\u1780\u17bc\u179c\u1791\u17b9\u1780\u1798\u17bb\u1793 \u00b7 larvae surveys already at this household",
         };
       })(this, s),
+      // Every emerged survey already recorded, newest first and grouped by round. Not
+      // scoped to a household the way the other lists are, because an emerged survey has
+      // none — the village is the unit, and seeing which villages a round already covers
+      // is the whole point of showing this under the form.
+      ...(function (self, st) {
+        const on = st.screen === "form" && st.type === "emerged";
+        // One line per village per round, not per record. A village is normally surveyed
+        // once in a round, so the two usually coincide \u2014 but the question this list
+        // answers is "which villages has this round covered", and that is a question
+        // about villages. Repeat surveys of one village sum into its line.
+        const byMonth = [];
+        if (on) {
+          self.state.records
+            .filter((r) => (r.form_type || r.type) === "emerged" && r.record_id !== st.editId)
+            .sort((a, b) => String(b.collected_at_utc).localeCompare(String(a.collected_at_utc)))
+            .forEach((r) => {
+              const month = r.period_month || String(r.collected_date || "").slice(0, 7);
+              let g = byMonth.find((x) => x.month === month);
+              if (!g) { g = { month: month, label: r.period_label || month, rows: [] }; byMonth.push(g); }
+              const key = r.village_code || r.village || "\u2014";
+              let v = g.rows.find((x) => x.key === key);
+              if (!v) {
+                v = { key: key, id: r.village || r.village_code || "\u2014",
+                  houses: 0, pos: 0, total: 0, surveys: 0, last: "", ids: [],
+                  aeg: 0, aegF: 0, alb: 0, oth: 0, cx: 0 };
+                g.rows.push(v);
+              }
+              v.surveys += 1;
+              v.ids.push(r.record_id);
+              v.houses += Number(r.tubes_reared) || 0;
+              
+              v.total += Number(r.total_catch) || 0;
+              // The four taxa the form counts, summed across a village's surveys.
+              v.aeg += (Number(r.aegypti_f) || 0) + (Number(r.aegypti_m) || 0);
+              v.aegF += Number(r.aegypti_f) || 0;
+              v.alb += (Number(r.albopictus_f) || 0) + (Number(r.albopictus_m) || 0);
+              v.oth += Number(r.aedes_other) || 0;
+              v.cx += (Number(r.culex) || 0) + (Number(r.other) || 0);
+              const d = r.collected_date || String(r.collected_at_utc || "").slice(0, 10);
+              if (String(d) > String(v.last)) v.last = d;
+            });
+        }
+        byMonth.forEach((g) => {
+          g.rows.sort((a, b) => b.total - a.total);
+          g.rows = g.rows.map((v) => {
+            // Every line can be edited and deleted. Where a village was surveyed more
+            // than once in a round, edit opens the most recent of them and delete removes
+            // the whole set the line stands for \u2014 the count is on the confirm button, so
+            // a press that removes three records says three before it is made.
+            const newest = v.ids[0];
+            const armed = st.prevDelArm === newest;
+            return {
+              id: v.id,
+              // What was found, by species. All four are printed even at zero: this list
+              // is read down a column to compare villages, and a row that drops its empty
+              // taxa puts a different species under the same position on every line.
+              meta: ["Aeg " + v.aeg + " (\u2640" + v.aegF + ")", "Alb " + v.alb, "Ae.oth " + v.oth, "Cx/oth " + v.cx]
+                .join("  \u00b7  ")
+                + (v.surveys > 1 ? "   (" + v.surveys + " \u1780\u17b6\u179a\u179f\u17d2\u1791\u1784\u17cb)" : ""),
+              // The village's total, which is what the species columns add up to.
+              tag: v.total + " \u1798\u17bc\u179f",
+              tagBg: v.total ? "#F6DCDF" : "#D5E7EF",
+              tagFg: v.total ? "#7C1220" : "#003E78",
+              armed: armed,
+              notArmed: !armed,
+              // The confirm says how many it takes, because one press can remove several.
+              delLabel: v.surveys > 1 ? "លុប " + v.surveys : "លុប",
+              edit: () => self.open("emerged", { edit: newest, returnTo: st.returnTo }),
+              arm: () => self.setState({ prevDelArm: newest }),
+              cancelDel: () => self.setState({ prevDelArm: "" }),
+              confirmDel: () => { self.setState({ prevDelArm: "" }); self.deleteRecordsNow(v.ids); },
+            };
+          });
+        });
+        return {
+          prevEmergedMonths: byMonth.map((g) => ({
+            label: g.label,
+            count: g.rows.length + " \u1797\u17bc\u1798\u17b7 \u00b7 "
+              + (g.rows.length === 1 ? "village" : "villages"),
+            rows: g.rows,
+            open: !!(st.openMonths || {})[g.month],
+            caret: (st.openMonths || {})[g.month] ? "\u2212" : "+",
+            toggle: () => self.setState((p) => ({ openMonths: { ...(p.openMonths || {}), [g.month]: !(p.openMonths || {})[g.month] } })),
+          })),
+          // The panel shows whenever the form is open, not only when it has rows: an
+          // empty form with nothing beneath it gave no sign that a list existed at all,
+          // and "no village surveyed yet this round" is itself worth saying on a survey
+          // that is recorded once per village.
+          hasPrevEmerged: on,
+          emergedEmpty: on && byMonth.length === 0,
+        };
+      })(this, s),
       // Every pupae survey already recorded, newest first and grouped by round. Not
       // scoped to a household the way the other lists are, because a pupae survey has
       // none — the village is the unit, and seeing which villages a round already covers
@@ -8677,6 +9108,7 @@ class Component extends DCLogic {
       openAdult: () => this.open("adult"),
       openLarvae: () => this.open("larvae"),
       openPupae: () => this.open("pupae"),
+      openEmerged: () => this.open("emerged"),
       openLab: () => this.open("lab"),
       editHousehold: current ? () => this.open("household", { edit: current.household_id, returnTo: "hhdetail" }) : null,
       hhInstall: current ? () => this.open("install", { house: current.household_id, returnTo: "hhdetail" }) : null,
@@ -9116,6 +9548,29 @@ class Component extends DCLogic {
         return p(d.getMonth() + 1) + "-" + p(d.getDate()) + "-" + p(d.getFullYear() % 100)
           + ", " + d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
       })(new Date(s.lastSync)) : "\u1798\u17b7\u1793\u1791\u17b6\u1793\u17cb\u1795\u17d2\u1789\u17be \u00b7 never",
+      // ---- auto-sync row ----
+      autoSyncOn: s.autoSync !== false,
+      toggleAutoSync: this.toggleAutoSync,
+      autoMark: s.autoSync !== false ? "✓" : "",
+      autoBoxBg: s.autoSync !== false ? "#117996" : "#fff",
+      autoBoxBd: s.autoSync !== false ? "#117996" : "#A8C8DC",
+      // Says what the loop is actually doing, including why it is not doing it. A
+      // background job that fails silently is worse than no background job: the phone
+      // looks synced while the team sees nothing.
+      autoState: (function (self, st) {
+        if (st.autoSync === false) return "បិទ · off — send with the button above";
+        const why = self.autoBlockedBy();
+        if (why === "offline") return "គ្មានបណ្តាញ · offline — will sync when signal returns";
+        if (why === "no sync URL") return "no sync URL set";
+        if (why === "signed out") return "signed out";
+        if (why === "busy") return "កំពុងផ្ទេរ · syncing…";
+        if (why === "form open") return "រង់ចាំ · waits until this form is closed";
+        return "បើក · on — every 2 minutes, and whenever you save or come back online";
+      })(this, s),
+      autoLastLabel: s.autoAt ? (function (d) {
+        return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      })(new Date(s.autoAt)) : "",
+      hasAutoLast: !!s.autoAt,
       ctxLabel: s.collector || "No collector set",
 
       // With a household in context its name sits in the app bar, so the in-form line is dropped.
